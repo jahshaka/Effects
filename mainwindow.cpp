@@ -31,7 +31,6 @@ public:
         TempVar tempVar;
         tempVar.name = QString("temp%1").arg(tempVars.count());
         tempVar.typeName = sock->typeName;
-        qDebug()<<sock->typeName;
         tempVars.insert(sock->id, tempVar);
 
         return tempVar;
@@ -113,27 +112,37 @@ public:
         //"material.diffuse = " + ctx
     }
 
+    // This is executed in the perspective of a connection
     QString evalSocket(ShaderContext& ctx, NodeGraph* graph, NodeModel* socketNode, int socketIndex)
     {
         QString c = "";
         auto inSock = socketNode->inSockets[socketIndex];
+        //TempVar var;
+        //NodeModel* leftNode;
         auto var = ctx.createTempVar(inSock);
 
         // get the connection so we can get the value
         auto con = graph->getConnectionFromOutputNode(socketNode,socketIndex);
 
         // if there is no connection then get the default value
-        if (!con)
+        if (!con) {
+            //auto var = ctx.createTempVar(inSock);
             return var.name + " = " + inSock->getDefaultValue() + ";\n";
+        }
 
-        // get node left of connection
+        // get node left of connection and create temp var
         auto leftNode = graph->nodes[con->leftNodeId];
+        auto outSock = leftNode->outSockets[con->leftSocketIndex];
+        auto leftVar = ctx.createTempVar(outSock);
+
 
         if (leftNode->typeName=="worldNormal") {
             c = var.name + " = v_normal;\n";
         }
         else if (leftNode->typeName=="float") {
-            c = var.name + " = " + leftNode->getSocketValue(socketIndex, nullptr) + ";";
+            c = leftVar.name + " = " + leftNode->getSocketValue(socketIndex, nullptr) + ";\n";
+            auto val = convertValue(leftVar.name, outSock, inSock);
+            c += var.name + " = " + val + ";\n";
         }
         else if (leftNode->typeName == "add"){
             c += evalSocket(ctx, graph, leftNode, 0);
@@ -157,6 +166,73 @@ public:
         }
 
         return c;
+    }
+
+    // fromValue could be a constant or a variable name
+    QString convertValue(QString fromValue, SocketModel* from, SocketModel* to)
+    {
+        int numFrom = getNumComponents(from->typeName);
+        int numTo = getNumComponents(to->typeName);
+
+        Q_ASSERT(numFrom!= 0 && numTo != 0);
+
+        QString suffix = ".";
+
+        // float being casted to a vector
+        //
+        if (numFrom==1 && numTo>1) {
+            return QString("vec%1(%2)").arg(numTo).arg(fromValue);
+        }
+
+        if (numFrom > numTo) {
+            // eg vec4 > vec2 = var.xy
+            for(int i = 0; i<numTo; i++) {
+                suffix += getVectorComponent(i);
+            }
+
+            return fromValue+suffix;
+        }
+        if (numFrom < numTo)
+        {
+            // eg vec2 > vec4 = var.xyyy
+            for(int i = 0; i<numTo; i++) {
+                suffix += getVectorComponent(qMin(i, numTo));
+            }
+            return fromValue+suffix;
+        }
+
+        return fromValue;
+
+    }
+
+    QString getVectorComponent(int index)
+    {
+        switch(index)
+        {
+            case 1: return "x";
+            case 2: return "y";
+            case 3: return "z";
+            case 4: return "w";
+        }
+
+        return "x";
+    }
+
+    int getNumComponents(QString valueType)
+    {
+        if (valueType=="float")
+            return 1;
+
+        if (valueType=="vec2")
+            return 2;
+
+        if (valueType=="vec3")
+            return 3;
+
+        if (valueType=="vec4")
+            return 4;
+
+        return 0;
     }
 };
 
