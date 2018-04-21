@@ -78,11 +78,12 @@ SocketModel::SocketModel(QString name, QString typeName):
 NodeModel::NodeModel()
 {
     id = QUuid::createUuid().toString();
+    widget = nullptr;
 }
 
 NodeModel *NodeModel::duplicate()
 {
-    auto model = new NodeModel;
+    auto model = createDuplicate();
 
     model->typeName = this->typeName;
     model->title = this->title;

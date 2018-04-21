@@ -1,6 +1,7 @@
 #ifndef NODEMODEL_H
 #define NODEMODEL_H
 
+#include <QObject>
 #include <QVector>
 #include <QString>
 #include <QMap>
@@ -109,8 +110,10 @@ public:
     }
 };
 
-class NodeModel
+class QWidget;
+class NodeModel : public QObject
 {
+    Q_OBJECT
 public:
     QString id;
 
@@ -120,14 +123,28 @@ public:
     QString typeName;
     QString title;
 
+    QWidget* widget;
+
     NodeModel();
 
-    virtual QString getSocketValue(int socketIndex, ModelContext* context){}
+    virtual QString getSocketValue(int socketIndex, ModelContext* context)
+    {
+        return outSockets[socketIndex]->getDefaultValue();
+    }
 
     // for the master node
     void calculate(ModelContext* context);
 
     virtual NodeModel* duplicate();
+
+signals:
+    void valueChanged(NodeModel*, int sockedIndex);
+
+protected:
+    virtual NodeModel* createDuplicate()
+    {
+        return new NodeModel();
+    }
 };
 
 #endif // NODEMODEL_H

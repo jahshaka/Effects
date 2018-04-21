@@ -71,6 +71,7 @@ class GraphNode : public QGraphicsPathItem
     QVector<Socket*> sockets;
     int nodeWidth;
     QGraphicsTextItem* text;
+    QGraphicsProxyWidget* proxyWidget;
 
     int inSocketCount = 0;
     int outSocketCount = 0;
@@ -84,6 +85,7 @@ public:
     void addInSocket(QString title);
     void addOutSocket(QString title);
     void addSocket(Socket* sock);
+    void setWidget(QWidget* widget);
     void calcPath();
     int calcHeight();
 
@@ -136,6 +138,7 @@ public:
 signals:
     void newConnection(SocketConnection* connection);
     void connectionRemoved(SocketConnection* connection);
+    void nodeValueChanged(NodeModel* nodeModel, int socketIndex);
 };
 
 

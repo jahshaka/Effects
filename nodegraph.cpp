@@ -11,6 +11,7 @@
 #include <QMenu>
 #include <QGraphicsWidget>
 #include <QGraphicsView>
+#include <QGraphicsProxyWidget>
 #include "nodegraph.h"
 #include "nodemodel.h"
 
@@ -124,6 +125,7 @@ GraphNode::GraphNode(QGraphicsItem* parent):
     QGraphicsPathItem(parent)
 {
     nodeType = 0;
+    proxyWidget = nullptr;
 
     this->setFlag(QGraphicsItem::ItemIsMovable);
     this->setFlag(QGraphicsItem::ItemIsSelectable);
@@ -179,6 +181,21 @@ void GraphNode::addSocket(Socket* sock)
     calcPath();
 }
 
+void GraphNode::setWidget(QWidget *widget)
+{
+    // gotta do this here before adding the widget
+    auto y = calcHeight();
+
+    proxyWidget = new QGraphicsProxyWidget(this);
+    proxyWidget->setWidget(widget);
+    //proxyWidget->setPreferredSize(widget->pr);
+    proxyWidget->setPreferredWidth(5);
+    proxyWidget->setPos((nodeWidth-proxyWidget->size().width()) / 2,
+                        y);
+
+    calcPath();
+}
+
 void GraphNode::calcPath()
 {
     QPainterPath path_content;
@@ -199,6 +216,8 @@ int GraphNode::calcHeight()
     }
 
     //height += 2; // padding
+    if (proxyWidget != nullptr)
+        height += proxyWidget->size().height();
 
     return height;
 }
@@ -244,6 +263,9 @@ void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addTo
         nodeView->addInSocket(sock->name);
     for(auto sock : model->outSockets)
         nodeView->addOutSocket(sock->name);
+
+    if (model->widget != nullptr)
+        nodeView->setWidget(model->widget);
     nodeView->setTitle(model->typeName);
 
     nodeView->setPos(x, y);
@@ -253,6 +275,10 @@ void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addTo
         Q_ASSERT_X(nodeGraph!=nullptr,"GraphNodeScene::addNodeModel", "Cant add node to null scene");
         nodeGraph->addNode(model);
     }
+
+    connect(model, &NodeModel::valueChanged, [this](NodeModel* nodeModel, int sockedIndex){
+        emit nodeValueChanged(nodeModel, sockedIndex);
+    });
 }
 
 QMenu *GraphNodeScene::createContextMenu(float x, float y)

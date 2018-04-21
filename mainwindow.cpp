@@ -7,6 +7,7 @@
 #include "scenewidget.h"
 #include <QLayout>
 #include <QGridLayout>
+#include <QLineEdit>
 
 struct TempVar
 {
@@ -30,6 +31,7 @@ public:
         TempVar tempVar;
         tempVar.name = QString("temp%1").arg(tempVars.count());
         tempVar.typeName = sock->typeName;
+        qDebug()<<sock->typeName;
         tempVars.insert(sock->id, tempVar);
 
         return tempVar;
@@ -38,6 +40,44 @@ public:
     QList<TempVar> getTempVars()
     {
         return tempVars.values();
+    }
+};
+
+class FloatNodeModel : public NodeModel
+{
+    QLineEdit* lineEdit;
+public:
+    FloatNodeModel():
+        NodeModel()
+    {
+        lineEdit = new QLineEdit();
+        lineEdit->setValidator(new QDoubleValidator());
+        lineEdit->setMaximumSize(lineEdit->sizeHint());
+
+        connect(lineEdit, &QLineEdit::textChanged,
+                  this, &FloatNodeModel::editTextChanged);
+
+        lineEdit->setText("0.0");
+
+        this->widget = lineEdit;
+
+        typeName = "float";
+        title = "Float";
+    }
+
+    void editTextChanged(const QString& text)
+    {
+        emit valueChanged(this, 0);
+    }
+
+    QString getSocketValue(int socketIndex, ModelContext *context)
+    {
+        return lineEdit->text();
+    }
+
+    NodeModel* createDuplicate() override
+    {
+        return new FloatNodeModel();
     }
 };
 
@@ -92,8 +132,10 @@ public:
         if (leftNode->typeName=="worldNormal") {
             c = var.name + " = v_normal;\n";
         }
-
-        if (leftNode->typeName == "add"){
+        else if (leftNode->typeName=="float") {
+            c = var.name + " = " + leftNode->getSocketValue(socketIndex, nullptr) + ";";
+        }
+        else if (leftNode->typeName == "add"){
             c += evalSocket(ctx, graph, leftNode, 0);
             c += evalSocket(ctx, graph, leftNode, 1);
 
@@ -103,8 +145,7 @@ public:
 
             c += var.name + " = " + a.name + " + " + b.name + ";\n";
         }
-
-        if (leftNode->typeName == "multiply"){
+        else if (leftNode->typeName == "multiply"){
             c += evalSocket(ctx, graph, leftNode, 0);
             c += evalSocket(ctx, graph, leftNode, 1);
 
@@ -155,6 +196,7 @@ NodeGraph* createGraph()
     return graph;
 }
 
+
 void registerModels(NodeGraph* graph)
 {
     // mult
@@ -172,6 +214,10 @@ void registerModels(NodeGraph* graph)
     normalNode->title = "World Normal";
     normalNode->outSockets.append(new Vector3SocketModel("normal"));
     graph->registerModel(normalNode);
+
+    auto floatNode = new FloatNodeModel();
+    floatNode->outSockets.append(new FloatSocketModel("value","float"));
+    graph->registerModel(floatNode);
 
 }
 
@@ -313,6 +359,15 @@ MainWindow::MainWindow(QWidget *parent) :
     registerModels(graph);
 
     connect(scene, &GraphNodeScene::newConnection, [this](SocketConnection* connection)
+    {
+        auto graph = scene->getNodeGraph();
+        ShaderGen shaderGen;
+        auto code = shaderGen.evaluateShader(graph, graph->getMasterNode());
+        ui->textEdit->setPlainText(code);
+        sceneWidget->updateShader(code);
+    });
+
+    connect(scene, &GraphNodeScene::nodeValueChanged, [this](NodeModel* model, int index)
     {
         auto graph = scene->getNodeGraph();
         ShaderGen shaderGen;
