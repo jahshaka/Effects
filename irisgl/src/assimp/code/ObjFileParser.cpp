@@ -3,7 +3,8 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2017, assimp team
+Copyright (c) 2006-2018, assimp team
+
 
 
 All rights reserved.
@@ -611,13 +612,14 @@ void ObjFileParser::getMaterialLib() {
         if ( '/' != *path.rbegin() ) {
           path += '/';
         }
-        absName = path + strMatName;
+        absName += path;
+        absName += strMatName;
     } else {
         absName = strMatName;
     }
-    IOStream *pFile = m_pIO->Open( absName );
 
-    if (!pFile ) {
+    IOStream *pFile = m_pIO->Open( absName );
+    if ( nullptr == pFile ) {
         DefaultLogger::get()->error("OBJ: Unable to locate material file " + strMatName);
         std::string strMatFallbackName = m_originalObjFileName.substr(0, m_originalObjFileName.length() - 3) + "mtl";
         DefaultLogger::get()->info("OBJ: Opening fallback material file " + strMatFallbackName);

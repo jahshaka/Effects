@@ -18,18 +18,22 @@ set(CPP
 	mainwindow.cpp
 	nodegraph.cpp
         nodemodel.cpp
-        scenewidget.cpp)
+        scenewidget.cpp
+        propertylistwidget.cpp)
 
 set(HEADERS
 	mainwindow.h
 	nodegraph.h
         nodemodel.h
-        scenewidget.h)
+        scenewidget.h
+        propertylistwidget.h)
 
 set(FORMS
-	mainwindow.ui)
+        mainwindow.ui
+        propertylistwidget.ui)
 
 set(LIBS IrisGL Qt5::Widgets)
+
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)

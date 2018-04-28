@@ -2,7 +2,8 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2017, assimp team
+Copyright (c) 2006-2018, assimp team
+
 
 All rights reserved.
 
@@ -204,7 +205,7 @@ enum ErrorPolicy {
 
 // -------------------------------------------------------------------------------
 /** Represents a data structure in a BLEND file. A Structure defines n fields
- *  and their locatios and encodings the input stream. Usually, every
+ *  and their locations and encodings the input stream. Usually, every
  *  Structure instance pertains to one equally-named data structure in the
  *  BlenderScene.h header. This class defines various utilities to map a
  *  binary `blob` read from the file to such a structure instance with

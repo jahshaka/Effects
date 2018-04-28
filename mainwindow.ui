@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1097</width>
-    <height>551</height>
+    <height>633</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,7 +28,14 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QGraphicsView" name="graphicsView"/>
+     <widget class="QGraphicsView" name="graphicsView">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>1</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
     </item>
     <item>
      <widget class="QTextEdit" name="textEdit">
@@ -54,6 +61,12 @@
         <height>0</height>
        </size>
       </property>
+      <property name="maximumSize">
+       <size>
+        <width>250</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="baseSize">
        <size>
         <width>0</width>
@@ -77,10 +90,37 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QWidget" name="sceneContainer" native="true"/>
+        <widget class="QWidget" name="sceneContainer" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>250</width>
+           <height>250</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>250</width>
+           <height>250</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="QWidget" name="propertyContainer" native="true"/>
+        <widget class="QTabWidget" name="propertyContainer">
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <widget class="PropertyListWidget" name="propertyContainerPage1" native="true">
+          <attribute name="title">
+           <string/>
+          </attribute>
+         </widget>
+         <widget class="QWidget" name="tab">
+          <attribute name="title">
+           <string>Page</string>
+          </attribute>
+         </widget>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -99,6 +139,14 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>PropertyListWidget</class>
+   <extends>QWidget</extends>
+   <header>propertylistwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

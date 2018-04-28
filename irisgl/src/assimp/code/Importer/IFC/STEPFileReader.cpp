@@ -2,7 +2,8 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2017, assimp team
+Copyright (c) 2006-2018, assimp team
+
 
 All rights reserved.
 
@@ -491,10 +492,17 @@ STEP::LazyObject::LazyObject(DB& db, uint64_t id,uint64_t /*line*/, const char* 
                 --skip_depth;
             }
 
-            if (skip_depth >= 1 && *a=='#') {
-                const char* tmp;
-                const int64_t num = static_cast<int64_t>( strtoul10_64(a+1,&tmp) );
-                db.MarkRef(num,id);
+			if (skip_depth >= 1 && *a=='#') {
+				if (*(a + 1) != '#')
+				{
+					const char* tmp;
+					const int64_t num = static_cast<int64_t>(strtoul10_64(a + 1, &tmp));
+					db.MarkRef(num, id);
+				}
+				else
+				{
+					++a;
+				}
             }
             ++a;
         }

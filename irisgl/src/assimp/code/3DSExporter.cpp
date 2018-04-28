@@ -2,7 +2,8 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2017, assimp team
+Copyright (c) 2006-2018, assimp team
+
 
 All rights reserved.
 
@@ -183,7 +184,7 @@ void ExportScene3DS(const char* pFile, IOSystem* pIOSystem, const aiScene* pScen
 } // end of namespace Assimp
 
 // ------------------------------------------------------------------------------------------------
-Discreet3DSExporter:: Discreet3DSExporter(std::shared_ptr<IOStream> outfile, const aiScene* scene)
+Discreet3DSExporter:: Discreet3DSExporter(std::shared_ptr<IOStream> &outfile, const aiScene* scene)
 : scene(scene)
 , writer(outfile)
 {

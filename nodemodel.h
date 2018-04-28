@@ -28,7 +28,6 @@ public:
     NodeModel* getMasterNode();
 
     void addConnection(NodeModel* leftNode, int leftSockIndex, NodeModel* rightNode, int rightSockIndex);
-
     void addConnection(QString leftNodeId, int leftSockIndex, QString rightNodeId, int rightSockIndex);
 
     // gets the output node and socket for a given input node and socket
@@ -75,6 +74,16 @@ public:
     {
         // todo: make false by default
         return true;
+    }
+
+    QString getValueFromInputSocket(int index)
+    {
+        auto sock = inputSockets[index];
+        if (sock->hasConnection()) {
+            return sock->getConnectedSocket()->getVariableName();
+        }
+
+        return sock->getDefaultValue();
     }
 
     virtual SocketModel* duplicate() = 0;

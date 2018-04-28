@@ -27,12 +27,15 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     nodegraph.cpp \
-    nodemodel.cpp
+    nodemodel.cpp \
+    propertylistwidget.cpp
 
 HEADERS += \
         mainwindow.h \
     nodegraph.h \
-    nodemodel.h
+    nodemodel.h \
+    propertylistwidget.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    propertylistwidget.ui
