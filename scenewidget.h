@@ -1,3 +1,5 @@
+#pragma once
+
 #include <irisgl/IrisGL.h>
 
 class SceneWidget : public iris::RenderWidget

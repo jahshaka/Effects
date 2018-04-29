@@ -1,9 +1,8 @@
 #include "nodemodel.h"
 
-
-void NodeGraph::registerModel(NodeModel *model)
+void NodeGraph::registerModel(QString name, std::function<NodeModel *()> factoryFunction)
 {
-    modelRegistry.insert(model->title, model);
+    modelFactories.insert(name, factoryFunction);
 }
 
 void NodeGraph::addNode(NodeModel *model)
@@ -39,13 +38,15 @@ void NodeGraph::addConnection(QString leftNodeId, int leftSockIndex, QString rig
     // todo: check if socket with pair already exists
 
     auto con = new ConnectionModel();
-    con->leftNodeId = leftNodeId;
-    con->leftSocketIndex = leftSockIndex;
-    con->rightNodeId = rightNodeId;
-    con->rightSocketIndex = rightSockIndex;
+    con->leftSocket = leftSock;
+    con->rightSocket = rightSock;
+
+    leftSock->connection = con;
+    rightSock->connection = con;
     connections.insert(con->id, con);
 }
 
+/*
 ConnectionModel *NodeGraph::getConnectionFromOutputNode(NodeModel *node, int socketIndex)
 {
     for(auto con : connections.values()) {
@@ -55,12 +56,67 @@ ConnectionModel *NodeGraph::getConnectionFromOutputNode(NodeModel *node, int soc
 
     return nullptr;
 }
+*/
 
 ConnectionModel::ConnectionModel()
 {
     id = QUuid::createUuid().toString();
-    leftSocketIndex = -1;
-    rightSocketIndex = -1;
+    leftSocket = nullptr;
+    rightSocket = nullptr;
+}
+
+void SocketModel::setGraph(NodeGraph *value)
+{
+    graph = value;
+}
+
+NodeGraph *SocketModel::getGraph() const
+{
+    return graph;
+}
+
+QString SocketModel::getVarName() const
+{
+    return varName;
+}
+
+void SocketModel::setVarName(const QString &value)
+{
+    varName = value;
+}
+
+SocketModel *SocketModel::getConnectedSocket()
+{
+    Q_ASSERT(connection!=nullptr);
+    Q_ASSERT(connection->leftSocket != nullptr && connection->rightSocket!=nullptr);
+
+    if(connection->leftSocket==this)
+        return connection->rightSocket;
+
+    if(connection->rightSocket==this)
+        return connection->leftSocket;
+
+    return nullptr;
+}
+
+QString SocketModel::getValue() const
+{
+    return value;
+}
+
+void SocketModel::setValue(const QString &value)
+{
+    this->value = value;
+}
+
+NodeModel *SocketModel::getNode() const
+{
+    return node;
+}
+
+void SocketModel::setNode(NodeModel *value)
+{
+    node = value;
 }
 
 SocketModel::SocketModel()
@@ -81,10 +137,49 @@ NodeModel::NodeModel()
     widget = nullptr;
 }
 
+void NodeModel::addInputSocket(SocketModel *sock)
+{
+    inSockets.append(sock);
+    sock->setNode(this);
+}
+
+void NodeModel::addOutputSocket(SocketModel *sock)
+{
+    outSockets.append(sock);
+    sock->setNode(this);
+}
+
+QString NodeModel::getValueFromInputSocket(int index)
+{
+    auto sock = inSockets[index];
+    if (sock->hasConnection()) {
+        return sock->getConnectedSocket()->getVarName();
+    }
+
+    return sock->getValue();
+}
+
+QString NodeModel::getOutputSocketVarName(int index)
+{
+    auto sock = outSockets[index];
+    return sock->getVarName();
+}
+
+NodeGraph *NodeModel::getGraph() const
+{
+    return graph;
+}
+
+void NodeModel::setGraph(NodeGraph *value)
+{
+    graph = value;
+}
+
+/*
 NodeModel *NodeModel::duplicate()
 {
     auto model = createDuplicate();
-
+    
     model->typeName = this->typeName;
     model->title = this->title;
 
@@ -95,3 +190,4 @@ NodeModel *NodeModel::duplicate()
 
     return model;
 }
+*/

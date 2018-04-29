@@ -26,7 +26,8 @@ set(HEADERS
 	nodegraph.h
         nodemodel.h
         scenewidget.h
-        propertylistwidget.h)
+        propertylistwidget.h
+        graphtest.h)
 
 set(FORMS
         mainwindow.ui

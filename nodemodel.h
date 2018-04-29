@@ -6,6 +6,7 @@
 #include <QString>
 #include <QMap>
 #include <QUuid>
+#include <functional>
 
 
 class NodeModel;
@@ -17,13 +18,14 @@ public:
     QMap<QString, NodeModel*> nodes;
     QMap<QString, ConnectionModel*> connections;
 
-    NodeModel* masterNode;
+    NodeModel* masterNode = nullptr;
 
-    QMap<QString, NodeModel*> modelRegistry;
-    void registerModel(NodeModel* model);
+    QMap<QString, std::function<NodeModel*()>> modelFactories;
+    void registerModel(QString name, std::function<NodeModel*()> factoryFunction);
 
     void addNode(NodeModel* model);
 
+    // master node must already be added as a node
     void setMasterNode(NodeModel* masterNode);
     NodeModel* getMasterNode();
 
@@ -34,24 +36,20 @@ public:
     ConnectionModel* getConnectionFromOutputNode(NodeModel* node, int socketIndex);
 };
 
+class SocketModel;
 class ConnectionModel
 {
 public:
     QString id;
 
-    QString leftNodeId;
-    int leftSocketIndex;
-
-    QString rightNodeId;
-    int rightSocketIndex;
+    SocketModel* leftSocket;
+    SocketModel* rightSocket;
 
     ConnectionModel();
 };
 
 class ModelContext
 {
-public:
-    virtual QString getTempVarName(QString typeName);
 };
 
 class SocketModel
@@ -59,16 +57,23 @@ class SocketModel
 public:
     QString id;
     QString name;
-    QString typeName;
-    QString defaultValue;
+    QString typeName; //todo: change to enum
+
+    // used to store results of calculations
+    // usually only right nodes have these assigned
+    QString varName;
+    // used to get calculation results
+    // will sometimes be var name
+    QString value;
+
+    // connection if any
+    ConnectionModel* connection = nullptr;
+    NodeGraph* graph = nullptr;
+
+    NodeModel* node = nullptr;
 
     SocketModel();
     SocketModel(QString name, QString typeName);
-
-    virtual QString getDefaultValue()
-    {
-        return defaultValue;
-    }
 
     virtual bool canConvertTo(SocketModel* other)
     {
@@ -76,18 +81,32 @@ public:
         return true;
     }
 
-    QString getValueFromInputSocket(int index)
-    {
-        auto sock = inputSockets[index];
-        if (sock->hasConnection()) {
-            return sock->getConnectedSocket()->getVariableName();
-        }
+    virtual SocketModel* duplicate() = 0;
 
-        return sock->getDefaultValue();
+    void setGraph(NodeGraph *value);
+    NodeGraph *getGraph() const;
+
+    // assigned by shader model context
+    QString getValue() const;
+    void setValue(const QString &value);
+
+    QString getVarName() const;
+    void setVarName(const QString &value);
+
+    bool hasConnection()
+    {
+        return connection != nullptr;
+    }
+    ConnectionModel* getConnection()
+    {
+        return connection;
     }
 
-    virtual SocketModel* duplicate() = 0;
+    SocketModel* getConnectedSocket();
+    NodeModel *getNode() const;
+    void setNode(NodeModel *value);
 };
+
 
 class FloatSocketModel : public SocketModel
 {
@@ -95,7 +114,7 @@ public:
     FloatSocketModel(QString name, QString defaultValue = "0.0f"):
         SocketModel(name,"float")
     {
-        this->defaultValue = defaultValue;
+        this->setValue(defaultValue);
     }
 
     virtual SocketModel* duplicate()
@@ -110,7 +129,7 @@ public:
     Vector3SocketModel(QString name, QString defaultValue = "vec3(0.0f, 0.0f, 0.0f)"):
         SocketModel(name, "vec3")
     {
-        this->defaultValue = defaultValue;
+        this->setValue(defaultValue);
     }
 
     virtual SocketModel* duplicate()
@@ -136,15 +155,26 @@ public:
 
     NodeModel();
 
+    NodeGraph* graph = nullptr;
+
+    void addInputSocket(SocketModel* sock);
+    void addOutputSocket(SocketModel* sock);
+
     virtual QString getSocketValue(int socketIndex, ModelContext* context)
     {
-        return outSockets[socketIndex]->getDefaultValue();
+        return outSockets[socketIndex]->getValue();
     }
 
-    // for the master node
-    void calculate(ModelContext* context);
+    QString getValueFromInputSocket(int index);
+    QString getOutputSocketVarName(int index);
 
-    virtual NodeModel* duplicate();
+
+    virtual void preProcess(ModelContext* context){}
+    virtual void process(ModelContext* context){}
+    virtual void postProcess(ModelContext* context){}
+
+    NodeGraph *getGraph() const;
+    void setGraph(NodeGraph *value);
 
 signals:
     void valueChanged(NodeModel*, int sockedIndex);

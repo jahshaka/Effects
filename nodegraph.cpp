@@ -266,7 +266,7 @@ void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addTo
 
     if (model->widget != nullptr)
         nodeView->setWidget(model->widget);
-    nodeView->setTitle(model->typeName);
+    nodeView->setTitle(model->title);
 
     nodeView->setPos(x, y);
     nodeView->nodeId = model->id;
@@ -285,11 +285,12 @@ QMenu *GraphNodeScene::createContextMenu(float x, float y)
 {
     auto menu = new QMenu();
 
-    for(auto model : nodeGraph->modelRegistry.values()) {
-        connect(menu->addAction(model->title), &QAction::triggered, [this,x, y,model](){
+    for(auto key : nodeGraph->modelFactories.keys()) {
+        auto factory = nodeGraph->modelFactories[key];
+        connect(menu->addAction(key), &QAction::triggered, [this,x, y,factory](){
 
-            auto multNode = model->duplicate();
-            this->addNodeModel(multNode, x, y);
+            auto node = factory();
+            this->addNodeModel(node, x, y);
 
         });
     }
