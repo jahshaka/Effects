@@ -6,6 +6,7 @@
 #include <QLayout>
 #include <QGridLayout>
 #include <QLineEdit>
+#include <QComboBox>
 
 // temporary variable
 struct TempVar
@@ -345,6 +346,75 @@ public:
     }
 };
 
+class SineNode : public NodeModel
+{
+public:
+    SineNode()
+    {
+        title = "Sine";
+
+        addInputSocket(new Vector3SocketModel("Value"));
+        addOutputSocket(new Vector3SocketModel("Result"));
+    }
+
+    virtual void process(ModelContext* context) override
+    {
+        auto ctx = (ShaderContext*)context;
+        auto valA = this->getValueFromInputSocket(0);
+        auto res = this->getOutputSocketVarName(0);
+
+        auto code = res +" = sin(" + valA + ");";
+        ctx->addCodeChunk(this, code);
+    }
+};
+
+class TextureCoordinateNode : public NodeModel
+{
+    QComboBox* combo;
+    QString uv;
+public:
+    TextureCoordinateNode()
+    {
+        title = "Texture Coordinate";
+
+        combo = new QComboBox();
+        combo->addItem("TexCoord0");
+        combo->addItem("TexCoord1");
+        combo->addItem("TexCoord2");
+        combo->addItem("TexCoord3");
+
+        connect(combo, &QComboBox::currentTextChanged,
+                  this, &TextureCoordinateNode::comboTextChanged);
+
+        this->widget = combo;
+
+        typeName = "float";
+
+        addOutputSocket(new Vector2SocketModel("UV"));
+        uv = "v_texCoord";
+    }
+
+    virtual void process(ModelContext* context) override
+    {
+        outSockets[0]->setVarName(uv);
+    }
+
+    void comboTextChanged(const QString& text)
+    {
+        if (text == "TexCoord0") {
+            uv = "v_texCoord";
+        } else if (text == "TexCoord1") {
+            uv = "v_texCoord1";
+        } else if (text == "TexCoord2") {
+            uv = "v_texCoord2";
+        } else if (text == "TexCoord3") {
+            uv = "v_texCoord3";
+        }
+
+        emit valueChanged(this, 0);
+    }
+};
+
 void registerModels(NodeGraph* graph)
 {
     // mult
@@ -375,21 +445,19 @@ void registerModels(NodeGraph* graph)
         return node;
     });
 
-    /*
+
     // uv
     graph->registerModel("Texture Coordinate", []()
     {
-        auto floatNode = new FloatNodeModel();
-        return floatNode;
+        return new TextureCoordinateNode();
     });
 
     // sine
     graph->registerModel("Sine", []()
     {
-        auto floatNode = new FloatNodeModel();
-        return floatNode;
+        return new SineNode();
     });
-    */
+
 
 }
 

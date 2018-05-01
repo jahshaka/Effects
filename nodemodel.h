@@ -148,7 +148,7 @@ public:
         {
             // eg vec2 > vec4 = var.xyyy
             for(int i = 0; i<numTo; i++) {
-                suffix += getVectorComponent(qMin(i, numTo));
+                suffix += getVectorComponent(qMin(i, numTo-2));
             }
             return fromValue+suffix;
         }
@@ -161,10 +161,10 @@ public:
     {
         switch(index)
         {
-            case 1: return "x";
-            case 2: return "y";
-            case 3: return "z";
-            case 4: return "w";
+            case 0: return "x";
+            case 1: return "y";
+            case 2: return "z";
+            case 3: return "w";
         }
 
         return "x";
@@ -208,6 +208,26 @@ public:
     }
 };
 
+class Vector2SocketModel : public SocketModel
+{
+public:
+    Vector2SocketModel(QString name, QString defaultValue = "vec2(0.0f, 0.0f)"):
+        SocketModel(name, "vec2")
+    {
+        this->setValue(defaultValue);
+    }
+
+    QString convertVarTo(SocketModel* toModel)
+    {
+        return SocketHelper::convertVectorValue(varName, this, toModel);
+    }
+
+    virtual SocketModel* duplicate()
+    {
+        return new Vector2SocketModel(name);
+    }
+};
+
 class Vector3SocketModel : public SocketModel
 {
 public:
@@ -225,6 +245,26 @@ public:
     virtual SocketModel* duplicate()
     {
         return new Vector3SocketModel(name);
+    }
+};
+
+class Vector4SocketModel : public SocketModel
+{
+public:
+    Vector4SocketModel(QString name, QString defaultValue = "vec4(0.0f, 0.0f, 0.0f, 0.0f)"):
+        SocketModel(name, "vec4")
+    {
+        this->setValue(defaultValue);
+    }
+
+    QString convertVarTo(SocketModel* toModel)
+    {
+        return SocketHelper::convertVectorValue(varName, this, toModel);
+    }
+
+    virtual SocketModel* duplicate()
+    {
+        return new Vector4SocketModel(name);
     }
 };
 
