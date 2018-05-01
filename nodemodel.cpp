@@ -153,7 +153,10 @@ QString NodeModel::getValueFromInputSocket(int index)
 {
     auto sock = inSockets[index];
     if (sock->hasConnection()) {
-        return sock->getConnectedSocket()->getVarName();
+        //return sock->getConnectedSocket()->getVarName();
+
+        // converts the var before sending it back
+        return sock->getConnectedSocket()->convertVarTo(sock);
     }
 
     return sock->getValue();

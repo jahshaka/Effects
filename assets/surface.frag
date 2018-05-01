@@ -53,6 +53,7 @@ uniform int u_lightCount;
 
 uniform vec3 u_eyePos;
 uniform vec3 u_sceneAmbient;
+uniform float u_time = 0.0f;
 
 struct Material
 {

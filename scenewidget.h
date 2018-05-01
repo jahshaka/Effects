@@ -32,4 +32,6 @@ public:
     void render();
 
     void updateShader(QString shaderCode);
+
+    void resetRenderTime();
 };

@@ -51,6 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
         auto code = shaderGen.generateShader(graph);
         ui->textEdit->setPlainText(code);
         sceneWidget->updateShader(code);
+        sceneWidget->resetRenderTime();
 
     });
 
@@ -61,6 +62,7 @@ MainWindow::MainWindow(QWidget *parent) :
         auto code = shaderGen.generateShader(graph);
         ui->textEdit->setPlainText(code);
         sceneWidget->updateShader(code);
+        sceneWidget->resetRenderTime();
     });
 
 

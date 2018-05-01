@@ -98,6 +98,7 @@ void SceneWidget::render()
 
     graphics->setShaderUniform("u_eyePos", cam->getLocalPos());
     graphics->setShaderUniform("u_sceneAmbient", QVector3D(0,0,0));
+    graphics->setShaderUniform("u_time", renderTime);
 
     // lights
     //qDebug()<<lights.size();
@@ -141,6 +142,11 @@ void SceneWidget::updateShader(QString shaderCode)
     shader = iris::Shader::create(
                 vertString,
                 fragString + shaderCode);
+}
+
+void SceneWidget::resetRenderTime()
+{
+    renderTime = 0;
 }
 
 SceneWidget::SceneWidget():

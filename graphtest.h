@@ -150,6 +150,7 @@ class SurfaceMasterNode : public NodeModel
 public:
     SurfaceMasterNode()
     {
+        title = "Surface Material";
         typeName = "Material";
         addInputSocket(new Vector3SocketModel("diffuse"));
         addInputSocket(new Vector3SocketModel("specular"));
@@ -162,15 +163,31 @@ public:
 
     virtual void process(ModelContext* ctx) override
     {
+        QString code = "";
         auto context = (ShaderContext*)ctx;
         //context->addCodeChunk(this, "void surface(inout Material material){\n");
 
         auto diffVar = this->getValueFromInputSocket(0);
-        context->addCodeChunk(this, "material.diffuse = " + diffVar + ";");
+        auto specVar = this->getValueFromInputSocket(1);
+        auto shininessVar = this->getValueFromInputSocket(2);
+        auto normVar = this->getValueFromInputSocket(3);
+        auto ambientVar = this->getValueFromInputSocket(4);
+        auto emissionVar = this->getValueFromInputSocket(5);
+        auto alphaVar = this->getValueFromInputSocket(6);
 
-        //context->addCodeChunk(this, "}");
+        code += "material.diffuse = " + diffVar + ";\n";
+        code += "material.specular = " + specVar + ";\n";
+        code += "material.shininess = " + shininessVar + ";\n";
+        code += "material.normal = " + normVar + ";\n";
+        code += "material.ambient = " + ambientVar + ";\n";
+        code += "material.emission = " + emissionVar + ";\n";
+        code += "material.alpha = " + alphaVar + ";\n";
+        //context->addCodeChunk(this, "material.diffuse = " + diffVar + ";");
+
+        context->addCodeChunk(this, code);
     }
 };
+
 
 class FloatNodeModel : public NodeModel
 {
@@ -217,6 +234,52 @@ public:
     }
 };
 
+/*
+class ColorNode : public NodeModel
+{
+    QLineEdit* lineEdit;
+
+    FloatSocketModel* valueSock;
+public:
+    ColorNode():
+        ColorNode()
+    {
+        lineEdit = new QLineEdit();
+        lineEdit->setValidator(new QDoubleValidator());
+        lineEdit->setMaximumSize(lineEdit->sizeHint());
+
+        connect(lineEdit, &QLineEdit::textChanged,
+                  this, &FloatNodeModel::editTextChanged);
+
+        this->widget = lineEdit;
+
+        typeName = "float";
+        title = "Float";
+
+        // add output socket
+        valueSock = new FloatSocketModel("value");
+        addOutputSocket(valueSock);
+
+        lineEdit->setText("0.0");
+    }
+
+    void editTextChanged(const QString& text)
+    {
+        valueSock->setValue(text);
+        emit valueChanged(this, 0);
+    }
+
+    virtual void process(ModelContext* context) override
+    {
+        auto ctx = (ShaderContext*)context;
+        auto res = this->getOutputSocketVarName(0);
+
+        auto code = res +" = "+valueSock->getValue()+";";
+        //ctx->addCodeChunk(this, code);
+        valueSock->setVarName(valueSock->getValue());
+    }
+};
+*/
 
 class VectorMultiplyNode : public NodeModel
 {
@@ -236,6 +299,9 @@ public:
         auto valA = this->getValueFromInputSocket(0);
         auto valB = this->getValueFromInputSocket(1);
         auto res = this->getOutputSocketVarName(0);
+
+        //valA = SocketHelper::convertValue(valA,inSockets[0], outSockets[0]);
+        //valB = SocketHelper::convertValue(valB,inSockets[1], outSockets[0]);
 
         auto code = res +" = " + valA + " * " + valB + ";";
         ctx->addCodeChunk(this, code);
@@ -263,6 +329,22 @@ public:
     }
 };
 
+class TimeNode : public NodeModel
+{
+public:
+    TimeNode()
+    {
+        title = "Time";
+
+        addOutputSocket(new FloatSocketModel("Seconds","u_time"));
+    }
+
+    virtual void process(ModelContext* context) override
+    {
+        outSockets[0]->setVarName("u_time");
+    }
+};
+
 void registerModels(NodeGraph* graph)
 {
     // mult
@@ -285,6 +367,29 @@ void registerModels(NodeGraph* graph)
         auto floatNode = new FloatNodeModel();
         return floatNode;
     });
+
+    // time
+    graph->registerModel("Time", []()
+    {
+        auto node = new TimeNode();
+        return node;
+    });
+
+    /*
+    // uv
+    graph->registerModel("Texture Coordinate", []()
+    {
+        auto floatNode = new FloatNodeModel();
+        return floatNode;
+    });
+
+    // sine
+    graph->registerModel("Sine", []()
+    {
+        auto floatNode = new FloatNodeModel();
+        return floatNode;
+    });
+    */
 
 }
 
