@@ -35,6 +35,9 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="accessibleName">
+       <string/>
+      </property>
      </widget>
     </item>
     <item>
@@ -50,6 +53,9 @@
         <width>400</width>
         <height>0</height>
        </size>
+      </property>
+      <property name="accessibleName">
+       <string/>
       </property>
      </widget>
     </item>
@@ -72,6 +78,9 @@
         <width>0</width>
         <height>0</height>
        </size>
+      </property>
+      <property name="accessibleName">
+       <string/>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <property name="spacing">
@@ -103,16 +112,22 @@
            <height>250</height>
           </size>
          </property>
+         <property name="accessibleName">
+          <string/>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QTabWidget" name="propertyContainer">
+         <property name="accessibleName">
+          <string/>
+         </property>
          <property name="currentIndex">
           <number>0</number>
          </property>
-         <widget class="PropertyListWidget" name="propertyContainerPage1" native="true">
+         <widget class="PropertyListWidget" name="propertyContainerPage1">
           <attribute name="title">
-           <string/>
+           <string>Properties</string>
           </attribute>
          </widget>
          <widget class="QWidget" name="tab">
@@ -136,7 +151,25 @@
      <height>25</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionSave"/>
+    <addaction name="actionLoad"/>
+   </widget>
+   <addaction name="menuFile"/>
   </widget>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionLoad">
+   <property name="text">
+    <string>Load</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
