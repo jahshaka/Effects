@@ -34,6 +34,9 @@ public:
 
     // gets the output node and socket for a given input node and socket
     ConnectionModel* getConnectionFromOutputNode(NodeModel* node, int socketIndex);
+
+    QJsonObject serialize();
+    void deserialize(QJsonObject obj);
 };
 
 class SocketModel;
@@ -305,6 +308,16 @@ public:
 
     NodeGraph *getGraph() const;
     void setGraph(NodeGraph *value);
+
+    virtual QJsonValue serializeWidgetValue(int widgetIndex = 0)
+    {
+        return "";
+    }
+
+    virtual void deserializeWidgetValue( QJsonValue val, int widgetIndex = 0)
+    {
+
+    }
 
 signals:
     void valueChanged(NodeModel*, int sockedIndex);

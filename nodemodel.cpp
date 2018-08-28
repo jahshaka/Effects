@@ -1,5 +1,9 @@
 #include "nodemodel.h"
 
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonValue>
+
 void NodeGraph::registerModel(QString name, std::function<NodeModel *()> factoryFunction)
 {
     modelFactories.insert(name, factoryFunction);
@@ -44,6 +48,38 @@ void NodeGraph::addConnection(QString leftNodeId, int leftSockIndex, QString rig
     leftSock->connection = con;
     rightSock->connection = con;
     connections.insert(con->id, con);
+}
+
+QJsonObject NodeGraph::serialize()
+{
+    QJsonObject graph;
+
+    QJsonArray nodesJson;
+
+    // save nodes
+    for(auto node : this->nodes.values()) {
+        QJsonObject nodeObj;
+        nodeObj["id"] = node->id;
+        nodeobj["value"] = node->serializeWidgetValue();
+        nodesJson.append(nodeObj);
+    }
+    graph.insert("nodes", nodesJson);
+
+    // save connections
+    QJsonArray consJson;
+    for(auto con : this->connections.values()) {
+        QJsonObject conObj;
+        conObj["id"] = con->id;
+        conObj["leftNodeId"] = con->leftSocket->node->id;
+        conObj["leftNodeSocketIndex"] = con->leftSocket->node->outSockets.indexOf(con->leftSocket);//todo: ugly, cleanup.
+        conObj["rightNodeId"] = con->rightSocket->node->id;
+        conObj["rightNodeSocketIndex"] = con->rightSocket->node->outSockets.indexOf(con->rightSocket);//todo: ugly, cleanup.
+
+        consJson.append(conObj);
+    }
+    graph.insert("connections", consJson);
+
+    return graph;
 }
 
 /*
