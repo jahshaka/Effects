@@ -233,6 +233,17 @@ public:
         //ctx->addCodeChunk(this, code);
         valueSock->setVarName(valueSock->getValue());
     }
+
+    virtual QJsonValue serializeWidgetValue(int widgetIndex = 0) override
+    {
+        return lineEdit->text().toDouble();
+    }
+
+    virtual void deserializeWidgetValue( QJsonValue val, int widgetIndex = 0) override
+    {
+        auto value = val.toDouble();
+        lineEdit->setText(QString("%1").arg(value));
+    }
 };
 
 /*

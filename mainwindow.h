@@ -20,6 +20,9 @@ public:
     ~MainWindow();
 
 private:
+    void saveGraph();
+
+private:
     Ui::MainWindow *ui;
     GraphNodeScene* scene;
     SceneWidget* sceneWidget;

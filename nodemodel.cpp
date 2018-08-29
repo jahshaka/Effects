@@ -60,7 +60,8 @@ QJsonObject NodeGraph::serialize()
     for(auto node : this->nodes.values()) {
         QJsonObject nodeObj;
         nodeObj["id"] = node->id;
-        nodeobj["value"] = node->serializeWidgetValue();
+        nodeObj["value"] = node->serializeWidgetValue();
+        nodeObj["type"] = node->typeName;
         nodesJson.append(nodeObj);
     }
     graph.insert("nodes", nodesJson);
@@ -73,7 +74,7 @@ QJsonObject NodeGraph::serialize()
         conObj["leftNodeId"] = con->leftSocket->node->id;
         conObj["leftNodeSocketIndex"] = con->leftSocket->node->outSockets.indexOf(con->leftSocket);//todo: ugly, cleanup.
         conObj["rightNodeId"] = con->rightSocket->node->id;
-        conObj["rightNodeSocketIndex"] = con->rightSocket->node->outSockets.indexOf(con->rightSocket);//todo: ugly, cleanup.
+        conObj["rightNodeSocketIndex"] = con->rightSocket->node->inSockets.indexOf(con->rightSocket);//todo: ugly, cleanup.
 
         consJson.append(conObj);
     }

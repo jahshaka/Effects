@@ -12,6 +12,9 @@
 #include <QGraphicsWidget>
 #include <QGraphicsView>
 #include <QGraphicsProxyWidget>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonValue>
 #include "nodegraph.h"
 #include "nodemodel.h"
 
@@ -296,6 +299,30 @@ QMenu *GraphNodeScene::createContextMenu(float x, float y)
     }
 
     return menu;
+}
+
+QJsonObject GraphNodeScene::serialize()
+{
+    QJsonObject data;
+
+    data["graph"] = this->nodeGraph->serialize();
+    QJsonObject scene;
+
+    QJsonArray nodesJson;
+
+    // save nodes
+    /*
+    for(auto& node : this->nodes) {
+        QJsonObject nodeObj;
+        //nodeObj["id"] = node->nodeId;
+        //nodeObj["x"] = node->x();
+        //nodeObj["y"] = node->y();
+        nodesJson.append(nodeObj);
+    }
+    */
+    scene.insert("nodes", nodesJson);
+
+    return data;
 }
 
 GraphNodeScene::GraphNodeScene(QWidget* parent):

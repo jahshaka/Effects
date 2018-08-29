@@ -6,6 +6,7 @@
 #include <QString>
 #include <QMap>
 #include <QUuid>
+#include <QJsonValue>
 #include <functional>
 
 

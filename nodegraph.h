@@ -9,6 +9,7 @@
 #include <QFontMetrics>
 #include <QtMath>
 #include <QGraphicsSceneMouseEvent>
+#include <QJsonObject>
 
 enum class SocketType
 {
@@ -134,6 +135,8 @@ public:
     void addNodeModel(NodeModel* model, float x, float y, bool addToGraph = true);
 
     QMenu* createContextMenu(float x, float y);
+
+    QJsonObject serialize();
 
 signals:
     void newConnection(SocketConnection* connection);

@@ -8,6 +8,9 @@
 #include <QLayout>
 #include <QGridLayout>
 #include <QLineEdit>
+#include <QFileDialog>
+#include <QJsonDocument>
+#include <QFile>
 #include "graphtest.h"
 
 
@@ -65,6 +68,8 @@ MainWindow::MainWindow(QWidget *parent) :
         sceneWidget->resetRenderTime();
     });
 
+    connect(ui->actionSave, &QAction::triggered, this, &MainWindow::saveGraph);
+
 
     // preview widget
     sceneWidget = new SceneWidget();
@@ -78,4 +83,17 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::saveGraph()
+{
+    QString path = QFileDialog::getSaveFileName(this, "Choose file name","material.json","Material File (*.json)");
+
+    QJsonDocument doc;
+    doc.setObject(scene->serialize());
+
+    QFile file(path);
+    file.open(QFile::WriteOnly | QFile::Truncate);
+    file.write(doc.toJson());
+    file.close();
 }
