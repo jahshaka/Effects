@@ -311,16 +311,20 @@ QJsonObject GraphNodeScene::serialize()
     QJsonArray nodesJson;
 
     // save nodes
-    /*
-    for(auto& node : this->nodes) {
-        QJsonObject nodeObj;
-        //nodeObj["id"] = node->nodeId;
-        //nodeObj["x"] = node->x();
-        //nodeObj["y"] = node->y();
-        nodesJson.append(nodeObj);
+
+    for(auto item : this->items()) {
+        if (item && item->type() == (int)GraphicsItemType::Node){
+            auto node = (GraphNode*)item;
+            QJsonObject nodeObj;
+            nodeObj["id"] = node->nodeId;
+            nodeObj["x"] = node->x();
+            nodeObj["y"] = node->y();
+            nodesJson.append(nodeObj);
+        }
     }
-    */
+
     scene.insert("nodes", nodesJson);
+    data["scene"] = scene;
 
     return data;
 }

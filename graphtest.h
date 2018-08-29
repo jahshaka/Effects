@@ -299,6 +299,7 @@ public:
     VectorMultiplyNode()
     {
         title = "Vector Multiply";
+        typeName = "vectorMultiply";
 
         addInputSocket(new Vector3SocketModel("A"));
         addInputSocket(new Vector3SocketModel("B"));
@@ -326,6 +327,7 @@ public:
     WorldNormalNode()
     {
         title = "World Normal";
+        typeName = "worldNormal";
 
         addOutputSocket(new Vector3SocketModel("World Normal","v_normal"));
     }
