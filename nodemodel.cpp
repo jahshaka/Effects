@@ -79,6 +79,7 @@ QJsonObject NodeGraph::serialize()
         consJson.append(conObj);
     }
     graph.insert("connections", consJson);
+    graph.insert("masternode",this->masterNode->id);
 
     //todo: save settings (acceptLighting, blendstate, depthstate, etc..)
     graph["settings"] = QJsonObject();
