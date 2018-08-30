@@ -80,6 +80,12 @@ QJsonObject NodeGraph::serialize()
     }
     graph.insert("connections", consJson);
 
+    //todo: save settings (acceptLighting, blendstate, depthstate, etc..)
+    graph["settings"] = QJsonObject();
+
+    //todo: save parameters
+    graph["parameters"] = QJsonObject();
+
     return graph;
 }
 

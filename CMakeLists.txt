@@ -23,6 +23,7 @@ set(CPP
 
 set(HEADERS
 	mainwindow.h
+        properties.h
 	nodegraph.h
         nodemodel.h
         scenewidget.h
