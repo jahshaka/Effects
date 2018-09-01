@@ -4,6 +4,11 @@
 #include <QJsonArray>
 #include <QJsonValue>
 
+void NodeGraph::addProperty(Property* prop)
+{
+    this->properties.append(prop);
+}
+
 void NodeGraph::registerModel(QString name, std::function<NodeModel *()> factoryFunction)
 {
     modelFactories.insert(name, factoryFunction);

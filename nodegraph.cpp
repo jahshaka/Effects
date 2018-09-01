@@ -298,6 +298,14 @@ QMenu *GraphNodeScene::createContextMenu(float x, float y)
         });
     }
 
+    // create properties
+    auto propMenu = menu->addMenu("Properties");
+    for(auto prop:nodeGraph->properties) {
+        connect(propMenu->addAction(prop->displayName), &QAction::triggered, [this,x, y,prop](){
+
+        });
+    }
+
     return menu;
 }
 

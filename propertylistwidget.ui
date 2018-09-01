@@ -37,7 +37,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="addPropertyButton">
+       <widget class="QToolButton" name="addPropertyButton">
         <property name="text">
          <string>Add Property</string>
         </property>

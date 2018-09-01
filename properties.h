@@ -6,9 +6,6 @@
 #include <QVector2D>
 #include <QVector3D>
 
-namespace iris
-{
-
 enum class PropertyType
 {
     None,
@@ -208,7 +205,5 @@ struct Vec3Property : public Property
         value = val.value<QVector3D>();
     }
 };
-
-}
 
 #endif // PROPERTIES_H

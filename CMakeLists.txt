@@ -28,6 +28,7 @@ set(HEADERS
         nodemodel.h
         scenewidget.h
         propertylistwidget.h
+        propertywidgets/floatpropertywidget.h
         graphtest.h)
 
 set(FORMS

@@ -8,6 +8,7 @@
 #include <QUuid>
 #include <QJsonValue>
 #include <functional>
+#include "properties.h"
 
 
 class NodeModel;
@@ -18,8 +19,11 @@ class NodeGraph
 public:
     QMap<QString, NodeModel*> nodes;
     QMap<QString, ConnectionModel*> connections;
-
     NodeModel* masterNode = nullptr;
+    QList<Property*> properties;
+
+
+    void addProperty(Property* prop);
 
     QMap<QString, std::function<NodeModel*()>> modelFactories;
     void registerModel(QString name, std::function<NodeModel*()> factoryFunction);

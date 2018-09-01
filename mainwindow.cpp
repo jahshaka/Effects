@@ -78,6 +78,8 @@ MainWindow::MainWindow(QWidget *parent) :
     grid->setMargin(0);
     grid->addWidget(sceneWidget);
     ui->sceneContainer->setLayout(grid);
+
+    // add menu items to property widget
 }
 
 MainWindow::~MainWindow()
