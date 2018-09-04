@@ -17,6 +17,7 @@
 #include <QJsonValue>
 #include "nodegraph.h"
 #include "nodemodel.h"
+#include "graphtest.h"
 
 
 Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title):
@@ -259,6 +260,7 @@ void GraphNodeScene::setNodeGraph(NodeGraph *value)
     addNodeModel(masterNode, 0, 0, false);
 }
 
+// add
 void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addToGraph)
 {
     auto nodeView = this->createNode<GraphNode>();
@@ -302,7 +304,7 @@ QMenu *GraphNodeScene::createContextMenu(float x, float y)
     auto propMenu = menu->addMenu("Properties");
     for(auto prop:nodeGraph->properties) {
         connect(propMenu->addAction(prop->displayName), &QAction::triggered, [this,x, y,prop](){
-
+            this->addNodeModel(new PropertyNode(prop), x, y);
         });
     }
 

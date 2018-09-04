@@ -5,6 +5,7 @@
 #include <QColor>
 #include <QVector2D>
 #include <QVector3D>
+#include <QVector4D>
 
 enum class PropertyType
 {
@@ -14,6 +15,7 @@ enum class PropertyType
     Float,
     Vec2,
     Vec3,
+    Vec4,
     Color,
     Texture,
     File,
@@ -25,11 +27,14 @@ struct Property
     unsigned            id;
     QString             displayName;
     QString             name;
-    QString             uniform;
+    //QString             uniform;
     PropertyType        type;
 
     virtual QVariant    getValue() = 0;
     virtual void        setValue(QVariant val) = 0;
+
+    virtual QString getUniformString() = 0;
+    virtual QString getUniformName() = 0;
 };
 
 class PropertyListener
@@ -56,6 +61,16 @@ struct BoolProperty : public Property
     void setValue(QVariant val) {
         value = val.toBool();
     }
+
+    QString getUniformName() override
+    {
+        return QString("input_")+name;
+    }
+
+    QString getUniformString() override
+    {
+        return QString("uniform bool ") + getUniformName();
+    }
 };
 
 struct IntProperty : public Property
@@ -75,6 +90,16 @@ struct IntProperty : public Property
     void setValue(QVariant val) {
         value = val.toInt();
     }
+
+    QString getUniformName() override
+    {
+        return QString("input_")+name;
+    }
+
+    QString getUniformString() override
+    {
+        return QString("uniform int ") + getUniformName();
+    }
 };
 
 struct FloatProperty : public Property
@@ -84,6 +109,7 @@ struct FloatProperty : public Property
     float maxValue;
 
     FloatProperty() {
+        value = 0;
         type = PropertyType::Float;
     }
 
@@ -93,6 +119,16 @@ struct FloatProperty : public Property
 
     void setValue(QVariant val) {
         value = val.toFloat();
+    }
+
+    QString getUniformName() override
+    {
+        return QString("input_")+name;
+    }
+
+    QString getUniformString() override
+    {
+        return QString("uniform float ") + getUniformName();
     }
 };
 
@@ -110,6 +146,16 @@ struct ColorProperty : public Property
 
     void setValue(QVariant val) {
         value = val.value<QColor>();
+    }
+
+    QString getUniformName() override
+    {
+        return QString("input_")+name;
+    }
+
+    QString getUniformString() override
+    {
+        return QString("uniform vec4 ") + getUniformName();
     }
 };
 
@@ -132,45 +178,17 @@ struct TextureProperty : public Property
         value = val.toString();
         toggle = !value.isEmpty();
     }
-};
 
-struct FileProperty : public Property
-{
-    QString value;
-    QString suffix;
-
-    FileProperty () {
-        type = PropertyType::File;
+    QString getUniformName() override
+    {
+        return QString("input_")+name;
     }
 
-    QVariant getValue() {
-        return value;
-    }
-
-    void setValue(QVariant val) {
-        value = val.toString();
+    QString getUniformString() override
+    {
+        return QString("uniform sampler2D ") + getUniformName();
     }
 };
-
-struct ListProperty : public Property
-{
-    QStringList value;
-    int index;
-
-    ListProperty () {
-        type = PropertyType::List;
-    }
-
-    QVariant getValue() {
-        return value;
-    }
-
-    void setValue(QVariant val) {
-        value = val.toStringList();
-    }
-};
-
-/* more abstract types without a physical widget */
 
 struct Vec2Property : public Property
 {
@@ -186,6 +204,16 @@ struct Vec2Property : public Property
 
     void setValue(QVariant val) {
         value = val.value<QVector2D>();
+    }
+
+    QString getUniformName() override
+    {
+        return QString("input_")+name;
+    }
+
+    QString getUniformString() override
+    {
+        return QString("uniform vec2 ") + getUniformName();
     }
 };
 
@@ -203,6 +231,43 @@ struct Vec3Property : public Property
 
     void setValue(QVariant val) {
         value = val.value<QVector3D>();
+    }
+
+    QString getUniformName() override
+    {
+        return QString("input_")+name;
+    }
+
+    QString getUniformString() override
+    {
+        return QString("uniform vec3 ") + getUniformName();
+    }
+};
+
+struct Vec4Property : public Property
+{
+    QVector4D value;
+
+    Vec4Property() {
+        type = PropertyType::Vec4;
+    }
+
+    QVariant getValue() {
+        return value;
+    }
+
+    void setValue(QVariant val) {
+        value = val.value<QVector4D>();
+    }
+
+    QString getUniformName() override
+    {
+        return QString("input_")+name;
+    }
+
+    QString getUniformString() override
+    {
+        return QString("uniform vec4 ") + getUniformName();
     }
 };
 

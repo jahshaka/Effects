@@ -37,14 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
     masterNode->inSockets.append(new FloatSocketModel("alpha"));
     */
 
-    auto masterNode = new SurfaceMasterNode();
 
-    auto graph = new NodeGraph;
-    graph->addNode(masterNode);
-    graph->setMasterNode(masterNode);
-    scene->setNodeGraph(graph);
-
-    registerModels(graph);
 
     connect(scene, &GraphNodeScene::newConnection, [this](SocketConnection* connection)
     {
@@ -80,6 +73,25 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->sceneContainer->setLayout(grid);
 
     // add menu items to property widget
+    newNodeGraph();
+}
+
+void MainWindow::setNodeGraph(NodeGraph *graph)
+{
+    registerModels(graph);
+    scene->setNodeGraph(graph);
+    ui->propertyContainerPage1->setNodeGraph(graph);
+    sceneWidget->setNodeGraph(graph);
+}
+
+void MainWindow::newNodeGraph()
+{
+    auto graph = new NodeGraph;
+    auto masterNode = new SurfaceMasterNode();
+    graph->addNode(masterNode);
+    graph->setMasterNode(masterNode);
+
+    setNodeGraph(graph);
 }
 
 MainWindow::~MainWindow()

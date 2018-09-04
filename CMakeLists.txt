@@ -19,7 +19,8 @@ set(CPP
 	nodegraph.cpp
         nodemodel.cpp
         scenewidget.cpp
-        propertylistwidget.cpp)
+        propertylistwidget.cpp
+        graphtest.cpp)
 
 set(HEADERS
 	mainwindow.h

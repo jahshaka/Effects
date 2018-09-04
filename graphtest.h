@@ -24,6 +24,7 @@ struct CodeChunk
 
 class ShaderContext : public ModelContext
 {
+    QStringList uniforms;
     // mapped using the socket guid
     QMap<QString, TempVar> tempVars;
     QList<CodeChunk> codeChunks;
@@ -63,6 +64,12 @@ public:
         codeChunks.append({ownerName, code});
     }
 
+    // add declaration for uniform here
+    void addUniform(QString uniformDecl)
+    {
+        uniforms.append(uniformDecl);
+    }
+
     QString generateVars()
     {
         QString finalCode = "";
@@ -71,6 +78,19 @@ public:
         for(auto& var : tempVars) {
             auto c = var.typeName + " " + var.name + ";\n";
             finalCode = c + finalCode;
+        }
+
+        return finalCode;
+    }
+
+    // generates uniforms from properties
+    QString generateUniforms()
+    {
+        QString finalCode = "";
+
+        // generate temp vars
+        for(auto& uniform : uniforms) {
+            finalCode += uniform + ";\n";
         }
 
         return finalCode;
@@ -109,7 +129,8 @@ public:
         generateProperties(graph, ctx);
         processNode(masterNode, ctx);
 
-        auto code = ctx->generateVars();
+        auto code = ctx->generateUniforms();
+        code += ctx->generateVars();
 
         code += "void surface(inout Material material){\n";
         code += ctx->generateCode(true);
@@ -428,52 +449,53 @@ public:
     }
 };
 
-void registerModels(NodeGraph* graph)
+class PropertyNode : public NodeModel
 {
-    // mult
-    graph->registerModel("Multiply", []()
+    Property* prop;
+public:
+    PropertyNode(Property* property)
     {
-        auto multNode = new VectorMultiplyNode();
-        return multNode;
-    });
+        this->prop = property;
+        this->title = property->displayName;
 
-    // normal
-    graph->registerModel("World Normal", []()
+        // add output based on property type
+        switch(property->type) {
+        case PropertyType::Float:
+            this->addOutputSocket(new FloatSocketModel("float"));
+        break;
+
+        case PropertyType::Vec2:
+            this->addOutputSocket(new Vector2SocketModel("vector2"));
+        break;
+
+        case PropertyType::Vec3:
+            this->addOutputSocket(new Vector3SocketModel("vector3"));
+        break;
+
+        case PropertyType::Vec4:
+            this->addOutputSocket(new Vector4SocketModel("vector4"));
+        break;
+
+        default:
+            //todo: throw error or something
+            Q_ASSERT(false);
+            break;
+        }
+
+
+    }
+
+    virtual void process(ModelContext* context) override
     {
-        auto normalNode = new WorldNormalNode();
-        return normalNode;
-    });
+        auto ctx = (ShaderContext*)context;
+        ctx->addUniform(prop->getUniformString());
 
-    // float
-    graph->registerModel("Float", []()
-    {
-        auto floatNode = new FloatNodeModel();
-        return floatNode;
-    });
+        if (this->outSockets.count() > 0)
+            outSockets[0]->setVarName(prop->getUniformName());
+    }
+};
 
-    // time
-    graph->registerModel("Time", []()
-    {
-        auto node = new TimeNode();
-        return node;
-    });
-
-
-    // uv
-    graph->registerModel("Texture Coordinate", []()
-    {
-        return new TextureCoordinateNode();
-    });
-
-    // sine
-    graph->registerModel("Sine", []()
-    {
-        return new SineNode();
-    });
-
-
-}
-
+void registerModels(NodeGraph* graph);
 
 
 /*

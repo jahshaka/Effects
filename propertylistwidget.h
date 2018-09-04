@@ -19,10 +19,7 @@ public:
     ~PropertyListWidget();
 
     void addProperty(QWidget* widget);
-    void setNodeGraph(NodeGraph* graph)
-    {
-        this->graph = graph;
-    }
+    void setNodeGraph(NodeGraph* graph);
 
 private:
     void addFloatProperty();

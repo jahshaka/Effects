@@ -10,12 +10,15 @@ class MainWindow;
 
 class SceneWidget;
 class GraphNodeScene;
+class NodeGraph;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
     explicit MainWindow(QWidget *parent = 0);
+    void setNodeGraph(NodeGraph* graph);
+    void newNodeGraph();
 
     ~MainWindow();
 

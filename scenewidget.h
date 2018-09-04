@@ -2,6 +2,7 @@
 
 #include <irisgl/IrisGL.h>
 
+class NodeGraph;
 class SceneWidget : public iris::RenderWidget
 {
     iris::MeshPtr mesh;
@@ -22,6 +23,7 @@ class SceneWidget : public iris::RenderWidget
     float renderTime;
     QList<iris::LightNodePtr> lights;
 
+    NodeGraph* graph;
 public:
     SceneWidget();
 
@@ -34,4 +36,7 @@ public:
     void updateShader(QString shaderCode);
 
     void resetRenderTime();
+
+    void passNodeGraphUniforms();
+    void setNodeGraph(NodeGraph* graph);
 };

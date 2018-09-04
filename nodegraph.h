@@ -100,6 +100,7 @@ public:
 
 class NodeGraph;
 class NodeModel;
+class Property;
 class GraphNodeScene : public QGraphicsScene
 {
     Q_OBJECT
@@ -133,6 +134,7 @@ public:
     NodeGraph *getNodeGraph() const;
     void setNodeGraph(NodeGraph *value);
     void addNodeModel(NodeModel* model, float x, float y, bool addToGraph = true);
+    void addPropertyNode(Property* prop, float x, float y, bool addToGraph = true);
 
     QMenu* createContextMenu(float x, float y);
 

@@ -1,6 +1,7 @@
 #include "scenewidget.h"
 #include <irisgl/IrisGL.h>
 #include "irisgl/src/graphics/graphicshelper.h"
+#include "nodemodel.h"
 
 QString assetPath(QString relPath)
 {
@@ -133,6 +134,9 @@ void SceneWidget::render()
         graphics->setShaderUniform(lightPrefix + "shadowType", (int)iris::ShadowMapType::None);
     }
 
+
+    passNodeGraphUniforms();
+
     mesh->draw(device);
 
 }
@@ -147,6 +151,38 @@ void SceneWidget::updateShader(QString shaderCode)
 void SceneWidget::resetRenderTime()
 {
     renderTime = 0;
+}
+
+void SceneWidget::passNodeGraphUniforms()
+{
+    for( auto prop : graph->properties) {
+        switch(prop->type) {
+        case PropertyType::Bool:
+            device->setShaderUniform(prop->getUniformName(), prop->getValue().toBool());
+        break;
+        case PropertyType::Int:
+            device->setShaderUniform(prop->getUniformName(), prop->getValue().toInt());
+        break;
+        case PropertyType::Float:
+            //qDebug()<<prop->getUniformName()<<" - "<<prop->getValue().toFloat();
+            device->setShaderUniform(prop->getUniformName(), prop->getValue().toFloat());
+        break;
+        case PropertyType::Vec2:
+            device->setShaderUniform(prop->getUniformName(), prop->getValue().value<QVector2D>());
+        break;
+        case PropertyType::Vec3:
+            device->setShaderUniform(prop->getUniformName(), prop->getValue().value<QVector3D>());
+        break;
+        case PropertyType::Vec4:
+            device->setShaderUniform(prop->getUniformName(), prop->getValue().value<QVector4D>());
+        break;
+        }
+    }
+}
+
+void SceneWidget::setNodeGraph(NodeGraph *graph)
+{
+    this->graph = graph;
 }
 
 SceneWidget::SceneWidget():
