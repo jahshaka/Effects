@@ -20,6 +20,7 @@ set(CPP
         nodemodel.cpp
         scenewidget.cpp
         propertylistwidget.cpp
+        properties.cpp
         graphtest.cpp)
 
 set(HEADERS

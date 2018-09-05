@@ -6,6 +6,8 @@
 #include <QVector2D>
 #include <QVector3D>
 #include <QVector4D>
+#include <QJsonObject>
+#include <QJsonValue>
 
 enum class PropertyType
 {
@@ -17,9 +19,7 @@ enum class PropertyType
     Vec3,
     Vec4,
     Color,
-    Texture,
-    File,
-    List
+    Texture
 };
 
 struct Property
@@ -35,6 +35,11 @@ struct Property
 
     virtual QString getUniformString() = 0;
     virtual QString getUniformName() = 0;
+
+    virtual QJsonObject serialize();
+    virtual void deserialize(const QJsonObject& obj);
+
+    static Property* parse(const QJsonObject& obj);
 };
 
 class PropertyListener
@@ -71,6 +76,18 @@ struct BoolProperty : public Property
     {
         return QString("uniform bool ") + getUniformName();
     }
+
+    QJsonObject serialize() override
+    {
+        auto obj = Property::serialize();
+        obj["value"] = value?"true":"false";
+        return obj;
+    }
+
+    void deserialize(const QJsonObject& obj) override
+    {
+        value = obj["value"].toBool();
+    }
 };
 
 struct IntProperty : public Property
@@ -99,6 +116,18 @@ struct IntProperty : public Property
     QString getUniformString() override
     {
         return QString("uniform int ") + getUniformName();
+    }
+
+    QJsonObject serialize() override
+    {
+        auto obj = Property::serialize();
+        obj["value"] = value;
+        return obj;
+    }
+
+    void deserialize(const QJsonObject& obj) override
+    {
+        value = obj["value"].toInt();
     }
 };
 
@@ -130,6 +159,18 @@ struct FloatProperty : public Property
     {
         return QString("uniform float ") + getUniformName();
     }
+
+    QJsonObject serialize() override
+    {
+        auto obj = Property::serialize();
+        obj["value"] = value;
+        return obj;
+    }
+
+    void deserialize(const QJsonObject& obj) override
+    {
+        value = (float)obj["value"].toDouble();
+    }
 };
 
 struct ColorProperty : public Property
@@ -157,17 +198,32 @@ struct ColorProperty : public Property
     {
         return QString("uniform vec4 ") + getUniformName();
     }
+
+    QJsonObject serialize() override
+    {
+        auto obj = Property::serialize();
+        QJsonObject colObj;
+        colObj["r"] = value.red();
+        colObj["g"] = value.green();
+        colObj["b"] = value.blue();
+        colObj["a"] = value.alpha();
+        obj["value"] = colObj;
+
+        return obj;
+    }
+
+    void deserialize(const QJsonObject& obj) override
+    {
+        value = obj["value"];
+    }
 };
 
 struct TextureProperty : public Property
 {
     QString value;
-    QString toggleValue;
-    bool toggle;
 
     TextureProperty () {
         type = PropertyType::Texture;
-        toggle = false;
     }
 
     QVariant getValue() {
@@ -176,7 +232,6 @@ struct TextureProperty : public Property
 
     void setValue(QVariant val) {
         value = val.toString();
-        toggle = !value.isEmpty();
     }
 
     QString getUniformName() override
@@ -187,6 +242,18 @@ struct TextureProperty : public Property
     QString getUniformString() override
     {
         return QString("uniform sampler2D ") + getUniformName();
+    }
+
+    QJsonObject serialize() override
+    {
+        auto obj = Property::serialize();
+        obj["value"] = value;
+        return obj;
+    }
+
+    void deserialize(const QJsonObject& obj) override
+    {
+        value = obj["value"].toString();
     }
 };
 
@@ -215,6 +282,22 @@ struct Vec2Property : public Property
     {
         return QString("uniform vec2 ") + getUniformName();
     }
+
+    QJsonObject serialize() override
+    {
+        auto obj = Property::serialize();
+        QJsonObject vec;
+        vec["x"] = vec.x();
+        vec["y"] = vec.y();
+
+        obj["value"] = vec;
+        return obj;
+    }
+
+    void deserialize(const QJsonObject& obj) override
+    {
+        value = obj["value"];
+    }
 };
 
 struct Vec3Property : public Property
@@ -242,6 +325,23 @@ struct Vec3Property : public Property
     {
         return QString("uniform vec3 ") + getUniformName();
     }
+
+    QJsonObject serialize() override
+    {
+        auto obj = Property::serialize();
+        QJsonObject vec;
+        vec["x"] = vec.x();
+        vec["y"] = vec.y();
+        vec["z"] = vec.z();
+
+        obj["value"] = vec;
+        return obj;
+    }
+
+    void deserialize(const QJsonObject& obj) override
+    {
+        value = obj["value"];
+    }
 };
 
 struct Vec4Property : public Property
@@ -268,6 +368,24 @@ struct Vec4Property : public Property
     QString getUniformString() override
     {
         return QString("uniform vec4 ") + getUniformName();
+    }
+
+    QJsonObject serialize() override
+    {
+        auto obj = Property::serialize();
+        QJsonObject vec;
+        vec["x"] = vec.x();
+        vec["y"] = vec.y();
+        vec["z"] = vec.z();
+        vec["w"] = vec.w();
+
+        obj["value"] = vec;
+        return obj;
+    }
+
+    void deserialize(const QJsonObject& obj) override
+    {
+        value = obj["value"];
     }
 };
 

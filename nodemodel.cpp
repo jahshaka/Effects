@@ -90,7 +90,12 @@ QJsonObject NodeGraph::serialize()
     graph["settings"] = QJsonObject();
 
     //todo: save parameters
-    graph["parameters"] = QJsonObject();
+    QJsonArray propJson;
+    for(auto prop : this->properties) {
+        QJsonObject propObj = prop->serialize();
+        propJson.append(propObj);
+    }
+    graph["properties"] = propJson;
 
     return graph;
 }
