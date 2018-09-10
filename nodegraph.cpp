@@ -226,6 +226,32 @@ int GraphNode::calcHeight()
     return height;
 }
 
+Socket *GraphNode::getInSocket(int index)
+{
+    int i = 0;
+    for(auto sock : sockets) {
+        if (sock->socketType == SocketType::In) {
+            if (index == i)
+                return sock;
+            i ++;
+        }
+    }
+
+    return nullptr;
+}
+
+Socket *GraphNode::getOutSocket(int index)
+{
+    int i = 0;
+    for(auto sock : sockets) {
+        if (sock->socketType == SocketType::Out) {
+            if (index == i)
+                return sock;
+            i ++;
+        }
+    }
+}
+
 void GraphNode::paint(QPainter *painter,
             const QStyleOptionGraphicsItem *option,
             QWidget *widget)
@@ -250,14 +276,25 @@ NodeGraph *GraphNodeScene::getNodeGraph() const
     return nodeGraph;
 }
 
-void GraphNodeScene::setNodeGraph(NodeGraph *value)
+void GraphNodeScene::setNodeGraph(NodeGraph *graph)
 {
     // clear previous nodegraph
-    // recreate nodes
-    nodeGraph = value;
 
-    auto masterNode = nodeGraph->getMasterNode();
-    addNodeModel(masterNode, 0, 0, false);
+    // recreate nodes
+    nodeGraph = graph;
+
+    //auto masterNode = nodeGraph->getMasterNode();
+    //addNodeModel(masterNode, 0, 0, false);
+
+    // add nodes
+    for(auto node : graph->nodes.values()) {
+        this->addNodeModel(node, 0, 0, false);
+    }
+
+    // add connections
+    for(auto con : graph->connections.values()) {
+
+    }
 }
 
 // add
@@ -304,7 +341,9 @@ QMenu *GraphNodeScene::createContextMenu(float x, float y)
     auto propMenu = menu->addMenu("Properties");
     for(auto prop:nodeGraph->properties) {
         connect(propMenu->addAction(prop->displayName), &QAction::triggered, [this,x, y,prop](){
-            this->addNodeModel(new PropertyNode(prop), x, y);
+            auto propNode = new PropertyNode();
+            propNode->setProperty(prop);
+            this->addNodeModel(propNode, x, y);
         });
     }
 
@@ -345,6 +384,24 @@ GraphNodeScene::GraphNodeScene(QWidget* parent):
     con = nullptr;
     nodeGraph = nullptr;
     this->installEventFilter(this);
+}
+
+SocketConnection *GraphNodeScene::addConnection(QString leftNodeId, int leftSockIndex, QString rightNodeId, int rightSockIndex)
+{
+    auto leftNode = this->getNodeById(leftNodeId);
+    auto rightNode = this->getNodeById(rightNodeId);
+
+    Q_ASSERT(leftNode != nullptr);
+    Q_ASSERT(rightNode != nullptr);
+
+    auto con = new SocketConnection();
+    con->socket1 = leftNode->getOutSocket(leftSockIndex);
+    con->socket2 = rightNode->getInSocket(rightSockIndex);
+    con->socket1->addConnection(con);
+    con->socket2->addConnection(con);
+    con->updatePosFromSockets();
+    con->updatePath();
+    this->addItem(con);
 }
 
 bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
@@ -450,6 +507,17 @@ Socket* GraphNodeScene::getSocketAt(float x, float y)
     for (auto item : items) {
         if (item && item->type() == (int)GraphicsItemType::Socket)
             return (Socket*)item;
+    }
+
+    return nullptr;
+}
+
+GraphNode *GraphNodeScene::getNodeById(QString id)
+{
+    auto items = this->items();
+    for (auto item : items) {
+        if (item && item->type() == (int)GraphicsItemType::Node)
+            return (GraphNode*)item;
     }
 
     return nullptr;

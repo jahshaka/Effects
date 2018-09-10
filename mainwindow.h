@@ -24,6 +24,8 @@ public:
 
 private:
     void saveGraph();
+    void loadGraph();
+    void restoreGraphPositions(const QJsonObject& data);
 
 private:
     Ui::MainWindow *ui;

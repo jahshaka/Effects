@@ -10,7 +10,11 @@
 #include <QLineEdit>
 #include <QFileDialog>
 #include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonValue>
 #include <QFile>
+#include <QByteArray>
 #include "graphtest.h"
 
 
@@ -62,7 +66,7 @@ MainWindow::MainWindow(QWidget *parent) :
     });
 
     connect(ui->actionSave, &QAction::triggered, this, &MainWindow::saveGraph);
-
+    connect(ui->actionLoad, &QAction::triggered, this, &MainWindow::loadGraph);
 
     // preview widget
     sceneWidget = new SceneWidget();
@@ -110,4 +114,34 @@ void MainWindow::saveGraph()
     file.open(QFile::WriteOnly | QFile::Truncate);
     file.write(doc.toJson());
     file.close();
+}
+
+void MainWindow::loadGraph()
+{
+    QString path = QFileDialog::getOpenFileName(this, "Choose file name","material.json","Material File (*.json)");
+
+    QFile file;
+    file.setFileName(path);
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    auto val = file.readAll();
+    file.close();
+    QJsonDocument d = QJsonDocument::fromJson(val);
+
+    auto graph = NodeGraph::deserialize(d.object());
+    this->setNodeGraph(graph);
+    this->restoreGraphPositions(d.object());
+}
+
+void MainWindow::restoreGraphPositions(const QJsonObject &data)
+{
+    auto scene = data["scene"].toObject();
+    auto nodeList = scene["nodes"].toArray();
+
+    for(auto nodeVal : nodeList) {
+        auto nodeObj = nodeVal.toObject();
+        auto nodeId = nodeObj["id"].toString();
+        auto node = this->scene->getNodeById(nodeId);
+        node->setX(nodeObj["x"].toDouble());
+        node->setY(nodeObj["y"].toDouble());
+    }
 }

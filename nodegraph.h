@@ -90,6 +90,9 @@ public:
     void calcPath();
     int calcHeight();
 
+    Socket* getInSocket(int index);
+    Socket* getOutSocket(int index);
+
     virtual void paint(QPainter *painter,
                 const QStyleOptionGraphicsItem *option,
                 QWidget *widget = 0) override;
@@ -105,7 +108,7 @@ class GraphNodeScene : public QGraphicsScene
 {
     Q_OBJECT
 
-    QVector<GraphNode> nodes;
+    //QVector<GraphNode> nodes;
 
     // only used when dragging
     SocketConnection* con;
@@ -127,12 +130,14 @@ public:
 
         return node;
     }
+    SocketConnection* addConnection(QString leftNodeId, int leftSockIndex, QString rightNodeId, int rightSockIndex);
 
     bool eventFilter(QObject *o, QEvent *e);
     Socket* getSocketAt(float x, float y);
+    GraphNode* getNodeById(QString id);
 
     NodeGraph *getNodeGraph() const;
-    void setNodeGraph(NodeGraph *value);
+    void setNodeGraph(NodeGraph* value);
     void addNodeModel(NodeModel* model, float x, float y, bool addToGraph = true);
     void addPropertyNode(Property* prop, float x, float y, bool addToGraph = true);
 

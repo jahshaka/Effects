@@ -24,6 +24,8 @@ public:
 
 
     void addProperty(Property* prop);
+    Property* getPropertyByName(const QString& name);
+    Property* getPropertyById(const QString& id);
 
     QMap<QString, std::function<NodeModel*()>> modelFactories;
     void registerModel(QString name, std::function<NodeModel*()> factoryFunction);
@@ -41,7 +43,7 @@ public:
     ConnectionModel* getConnectionFromOutputNode(NodeModel* node, int socketIndex);
 
     QJsonObject serialize();
-    void deserialize(QJsonObject obj);
+    static NodeGraph* deserialize(QJsonObject obj);
 };
 
 class SocketModel;

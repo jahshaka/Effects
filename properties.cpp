@@ -1,11 +1,17 @@
 #include "properties.h"
 #include <QJsonObject>
 #include <QJsonValue>
+#include <QUuid>
+
+Property::Property()
+{
+    QUuid::createUuid().toString();
+}
 
 QJsonObject Property::serialize()
 {
     QJsonObject obj;
-    obj["id"] = (int)id;
+    obj["id"] = id;
     obj["name"] = name;
     obj["displayName"] = displayName;
 
@@ -35,6 +41,8 @@ QJsonObject Property::serialize()
         obj["type"] = "vec4";
         break;
     }
+
+    return obj;
 }
 
 void Property::deserialize(const QJsonObject& obj)
@@ -68,7 +76,7 @@ Property* Property::parse(const QJsonObject& obj)
         prop = new Vec4Property();
 
     if (prop != nullptr) {
-        prop->id            = obj["id"].toInt();
+        prop->id            = obj["id"].toString();
         prop->name          = obj["name"].toString();
         prop->displayName   = obj["displayName"].toString();
 

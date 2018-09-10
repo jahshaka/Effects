@@ -1,4 +1,5 @@
 #include "nodemodel.h"
+#include "graphtest.h"
 
 #include <QJsonObject>
 #include <QJsonArray>
@@ -7,6 +8,22 @@
 void NodeGraph::addProperty(Property* prop)
 {
     this->properties.append(prop);
+}
+
+Property *NodeGraph::getPropertyByName(const QString &name)
+{
+    for(auto prop : properties)
+        if (prop->name == name)
+            return prop;
+    return nullptr;
+}
+
+Property *NodeGraph::getPropertyById(const QString &id)
+{
+    for(auto prop : properties)
+        if (prop->id == id)
+            return prop;
+    return nullptr;
 }
 
 void NodeGraph::registerModel(QString name, std::function<NodeModel *()> factoryFunction)
@@ -96,6 +113,56 @@ QJsonObject NodeGraph::serialize()
         propJson.append(propObj);
     }
     graph["properties"] = propJson;
+
+    return graph;
+}
+
+NodeGraph* NodeGraph::deserialize(QJsonObject obj)
+{
+    auto graph = new NodeGraph();
+
+    // read settings
+
+    // read properties
+    auto graphObj = obj["graph"].toObject();
+    auto propList = graphObj["properties"].toArray();
+    for(auto propObj : propList) {
+        auto prop = Property::parse(propObj.toObject());
+        graph->addProperty(prop);
+    }
+
+    // read nodes
+    auto nodeList = graphObj["nodes"].toArray();
+    for (auto nodeVar : nodeList) {
+        auto nodeObj = nodeVar.toObject();
+        auto type = nodeObj["type"].toString();
+
+        auto nodeModel = graph->modelFactories[type]();
+        nodeModel->id = nodeObj["id"].toString();
+
+        // special case for properties
+        if (type=="property") {
+            auto propId = nodeObj["value"].toString();
+            auto prop = graph->getPropertyById(propId);
+            ((PropertyNode*)nodeModel)->setProperty(prop);
+        }
+
+        graph->addNode(nodeModel);
+    }
+
+    // read connections
+    auto conList = graphObj["connections"].toArray();
+    for (auto conVar : conList) {
+        auto conObj = conVar.toObject();
+        auto id             = conObj["id"].toString();
+        auto leftNodeId     = conObj["leftNodeId"].toString();
+        auto leftSockIndex  = conObj["leftNodeSocketIndex"].toInt();
+        auto rightNodeId    = conObj["rightNodeId"].toString();
+        auto rightSockIndex = conObj["rightNodeSocketIndex"].toInt();
+
+        graph->addConnection(leftNodeId, leftSockIndex, rightNodeId, rightSockIndex);
+    }
+
 
     return graph;
 }

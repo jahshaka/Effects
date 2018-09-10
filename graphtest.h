@@ -453,7 +453,13 @@ class PropertyNode : public NodeModel
 {
     Property* prop;
 public:
-    PropertyNode(Property* property)
+    PropertyNode()
+    {
+        this->typeName = "property";
+    }
+
+    // doesnt own property
+    void setProperty(Property* property)
     {
         this->prop = property;
         this->title = property->displayName;
@@ -481,8 +487,15 @@ public:
             Q_ASSERT(false);
             break;
         }
+    }
 
+    virtual QJsonValue serializeWidgetValue(int widgetIndex = 0) override
+    {
+        if (this->prop) {
+            return this->prop->id;
+        }
 
+        return "";
     }
 
     virtual void process(ModelContext* context) override

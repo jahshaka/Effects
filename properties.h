@@ -24,11 +24,13 @@ enum class PropertyType
 
 struct Property
 {
-    unsigned            id;
+    QString             id;
     QString             displayName;
     QString             name;
     //QString             uniform;
     PropertyType        type;
+
+    Property();
 
     virtual QVariant    getValue() = 0;
     virtual void        setValue(QVariant val) = 0;
@@ -214,7 +216,11 @@ struct ColorProperty : public Property
 
     void deserialize(const QJsonObject& obj) override
     {
-        value = obj["value"];
+        auto colorObj = obj["value"].toObject();
+        value.setRed(colorObj["r"].toInt());
+        value.setGreen(colorObj["g"].toInt());
+        value.setBlue(colorObj["b"].toInt());
+        value.setAlpha(colorObj["a"].toInt());
     }
 };
 
@@ -287,8 +293,8 @@ struct Vec2Property : public Property
     {
         auto obj = Property::serialize();
         QJsonObject vec;
-        vec["x"] = vec.x();
-        vec["y"] = vec.y();
+        vec["x"] = value.x();
+        vec["y"] = value.y();
 
         obj["value"] = vec;
         return obj;
@@ -296,7 +302,9 @@ struct Vec2Property : public Property
 
     void deserialize(const QJsonObject& obj) override
     {
-        value = obj["value"];
+        auto vecObj = obj["value"].toObject();
+        value.setX(vecObj["x"].toDouble(0));
+        value.setY(vecObj["y"].toDouble(0));
     }
 };
 
@@ -330,9 +338,9 @@ struct Vec3Property : public Property
     {
         auto obj = Property::serialize();
         QJsonObject vec;
-        vec["x"] = vec.x();
-        vec["y"] = vec.y();
-        vec["z"] = vec.z();
+        vec["x"] = value.x();
+        vec["y"] = value.y();
+        vec["z"] = value.z();
 
         obj["value"] = vec;
         return obj;
@@ -340,7 +348,10 @@ struct Vec3Property : public Property
 
     void deserialize(const QJsonObject& obj) override
     {
-        value = obj["value"];
+        auto vecObj = obj["value"].toObject();
+        value.setX(vecObj["x"].toDouble(0));
+        value.setY(vecObj["y"].toDouble(0));
+        value.setZ(vecObj["z"].toDouble(0));
     }
 };
 
@@ -374,10 +385,10 @@ struct Vec4Property : public Property
     {
         auto obj = Property::serialize();
         QJsonObject vec;
-        vec["x"] = vec.x();
-        vec["y"] = vec.y();
-        vec["z"] = vec.z();
-        vec["w"] = vec.w();
+        vec["x"] = value.x();
+        vec["y"] = value.y();
+        vec["z"] = value.z();
+        vec["w"] = value.w();
 
         obj["value"] = vec;
         return obj;
@@ -385,7 +396,11 @@ struct Vec4Property : public Property
 
     void deserialize(const QJsonObject& obj) override
     {
-        value = obj["value"];
+        auto vecObj = obj["value"].toObject();
+        value.setX(vecObj["x"].toDouble(0));
+        value.setY(vecObj["y"].toDouble(0));
+        value.setZ(vecObj["z"].toDouble(0));
+        value.setW(vecObj["w"].toDouble(0));
     }
 };
 
