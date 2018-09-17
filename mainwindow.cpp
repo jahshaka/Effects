@@ -23,47 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-    scene = new GraphNodeScene(this);
-    scene->setBackgroundBrush(QBrush(QColor(60, 60, 60)));
-    ui->graphicsView->setScene(scene);
-
-    // set default
-    /*
-    auto masterNode = new NodeModel();
-    masterNode->typeName = "Material";
-    masterNode->inSockets.append(new Vector3SocketModel("diffuse"));
-    masterNode->inSockets.append(new Vector3SocketModel("specular"));
-    masterNode->inSockets.append(new FloatSocketModel("shininess"));
-    masterNode->inSockets.append(new Vector3SocketModel("normal", "v_normal"));
-    masterNode->inSockets.append(new Vector3SocketModel("ambient"));
-    masterNode->inSockets.append(new Vector3SocketModel("emission"));
-    masterNode->inSockets.append(new FloatSocketModel("alpha"));
-    */
-
-
-
-    connect(scene, &GraphNodeScene::newConnection, [this](SocketConnection* connection)
-    {
-
-        auto graph = scene->getNodeGraph();
-        ShaderGenerator shaderGen;
-        auto code = shaderGen.generateShader(graph);
-        ui->textEdit->setPlainText(code);
-        sceneWidget->updateShader(code);
-        sceneWidget->resetRenderTime();
-
-    });
-
-    connect(scene, &GraphNodeScene::nodeValueChanged, [this](NodeModel* model, int index)
-    {
-        auto graph = scene->getNodeGraph();
-        ShaderGenerator shaderGen;
-        auto code = shaderGen.generateShader(graph);
-        ui->textEdit->setPlainText(code);
-        sceneWidget->updateShader(code);
-        sceneWidget->resetRenderTime();
-    });
+    scene = nullptr;
 
     connect(ui->actionSave, &QAction::triggered, this, &MainWindow::saveGraph);
     connect(ui->actionLoad, &QAction::triggered, this, &MainWindow::loadGraph);
@@ -82,8 +42,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::setNodeGraph(NodeGraph *graph)
 {
-    registerModels(graph);
-    scene->setNodeGraph(graph);
+    // create and set new scene
+    auto newScene = createNewScene();
+    ui->graphicsView->setScene(newScene);
+    newScene->setNodeGraph(graph);
+
+    // delet old scene and reassign new scene
+    if (scene) {
+        scene->deleteLater();
+    }
+    scene = newScene;
+
     ui->propertyContainerPage1->setNodeGraph(graph);
     sceneWidget->setNodeGraph(graph);
 }
@@ -91,6 +60,7 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
 void MainWindow::newNodeGraph()
 {
     auto graph = new NodeGraph;
+    registerModels(graph);
     auto masterNode = new SurfaceMasterNode();
     graph->addNode(masterNode);
     graph->setMasterNode(masterNode);
@@ -144,4 +114,33 @@ void MainWindow::restoreGraphPositions(const QJsonObject &data)
         node->setX(nodeObj["x"].toDouble());
         node->setY(nodeObj["y"].toDouble());
     }
+}
+
+GraphNodeScene *MainWindow::createNewScene()
+{
+    auto scene = new GraphNodeScene(this);
+    scene->setBackgroundBrush(QBrush(QColor(60, 60, 60)));
+
+    connect(scene, &GraphNodeScene::newConnection, [this, scene](SocketConnection* connection)
+    {
+        auto graph = scene->getNodeGraph();
+        ShaderGenerator shaderGen;
+        auto code = shaderGen.generateShader(graph);
+        ui->textEdit->setPlainText(code);
+        sceneWidget->updateShader(code);
+        sceneWidget->resetRenderTime();
+
+    });
+
+    connect(scene, &GraphNodeScene::nodeValueChanged, [this, scene](NodeModel* model, int index)
+    {
+        auto graph = scene->getNodeGraph();
+        ShaderGenerator shaderGen;
+        auto code = shaderGen.generateShader(graph);
+        ui->textEdit->setPlainText(code);
+        sceneWidget->updateShader(code);
+        sceneWidget->resetRenderTime();
+    });
+
+    return scene;
 }

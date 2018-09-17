@@ -293,7 +293,12 @@ void GraphNodeScene::setNodeGraph(NodeGraph *graph)
 
     // add connections
     for(auto con : graph->connections.values()) {
-
+        auto leftNode = con->leftSocket->node;
+        auto rightNode = con->rightSocket->node;
+        this->addConnection(leftNode->id,
+                            leftNode->outSockets.indexOf(con->leftSocket),
+                            rightNode->id,
+                            rightNode->inSockets.indexOf(con->rightSocket));
     }
 }
 
@@ -402,8 +407,28 @@ SocketConnection *GraphNodeScene::addConnection(QString leftNodeId, int leftSock
     con->updatePosFromSockets();
     con->updatePath();
     this->addItem(con);
-}
 
+	return con;
+}
+/*
+SocketConnection* GraphNodeScene::addConnection(Socket* leftCon, Socket* rightCon)
+{
+    auto leftNode = this->getNodeById(leftNodeId);
+    auto rightNode = this->getNodeById(rightNodeId);
+
+    Q_ASSERT(leftNode != nullptr);
+    Q_ASSERT(rightNode != nullptr);
+
+    auto con = new SocketConnection();
+    con->socket1 = leftNode->getOutSocket(leftSockIndex);
+    con->socket2 = rightNode->getInSocket(rightSockIndex);
+    con->socket1->addConnection(con);
+    con->socket2->addConnection(con);
+    con->updatePosFromSockets();
+    con->updatePath();
+    this->addItem(con);
+}
+*/
 bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 {
     QGraphicsSceneMouseEvent *me = (QGraphicsSceneMouseEvent*) e;
@@ -517,7 +542,8 @@ GraphNode *GraphNodeScene::getNodeById(QString id)
     auto items = this->items();
     for (auto item : items) {
         if (item && item->type() == (int)GraphicsItemType::Node)
-            return (GraphNode*)item;
+			if (((GraphNode*)item)->nodeId == id)
+				return (GraphNode*)item;
     }
 
     return nullptr;

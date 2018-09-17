@@ -131,6 +131,8 @@ public:
         return node;
     }
     SocketConnection* addConnection(QString leftNodeId, int leftSockIndex, QString rightNodeId, int rightSockIndex);
+    SocketConnection* addConnection(Socket* leftCon, Socket* rightCon);
+
 
     bool eventFilter(QObject *o, QEvent *e);
     Socket* getSocketAt(float x, float y);

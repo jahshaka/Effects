@@ -46,13 +46,13 @@ NodeModel *NodeGraph::getMasterNode()
     return masterNode;
 }
 
-void NodeGraph::addConnection(NodeModel *leftNode, int leftSockIndex, NodeModel *rightNode, int rightSockIndex)
+ConnectionModel* NodeGraph::addConnection(NodeModel *leftNode, int leftSockIndex, NodeModel *rightNode, int rightSockIndex)
 {
     // todo: check if the indices are correct
-    addConnection(leftNode->id, leftSockIndex, rightNode->id, rightSockIndex);
+    return addConnection(leftNode->id, leftSockIndex, rightNode->id, rightSockIndex);
 }
 
-void NodeGraph::addConnection(QString leftNodeId, int leftSockIndex, QString rightNodeId, int rightSockIndex)
+ConnectionModel* NodeGraph::addConnection(QString leftNodeId, int leftSockIndex, QString rightNodeId, int rightSockIndex)
 {
     // todo: check if the ids and socket indices are correct
     auto leftNode = nodes[leftNodeId];
@@ -70,6 +70,8 @@ void NodeGraph::addConnection(QString leftNodeId, int leftSockIndex, QString rig
     leftSock->connection = con;
     rightSock->connection = con;
     connections.insert(con->id, con);
+
+    return con;
 }
 
 QJsonObject NodeGraph::serialize()
@@ -120,6 +122,7 @@ QJsonObject NodeGraph::serialize()
 NodeGraph* NodeGraph::deserialize(QJsonObject obj)
 {
     auto graph = new NodeGraph();
+    registerModels(graph);
 
     // read settings
 
@@ -137,17 +140,30 @@ NodeGraph* NodeGraph::deserialize(QJsonObject obj)
         auto nodeObj = nodeVar.toObject();
         auto type = nodeObj["type"].toString();
 
-        auto nodeModel = graph->modelFactories[type]();
+        NodeModel* nodeModel = nullptr;
+        if (type=="Material") {
+            nodeModel = new SurfaceMasterNode();
+        }
+        else {
+            nodeModel = graph->modelFactories[type]();
+        }
         nodeModel->id = nodeObj["id"].toString();
+
 
         // special case for properties
         if (type=="property") {
             auto propId = nodeObj["value"].toString();
             auto prop = graph->getPropertyById(propId);
             ((PropertyNode*)nodeModel)->setProperty(prop);
-        }
+		}
+		else {
+			nodeModel->deserializeWidgetValue(nodeObj["value"]);
+		}
 
         graph->addNode(nodeModel);
+        if (type=="Material") {
+            graph->setMasterNode(nodeModel);
+        }
     }
 
     // read connections

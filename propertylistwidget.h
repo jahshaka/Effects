@@ -9,6 +9,7 @@ class PropertyListWidget;
 
 class QVBoxLayout;
 class NodeGraph;
+class FloatProperty;
 
 class PropertyListWidget : public QWidget
 {
@@ -22,7 +23,8 @@ public:
     void setNodeGraph(NodeGraph* graph);
 
 private:
-    void addFloatProperty();
+    void addNewFloatProperty();
+	void addFloatProperty(FloatProperty* floatProp);
 
 private:
     Ui::PropertyListWidget *ui;

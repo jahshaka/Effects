@@ -170,44 +170,8 @@ public:
 class SurfaceMasterNode : public NodeModel
 {
 public:
-    SurfaceMasterNode()
-    {
-        title = "Surface Material";
-        typeName = "Material";
-        addInputSocket(new Vector3SocketModel("diffuse"));
-        addInputSocket(new Vector3SocketModel("specular"));
-        addInputSocket(new FloatSocketModel("shininess"));
-        addInputSocket(new Vector3SocketModel("normal", "v_normal"));
-        addInputSocket(new Vector3SocketModel("ambient"));
-        addInputSocket(new Vector3SocketModel("emission"));
-        addInputSocket(new FloatSocketModel("alpha"));
-    }
-
-    virtual void process(ModelContext* ctx) override
-    {
-        QString code = "";
-        auto context = (ShaderContext*)ctx;
-        //context->addCodeChunk(this, "void surface(inout Material material){\n");
-
-        auto diffVar = this->getValueFromInputSocket(0);
-        auto specVar = this->getValueFromInputSocket(1);
-        auto shininessVar = this->getValueFromInputSocket(2);
-        auto normVar = this->getValueFromInputSocket(3);
-        auto ambientVar = this->getValueFromInputSocket(4);
-        auto emissionVar = this->getValueFromInputSocket(5);
-        auto alphaVar = this->getValueFromInputSocket(6);
-
-        code += "material.diffuse = " + diffVar + ";\n";
-        code += "material.specular = " + specVar + ";\n";
-        code += "material.shininess = " + shininessVar + ";\n";
-        code += "material.normal = " + normVar + ";\n";
-        code += "material.ambient = " + ambientVar + ";\n";
-        code += "material.emission = " + emissionVar + ";\n";
-        code += "material.alpha = " + alphaVar + ";\n";
-        //context->addCodeChunk(this, "material.diffuse = " + diffVar + ";");
-
-        context->addCodeChunk(this, code);
-    }
+    SurfaceMasterNode();
+    virtual void process(ModelContext* ctx) override;
 };
 
 

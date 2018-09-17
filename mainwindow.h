@@ -27,6 +27,8 @@ private:
     void loadGraph();
     void restoreGraphPositions(const QJsonObject& data);
 
+    GraphNodeScene* createNewScene();
+
 private:
     Ui::MainWindow *ui;
     GraphNodeScene* scene;

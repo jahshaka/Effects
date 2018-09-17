@@ -36,8 +36,8 @@ public:
     void setMasterNode(NodeModel* masterNode);
     NodeModel* getMasterNode();
 
-    void addConnection(NodeModel* leftNode, int leftSockIndex, NodeModel* rightNode, int rightSockIndex);
-    void addConnection(QString leftNodeId, int leftSockIndex, QString rightNodeId, int rightSockIndex);
+    ConnectionModel* addConnection(NodeModel* leftNode, int leftSockIndex, NodeModel* rightNode, int rightSockIndex);
+    ConnectionModel* addConnection(QString leftNodeId, int leftSockIndex, QString rightNodeId, int rightSockIndex);
 
     // gets the output node and socket for a given input node and socket
     ConnectionModel* getConnectionFromOutputNode(NodeModel* node, int socketIndex);

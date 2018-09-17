@@ -14,7 +14,7 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
     ui->setupUi(this);
     auto menu = new QMenu(this);
     auto action = menu->addAction("Add Float Property");
-    connect(action, &QAction::triggered, this, &PropertyListWidget::addFloatProperty);
+    connect(action, &QAction::triggered, this, &PropertyListWidget::addNewFloatProperty);
 
     menu->addAction("Add Int Property");
     menu->addAction("Add Vector2 Property");
@@ -45,18 +45,29 @@ void PropertyListWidget::setNodeGraph(NodeGraph *graph)
     this->graph = graph;
 
     // build properties
+	for (auto prop : graph->properties) {
+		switch (prop->type) {
+		case PropertyType::Float:
+			addFloatProperty((FloatProperty*)prop);
+		default:
+			break;
+		}
+	}
 }
 
-void PropertyListWidget::addFloatProperty()
+void PropertyListWidget::addNewFloatProperty()
 {
     auto prop = new FloatProperty();
     prop->displayName = "Float Property";
     // todo: not safe! find a better way to do this!!!!
     prop->name = QString("property%1").arg(graph->properties.count());
+	this->addFloatProperty(prop);
+	this->graph->addProperty(prop);
+}
 
-    auto propWidget = new FloatPropertyWidget();
-    this->layout->insertWidget(this->layout->count() - 1, propWidget);
-    propWidget->setProperty(prop);
-
-    this->graph->addProperty(prop);
+void PropertyListWidget::addFloatProperty(FloatProperty* floatProp)
+{
+	auto propWidget = new FloatPropertyWidget();
+	this->layout->insertWidget(this->layout->count() - 1, propWidget);
+	propWidget->setProperty(floatProp);
 }

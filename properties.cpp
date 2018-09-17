@@ -5,7 +5,7 @@
 
 Property::Property()
 {
-    QUuid::createUuid().toString();
+    id = QUuid::createUuid().toString();
 }
 
 QJsonObject Property::serialize()
