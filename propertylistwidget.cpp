@@ -42,6 +42,8 @@ void PropertyListWidget::addProperty(QWidget *widget)
 
 void PropertyListWidget::setNodeGraph(NodeGraph *graph)
 {
+	//todo: clear widgets
+
     this->graph = graph;
 
     // build properties

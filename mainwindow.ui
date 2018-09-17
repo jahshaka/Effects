@@ -54,6 +54,12 @@
         <height>0</height>
        </size>
       </property>
+      <property name="maximumSize">
+       <size>
+        <width>400</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="accessibleName">
        <string/>
       </property>
@@ -130,9 +136,9 @@
            <string>Properties</string>
           </attribute>
          </widget>
-         <widget class="QWidget" name="tab">
+         <widget class="MaterialSettingsWidget" name="tab">
           <attribute name="title">
-           <string>Page</string>
+           <string>Material Settings</string>
           </attribute>
          </widget>
         </widget>
@@ -148,7 +154,7 @@
      <x>0</x>
      <y>0</y>
      <width>1097</width>
-     <height>20</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -177,6 +183,12 @@
    <class>PropertyListWidget</class>
    <extends>QWidget</extends>
    <header>propertylistwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MaterialSettingsWidget</class>
+   <extends>QWidget</extends>
+   <header>materialsettingswidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
