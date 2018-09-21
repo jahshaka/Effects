@@ -25,6 +25,7 @@ public:
 private:
     void saveGraph();
     void loadGraph();
+    void exportGraph();
     void restoreGraphPositions(const QJsonObject& data);
 
     GraphNodeScene* createNewScene();
@@ -33,5 +34,6 @@ private:
     Ui::MainWindow *ui;
     GraphNodeScene* scene;
     SceneWidget* sceneWidget;
+	NodeGraph *graph;
 };
 #endif // MAINWINDOW_H

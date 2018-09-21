@@ -22,6 +22,7 @@ set(CPP
         propertylistwidget.cpp
 		materialsettingswidget.cpp
         properties.cpp
+        materialwriter.cpp
         graphtest.cpp)
 
 set(HEADERS
@@ -33,6 +34,7 @@ set(HEADERS
         propertylistwidget.h
         materialsettingswidget.h
         propertywidgets/floatpropertywidget.h
+        materialwriter.h
         graphtest.h)
 
 set(FORMS

@@ -16,6 +16,7 @@
 #include <QFile>
 #include <QByteArray>
 #include "graphtest.h"
+#include "materialwriter.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -26,7 +27,8 @@ MainWindow::MainWindow(QWidget *parent) :
     scene = nullptr;
 
     connect(ui->actionSave, &QAction::triggered, this, &MainWindow::saveGraph);
-    connect(ui->actionLoad, &QAction::triggered, this, &MainWindow::loadGraph);
+	connect(ui->actionLoad, &QAction::triggered, this, &MainWindow::loadGraph);
+	connect(ui->actionExport, &QAction::triggered, this, &MainWindow::exportGraph);
 
     // preview widget
     sceneWidget = new SceneWidget();
@@ -55,6 +57,7 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
 
     ui->propertyContainerPage1->setNodeGraph(graph);
     sceneWidget->setNodeGraph(graph);
+	this->graph = graph;
 }
 
 void MainWindow::newNodeGraph()
@@ -100,6 +103,25 @@ void MainWindow::loadGraph()
     auto graph = NodeGraph::deserialize(d.object());
     this->setNodeGraph(graph);
     this->restoreGraphPositions(d.object());
+}
+
+void MainWindow::exportGraph()
+{
+	QString path = QFileDialog::getSaveFileName(this, "Choose file name", "material.material", "Material File (*.material)");
+
+	QJsonDocument doc;
+	doc.setObject((new MaterialWriter())->serializeMaterial(graph));
+
+	QFile file(path);
+	file.open(QFile::WriteOnly | QFile::Truncate);
+	file.write(doc.toJson());
+	file.close();
+
+	QString sourcePath = QFileInfo(path).absolutePath()+"/surface.frag";
+	QFile sourceFile(sourcePath);
+	sourceFile.open(QFile::WriteOnly | QFile::Truncate);
+	sourceFile.write((new ShaderGenerator())->generateShader(graph).toUtf8());
+	sourceFile.close();
 }
 
 void MainWindow::restoreGraphPositions(const QJsonObject &data)
