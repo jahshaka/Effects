@@ -14,6 +14,13 @@
 class NodeModel;
 class ConnectionModel;
 
+enum class NodeType {
+	Surface,
+	Number,
+	Modifier,
+	Calculation
+};
+
 class NodeGraph
 {
 public:
@@ -290,8 +297,10 @@ public:
 
     QString typeName;
     QString title;
+	NodeType nodeType;
 
     QWidget* widget;
+	QColor titleColor;
 
     NodeModel();
 
@@ -315,6 +324,9 @@ public:
 
     NodeGraph *getGraph() const;
     void setGraph(NodeGraph *value);
+	QColor setNodeTitleColor();
+	void setNodeType(NodeType type);
+
 
     virtual QJsonValue serializeWidgetValue(int widgetIndex = 0)
     {
@@ -328,6 +340,7 @@ public:
 
 signals:
     void valueChanged(NodeModel*, int sockedIndex);
+	void titleColorChanged();
 
 protected:
     virtual NodeModel* createDuplicate()

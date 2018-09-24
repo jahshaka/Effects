@@ -184,14 +184,30 @@ public:
     FloatNodeModel():
         NodeModel()
     {
-        lineEdit = new QLineEdit();
+		setNodeType(NodeType::Number);
+		lineEdit = new QLineEdit();
         lineEdit->setValidator(new QDoubleValidator());
-        lineEdit->setMaximumSize(lineEdit->sizeHint());
+        lineEdit->setStyleSheet("border: 2px solid rgba(220,220,220,1);"
+                                "border-radius: 2px;"
+                                "padding: 2px 8px 2px 12px;"
+                                "background: rgba(0,0,0,0);"
+                                "color: rgba(250,250,250);");
+
+       // lineEdit->setMaximumSize(lineEdit->sizeHint());
+       // lineEdit->setMaximumSize(QSize(160,20));
 
         connect(lineEdit, &QLineEdit::textChanged,
                   this, &FloatNodeModel::editTextChanged);
 
-        this->widget = lineEdit;
+        auto containerWidget = new QWidget();
+        auto layout = new QVBoxLayout;
+        containerWidget->setMaximumSize(170,55);
+        containerWidget->setLayout(layout);
+        containerWidget->setStyleSheet("background:rgba(0,0,0,0);");
+        layout->addWidget(lineEdit);
+        layout->setSpacing(0);
+
+        this->widget = containerWidget;
 
         typeName = "float";
         title = "Float";
@@ -283,7 +299,8 @@ class VectorMultiplyNode : public NodeModel
 public:
     VectorMultiplyNode()
     {
-        title = "Vector Multiply";
+		setNodeType(NodeType::Calculation);
+		title = "Vector Multiply";
         typeName = "vectorMultiply";
 
         addInputSocket(new Vector3SocketModel("A"));
@@ -311,6 +328,8 @@ class WorldNormalNode : public NodeModel
 public:
     WorldNormalNode()
     {
+		setNodeType(NodeType::Surface);
+
         title = "World Normal";
         typeName = "worldNormal";
 
@@ -333,6 +352,8 @@ class TimeNode : public NodeModel
 public:
     TimeNode()
     {
+		setNodeType(NodeType::Modifier);
+
         title = "Time";
 
         addOutputSocket(new FloatSocketModel("Seconds","u_time"));
@@ -349,6 +370,9 @@ class SineNode : public NodeModel
 public:
     SineNode()
     {
+		setNodeType(NodeType::Modifier);
+
+
         title = "Sine";
 
         addInputSocket(new Vector3SocketModel("Value"));
@@ -366,6 +390,37 @@ public:
     }
 };
 
+class MakeColorNode: public NodeModel
+{
+public:
+    MakeColorNode(){
+		setNodeType(NodeType::Surface);
+
+
+        title = "Color";
+        addInputSocket(new FloatSocketModel("Value R"));
+        addInputSocket(new FloatSocketModel("Value G"));
+        addInputSocket(new FloatSocketModel("Value B"));
+
+        addOutputSocket(new Vector4SocketModel("color"));
+    }
+
+    virtual void process(ModelContext *context) override
+    {
+        auto ctx = (ShaderContext*)context;
+        auto valr = this->getValueFromInputSocket(0);
+        auto valg = this->getValueFromInputSocket(1);
+        auto valb = this->getValueFromInputSocket(2);
+        auto res = this->getOutputSocketVarName(0);
+
+        auto code = res +" = vec4(" + valr + ","+valg +"," + valb +", 1);";
+        ctx->addCodeChunk(this, code);
+    }
+
+
+
+};
+
 class TextureCoordinateNode : public NodeModel
 {
     QComboBox* combo;
@@ -373,7 +428,9 @@ class TextureCoordinateNode : public NodeModel
 public:
     TextureCoordinateNode()
     {
-        title = "Texture Coordinate";
+		setNodeType(NodeType::Surface);
+
+		title = "Texture Coordinate";
 
         combo = new QComboBox();
         combo->addItem("TexCoord0");
@@ -384,7 +441,23 @@ public:
         connect(combo, &QComboBox::currentTextChanged,
                   this, &TextureCoordinateNode::comboTextChanged);
 
-        this->widget = combo;
+        combo->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+        combo->setStyleSheet("QComboBox{border: 2px solid rgba(250,250,250,0);color : rgba(230,230,230,1);}"
+                             "QComboBox QAbstractItemView{selection-background-color: lightgray; background: rgba(20,20,20,1); color : rgba(230,230,230,1); border: none; }"
+                          //   "QComboBox::drop-down {border: 1px solid black; }"
+                             "QComboBox::drop-arrow{color: rgba(230,230,230,1);}");
+
+        auto containerWidget = new QWidget();
+        auto layout = new QVBoxLayout;
+        containerWidget->setMaximumSize(170,55);
+        containerWidget->setLayout(layout);
+        containerWidget->setStyleSheet("background:rgba(0,0,0,0);");
+        layout->addWidget(combo);
+        layout->setSpacing(0);
+
+        this->widget = containerWidget;
+
+        //this->widget = combo;
 
         typeName = "float";
 

@@ -272,6 +272,9 @@ NodeModel::NodeModel()
 {
     id = QUuid::createUuid().toString();
     widget = nullptr;
+	connect(this, &NodeModel::titleColorChanged, [=]() {
+		setNodeTitleColor(); 
+	});
 }
 
 void NodeModel::addInputSocket(SocketModel *sock)
@@ -314,6 +317,37 @@ void NodeModel::setGraph(NodeGraph *value)
 {
     graph = value;
 }
+
+QColor NodeModel::setNodeTitleColor()
+{
+	switch (nodeType) {
+	case NodeType::Number:
+		return titleColor = QColor(0, 103, 91);
+		break;
+	case NodeType::Calculation:
+		return titleColor = QColor(0, 103, 181);
+		break;
+	case NodeType::Modifier:
+		return titleColor = QColor(190, 20, 10);
+		break;
+	case NodeType::Surface:
+		return titleColor = QColor(52,81,94);
+		break;
+	default:
+		return titleColor = QColor(0, 0, 0, 0);
+		break;
+	}
+
+}
+
+void NodeModel::setNodeType(NodeType type)
+{
+	nodeType = type;
+	emit titleColorChanged();
+
+}
+
+
 
 /*
 NodeModel *NodeModel::duplicate()

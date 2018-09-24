@@ -10,6 +10,7 @@
 #include <QtMath>
 #include <QGraphicsSceneMouseEvent>
 #include <QJsonObject>
+#include <QPointf>
 
 enum class SocketType
 {
@@ -43,6 +44,8 @@ public:
     void updatePosFromSockets();
     void updatePath();
     virtual int type() const override;
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR) override;
+
 };
 
 
@@ -53,8 +56,10 @@ public:
     QVector<SocketConnection*> connections;
     SocketType socketType;
     float radius;
+    float dimentions;
     QGraphicsTextItem* text;
     GraphNode* node;
+    GraphNode* owner;
 
     int socketIndex = -1;
 
@@ -62,9 +67,24 @@ public:
     void addConnection(SocketConnection* con);
     float calcHeight();
     float getRadius();
+    QPointF getPos();
+    float getSocketOffset();
     virtual int type() const override;
 
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+private:
+    QPointF socketPos;
+    QColor socketColor;
+    QColor connectedColor = QColor(50,150,250);
+    QColor disconnectedColor= QColor(90,90,90);
+    bool connected;
+    bool rounded = true;
+
+    QColor getSocketColor();
+    void setSocketColor(QColor color);
+    void setConnected(bool value);
+    void updateSocket();
+
 };
 
 class GraphNode : public QGraphicsPathItem
@@ -78,10 +98,15 @@ class GraphNode : public QGraphicsPathItem
     int outSocketCount = 0;
 public:
     int nodeType;
+	bool isHighlighted = false;
+	bool currentSelectedState = false;
+	bool check = false;
     QString nodeId;
+	QColor titleColor;
 
     GraphNode(QGraphicsItem* parent);
 
+	void setTitleColor(QColor color);
     void setTitle(QString title);
     void addInSocket(QString title);
     void addOutSocket(QString title);
@@ -98,6 +123,13 @@ public:
                 QWidget *widget = 0) override;
 
     virtual int type() const override;
+private:
+    QColor connectedColor = QColor(50,150,250);
+    QColor disconnectedColor= QColor(90,90,90,0);
+    void highlightNode(bool val);
+
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent *event)override;
 };
 
 
@@ -115,6 +147,8 @@ class GraphNodeScene : public QGraphicsScene
 
     // model for scene
     NodeGraph* nodeGraph;
+
+	QGraphicsItemGroup *conGroup;
 public:
     GraphNodeScene(QWidget* parent);
 
@@ -137,6 +171,7 @@ public:
     bool eventFilter(QObject *o, QEvent *e);
     Socket* getSocketAt(float x, float y);
     GraphNode* getNodeById(QString id);
+    GraphNode* getNodeByPos(QPointF point);
 
     NodeGraph *getNodeGraph() const;
     void setNodeGraph(NodeGraph* value);
@@ -147,6 +182,12 @@ public:
 
     QJsonObject serialize();
 
+protected:
+	void wheelEvent(QGraphicsSceneWheelEvent *event)override;
+	void drawItems(QPainter *painter, int numItems,
+		QGraphicsItem *items[],
+		const QStyleOptionGraphicsItem options[],
+		QWidget *widget = Q_NULLPTR);
 signals:
     void newConnection(SocketConnection* connection);
     void connectionRemoved(SocketConnection* connection);
