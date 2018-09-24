@@ -1,3 +1,4 @@
+#include <QDebug>
 #include <QGraphicsScene>
 #include <QGraphicsRectItem>
 #include <QGraphicsPathItem>
@@ -27,32 +28,48 @@ Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title):
     this->setFlag(QGraphicsItem::ItemSendsScenePositionChanges);
     text = new QGraphicsTextItem(this);
     text->setPlainText(title);
-
+    text->setDefaultTextColor(QColor(200,200,200));
+    setSocketColor(disconnectedColor);
     QFontMetrics fm(parent->scene()->font());
     QRect textRect = fm.boundingRect(title);
-
+    owner = (GraphNode*)parent;
     radius = qCeil(textRect.height()/2.0f);
+    dimentions = textRect.height();
     QPainterPath path;
-    path.addRect(-radius, -radius, radius * 2, radius * 2);
-    setBrush(QBrush(QColor(200, 250, 250)));
-    setPen(Qt::NoPen);
-    setPath(path);
+
+
 
     // socket positions are at the outer right or outer left of the graph node
     if (socketType == SocketType::Out)
     {
-        // left node
-        text->setPos(-textRect.width() -radius - 5, -radius);
+        // socket on the right    out socket
+        text->setPos(-textRect.width() -radius*4, -radius);
+        if(rounded)  path.addRoundedRect(-radius*2, -radius/2, dimentions, dimentions, radius, radius);
+        else path.addRect(-radius*2, -radius/2, dimentions, dimentions);
+        socketPos = path.currentPosition();
     }
     else
     {
-        text->setPos(radius, -radius);
+        //socket on the left      in socket
+        text->setPos(radius*3, -radius);
+        if(rounded) path.addRoundedRect(radius/2, -radius/2, dimentions, dimentions,radius, radius);
+        else path.addRect(radius/2, -radius/2, dimentions, dimentions);
+
+        socketPos = path.currentPosition();
     }
+    setBrush(getSocketColor());
+    QPen pen(QColor(20,20,20),5);
+    setPen(pen);
+    setPath(path);
+
 }
 
 void Socket::addConnection(SocketConnection* con)
 {
     connections.append(con);
+    setSocketColor(connectedColor);
+    text->setDefaultTextColor(QColor(255,255,255));
+    updateSocket();
 }
 
 float Socket::calcHeight()
@@ -63,6 +80,16 @@ float Socket::calcHeight()
 float Socket::getRadius()
 {
     return radius;
+}
+
+QPointF Socket::getPos()
+{
+    return socketPos;
+}
+
+float Socket::getSocketOffset()
+{
+    return socketPos.x()/2;
 }
 
 int Socket::type() const
@@ -83,6 +110,41 @@ QVariant Socket::itemChange(GraphicsItemChange change, const QVariant &value)
     return value;
 }
 
+QColor Socket::getSocketColor()
+{
+    return socketColor;
+}
+
+void Socket::setSocketColor(QColor color)
+{
+    socketColor = color;
+}
+
+void Socket::setConnected(bool value)
+{
+    connected = value;
+}
+
+void Socket::updateSocket()
+{
+    QPainterPath path;
+    // socket positions are at the outer right or outer left of the graph node
+    if (socketType == SocketType::Out)
+    {
+        if(rounded)  path.addRoundedRect(-radius*2, -radius/2, dimentions, dimentions, radius, radius);
+        else path.addRect(-radius*2, -radius/2, dimentions, dimentions);
+       }
+    else
+    {
+        if(rounded) path.addRoundedRect(radius/2, -radius/2, dimentions, dimentions,radius, radius);
+        else path.addRect(radius/2, -radius/2, dimentions, dimentions);
+    }
+    setBrush(getSocketColor());
+    QPen pen(QColor(20,20,20),5);
+    setPen(pen);
+    setPath(path);
+}
+
 SocketConnection::SocketConnection()
 {
     socket1 = nullptr;
@@ -91,15 +153,22 @@ SocketConnection::SocketConnection()
     pos1 = QPointF(0,0);
     pos2 = QPointF(0,0);
 
+
+    QLinearGradient grad(0,0,0,100);
+    grad.setColorAt(0.0,QColor(0,0,50));
+    grad.setColorAt(1.0,QColor(250,250,250));
+
     auto pen = QPen(QColor(200, 200, 200));
-    pen.setWidth(5);
+    pen.setBrush(QColor(50,150,250));
+    pen.setCapStyle(Qt::RoundCap);
+    pen.setWidth(3);
     setPen(pen);
 }
 
 void SocketConnection::updatePosFromSockets()
 {
-    pos1 = socket1->scenePos();
-    pos2 = socket2->scenePos();
+    pos1 = socket1->scenePos()+QPoint(socket1->getSocketOffset(),5);
+    pos2 = socket2->scenePos()-QPoint(socket1->getSocketOffset()*2,-5);
 }
 
 void SocketConnection::updatePath()
@@ -115,6 +184,7 @@ void SocketConnection::updatePath()
     QPointF ctr2(pos1.x() + dx * 0.75, pos1.y() + dy * 0.9);
 
     p.cubicTo(ctr1, ctr2, pos2);
+    p.setFillRule(Qt::OddEvenFill);
 
     setPath(p);
 }
@@ -124,6 +194,12 @@ int SocketConnection::type() const
     return (int)GraphicsItemType::Connection;
 }
 
+void SocketConnection::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
+{
+	painter->setRenderHint(QPainter::Antialiasing);
+	QGraphicsPathItem::paint(painter, option, widget);
+}
+
 
 GraphNode::GraphNode(QGraphicsItem* parent):
     QGraphicsPathItem(parent)
@@ -131,16 +207,18 @@ GraphNode::GraphNode(QGraphicsItem* parent):
     nodeType = 0;
     proxyWidget = nullptr;
 
+
     this->setFlag(QGraphicsItem::ItemIsMovable);
     this->setFlag(QGraphicsItem::ItemIsSelectable);
     this->setFlag(QGraphicsItem::ItemSendsGeometryChanges);
     this->setFlag(QGraphicsItem::ItemSendsScenePositionChanges);
 
-    nodeWidth = 150;
+    nodeWidth = 170;
     QPainterPath path_content;
-    path_content.setFillRule(Qt::WindingFill);
+   // path_content.setFillRule(Qt::WindingFill);
     //path_content.addRoundedRect(QRect(0, 0, 100, 220), 5, 5);
-    path_content.addRect(QRect(0, 0, nodeWidth, calcHeight()));
+    //path_content.addRect(QRect(0, 0, nodeWidth, calcHeight()));
+    //path_content.addRoundedRect(QRect(0, 0, nodeWidth, calcHeight()),17,17);
     setPath(path_content);
 
     setPen(QPen(Qt::black));
@@ -149,7 +227,19 @@ GraphNode::GraphNode(QGraphicsItem* parent):
     text = new QGraphicsTextItem(this);
     text->setPlainText("Title");
     text->setPos(5, 5);
+
     text->setDefaultTextColor(QColor(255, 255, 255));
+
+    QFont font = text->font();
+    font.setWeight(65);
+    text->setFont(font);
+
+}
+
+void GraphNode::setTitleColor(QColor color)
+{
+	titleColor = color;
+	
 }
 
 void GraphNode::setTitle(QString title)
@@ -204,19 +294,21 @@ void GraphNode::calcPath()
 {
     QPainterPath path_content;
     path_content.setFillRule(Qt::WindingFill);
-    path_content.addRect(QRect(0, 0, nodeWidth, calcHeight()));
+    path_content.addRoundedRect(QRect(0, 0, nodeWidth, calcHeight()),7,7);
     setPath(path_content);
+
+	
 }
 
 int GraphNode::calcHeight()
 {
     int height = 0;
-    height += 35 + 5;// title + padding
+    height += 35 + 22;// title + padding
 
     for(auto socket : sockets)
     {
         height += socket->calcHeight();
-        height += 5; // padding
+        height += 14; // padding
     }
 
     //height += 2; // padding
@@ -256,18 +348,69 @@ void GraphNode::paint(QPainter *painter,
             const QStyleOptionGraphicsItem *option,
             QWidget *widget)
 {
+	painter->setRenderHint(QPainter::HighQualityAntialiasing);
+	painter->setRenderHint(QPainter::Antialiasing);
+
+
+	if (isHighlighted) {
+		auto rect = boundingRect();
+        painter->setPen(QPen(connectedColor,3));
+        painter->drawRoundedRect(rect ,2,2);
+    }
+	if (option->state.testFlag(QStyle::State_Selected) != currentSelectedState) {
+		currentSelectedState = option->state.testFlag(QStyle::State_Selected);
+		highlightNode(currentSelectedState);
+	}
+	
+
+
     painter->setPen(pen());
+    setBrush(QColor(20,20,20));
     painter->fillPath(path(), brush());
 
     // title tab
     QPainterPath titlePath;
-    titlePath.addRect(0, 0, nodeWidth, 35);
-    painter->fillPath(titlePath, QBrush(QColor(135, 206, 235)));
+	//titlePath.addRoundedRect(0, 0, nodeWidth, 35, 7, 7);
+	titlePath.addRect(0, 30, nodeWidth, 5);
+	painter->fillPath(titlePath, QBrush(titleColor));
 }
 
 int GraphNode::type() const
 {
     return (int)GraphicsItemType::Node;
+}
+
+void GraphNode::highlightNode(bool val)
+{
+
+	isHighlighted = val;
+
+    for( Socket* sock : sockets){
+        if(sock->socketType == SocketType::In){
+            for( SocketConnection* con : sock->connections){
+                if(con->socket1->socketType == SocketType::Out){					
+					con->socket1->owner->isHighlighted = val;
+					con->socket1->owner->highlightNode(val);
+					con->socket1->owner->currentSelectedState = false;
+				}
+                if(con->socket2->socketType == SocketType::Out){
+					con->socket2->owner->isHighlighted = val;
+                    con->socket2->owner->highlightNode(val);		
+					con->socket2->owner->currentSelectedState = false;
+
+                }
+            }
+        }
+    }
+	if (!val) check = val;
+	update();
+}
+
+void GraphNode::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+	check = true;
+    QGraphicsPathItem::mousePressEvent( event);
+
 }
 
 
@@ -314,6 +457,7 @@ void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addTo
     if (model->widget != nullptr)
         nodeView->setWidget(model->widget);
     nodeView->setTitle(model->title);
+	nodeView->setTitleColor(model->setNodeTitleColor());
 
     nodeView->setPos(x, y);
     nodeView->nodeId = model->id;
@@ -383,12 +527,28 @@ QJsonObject GraphNodeScene::serialize()
     return data;
 }
 
+void GraphNodeScene::wheelEvent(QGraphicsSceneWheelEvent * event)
+{
+
+	QGraphicsScene::wheelEvent(event);
+}
+
+void GraphNodeScene::drawItems(QPainter * painter, int numItems, QGraphicsItem * items[], const QStyleOptionGraphicsItem options[], QWidget * widget)
+{
+//	removeItem(nodeGraph);
+//	addItem(nodeGraph);
+	QGraphicsScene::drawItems(painter, numItems, items, options, widget);
+}
+
+
 GraphNodeScene::GraphNodeScene(QWidget* parent):
     QGraphicsScene(parent)
 {
-    con = nullptr;
     nodeGraph = nullptr;
+	con = nullptr;
     this->installEventFilter(this);
+	conGroup = new QGraphicsItemGroup;
+	addItem(conGroup);
 }
 
 SocketConnection *GraphNodeScene::addConnection(QString leftNodeId, int leftSockIndex, QString rightNodeId, int rightSockIndex)
@@ -445,7 +605,8 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
             con->pos1 = me->scenePos();
             con->pos2 = me->scenePos();
             con->updatePath();
-            this->addItem(con);
+			conGroup->addToGroup(con);
+           // this->addItem(con);
 
             return true;
         }
@@ -463,7 +624,6 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 
             menu->exec(p);
         }
-
     }
     break;
     case QEvent::GraphicsSceneMouseMove:
@@ -544,6 +704,21 @@ GraphNode *GraphNodeScene::getNodeById(QString id)
         if (item && item->type() == (int)GraphicsItemType::Node)
 			if (((GraphNode*)item)->nodeId == id)
 				return (GraphNode*)item;
+    }
+
+    return nullptr;
+}
+
+GraphNode *GraphNodeScene::getNodeByPos(QPointF point)
+{
+    auto items = this->items();
+    //auto items = this->items();
+    for (auto item : items) {
+        if (item && item->boundingRect().contains(point)){
+            qDebug() << "clicked nbode";
+            qDebug() << item->boundingRect();
+            return (GraphNode*)item;
+        }
     }
 
     return nullptr;

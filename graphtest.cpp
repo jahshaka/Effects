@@ -43,6 +43,10 @@ void registerModels(NodeGraph* graph)
         return new SineNode();
     });
 
+    //make color
+    graph->registerModel("Make Color", [](){
+        return new MakeColorNode();
+    });
     // sine
     graph->registerModel("property", []()
     {
