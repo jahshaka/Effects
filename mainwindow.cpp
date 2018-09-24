@@ -107,7 +107,7 @@ void MainWindow::loadGraph()
 
 void MainWindow::exportGraph()
 {
-	QString path = QFileDialog::getSaveFileName(this, "Choose file name", "material.material", "Material File (*.material)");
+	QString path = QFileDialog::getSaveFileName(this, "Choose file name", "material.material", "Material File (*.shader)");
 
 	QJsonDocument doc;
 	doc.setObject((new MaterialWriter())->serializeMaterial(graph));
@@ -117,10 +117,10 @@ void MainWindow::exportGraph()
 	file.write(doc.toJson());
 	file.close();
 
-	QString sourcePath = QFileInfo(path).absolutePath()+"/surface.frag";
+	QString sourcePath = QFileInfo(path).absolutePath()+"/shader.frag";
 	QFile sourceFile(sourcePath);
 	sourceFile.open(QFile::WriteOnly | QFile::Truncate);
-	sourceFile.write((new ShaderGenerator())->generateShader(graph).toUtf8());
+	sourceFile.write("#pragma include <surface.frag>\n\n"+(new ShaderGenerator())->generateShader(graph).toUtf8());
 	sourceFile.close();
 }
 

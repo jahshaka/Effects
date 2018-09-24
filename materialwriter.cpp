@@ -24,8 +24,9 @@ QJsonObject MaterialWriter::serializeMaterial(NodeGraph* graph)
 	// convert properties to uniforms
 	for (auto prop : graph->properties) {
 		QJsonObject uniformObj;
-		uniformObj["name"] = prop->name;
+		//uniformObj["name"] = prop->name;
 		uniformObj["displayName"] = prop->displayName;
+		uniformObj["name"] = prop->getUniformName();
 		uniformObj["uniform"] = prop->getUniformName();
 
 		switch (prop->type) {
@@ -40,8 +41,8 @@ QJsonObject MaterialWriter::serializeMaterial(NodeGraph* graph)
 	matObj["uniforms"] = uniformArray;
 
 	// todo: add surface type for pbr
-	matObj["vertex_shader"] = ":/surface.vert";
-	matObj["fragment_shader"] = "surface.frag";
+	matObj["vertex_shader"] = ":assets/shaders/surface.vert";
+	matObj["fragment_shader"] = "shader.frag";
 	matObj["builtin"] = false;
 
 	// save shadergraph
@@ -56,4 +57,5 @@ void MaterialWriter::writeFloat(FloatProperty* prop, QJsonObject& uniform)
 	uniform["value"] = prop->value;
 	uniform["min"] = prop->minValue;
 	uniform["max"] = prop->maxValue;
+	uniform["type"] = "float";
 }

@@ -141,6 +141,8 @@ struct FloatProperty : public Property
 
     FloatProperty() {
         value = 0;
+		minValue = 0;
+		maxValue = 1;
         type = PropertyType::Float;
     }
 
