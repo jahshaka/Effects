@@ -26,19 +26,22 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+	configureUI();
+
     scene = nullptr;
+	sceneWidget = new SceneWidget();
 
     connect(ui->actionSave, &QAction::triggered, this, &MainWindow::saveGraph);
 	connect(ui->actionLoad, &QAction::triggered, this, &MainWindow::loadGraph);
 	connect(ui->actionExport, &QAction::triggered, this, &MainWindow::exportGraph);
 
     // preview widget
-    sceneWidget = new SceneWidget();
+ /*   sceneWidget = new SceneWidget();
     auto grid = new QGridLayout();
     grid->setSpacing(0);
     grid->setMargin(0);
     grid->addWidget(sceneWidget);
-    ui->sceneContainer->setLayout(grid);
+    ui->sceneContainer->setLayout(grid);*/
 
     // add menu items to property widget
     newNodeGraph();
@@ -48,7 +51,9 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
 {
     // create and set new scene
     auto newScene = createNewScene();
-    ui->graphicsView->setScene(newScene);
+   // ui->graphicsView->setScene(newScene);
+	graphicsView->setScene(newScene);
+	graphicsView->setAcceptDrops(true);
     newScene->setNodeGraph(graph);
 
     // delet old scene and reassign new scene
@@ -57,8 +62,10 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
     }
     scene = newScene;
 
-    ui->propertyContainerPage1->setNodeGraph(graph);
+    //ui->propertyContainerPage1->setNodeGraph(graph);
+	propertyListWidget->setNodeGraph(graph);
     sceneWidget->setNodeGraph(graph);
+	displayWidget->setWidget(sceneWidget);
 	this->graph = graph;
 }
 
@@ -140,6 +147,77 @@ void MainWindow::restoreGraphPositions(const QJsonObject &data)
     }
 }
 
+void MainWindow::configureUI()
+{
+	nodeTray = new QDockWidget("node tray");
+	centralWidget = new QWidget();
+	textWidget = new QDockWidget("code view");
+	displayWidget = new QDockWidget("display");
+
+	propertyWidget = new QDockWidget("properties");
+	materialSettingsWidget = new QDockWidget("material settings");
+	tabbedWidget = new QTabWidget;
+	graphicsView = new QGraphicsView;
+	textEdit = new QTextEdit;
+	propertyListWidget = new PropertyListWidget;
+	nodeContainer = new QListWidget;
+
+
+	nodeTray->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	textWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	displayWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	propertyWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	materialSettingsWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+
+	setDockNestingEnabled(true);
+	this->setCentralWidget(graphicsView);
+	addDockWidget(Qt::LeftDockWidgetArea, nodeTray, Qt::Vertical);
+	addDockWidget(Qt::RightDockWidgetArea, textWidget, Qt::Vertical);
+	addDockWidget(Qt::RightDockWidgetArea, displayWidget, Qt::Vertical);
+	addDockWidget(Qt::RightDockWidgetArea, materialSettingsWidget, Qt::Vertical);
+	addDockWidget(Qt::RightDockWidgetArea, propertyWidget, Qt::Vertical);
+	QMainWindow::tabifyDockWidget(propertyWidget, materialSettingsWidget);
+
+	textWidget->setWidget(textEdit);
+	propertyWidget->setWidget(propertyListWidget);
+	nodeTray->setWidget(nodeContainer);
+	QSize currentSize(50, 50);
+
+
+	nodeContainer->setViewMode(QListWidget::IconMode);
+	nodeContainer->setIconSize(currentSize);
+	nodeContainer->setMouseTracking(true);
+	nodeContainer->setAlternatingRowColors(true);
+	nodeContainer->setDragDropMode(QAbstractItemView::DragDrop);
+	nodeContainer->setDragEnabled(true);
+	nodeContainer->setMovement(QListView::Static);
+	nodeContainer->setResizeMode(QListWidget::Adjust);
+	nodeContainer->setDefaultDropAction(Qt::MoveAction);
+
+	nodeContainer->setSelectionMode(QAbstractItemView::SingleSelection);
+	nodeContainer->setDragEnabled(true);
+	nodeContainer->setDragDropMode(QAbstractItemView::DragDrop);
+	nodeContainer->viewport()->setAcceptDrops(false);
+	nodeContainer->setDropIndicatorShown(true);
+
+
+	//testing widget
+	auto node = new nodeListModel;
+	node->name = QString("test Node");
+	auto item = new QListWidgetItem;
+	item->setData(Qt::DisplayRole, node->name);
+	item->setSizeHint(currentSize);
+	item->setTextAlignment(Qt::AlignCenter);
+	item->setFlags(item->flags() | Qt::ItemIsEditable);
+//	item->setIcon(QIcon(":/icons/icons8-folder-72.png"));
+	nodeContainer->addItem(item);
+	
+	//displayWidget->setWidget(sceneWidget);
+
+}
+
+
+
 GraphNodeScene *MainWindow::createNewScene()
 {
     auto scene = new GraphNodeScene(this);
@@ -150,7 +228,7 @@ GraphNodeScene *MainWindow::createNewScene()
         auto graph = scene->getNodeGraph();
         ShaderGenerator shaderGen;
         auto code = shaderGen.generateShader(graph);
-        ui->textEdit->setPlainText(code);
+        textEdit->setPlainText(code);
         sceneWidget->updateShader(code);
         sceneWidget->resetRenderTime();
 
@@ -161,7 +239,7 @@ GraphNodeScene *MainWindow::createNewScene()
         auto graph = scene->getNodeGraph();
         ShaderGenerator shaderGen;
         auto code = shaderGen.generateShader(graph);
-        ui->textEdit->setPlainText(code);
+        textEdit->setPlainText(code);
         sceneWidget->updateShader(code);
         sceneWidget->resetRenderTime();
     });

@@ -1,12 +1,26 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QListWidget>
 #include <QMainWindow>
 #include <QGraphicsPathItem>
+#include <QGraphicsView>
+#include <QTextEdit>
+#include <QDockWidget>
+#include "propertylistwidget.h"
+#include "nodemodel.h"
 
 namespace Ui {
 class MainWindow;
 }
+
+struct nodeListModel {
+	QString name;
+	NodeType type;
+	int inSockets;
+	int outSockets;
+
+};
 
 class SceneWidget;
 class GraphNodeScene;
@@ -28,6 +42,8 @@ private:
     void exportGraph();
     void restoreGraphPositions(const QJsonObject& data);
 
+	void configureUI();
+
     GraphNodeScene* createNewScene();
 
 private:
@@ -35,5 +51,18 @@ private:
     GraphNodeScene* scene;
     SceneWidget* sceneWidget;
 	NodeGraph *graph;
+
+	QDockWidget* nodeTray;
+	QWidget *centralWidget;
+	QDockWidget* textWidget;
+	QDockWidget* displayWidget;
+
+	QDockWidget *propertyWidget;
+	QDockWidget *materialSettingsWidget;
+	QTabWidget *tabbedWidget;
+	QGraphicsView* graphicsView;
+	QTextEdit* textEdit;
+	PropertyListWidget* propertyListWidget;
+	QListWidget *nodeContainer;
 };
 #endif // MAINWINDOW_H
