@@ -31,6 +31,8 @@ set(CPP
 	graph/socketmodel.cpp
 	graph/sockethelper.cpp
 	graph/library.cpp
+	graph/graphicsview.cpp
+
 	# generator
 	generator/shadergenerator.cpp
 	generator/shadercontext.cpp
@@ -42,7 +44,6 @@ set(HEADERS
 	mainwindow.h
         properties.h
 	nodegraph.h
-    #    nodemodel.h
         scenewidget.h
         propertylistwidget.h
         materialsettingswidget.h
@@ -57,6 +58,7 @@ set(HEADERS
 		graph/sockethelper.h
 		graph/sockets.h
 		graph/library.h
+		graph/graphicsview.h
 		# generator
 		generator/shadergenerator.h
 		generator/shadercontext.h

@@ -4,15 +4,18 @@
 //#include "nodemodel.h"
 #include <QMouseEvent>
 #include <QDebug>
+#include <QDrag>
 #include "scenewidget.h"
 #include <QLayout>
 #include <QGridLayout>
 #include <QLineEdit>
+#include <QListWidgetItem>
 #include <QFileDialog>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonValue>
+#include <QMimeData>
 #include <QFile>
 #include <QByteArray>
 //#include "graphtest.h"
@@ -157,7 +160,7 @@ void MainWindow::configureUI()
 	propertyWidget = new QDockWidget("properties");
 	materialSettingsWidget = new QDockWidget("material settings");
 	tabbedWidget = new QTabWidget;
-	graphicsView = new QGraphicsView;
+	graphicsView = new GraphicsView;
 	textEdit = new QTextEdit;
 	propertyListWidget = new PropertyListWidget;
 	nodeContainer = new QListWidget;
@@ -203,7 +206,7 @@ void MainWindow::configureUI()
 
 	//testing widget
 	auto node = new nodeListModel;
-	node->name = QString("test Node");
+	node->name = QString("float node");
 	auto item = new QListWidgetItem;
 	item->setData(Qt::DisplayRole, node->name);
 	item->setSizeHint(currentSize);
@@ -211,6 +214,24 @@ void MainWindow::configureUI()
 	item->setFlags(item->flags() | Qt::ItemIsEditable);
 //	item->setIcon(QIcon(":/icons/icons8-folder-72.png"));
 	nodeContainer->addItem(item);
+
+	auto v = item->listWidget();
+
+	connect(v, &QListWidget::itemPressed, [=](QListWidgetItem* item1) {
+		auto drag = new QDrag(this);
+		auto mimeData = new QMimeData;
+		drag->setMimeData(mimeData);
+
+		mimeData->setText("float");
+		Qt::DropAction dropev = drag->exec(Qt::CopyAction);
+		qDebug() << dropev;
+
+		connect(drag, &QDrag::actionChanged, [=](Qt::DropAction action) {
+			qDebug() << action;
+
+		});
+	});
+
 	
 	//displayWidget->setWidget(sceneWidget);
 

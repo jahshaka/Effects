@@ -1,4 +1,5 @@
 #include <QDebug>
+#include <QDropEvent>
 #include <QGraphicsScene>
 #include <QGraphicsRectItem>
 #include <QGraphicsPathItem>
@@ -10,6 +11,7 @@
 #include <QPainter>
 #include <QWidget>
 #include <QMenu>
+#include <QMimeData>
 #include <QGraphicsWidget>
 #include <QGraphicsView>
 #include <QGraphicsProxyWidget>
@@ -557,6 +559,14 @@ void GraphNodeScene::drawItems(QPainter * painter, int numItems, QGraphicsItem *
 	QGraphicsScene::drawItems(painter, numItems, items, options, widget);
 }
 
+void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
+{
+
+	auto factory = nodeGraph->modelFactories[event->mimeData()->text()];
+	auto node = factory();
+	this->addNodeModel(node, event->scenePos().x(), event->scenePos().y());
+}
+
 
 GraphNodeScene::GraphNodeScene(QWidget* parent):
     QGraphicsScene(parent)
@@ -566,6 +576,7 @@ GraphNodeScene::GraphNodeScene(QWidget* parent):
     this->installEventFilter(this);
 	conGroup = new QGraphicsItemGroup;
 	addItem(conGroup);
+	
 }
 
 SocketConnection *GraphNodeScene::addConnection(QString leftNodeId, int leftSockIndex, QString rightNodeId, int rightSockIndex)
@@ -697,6 +708,12 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
         }
     }
     break;
+
+	case QEvent::GraphicsSceneDrop: {
+		auto event = (QDropEvent*)e;
+		event->acceptProposedAction();
+	}
+		break;	
     }
 
     return QObject::eventFilter(o, e);
