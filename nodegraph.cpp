@@ -554,13 +554,12 @@ void GraphNodeScene::wheelEvent(QGraphicsSceneWheelEvent * event)
 
 void GraphNodeScene::drawItems(QPainter * painter, int numItems, QGraphicsItem * items[], const QStyleOptionGraphicsItem options[], QWidget * widget)
 {
-//	removeItem(nodeGraph);
-//	addItem(nodeGraph);
 	QGraphicsScene::drawItems(painter, numItems, items, options, widget);
 }
 
 void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 {
+	event->accept();
 
 	auto factory = nodeGraph->modelFactories[event->mimeData()->text()];
 	auto node = factory();
@@ -749,8 +748,6 @@ GraphNode *GraphNodeScene::getNodeByPos(QPointF point)
     //auto items = this->items();
     for (auto item : items) {
         if (item && item->boundingRect().contains(point)){
-            qDebug() << "clicked nbode";
-            qDebug() << item->boundingRect();
             return (GraphNode*)item;
         }
     }

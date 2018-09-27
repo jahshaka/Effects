@@ -22,7 +22,8 @@
 #include "generator/shadergenerator.h"
 #include "nodes/test.h"
 #include "materialwriter.h"
-
+#include "nodelistitem.h"
+#include <QPointer>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -38,6 +39,8 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(ui->actionLoad, &QAction::triggered, this, &MainWindow::loadGraph);
 	connect(ui->actionExport, &QAction::triggered, this, &MainWindow::exportGraph);
 
+	installEventFilter(this);
+
     // preview widget
  /*   sceneWidget = new SceneWidget();
     auto grid = new QGridLayout();
@@ -48,6 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // add menu items to property widget
     newNodeGraph();
+	generateTileNode();
 }
 
 void MainWindow::setNodeGraph(NodeGraph *graph)
@@ -165,8 +169,7 @@ void MainWindow::configureUI()
 	propertyListWidget = new PropertyListWidget;
 	nodeContainer = new QListWidget;
 
-
-	nodeTray->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	nodeTray->setAllowedAreas(Qt::AllDockWidgetAreas);
 	textWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	displayWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	propertyWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
@@ -183,58 +186,143 @@ void MainWindow::configureUI()
 
 	textWidget->setWidget(textEdit);
 	propertyWidget->setWidget(propertyListWidget);
-	nodeTray->setWidget(nodeContainer);
-	QSize currentSize(50, 50);
+	QSize currentSize(100, 100);
+	
+	// main left dock widget
+	auto container = new QWidget;
+	auto containerLayout = new QVBoxLayout;
+	container->setLayout(containerLayout);
 
+	//search box
+	auto searchContainer = new QWidget;
+	auto searchLayout = new QHBoxLayout;
+	auto searchBar = new QLineEdit;
 
+	searchContainer->setLayout(searchLayout);
+	searchLayout->addWidget(searchBar);
+
+	connect(searchBar, &QLineEdit::textChanged, [=](QString str) {
+
+		auto entireList = nodeContainer->findItems("", Qt::MatchContains);
+		/*for (auto item : entireList) {
+			item->listWidget()->setVisible(false);
+			break;
+		}*/
+		nodeContainer->clear();
+
+		auto list = nodeContainer->findItems(str, Qt::MatchContains);
+		generateTileNode(list);
+
+		if (str.length() == 0) generateTileNode();
+		
+	});
+
+	nodeTray->setWidget(container);
+
+	containerLayout->addWidget(searchContainer);
+	containerLayout->addWidget(nodeContainer);
+
+	nodeContainer->setSpacing(5);
+	nodeContainer->setContentsMargins(10, 3, 10, 10);
 	nodeContainer->setViewMode(QListWidget::IconMode);
 	nodeContainer->setIconSize(currentSize);
 	nodeContainer->setMouseTracking(true);
 	nodeContainer->setAlternatingRowColors(true);
 	nodeContainer->setDragDropMode(QAbstractItemView::DragDrop);
-	nodeContainer->setDragEnabled(true);
 	nodeContainer->setMovement(QListView::Static);
 	nodeContainer->setResizeMode(QListWidget::Adjust);
 	nodeContainer->setDefaultDropAction(Qt::MoveAction);
-
 	nodeContainer->setSelectionMode(QAbstractItemView::SingleSelection);
 	nodeContainer->setDragEnabled(true);
-	nodeContainer->setDragDropMode(QAbstractItemView::DragDrop);
 	nodeContainer->viewport()->setAcceptDrops(false);
 	nodeContainer->setDropIndicatorShown(true);
+	nodeContainer->installEventFilter(this);
+	nodeContainer->viewport()->installEventFilter(this);
+	nodeContainer->setStyleSheet("QListWidget::item{background: rgba(70,70,70,1); color: rgba(200,200,200,1);}"
+								"QListView::item:selected:active {background: qlineargradient(x1 : 0, y1 : 0, x2 : 0, y2 : 1,stop : 0 #6a6ea9, stop: 1 #888dd9);}"
+								"");
 
+}
 
-	//testing widget
-	auto node = new nodeListModel;
-	node->name = QString("float node");
-	auto item = new QListWidgetItem;
-	item->setData(Qt::DisplayRole, node->name);
-	item->setSizeHint(currentSize);
-	item->setTextAlignment(Qt::AlignCenter);
-	item->setFlags(item->flags() | Qt::ItemIsEditable);
-//	item->setIcon(QIcon(":/icons/icons8-folder-72.png"));
-	nodeContainer->addItem(item);
+void MainWindow::generateTileNode()
+{
+	QSize currentSize(80, 70);
 
-	auto v = item->listWidget();
+	for (QString tile : graph->modelFactories.uniqueKeys()) {
+		if (tile == "property") continue;
+		auto item = new NodeListItem;
+		item->setData(Qt::DisplayRole, tile);
+		item->setData(Qt::UserRole, tile);
+		item->setSizeHint(currentSize);
+		item->setTextAlignment(Qt::AlignCenter);
+		item->setFlags(item->flags() | Qt::ItemIsEditable);
+		item->setIcon(QIcon(":/icons/icons8-folder-72.png"));
+		item->setBackgroundColor(QColor(60, 60, 60));
+		nodeContainer->addItem(item);
 
-	connect(v, &QListWidget::itemPressed, [=](QListWidgetItem* item1) {
-		auto drag = new QDrag(this);
-		auto mimeData = new QMimeData;
-		drag->setMimeData(mimeData);
+	}
+}
 
-		mimeData->setText("float");
-		Qt::DropAction dropev = drag->exec(Qt::CopyAction);
-		qDebug() << dropev;
+void MainWindow::generateTileNode(QList<QListWidgetItem*> list)
+{
+	QSize currentSize(80, 70);
 
-		connect(drag, &QDrag::actionChanged, [=](Qt::DropAction action) {
-			qDebug() << action;
+	for (auto tile : list) {
+		
+		auto item = new NodeListItem;
+		item->setData(Qt::DisplayRole, tile->data(Qt::DisplayRole));
+		item->setData(Qt::UserRole, tile->data(Qt::DisplayRole));
+		item->setSizeHint(currentSize);
+		item->setTextAlignment(Qt::AlignCenter);
+		item->setFlags(item->flags() | Qt::ItemIsEditable);
+		item->setIcon(QIcon(":/icons/icons8-folder-72.png"));
+		item->setBackgroundColor(QColor(60, 60, 60));
+		nodeContainer->addItem(item);
 
-		});
-	});
+	}
+}
 
-	
-	//displayWidget->setWidget(sceneWidget);
+bool MainWindow::eventFilter(QObject * watched, QEvent * event)
+{
+	if (watched == nodeContainer->viewport()) {
+		switch (event->type()) {
+			case QEvent::MouseButtonPress: {
+				break;
+			}
 
+			case QEvent::MouseButtonRelease: {
+				break;
+			}
+
+			case QEvent::MouseMove: {
+				auto evt = static_cast<QMouseEvent*>(event);
+				QPoint dragStartPosition(300, 0);
+				if ((evt->pos() - dragStartPosition).manhattanLength()
+					< QApplication::startDragDistance())
+					return true;
+
+				if (evt->buttons() & Qt::LeftButton) {
+					
+					auto item = nodeContainer->currentItem();
+					if (!item) return true;
+					if (!item->isSelected()) return true;
+
+					auto drag = new QDrag(this);
+					auto mimeData = new QMimeData;
+					drag->setMimeData(mimeData);
+
+					mimeData->setText(item->data(Qt::UserRole).toString());
+					Qt::DropAction dropev = drag->exec(Qt::CopyAction);
+				}
+
+				break;
+			}
+			
+			default: break;
+		}
+	}
+
+	return QObject::eventFilter(watched, event);
 }
 
 

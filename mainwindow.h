@@ -44,6 +44,10 @@ private:
     void restoreGraphPositions(const QJsonObject& data);
 
 	void configureUI();
+	void generateTileNode();
+	void generateTileNode(QList<QListWidgetItem*> list);
+
+	bool eventFilter(QObject *watched, QEvent *event);
 
     GraphNodeScene* createNewScene();
 
