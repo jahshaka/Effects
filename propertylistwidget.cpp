@@ -4,8 +4,8 @@
 #include <QDebug>
 #include "propertywidgets/floatpropertywidget.h"
 #include "properties.h"
-#include "nodegraph.h"
-#include "nodemodel.h"
+#include "graph/nodegraph.h"
+//#include "nodemodel.h"
 
 PropertyListWidget::PropertyListWidget(QWidget *parent) :
     QWidget(parent),

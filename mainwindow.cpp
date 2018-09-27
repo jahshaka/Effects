@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "nodegraph.h"
-#include "nodemodel.h"
+//#include "nodemodel.h"
 #include <QMouseEvent>
 #include <QDebug>
 #include "scenewidget.h"
@@ -15,7 +15,9 @@
 #include <QJsonValue>
 #include <QFile>
 #include <QByteArray>
-#include "graphtest.h"
+//#include "graphtest.h"
+#include "generator/shadergenerator.h"
+#include "nodes/test.h"
 #include "materialwriter.h"
 
 

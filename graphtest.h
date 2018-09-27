@@ -1,12 +1,14 @@
 #include "nodegraph.h"
-#include "nodemodel.h"
+//#include "nodemodel.h"
 #include <QMouseEvent>
 #include <QDebug>
-#include "scenewidget.h"
 #include <QLayout>
 #include <QGridLayout>
 #include <QLineEdit>
 #include <QComboBox>
+
+#include "scenewidget.h"
+#include "graph/nodegraph.h"
 
 // temporary variable
 struct TempVar

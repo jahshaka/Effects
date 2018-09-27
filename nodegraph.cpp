@@ -16,9 +16,14 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonValue>
+#include <QStyleOptionGraphicsItem>
 #include "nodegraph.h"
-#include "nodemodel.h"
-#include "graphtest.h"
+//#include "nodemodel.h"
+#include "../graph/sockethelper.h"
+#include "../graph/nodemodel.h"
+#include "../graph/connectionmodel.h"
+#include "../graph/nodegraph.h"
+#include "../nodes/test.h"
 
 
 Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title):

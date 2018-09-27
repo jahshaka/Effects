@@ -1,8 +1,10 @@
 #include "materialwriter.h"
-#include "nodemodel.h"
-#include "graphtest.h"
+//#include "nodemodel.h"
+//#include "graphtest.h"
 #include <QJsonObject>
 #include <QJsonArray>
+#include "graph/nodegraph.h"
+#include "generator/shadergenerator.h"
 
 QJsonObject MaterialWriter::serializeMaterial(NodeGraph* graph)
 {

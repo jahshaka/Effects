@@ -17,25 +17,50 @@ set(CPP
 	main.cpp
 	mainwindow.cpp
 	nodegraph.cpp
-        nodemodel.cpp
-        scenewidget.cpp
-        propertylistwidget.cpp
-		materialsettingswidget.cpp
-        properties.cpp
-        materialwriter.cpp
-        graphtest.cpp)
+    #nodemodel.cpp
+    scenewidget.cpp
+    propertylistwidget.cpp
+	materialsettingswidget.cpp
+    properties.cpp
+    materialwriter.cpp
+    #graphtest.cpp
+	# graph
+	graph/nodegraph.cpp
+	graph/nodemodel.cpp
+	graph/connectionmodel.cpp
+	graph/socketmodel.cpp
+	graph/sockethelper.cpp
+	# generator
+	generator/shadergenerator.cpp
+	generator/shadercontext.cpp
+	# nodes
+	nodes/test.cpp
+	)
 
 set(HEADERS
 	mainwindow.h
         properties.h
 	nodegraph.h
-        nodemodel.h
+    #    nodemodel.h
         scenewidget.h
         propertylistwidget.h
         materialsettingswidget.h
         propertywidgets/floatpropertywidget.h
         materialwriter.h
-        graphtest.h)
+        #graphtest.h
+		#graph
+		graph/nodegraph.h
+		graph/nodemodel.h
+		graph/connectionmodel.h
+		graph/socketmodel.h
+		graph/sockethelper.h
+		graph/sockets.h
+		# generator
+		generator/shadergenerator.h
+		generator/shadercontext.h
+		# nodes
+		nodes/test.h
+	)
 
 set(FORMS
         mainwindow.ui
