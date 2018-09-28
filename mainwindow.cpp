@@ -167,18 +167,11 @@ void MainWindow::configureStyleSheet()
 		"QMenu::item{padding: 2px 5px 2px 20px;	}"
 		"QMenu::item:hover{	background: rgba(40,128, 185,.9);}"
 		"QMenu::item:selected{	background: rgba(40,128, 185,.9);}"
-		"QDockWidget{color: rgba(250,250,250,.9); background: rgba(32,32,32,1); border: 2px solid rgba(0,0,0,1);}"
-		"QDockWidget::title{background: rgba(22,22,22,1);	border: 1px solid rgba(20,20,20, .8);	text - align: center; font - weight: bold; padding: 5px;}"
-		"QDockWidget::close-button, QDockWidget::float-button{	background: rgba(0,0,0,0);	color: red;	padding: 0px;}"
-		"QDockWidget::close - button:hover, QDockWidget::float - button : hover{background: rgba(0,220,0,1);	padding: 0px;}"
+		
 		"QTabWidget::pane{border: 1px solid rgba(0,0,0,.5);	border - top: 0px solid rgba(0,0,0,0);	}"
 		"QTabWidget::tab - bar{	left: 1px;	}"
 		"QDockWidget::tab{	background:rgba(32,32,32,1);}"
-		"QScrollBar: vertical {border : 0px solid black;	background - color: rgba(32, 32, 32, .7);width: 8px;padding: 1px;}"
-		"QScrollBar::handle {	background: rgba(20, 20, 20, .9);background: accent;	border - radius: 4px;right: 1px;width: 8px;}"
-		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
-		" QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
-		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .1);}"
+		
 	);
 
 	/*nodeContainer->setStyleSheet("QListWidget::item{background: rgba(70,70,70,1); color: rgba(200,200,200,1);}"
@@ -191,21 +184,39 @@ void MainWindow::configureStyleSheet()
 
 	nodeContainer->setStyleSheet(
 	
-		"QListView::item{ border-radius: 2px; border: 1px solid rgba(0,0,0,1);  }"
-	
-	
+		"QListView::item{ border-radius: 2px; border: 1px solid rgba(0,0,0,1); background: rgba(80,80,80,1);  }"	
+		"QListView::item:selected{ background: rgba(65,65,65,1); border: 1px solid rgba(50,150,250,1); }"
 	);
+
+	nodeTray->setStyleSheet(
+		"QDockWidget{color: rgba(250,250,250,.9); background: rgba(32,32,32,1);}"
+		"QDockWidget::title{ padding: 8px; background: rgba(22,22,22,1);	border: 1px solid rgba(20,20,20, .8);	text-align: center;}"
+		"QDockWidget::close-button{ background: rgba(0,0,0,0); color: rgba(200,200,200,0); icon-size: 0px; padding: 23px; }"
+		"QDockWidget::float-button{ background: rgba(0,0,0,0); color: rgba(200,200,200,0); icon-size: 0px; padding: 22px; }"
+		//"QDockWidget::close-button, QDockWidget::float-button{	background: rgba(10,10,10,1); color: white;padding: 0px;}"
+		//"QDockWidget::close-button:hover, QDockWidget::float-button:hover{background: rgba(0,220,0,0);padding: 0px;}"
+		"QScrollBar:vertical {border : 0px solid black;	background: rgba(32, 32, 32, .7);width: 3px;padding: 1px;}"
+		"QScrollBar::handle{ background: rgba(20, 20, 20, .9);	border-radius: 4px; right: 1px; width: 3px;}"
+		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
+		" QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
+		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .1);}"
+	);
+
+	textWidget->setStyleSheet(nodeTray->styleSheet());
+	displayWidget->setStyleSheet(nodeTray->styleSheet());
+	propertyWidget->setStyleSheet(nodeTray->styleSheet());
+	materialSettingsWidget->setStyleSheet(nodeTray->styleSheet());
 }
 
 void MainWindow::configureUI()
 {
-	nodeTray = new QDockWidget("node tray");
+	nodeTray = new QDockWidget("Library",this);
 	centralWidget = new QWidget();
-	textWidget = new QDockWidget("code view");
-	displayWidget = new QDockWidget("display");
+	textWidget = new QDockWidget("Code View");
+	displayWidget = new QDockWidget("Display");
 
-	propertyWidget = new QDockWidget("properties");
-	materialSettingsWidget = new QDockWidget("material settings");
+	propertyWidget = new QDockWidget("Properties");
+	materialSettingsWidget = new QDockWidget("Material Settings");
 	tabbedWidget = new QTabWidget;
 	graphicsView = new GraphicsView;
 	textEdit = new QTextEdit;
@@ -277,11 +288,14 @@ void MainWindow::configureUI()
 	nodeContainer->setResizeMode(QListWidget::Adjust);
 	nodeContainer->setDefaultDropAction(Qt::MoveAction);
 	nodeContainer->setSelectionMode(QAbstractItemView::SingleSelection);
+	nodeContainer->setSelectionRectVisible(false);
 	nodeContainer->setDragEnabled(true);
 	nodeContainer->viewport()->setAcceptDrops(false);
 	nodeContainer->setDropIndicatorShown(true);
 	nodeContainer->installEventFilter(this);
 	nodeContainer->viewport()->installEventFilter(this);
+	nodeContainer->setWordWrap(true);
+	nodeContainer->setGridSize(QSize(70, 100));
 	
 
 	searchContainer->setStyleSheet("background:rgba(32,32,32,1);");

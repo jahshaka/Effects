@@ -60,15 +60,17 @@ Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title):
     {
         //socket on the left      in socket
         text->setPos(radius*3, -radius);
-        if(rounded) path.addRoundedRect(radius/2, -radius/2, dimentions, dimentions,radius, radius);
-        else path.addRect(radius/2, -radius/2, dimentions, dimentions);
+        if(rounded) path.addRoundedRect(0, -radius/2, dimentions, dimentions,radius, radius);
+        else path.addRect(0, -radius/2, dimentions, dimentions);
 
         socketPos = path.currentPosition();
     }
     setBrush(getSocketColor());
-    QPen pen(QColor(20,20,20),5);
+    QPen pen(QColor(97,97,97),2);
     setPen(pen);
     setPath(path);
+
+	
 
 }
 
@@ -144,8 +146,8 @@ void Socket::updateSocket()
        }
     else
     {
-        if(rounded) path.addRoundedRect(radius/2, -radius/2, dimentions, dimentions,radius, radius);
-        else path.addRect(radius/2, -radius/2, dimentions, dimentions);
+        if(rounded) path.addRoundedRect(0, -radius/2, dimentions, dimentions,radius, radius);
+        else path.addRect(0, -radius/2, dimentions, dimentions);
     }
     setBrush(getSocketColor());
     QPen pen(QColor(20,20,20),5);
@@ -363,7 +365,7 @@ void GraphNode::paint(QPainter *painter,
 	if (isHighlighted) {
 		auto rect = boundingRect();
         painter->setPen(QPen(connectedColor,3));
-        painter->drawRoundedRect(rect ,2,2);
+        painter->drawRoundedRect(rect ,7,7);
     }
 	if (option->state.testFlag(QStyle::State_Selected) != currentSelectedState) {
 		currentSelectedState = option->state.testFlag(QStyle::State_Selected);
@@ -381,6 +383,12 @@ void GraphNode::paint(QPainter *painter,
 	//titlePath.addRoundedRect(0, 0, nodeWidth, 35, 7, 7);
 	titlePath.addRect(0, 30, nodeWidth, 5);
 	painter->fillPath(titlePath, QBrush(titleColor));
+
+	QPen pen(QColor(200, 200, 200, 100), 2);
+	painter->setPen(pen);
+	painter->drawRoundedRect(boundingRect(), 7, 7);
+
+
 }
 
 int GraphNode::type() const
@@ -548,9 +556,6 @@ QJsonObject GraphNodeScene::serialize()
 
 void GraphNodeScene::wheelEvent(QGraphicsSceneWheelEvent * event)
 {
-
-	qDebug() << event->delta();
-
 	QGraphicsScene::wheelEvent(event);
 }
 

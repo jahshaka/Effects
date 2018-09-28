@@ -5,6 +5,7 @@
 #include <QTextEdit>
 #include <QLineEdit>
 #include <QDoubleSpinBox>
+#include <QPainter>
 #include "../properties.h"
 
 class FloatPropertyWidget : public QWidget
@@ -40,6 +41,9 @@ public:
         });
 
         this->setLayout(layout);
+		setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+	//	setStyleSheet("background: rgba(0,0,0,0); border: 1px solid rgba(200,200,200,.5);");
     }
 
     void setProperty(FloatProperty* prop)
@@ -54,10 +58,24 @@ public:
     QLineEdit* displayName;
 
 public slots:
-    void valueChanged(double newVal)
-    {
-        prop->setValue((float)newVal);
-    }
+	void valueChanged(double newVal)
+	{
+		prop->setValue((float)newVal);
+	}
+protected:
+	void paintEvent(QPaintEvent *event) override
+	{
+
+		QWidget::paintEvent(event);
+		QPainter painter(this);
+		painter.setRenderHint(QPainter::Antialiasing);
+	//	QPen pen(QColor(200, 200, 200),2);
+		painter.setPen(QPen(QColor(200, 200, 200, 70), 2));
+		painter.drawRect(0, 0, width(), height());
+		
+	}
+
+
 
 
 };
