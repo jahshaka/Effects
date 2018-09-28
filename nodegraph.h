@@ -189,6 +189,8 @@ protected:
 		const QStyleOptionGraphicsItem options[],
 		QWidget *widget = Q_NULLPTR);
 	void dropEvent(QGraphicsSceneDragDropEvent *event) override;
+	void drawBackground(QPainter *painter, const QRectF &rect);
+
 signals:
     void newConnection(SocketConnection* connection);
     void connectionRemoved(SocketConnection* connection);

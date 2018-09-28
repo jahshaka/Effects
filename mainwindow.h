@@ -69,5 +69,7 @@ private:
 	QTextEdit* textEdit;
 	PropertyListWidget* propertyListWidget;
 	QListWidget *nodeContainer;
+
+	void configureStyleSheet();
 };
 #endif // MAINWINDOW_H

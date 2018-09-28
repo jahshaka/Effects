@@ -52,6 +52,8 @@ MainWindow::MainWindow(QWidget *parent) :
     // add menu items to property widget
     newNodeGraph();
 	generateTileNode();
+	configureStyleSheet();
+	
 }
 
 void MainWindow::setNodeGraph(NodeGraph *graph)
@@ -73,6 +75,7 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
 	propertyListWidget->setNodeGraph(graph);
     sceneWidget->setNodeGraph(graph);
 	displayWidget->setWidget(sceneWidget);
+	sceneWidget->setMinimumSize(100, 100);
 	this->graph = graph;
 }
 
@@ -154,6 +157,46 @@ void MainWindow::restoreGraphPositions(const QJsonObject &data)
     }
 }
 
+
+void MainWindow::configureStyleSheet()
+{
+	setStyleSheet(
+		"QMainWindow::separator {width: 10px;h eight: 0px; margin: -4.5px; padding: 0px; border: 0px solid black; background: rgba(19, 19, 19, 1);}"
+		"QWidget{background:rgba(32,32,32,1); color:rgba(240,240,240,1); border: 0px solid rgba(0,0,0,0);}"
+		"QMenu{	background: rgba(26,26,26,.9); color: rgba(250,250, 250,.9);}"
+		"QMenu::item{padding: 2px 5px 2px 20px;	}"
+		"QMenu::item:hover{	background: rgba(40,128, 185,.9);}"
+		"QMenu::item:selected{	background: rgba(40,128, 185,.9);}"
+		"QDockWidget{color: rgba(250,250,250,.9); background: rgba(32,32,32,1); border: 2px solid rgba(0,0,0,1);}"
+		"QDockWidget::title{background: rgba(22,22,22,1);	border: 1px solid rgba(20,20,20, .8);	text - align: center; font - weight: bold; padding: 5px;}"
+		"QDockWidget::close-button, QDockWidget::float-button{	background: rgba(0,0,0,0);	color: red;	padding: 0px;}"
+		"QDockWidget::close - button:hover, QDockWidget::float - button : hover{background: rgba(0,220,0,1);	padding: 0px;}"
+		"QTabWidget::pane{border: 1px solid rgba(0,0,0,.5);	border - top: 0px solid rgba(0,0,0,0);	}"
+		"QTabWidget::tab - bar{	left: 1px;	}"
+		"QDockWidget::tab{	background:rgba(32,32,32,1);}"
+		"QScrollBar: vertical {border : 0px solid black;	background - color: rgba(32, 32, 32, .7);width: 8px;padding: 1px;}"
+		"QScrollBar::handle {	background: rgba(20, 20, 20, .9);background: accent;	border - radius: 4px;right: 1px;width: 8px;}"
+		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
+		" QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
+		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .1);}"
+	);
+
+	/*nodeContainer->setStyleSheet("QListWidget::item{background: rgba(70,70,70,1); color: rgba(200,200,200,1);}"
+		"QListView::item:selected:active {background: qlineargradient(x1 : 0, y1 : 0, x2 : 0, y2 : 1,stop : 0 #6a6ea9, stop: 1 #888dd9);}"
+		"QWidget{background: rgba(32,32,32,1);}");*/
+
+	propertyListWidget->setStyleSheet(
+		"QWidget{background:rgba(32,32,32,1);}"
+	);
+
+	nodeContainer->setStyleSheet(
+	
+		"QListView::item{ border-radius: 2px; border: 1px solid rgba(0,0,0,1);  }"
+	
+	
+	);
+}
+
 void MainWindow::configureUI()
 {
 	nodeTray = new QDockWidget("node tray");
@@ -181,8 +224,8 @@ void MainWindow::configureUI()
 	addDockWidget(Qt::RightDockWidgetArea, textWidget, Qt::Vertical);
 	addDockWidget(Qt::RightDockWidgetArea, displayWidget, Qt::Vertical);
 	addDockWidget(Qt::RightDockWidgetArea, materialSettingsWidget, Qt::Vertical);
-	addDockWidget(Qt::RightDockWidgetArea, propertyWidget, Qt::Vertical);
-	QMainWindow::tabifyDockWidget(propertyWidget, materialSettingsWidget);
+	addDockWidget(Qt::LeftDockWidgetArea, propertyWidget, Qt::Vertical);
+	//QMainWindow::tabifyDockWidget(propertyWidget, materialSettingsWidget);
 
 	textWidget->setWidget(textEdit);
 	propertyWidget->setWidget(propertyListWidget);
@@ -197,6 +240,7 @@ void MainWindow::configureUI()
 	auto searchContainer = new QWidget;
 	auto searchLayout = new QHBoxLayout;
 	auto searchBar = new QLineEdit;
+	searchContainer->setContentsMargins(0, 0, 0, 0);
 
 	searchContainer->setLayout(searchLayout);
 	searchLayout->addWidget(searchBar);
@@ -222,12 +266,12 @@ void MainWindow::configureUI()
 	containerLayout->addWidget(searchContainer);
 	containerLayout->addWidget(nodeContainer);
 
+	nodeContainer->setAlternatingRowColors(false);
 	nodeContainer->setSpacing(5);
 	nodeContainer->setContentsMargins(10, 3, 10, 10);
 	nodeContainer->setViewMode(QListWidget::IconMode);
 	nodeContainer->setIconSize(currentSize);
 	nodeContainer->setMouseTracking(true);
-	nodeContainer->setAlternatingRowColors(true);
 	nodeContainer->setDragDropMode(QAbstractItemView::DragDrop);
 	nodeContainer->setMovement(QListView::Static);
 	nodeContainer->setResizeMode(QListWidget::Adjust);
@@ -238,9 +282,10 @@ void MainWindow::configureUI()
 	nodeContainer->setDropIndicatorShown(true);
 	nodeContainer->installEventFilter(this);
 	nodeContainer->viewport()->installEventFilter(this);
-	nodeContainer->setStyleSheet("QListWidget::item{background: rgba(70,70,70,1); color: rgba(200,200,200,1);}"
-								"QListView::item:selected:active {background: qlineargradient(x1 : 0, y1 : 0, x2 : 0, y2 : 1,stop : 0 #6a6ea9, stop: 1 #888dd9);}"
-								"");
+	
+
+	searchContainer->setStyleSheet("background:rgba(32,32,32,1);");
+	searchBar->setStyleSheet("QLineEdit{ background:rgba(41,41,41,1); border: 1px solid rgba(150,150,150,.2); border-radius: 2px; }");
 
 }
 
@@ -250,7 +295,7 @@ void MainWindow::generateTileNode()
 
 	for (QString tile : graph->modelFactories.uniqueKeys()) {
 		if (tile == "property") continue;
-		auto item = new NodeListItem;
+		auto item = new QListWidgetItem;
 		item->setData(Qt::DisplayRole, tile);
 		item->setData(Qt::UserRole, tile);
 		item->setSizeHint(currentSize);
@@ -269,7 +314,7 @@ void MainWindow::generateTileNode(QList<QListWidgetItem*> list)
 
 	for (auto tile : list) {
 		
-		auto item = new NodeListItem;
+		auto item = new QListWidgetItem;
 		item->setData(Qt::DisplayRole, tile->data(Qt::DisplayRole));
 		item->setData(Qt::UserRole, tile->data(Qt::DisplayRole));
 		item->setSizeHint(currentSize);

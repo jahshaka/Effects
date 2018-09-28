@@ -549,6 +549,8 @@ QJsonObject GraphNodeScene::serialize()
 void GraphNodeScene::wheelEvent(QGraphicsSceneWheelEvent * event)
 {
 
+	qDebug() << event->delta();
+
 	QGraphicsScene::wheelEvent(event);
 }
 
@@ -564,6 +566,11 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 	auto factory = nodeGraph->modelFactories[event->mimeData()->text()];
 	auto node = factory();
 	this->addNodeModel(node, event->scenePos().x(), event->scenePos().y());
+}
+
+void GraphNodeScene::drawBackground(QPainter * painter, const QRectF & rect)
+{
+	//does not draw background
 }
 
 
