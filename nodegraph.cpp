@@ -23,6 +23,7 @@
 #include "../graph/nodemodel.h"
 #include "../graph/connectionmodel.h"
 #include "../graph/nodegraph.h"
+#include "../graph/library.h"
 #include "../nodes/test.h"
 
 
@@ -481,6 +482,7 @@ QMenu *GraphNodeScene::createContextMenu(float x, float y)
 {
     auto menu = new QMenu();
 
+	/*
     for(auto key : nodeGraph->modelFactories.keys()) {
         auto factory = nodeGraph->modelFactories[key];
         connect(menu->addAction(key), &QAction::triggered, [this,x, y,factory](){
@@ -490,6 +492,16 @@ QMenu *GraphNodeScene::createContextMenu(float x, float y)
 
         });
     }
+	*/
+	for (auto item : nodeGraph->library->getItems()) {
+		auto factory = item->factoryFunction;
+		connect(menu->addAction(item->displayName), &QAction::triggered, [this, x, y, factory]() {
+
+			auto node = factory();
+			this->addNodeModel(node, x, y);
+
+		});
+	}
 
     // create properties
     auto propMenu = menu->addMenu("Properties");

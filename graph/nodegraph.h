@@ -13,6 +13,7 @@
 
 class NodeModel;
 class ConnectionModel;
+class NodeLibrary;
 
 class ModelContext
 {
@@ -31,8 +32,10 @@ public:
 	Property* getPropertyByName(const QString& name);
 	Property* getPropertyById(const QString& id);
 
-	QMap<QString, std::function<NodeModel*()>> modelFactories;
-	void registerModel(QString name, std::function<NodeModel*()> factoryFunction);
+	//QMap<QString, std::function<NodeModel*()>> modelFactories;
+	//void registerModel(QString name, std::function<NodeModel*()> factoryFunction);
+	NodeLibrary* library;
+	void setNodeLibrary(NodeLibrary* lib);
 
 	void addNode(NodeModel* model);
 

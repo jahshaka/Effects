@@ -1,6 +1,7 @@
 #include "nodegraph.h"
 #include "connectionmodel.h"
 #include "../nodes/test.h"
+#include "library.h"
 
 #include <QJsonObject>
 #include <QJsonArray>
@@ -27,10 +28,18 @@ Property *NodeGraph::getPropertyById(const QString &id)
 	return nullptr;
 }
 
+/*
 void NodeGraph::registerModel(QString name, std::function<NodeModel *()> factoryFunction)
 {
 	modelFactories.insert(name, factoryFunction);
 }
+*/
+
+void NodeGraph::setNodeLibrary(NodeLibrary* lib)
+{
+	this->library = lib;
+}
+
 
 void NodeGraph::addNode(NodeModel *model)
 {
@@ -146,7 +155,8 @@ NodeGraph* NodeGraph::deserialize(QJsonObject obj)
 			nodeModel = new SurfaceMasterNode();
 		}
 		else {
-			nodeModel = graph->modelFactories[type]();
+			//nodeModel = graph->modelFactories[type]();
+			nodeModel = graph->library->createNode(type);
 		}
 		nodeModel->id = nodeObj["id"].toString();
 

@@ -30,6 +30,7 @@ set(CPP
 	graph/connectionmodel.cpp
 	graph/socketmodel.cpp
 	graph/sockethelper.cpp
+	graph/library.cpp
 	# generator
 	generator/shadergenerator.cpp
 	generator/shadercontext.cpp
@@ -55,6 +56,7 @@ set(HEADERS
 		graph/socketmodel.h
 		graph/sockethelper.h
 		graph/sockets.h
+		graph/library.h
 		# generator
 		generator/shadergenerator.h
 		generator/shadercontext.h

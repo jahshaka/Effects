@@ -1,7 +1,9 @@
 #include "test.h"
+#include "../graph/library.h"
 
 void registerModels(NodeGraph* graph)
 {
+	/*
 	// mult
 	graph->registerModel("vectorMultiply", []()
 	{
@@ -53,6 +55,66 @@ void registerModels(NodeGraph* graph)
 	{
 		return new PropertyNode();
 	});
+
+	*/
+
+	auto lib = new NodeLibrary();
+
+	// mult
+	lib->addNode("vectorMultiply","Vector Multiply","", []()
+	{
+		auto multNode = new VectorMultiplyNode();
+		return multNode;
+	});
+
+	// normal
+	lib->addNode("worldNormal", "World Normal", "", []()
+	{
+		auto normalNode = new WorldNormalNode();
+		return normalNode;
+	});
+
+	// float
+	lib->addNode("float", "Float", "", []()
+	{
+		auto floatNode = new FloatNodeModel();
+		return floatNode;
+	});
+
+	// time
+	lib->addNode("time", "Time", "", []()
+	{
+		auto node = new TimeNode();
+		return node;
+	});
+
+
+	// uv
+	lib->addNode("texCoords", "Texture Coordinate", "", []()
+	{
+		return new TextureCoordinateNode();
+	});
+
+	// sine
+	lib->addNode("sine", "Sine", "", []()
+	{
+		return new SineNode();
+	});
+
+	//make color
+	lib->addNode("makeColor", "", "", []() {
+		return new MakeColorNode();
+	});
+
+	graph->setNodeLibrary(lib);
+
+	/*
+	// property
+	lib->addNode("property", "", "", []()
+	{
+		return new PropertyNode();
+	});
+	*/
 }
 
 SurfaceMasterNode::SurfaceMasterNode()
