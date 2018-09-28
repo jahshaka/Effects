@@ -40,7 +40,7 @@ NodeModel* NodeLibrary::createNode(QString name)
 {
 	for (auto item : items)
 		if (item->name == name)
-			item->factoryFunction();
+			return item->factoryFunction();
 	return nullptr;
 }
 

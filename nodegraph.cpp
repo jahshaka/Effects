@@ -66,7 +66,7 @@ Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title):
         socketPos = path.currentPosition();
     }
     setBrush(getSocketColor());
-    QPen pen(QColor(97,97,97),2);
+    QPen pen(QColor(97,97,97),3);
     setPen(pen);
     setPath(path);
 
@@ -150,8 +150,8 @@ void Socket::updateSocket()
         else path.addRect(0, -radius/2, dimentions, dimentions);
     }
     setBrush(getSocketColor());
-    QPen pen(QColor(20,20,20),5);
-    setPen(pen);
+	QPen pen(QColor(27, 27, 27), 3);
+	setPen(pen);
     setPath(path);
 }
 
@@ -384,7 +384,7 @@ void GraphNode::paint(QPainter *painter,
 	titlePath.addRect(0, 30, nodeWidth, 5);
 	painter->fillPath(titlePath, QBrush(titleColor));
 
-	QPen pen(QColor(200, 200, 200, 100), 2);
+	QPen pen(QColor(200, 200, 200, 100), 3);
 	painter->setPen(pen);
 	painter->drawRoundedRect(boundingRect(), 7, 7);
 
@@ -567,9 +567,9 @@ void GraphNodeScene::drawItems(QPainter * painter, int numItems, QGraphicsItem *
 void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 {
 	event->accept();
+	auto node = nodeGraph->library->createNode(event->mimeData()->text());
 
-	auto factory = nodeGraph->modelFactories[event->mimeData()->text()];
-	auto node = factory();
+//	auto factory = nodeGraph->modelFactories[event->mimeData()->text()];
 	this->addNodeModel(node, event->scenePos().x(), event->scenePos().y());
 }
 

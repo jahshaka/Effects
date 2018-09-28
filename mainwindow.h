@@ -8,7 +8,7 @@
 #include <QTextEdit>
 #include <QDockWidget>
 #include "propertylistwidget.h"
-#include "nodemodel.h"
+//#include "nodemodel.h"
 #include "graphicsview.h"
 
 namespace Ui {
@@ -17,7 +17,7 @@ class MainWindow;
 
 struct nodeListModel {
 	QString name;
-	NodeType type;
+	//NodeType type;
 	int inSockets;
 	int outSockets;
 

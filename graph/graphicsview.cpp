@@ -11,7 +11,7 @@ GraphicsView::GraphicsView( QWidget *parent) : QGraphicsView(parent)
 	setRenderHint(QPainter::Antialiasing);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	setCacheMode(QGraphicsView::CacheBackground);
+	//setCacheMode(QGraphicsView::CacheBackground);
 	setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
 	QGraphicsView::setAcceptDrops(true);
 }
@@ -70,7 +70,7 @@ void GraphicsView::drawBackground(QPainter * painter, const QRectF & rect)
 		double bottom = std::floor(tl.y() / gridStep - 0.5);
 		double top = std::floor(br.y() / gridStep + 1.0);
 
-		QPen pen(QColor(100, 100, 100, 50), 2);
+		QPen pen(QColor(100, 100, 100, 20), 2);
 		painter->setPen(pen);
 
 		// vertical lines

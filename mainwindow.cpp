@@ -23,6 +23,7 @@
 #include "nodes/test.h"
 #include "materialwriter.h"
 #include "nodelistitem.h"
+#include "graph/library.h"
 #include <QPointer>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -307,11 +308,11 @@ void MainWindow::generateTileNode()
 {
 	QSize currentSize(80, 70);
 
-	for (QString tile : graph->modelFactories.uniqueKeys()) {
-		if (tile == "property") continue;
+	for (NodeLibraryItem *tile : graph->library->items) {
+		if (tile->name == "property") continue;
 		auto item = new QListWidgetItem;
-		item->setData(Qt::DisplayRole, tile);
-		item->setData(Qt::UserRole, tile);
+		item->setData(Qt::DisplayRole, tile->displayName);
+		item->setData(Qt::UserRole, tile->name);
 		item->setSizeHint(currentSize);
 		item->setTextAlignment(Qt::AlignCenter);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
