@@ -1,4 +1,5 @@
 #include <QDebug>
+#include <QDropEvent>
 #include <QGraphicsScene>
 #include <QGraphicsRectItem>
 #include <QGraphicsPathItem>
@@ -10,6 +11,7 @@
 #include <QPainter>
 #include <QWidget>
 #include <QMenu>
+#include <QMimeData>
 #include <QGraphicsWidget>
 #include <QGraphicsView>
 #include <QGraphicsProxyWidget>
@@ -58,15 +60,17 @@ Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title):
     {
         //socket on the left      in socket
         text->setPos(radius*3, -radius);
-        if(rounded) path.addRoundedRect(radius/2, -radius/2, dimentions, dimentions,radius, radius);
-        else path.addRect(radius/2, -radius/2, dimentions, dimentions);
+        if(rounded) path.addRoundedRect(0, -radius/2, dimentions, dimentions,radius, radius);
+        else path.addRect(0, -radius/2, dimentions, dimentions);
 
         socketPos = path.currentPosition();
     }
     setBrush(getSocketColor());
-    QPen pen(QColor(20,20,20),5);
+    QPen pen(QColor(97,97,97),3);
     setPen(pen);
     setPath(path);
+
+	
 
 }
 
@@ -142,12 +146,12 @@ void Socket::updateSocket()
        }
     else
     {
-        if(rounded) path.addRoundedRect(radius/2, -radius/2, dimentions, dimentions,radius, radius);
-        else path.addRect(radius/2, -radius/2, dimentions, dimentions);
+        if(rounded) path.addRoundedRect(0, -radius/2, dimentions, dimentions,radius, radius);
+        else path.addRect(0, -radius/2, dimentions, dimentions);
     }
     setBrush(getSocketColor());
-    QPen pen(QColor(20,20,20),5);
-    setPen(pen);
+	QPen pen(QColor(27, 27, 27), 3);
+	setPen(pen);
     setPath(path);
 }
 
@@ -361,7 +365,7 @@ void GraphNode::paint(QPainter *painter,
 	if (isHighlighted) {
 		auto rect = boundingRect();
         painter->setPen(QPen(connectedColor,3));
-        painter->drawRoundedRect(rect ,2,2);
+        painter->drawRoundedRect(rect ,7,7);
     }
 	if (option->state.testFlag(QStyle::State_Selected) != currentSelectedState) {
 		currentSelectedState = option->state.testFlag(QStyle::State_Selected);
@@ -379,6 +383,12 @@ void GraphNode::paint(QPainter *painter,
 	//titlePath.addRoundedRect(0, 0, nodeWidth, 35, 7, 7);
 	titlePath.addRect(0, 30, nodeWidth, 5);
 	painter->fillPath(titlePath, QBrush(titleColor));
+
+	QPen pen(QColor(200, 200, 200, 100), 3);
+	painter->setPen(pen);
+	painter->drawRoundedRect(boundingRect(), 7, 7);
+
+
 }
 
 int GraphNode::type() const
@@ -546,15 +556,26 @@ QJsonObject GraphNodeScene::serialize()
 
 void GraphNodeScene::wheelEvent(QGraphicsSceneWheelEvent * event)
 {
-
 	QGraphicsScene::wheelEvent(event);
 }
 
 void GraphNodeScene::drawItems(QPainter * painter, int numItems, QGraphicsItem * items[], const QStyleOptionGraphicsItem options[], QWidget * widget)
 {
-//	removeItem(nodeGraph);
-//	addItem(nodeGraph);
 	QGraphicsScene::drawItems(painter, numItems, items, options, widget);
+}
+
+void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
+{
+	event->accept();
+	auto node = nodeGraph->library->createNode(event->mimeData()->text());
+
+//	auto factory = nodeGraph->modelFactories[event->mimeData()->text()];
+	this->addNodeModel(node, event->scenePos().x(), event->scenePos().y());
+}
+
+void GraphNodeScene::drawBackground(QPainter * painter, const QRectF & rect)
+{
+	//does not draw background
 }
 
 
@@ -566,6 +587,7 @@ GraphNodeScene::GraphNodeScene(QWidget* parent):
     this->installEventFilter(this);
 	conGroup = new QGraphicsItemGroup;
 	addItem(conGroup);
+	
 }
 
 SocketConnection *GraphNodeScene::addConnection(QString leftNodeId, int leftSockIndex, QString rightNodeId, int rightSockIndex)
@@ -697,6 +719,12 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
         }
     }
     break;
+
+	case QEvent::GraphicsSceneDrop: {
+		auto event = (QDropEvent*)e;
+		event->acceptProposedAction();
+	}
+		break;	
     }
 
     return QObject::eventFilter(o, e);
@@ -732,8 +760,6 @@ GraphNode *GraphNodeScene::getNodeByPos(QPointF point)
     //auto items = this->items();
     for (auto item : items) {
         if (item && item->boundingRect().contains(point)){
-            qDebug() << "clicked nbode";
-            qDebug() << item->boundingRect();
             return (GraphNode*)item;
         }
     }

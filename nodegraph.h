@@ -76,7 +76,7 @@ private:
     QPointF socketPos;
     QColor socketColor;
     QColor connectedColor = QColor(50,150,250);
-    QColor disconnectedColor= QColor(90,90,90);
+    QColor disconnectedColor= QColor(90,90,90).darker(175);
     bool connected;
     bool rounded = true;
 
@@ -188,6 +188,9 @@ protected:
 		QGraphicsItem *items[],
 		const QStyleOptionGraphicsItem options[],
 		QWidget *widget = Q_NULLPTR);
+	void dropEvent(QGraphicsSceneDragDropEvent *event) override;
+	void drawBackground(QPainter *painter, const QRectF &rect);
+
 signals:
     void newConnection(SocketConnection* connection);
     void connectionRemoved(SocketConnection* connection);
