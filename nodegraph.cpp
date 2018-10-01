@@ -26,6 +26,7 @@
 #include "../graph/connectionmodel.h"
 #include "../graph/nodegraph.h"
 #include "../graph/library.h"
+#include "../graph/graphicsview.h"
 #include "../nodes/test.h"
 
 
@@ -33,8 +34,8 @@ Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title):
     QGraphicsPathItem(parent),
     socketType(socketType)
 {
-    this->setFlag(QGraphicsItem::ItemSendsScenePositionChanges);
-    text = new QGraphicsTextItem(this);
+	this->setFlag(QGraphicsItem::ItemSendsScenePositionChanges);
+	text = new QGraphicsTextItem(this);
     text->setPlainText(title);
     text->setDefaultTextColor(QColor(200,200,200));
     setSocketColor(disconnectedColor);
@@ -209,6 +210,7 @@ void SocketConnection::paint(QPainter * painter, const QStyleOptionGraphicsItem 
 	painter->setRenderHint(QPainter::Antialiasing);
 	QGraphicsPathItem::paint(painter, option, widget);
 }
+
 
 
 GraphNode::GraphNode(QGraphicsItem* parent):
@@ -638,16 +640,21 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
     {
         auto sock = getSocketAt(me->scenePos().x(), me->scenePos().y());
         if (sock != nullptr) {
+			if (me->button() == Qt::LeftButton) {
+				con = new SocketConnection();
+				con->socket1 = sock;
+				con->pos1 = me->scenePos();
+				con->pos2 = me->scenePos();
+				con->updatePath();
+				conGroup->addToGroup(con);
+				// this->addItem(con);
+			}
+			if (me->button() == Qt::RightButton) {
 
-            con = new SocketConnection();
-            con->socket1 = sock;
-            con->pos1 = me->scenePos();
-            con->pos2 = me->scenePos();
-            con->updatePath();
-			conGroup->addToGroup(con);
-           // this->addItem(con);
 
-            return true;
+			}
+
+			return true;
         }
         else if (me->button() == Qt::RightButton)
         {
