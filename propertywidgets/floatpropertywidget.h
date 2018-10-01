@@ -20,8 +20,6 @@ public:
     void buildUi()
     {
         auto layout = new QVBoxLayout();
-
-        // title
         auto line = new QHBoxLayout();
         line->addWidget(new QLabel("Display Name"));
         displayName = new QLineEdit("Float Property");
@@ -43,7 +41,6 @@ public:
         this->setLayout(layout);
 		setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-	//	setStyleSheet("background: rgba(0,0,0,0); border: 1px solid rgba(200,200,200,.5);");
     }
 
     void setProperty(FloatProperty* prop)
@@ -65,14 +62,11 @@ public slots:
 protected:
 	void paintEvent(QPaintEvent *event) override
 	{
-
 		QWidget::paintEvent(event);
 		QPainter painter(this);
 		painter.setRenderHint(QPainter::Antialiasing);
-	//	QPen pen(QColor(200, 200, 200),2);
 		painter.setPen(QPen(QColor(200, 200, 200, 70), 2));
 		painter.drawRect(0, 0, width(), height());
-		
 	}
 
 

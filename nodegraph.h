@@ -178,6 +178,7 @@ public:
     void addPropertyNode(Property* prop, float x, float y, bool addToGraph = true);
 
     QMenu* createContextMenu(float x, float y);
+	QMenu* removeConnectionContextMenu(float x, float y);
 
     QJsonObject serialize();
 

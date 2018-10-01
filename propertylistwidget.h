@@ -10,6 +10,7 @@ class PropertyListWidget;
 class QVBoxLayout;
 class NodeGraph;
 class FloatProperty;
+class Vec2Property;
 
 class PropertyListWidget : public QWidget
 {
@@ -25,6 +26,9 @@ public:
 private:
     void addNewFloatProperty();
 	void addFloatProperty(FloatProperty* floatProp);
+
+	void addNewVec2Property();
+	void addVec2Property(Vec2Property* vec2Prop);
 
 private:
     Ui::PropertyListWidget *ui;

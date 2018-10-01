@@ -528,6 +528,20 @@ QMenu *GraphNodeScene::createContextMenu(float x, float y)
     return menu;
 }
 
+QMenu * GraphNodeScene::removeConnectionContextMenu(float x, float y)
+{
+	auto menu = new QMenu();
+	auto sock = getSocketAt(x, y);
+	auto string = QString("remove %1 connection").arg(sock->text->toPlainText());
+	if(sock)
+	connect(menu->addAction(string), &QAction::triggered, [=]() {
+	//	sock->connections.removeAll();
+	});
+
+
+	return menu;
+}
+
 QJsonObject GraphNodeScene::serialize()
 {
     QJsonObject data;
@@ -579,7 +593,6 @@ void GraphNodeScene::drawBackground(QPainter * painter, const QRectF & rect)
 {
 	//does not draw background
 }
-
 
 GraphNodeScene::GraphNodeScene(QWidget* parent):
     QGraphicsScene(parent)
@@ -650,8 +663,14 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 				// this->addItem(con);
 			}
 			if (me->button() == Qt::RightButton) {
+				auto x = me->scenePos().x();
+				auto y = me->scenePos().y();
+				auto menu = removeConnectionContextMenu(x,y);
+				auto view = this->views().first();
+				auto scenePoint = view->mapFromScene(me->scenePos());
+				auto p = view->viewport()->mapToGlobal(scenePoint);
 
-
+				menu->exec(p);
 			}
 
 			return true;
