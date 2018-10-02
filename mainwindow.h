@@ -9,7 +9,7 @@
 #include <QDockWidget>
 #include "propertylistwidget.h"
 //#include "nodemodel.h"
-#include "graphicsview.h"
+#include "graph/graphicsview.h"
 
 namespace Ui {
 class MainWindow;

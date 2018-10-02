@@ -22,7 +22,7 @@
 #include "generator/shadergenerator.h"
 #include "nodes/test.h"
 #include "materialwriter.h"
-#include "nodelistitem.h"
+//#include "nodelistitem.h"
 #include "graph/library.h"
 #include <QPointer>
 

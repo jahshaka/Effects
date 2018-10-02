@@ -98,6 +98,7 @@ class GraphNode : public QGraphicsPathItem
     int outSocketCount = 0;
 public:
     int nodeType;
+	int level = 0;
 	bool isHighlighted = false;
 	bool currentSelectedState = false;
 	bool check = false;
@@ -126,7 +127,7 @@ public:
 private:
     QColor connectedColor = QColor(50,150,250);
     QColor disconnectedColor= QColor(90,90,90,0);
-    void highlightNode(bool val);
+    void highlightNode(bool val, int lvl);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event)override;
