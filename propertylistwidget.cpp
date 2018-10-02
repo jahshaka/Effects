@@ -4,6 +4,7 @@
 #include <QDebug>
 #include "propertywidgets/floatpropertywidget.h"
 #include "propertywidgets/vectorpropertywidget.h"
+#include "propertywidgets/intpropertywidget.h"
 #include "properties.h"
 #include "graph/nodegraph.h"
 //#include "nodemodel.h"
@@ -17,15 +18,18 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
     auto action = menu->addAction("Add Float Property");
     connect(action, &QAction::triggered, this, &PropertyListWidget::addNewFloatProperty);
 
-    menu->addAction("Add Int Property");
-	auto action1 = menu->addAction("Add Vector2 Property");
-	menu->addAction("Add Vector3 Property");
-    menu->addAction("Add Vector4 Property");
+    auto actionInt = menu->addAction("Add Int Property");
+	auto action2 = menu->addAction("Add Vector2 Property");
+	auto action3 = menu->addAction("Add Vector3 Property");
+	auto action4 = menu->addAction("Add Vector4 Property");
     menu->addAction("Add Texture Property");
     ui->addPropertyButton->setMenu(menu);
     ui->addPropertyButton->setPopupMode(QToolButton::InstantPopup);
 
-	connect(action1, &QAction::triggered, this, &PropertyListWidget::addNewVec2Property);
+	connect(actionInt, &QAction::triggered, this, &PropertyListWidget::addNewIntProperty);
+	connect(action2, &QAction::triggered, this, &PropertyListWidget::addNewVec2Property);
+	connect(action3, &QAction::triggered, this, &PropertyListWidget::addNewVec3Property);
+	connect(action4, &QAction::triggered, this, &PropertyListWidget::addNewVec4Property);
 
 
     delete ui->widgetList->layout();
@@ -92,4 +96,57 @@ void PropertyListWidget::addVec2Property(Vec2Property * vec2Prop)
 	auto propWidget = new Vector2DPropertyWidget();
 	this->layout->insertWidget(this->layout->count() - 1, propWidget);
 	propWidget->setProp(vec2Prop);
+}
+///////
+
+void PropertyListWidget::addNewVec3Property()
+{
+	auto prop = new Vec3Property;
+	prop->displayName = "Vector 3 property";
+	prop->name = QString("property%1").arg(graph->properties.count());
+	this->addVec3Property(prop);
+	this->graph->addProperty(prop);
+}
+
+void PropertyListWidget::addVec3Property(Vec3Property * vec3Prop)
+{
+	auto propWidget = new Vector3DPropertyWidget();
+	this->layout->insertWidget(this->layout->count() - 1, propWidget);
+	propWidget->setProp(vec3Prop);
+}
+
+///////
+
+void PropertyListWidget::addNewVec4Property()
+{
+	auto prop = new Vec4Property;
+	prop->displayName = "Vector 4 property";
+	prop->name = QString("property%1").arg(graph->properties.count());
+	this->addVec4Property(prop);
+	this->graph->addProperty(prop);
+}
+
+void PropertyListWidget::addVec4Property(Vec4Property * vec4Prop)
+{
+	auto propWidget = new Vector4DPropertyWidget();
+	this->layout->insertWidget(this->layout->count() - 1, propWidget);
+	propWidget->setProp(vec4Prop);
+}
+
+///////
+
+void PropertyListWidget::addNewIntProperty()
+{
+	auto prop = new IntProperty;
+	prop->displayName = "Int property";
+	prop->name = QString("property%1").arg(graph->properties.count());
+	this->addIntProperty(prop);
+	this->graph->addProperty(prop);
+}
+
+void PropertyListWidget::addIntProperty(IntProperty * intProp)
+{
+	auto propWidget = new IntPropertyWidget();
+	this->layout->insertWidget(this->layout->count() - 1, propWidget);
+	propWidget->setProp(intProp);
 }

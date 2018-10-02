@@ -404,6 +404,9 @@ void PropertyNode::setProperty(Property* property)
 
 	// add output based on property type
 	switch (property->type) {
+	case PropertyType::Int:
+		this->addOutputSocket(new FloatSocketModel("int"));
+		break;
 	case PropertyType::Float:
 		this->addOutputSocket(new FloatSocketModel("float"));
 		break;

@@ -99,6 +99,9 @@ struct IntProperty : public Property
     int maxValue;
 
     IntProperty() {
+		value = 0;
+		minValue = 0;
+		maxValue = 100;
         type = PropertyType::Int;
     }
 
