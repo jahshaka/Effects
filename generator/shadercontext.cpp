@@ -19,6 +19,16 @@ TempVar ShaderContext::createTempVar(SocketModel* sock)
 	return tempVar;
 }
 
+TempVar ShaderContext::createTempVar(QString typeName)
+{
+	TempVar tempVar;
+	tempVar.name = QString("temp%1").arg(tempVars.count());
+	tempVar.typeName = typeName;
+	tempVars.insert((new QUuid())->toString(), tempVar);
+
+	return tempVar;
+}
+
 QList<TempVar> ShaderContext::getTempVars()
 {
 	return tempVars.values();
