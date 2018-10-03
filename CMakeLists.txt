@@ -23,6 +23,7 @@ set(CPP
 	materialsettingswidget.cpp
     propertywidgets/vectorpropertywidget.cpp
     propertywidgets/intpropertywidget.cpp
+    propertywidgets/floatpropertywidget.cpp
     properties.cpp
     materialwriter.cpp
     #graphtest.cpp

@@ -79,7 +79,7 @@ void PropertyListWidget::addFloatProperty(FloatProperty* floatProp)
 {
 	auto propWidget = new FloatPropertyWidget();
 	this->layout->insertWidget(this->layout->count() - 1, propWidget);
-	propWidget->setProperty(floatProp);
+	propWidget->setProp(floatProp);
 }
 
 void PropertyListWidget::addNewVec2Property()
