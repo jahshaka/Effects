@@ -97,11 +97,13 @@ struct IntProperty : public Property
     int value;
     int minValue;
     int maxValue;
+	int step;
 
     IntProperty() {
 		value = 0;
 		minValue = 0;
 		maxValue = 100;
+		step = 1;
         type = PropertyType::Int;
     }
 

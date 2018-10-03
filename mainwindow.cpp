@@ -162,7 +162,7 @@ void MainWindow::restoreGraphPositions(const QJsonObject &data)
 void MainWindow::configureStyleSheet()
 {
 	setStyleSheet(
-		"QMainWindow::separator {width: 10px;h eight: 0px; margin: -4.5px; padding: 0px; border: 0px solid black; background: rgba(19, 19, 19, 1);}"
+		"QMainWindow::separator {width: 10px;h eight: 0px; margin: -3.5px; padding: 0px; border: 0px solid black; background: rgba(19, 19, 19, 1);}"
 		"QWidget{background:rgba(32,32,32,1); color:rgba(240,240,240,1); border: 0px solid rgba(0,0,0,0);}"
 		"QMenu{	background: rgba(26,26,26,.9); color: rgba(250,250, 250,.9);}"
 		"QMenu::item{padding: 2px 5px 2px 20px;	}"

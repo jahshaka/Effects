@@ -19,11 +19,15 @@ public:
 
 private:
 	QSpinBox* intSpinBox;
+	QSpinBox* maxSpinBox;
+	QSpinBox* minSpinBox;
+	QSpinBox* stepSpinBox;
 	IntProperty *prop;
 	QLineEdit *displayName;
 	int x = 0;
 	int min =0;
 	int max =0;
+	int step =0;
 	QWidget *widget;
 
 protected:

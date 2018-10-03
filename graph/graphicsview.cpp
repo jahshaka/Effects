@@ -122,11 +122,7 @@ void GraphicsView::mousePressEvent(QMouseEvent * event)
 
 	if (event->button() == Qt::MiddleButton) {
 		clickPos = mapToScene(event->pos());
-
-		if (scene()->mouseGrabberItem() == nullptr) {
-			dragging = true;
-		}
-
+		dragging = true;
 	}
 }
 
