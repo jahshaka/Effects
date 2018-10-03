@@ -43,6 +43,8 @@ void Vector2DPropertyWidget::setProp(Vec2Property *prop)
 	displayName->setText(prop->displayName);
 	xSpinBox->setValue(prop->value.x());
 	ySpinBox->setValue(prop->value.y());
+	emit nameChanged(displayName->text());
+
 }
 
 QWidget * Vector2DPropertyWidget::getValueWidget()
@@ -141,6 +143,8 @@ void Vector3DPropertyWidget::setProp(Vec3Property *prop)
 	xSpinBox->setValue(prop->value.x());
 	ySpinBox->setValue(prop->value.y());
 	zSpinBox->setValue(prop->value.z());
+	emit nameChanged(displayName->text());
+
 }
 
 QWidget * Vector3DPropertyWidget::getValueWidget()
@@ -246,6 +250,7 @@ void Vector4DPropertyWidget::setProp(Vec4Property *prop)
 	xSpinBox->setValue(prop->value.x());
 	ySpinBox->setValue(prop->value.y());
 	zSpinBox->setValue(prop->value.z());
+	emit nameChanged(displayName->text());
 }
 
 QWidget * Vector4DPropertyWidget::getValueWidget()

@@ -35,6 +35,8 @@ Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title):
     socketType(socketType)
 {
 	this->setFlag(QGraphicsItem::ItemSendsScenePositionChanges);
+
+
 	text = new QGraphicsTextItem(this);
     text->setPlainText(title);
     text->setDefaultTextColor(QColor(200,200,200));
@@ -156,6 +158,7 @@ void Socket::updateSocket()
     setPath(path);
 }
 
+
 SocketConnection::SocketConnection()
 {
     socket1 = nullptr;
@@ -184,9 +187,9 @@ void SocketConnection::updatePosFromSockets()
 
 void SocketConnection::updatePath()
 {
-    QPainterPath p;
-
-    p.moveTo(pos1);
+ 
+	p = new QPainterPath;
+    p->moveTo(pos1);
 
     qreal dx = pos2.x() - pos1.x();
     qreal dy = pos2.y() - pos1.y();
@@ -194,10 +197,25 @@ void SocketConnection::updatePath()
     QPointF ctr1(pos1.x() + dx * 0.25, pos1.y() + dy * 0.1);
     QPointF ctr2(pos1.x() + dx * 0.75, pos1.y() + dy * 0.9);
 
-    p.cubicTo(ctr1, ctr2, pos2);
-    p.setFillRule(Qt::OddEvenFill);
+    p->cubicTo(ctr1, ctr2, pos2);
+    p->setFillRule(Qt::OddEvenFill);
 
-    setPath(p);
+	//if (status == SocketConnectionStatus::Started || status == SocketConnectionStatus::Inprogress) {
+	//	QPainterPathStroker str;
+	//	str.setCapStyle(Qt::RoundCap);
+	//	str.setWidth(10.0);
+	//	str.setDashPattern(Qt::CustomDashLine);
+	//	str.setDashOffset(19);
+	//	QPainterPath resultPath = str.createStroke(p).simplified();
+
+
+	//	setPath(resultPath);
+	//}
+	//else {
+		
+		setPath(*p);
+
+	//}
 }
 
 int SocketConnection::type() const
@@ -208,7 +226,18 @@ int SocketConnection::type() const
 void SocketConnection::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
 	painter->setRenderHint(QPainter::Antialiasing);
-	QGraphicsPathItem::paint(painter, option, widget);
+	if (status == SocketConnectionStatus::Started || status == SocketConnectionStatus::Inprogress) {
+		QPen pen(QColor(90, 90, 90),2);
+		pen.setStyle(Qt::DashLine);
+		pen.setDashOffset(6);
+		painter->setPen(pen);
+		painter->drawPath(*p);
+	}
+	else {
+		QGraphicsPathItem::paint(painter, option, widget);
+	}
+
+
 }
 
 
@@ -594,6 +623,8 @@ void GraphNodeScene::drawBackground(QPainter * painter, const QRectF & rect)
 	//does not draw background
 }
 
+
+
 GraphNodeScene::GraphNodeScene(QWidget* parent):
     QGraphicsScene(parent)
 {
@@ -658,9 +689,12 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 				con->socket1 = sock;
 				con->pos1 = me->scenePos();
 				con->pos2 = me->scenePos();
+				con->status = SocketConnectionStatus::Started;
 				con->updatePath();
 				conGroup->addToGroup(con);
 				// this->addItem(con);
+				views().at(0)->setDragMode(QGraphicsView::NoDrag);
+
 			}
 			if (me->button() == Qt::RightButton) {
 				auto x = me->scenePos().x();
@@ -702,6 +736,9 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
     break;
     case QEvent::GraphicsSceneMouseRelease:
     {
+		views().at(0)->setDragMode(QGraphicsView::RubberBandDrag);
+
+
         if (con) {
             // make it an official connection
             auto sock = getSocketAt(me->scenePos().x(), me->scenePos().y());
@@ -711,7 +748,7 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
                     // todo: prevent recursive connection
                     if (con->socket1->node != sock->node) {// prevent it connecting to itself
                         con->socket2 = sock;
-
+						con->status = SocketConnectionStatus::Finished;
                         con->socket1->addConnection(con);
                         con->socket2->addConnection(con);
                         con->updatePosFromSockets();
@@ -751,6 +788,11 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 		event->acceptProposedAction();
 	}
 		break;	
+
+	case QEvent::GraphicsSceneDragEnter:{
+		qDebug() << "testing";
+	}
+	break;
     }
 
     return QObject::eventFilter(o, e);

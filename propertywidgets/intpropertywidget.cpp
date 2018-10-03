@@ -33,6 +33,8 @@ void IntPropertyWidget::setProp(IntProperty * prop)
 	minSpinBox->setValue(prop->minValue);
 	maxSpinBox->setValue(prop->maxValue);
 	stepSpinBox->setValue(prop->step);
+	emit nameChanged(displayName->text());
+
 }
 
 int IntPropertyWidget::getValue()

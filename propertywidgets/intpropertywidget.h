@@ -37,9 +37,6 @@ public slots:
 	void setPropValue(int value);
 signals:
 	void valueChanged(int val);
-
-
-
-
+	void nameChanged(QString name);
 
 };

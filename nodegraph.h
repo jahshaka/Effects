@@ -25,6 +25,14 @@ enum class GraphicsItemType : int
     Connection = QGraphicsItem::UserType + 3
 };
 
+enum class SocketConnectionStatus
+{
+	Started,
+	Inprogress,
+	Finished,
+	Cancelled,
+};
+
 class Socket;
 class GraphNode;
 
@@ -38,6 +46,9 @@ public:
 
     QPointF pos1;
     QPointF pos2;
+
+	SocketConnectionStatus status;
+	QPainterPath* p;
 
     SocketConnection();
 

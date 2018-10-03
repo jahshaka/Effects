@@ -42,6 +42,7 @@ public slots:
 	void setPropValues(QVector2D values);
 signals:
 	void valueChanged(QVector2D val);
+	void nameChanged(QString name);
 
 
 };
@@ -76,6 +77,7 @@ public slots:
 	void setPropValues(QVector3D values);
 signals:
 	void valueChanged(QVector3D val);
+	void nameChanged(QString name);
 };
 
 
@@ -111,6 +113,7 @@ protected:
 public slots:
 	void setPropValues(QVector4D values);
 signals:
-	void valueChanged(QVector4D val);
+	void valueChanged(QVector4D val);	void nameChanged(QString name);
+
 };
 
