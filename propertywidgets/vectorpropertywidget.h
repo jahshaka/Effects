@@ -26,12 +26,12 @@ public:
 
 
 private:
-	QSpinBox* xSpinBox;
-	QSpinBox* ySpinBox;
+	QDoubleSpinBox* xSpinBox;
+	QDoubleSpinBox* ySpinBox;
 	Vec2Property *prop;
 	QLineEdit *displayName;
-	int x;
-	int y;
+	double x;
+	double y;
 	QVector2D value;
 	QWidget *widget;
 
@@ -58,14 +58,14 @@ public:
 
 
 private:
-	QSpinBox* xSpinBox;
-	QSpinBox* ySpinBox;
-	QSpinBox* zSpinBox;
+	QDoubleSpinBox* xSpinBox;
+	QDoubleSpinBox* ySpinBox;
+	QDoubleSpinBox* zSpinBox;
 	Vec3Property *prop;
 	QLineEdit *displayName;
-	int x;
-	int y;
-	int z;
+	double x;
+	double y;
+	double z;
 	QVector3D value;
 	QWidget *widget;
 
@@ -92,16 +92,16 @@ public:
 
 
 private:
-	QSpinBox* xSpinBox;
-	QSpinBox* ySpinBox;
-	QSpinBox* zSpinBox;
-	QSpinBox* wSpinBox;
+	QDoubleSpinBox* xSpinBox;
+	QDoubleSpinBox* ySpinBox;
+	QDoubleSpinBox* zSpinBox;
+	QDoubleSpinBox* wSpinBox;
 	Vec4Property *prop;
 	QLineEdit *displayName;
-	int x;
-	int y;
-	int z;
-	int w;
+	double x;
+	double y;
+	double z;
+	double w;
 	QVector4D value;
 	QWidget *widget;
 

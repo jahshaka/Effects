@@ -12,6 +12,7 @@ IntPropertyWidget::IntPropertyWidget()
 	auto label = new QLabel("Display Name", this);
 
 	textLayout->addWidget(label);
+	textLayout->addStretch();
 	textLayout->addWidget(displayName);
 	auto wid = getValueWidget();
 

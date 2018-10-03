@@ -23,6 +23,7 @@ Vector2DPropertyWidget::Vector2DPropertyWidget() : QWidget()
 	auto label = new QLabel("Display Name", this);
 
 	textLayout->addWidget(label);
+	textLayout->addStretch();
 	textLayout->addWidget(displayName);
 	auto wid = getValueWidget();
 
@@ -57,18 +58,18 @@ QWidget * Vector2DPropertyWidget::getValueWidget()
 	widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	widget->setLayout(spinLayout);
 
-	xSpinBox = new QSpinBox(this);
-	ySpinBox = new QSpinBox(this);
+	xSpinBox = new QDoubleSpinBox(this);
+	ySpinBox = new QDoubleSpinBox(this);
 
 	spinLayout->addWidget(label);
 	spinLayout->addWidget(xSpinBox);
 	spinLayout->addWidget(ySpinBox);
 
-	connect(xSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [=](int val) {
+	connect(xSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
 		x = val;
 		emit valueChanged(QVector2D(x, y));
 	});
-	connect(ySpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [=](int val) {
+	connect(ySpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
 		y = val;
 		emit valueChanged(QVector2D(x, y));
 	});
@@ -119,6 +120,7 @@ Vector3DPropertyWidget::Vector3DPropertyWidget() : QWidget()
 	auto label = new QLabel("Display Name", this);
 
 	textLayout->addWidget(label);
+	textLayout->addStretch();
 	textLayout->addWidget(displayName);
 	auto wid = getValueWidget();
 
@@ -154,24 +156,24 @@ QWidget * Vector3DPropertyWidget::getValueWidget()
 	widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	widget->setLayout(spinLayout);
 
-	xSpinBox = new QSpinBox(this);
-	ySpinBox = new QSpinBox(this);
-	zSpinBox = new QSpinBox(this);
+	xSpinBox = new QDoubleSpinBox(this);
+	ySpinBox = new QDoubleSpinBox(this);
+	zSpinBox = new QDoubleSpinBox(this);
 
 	spinLayout->addWidget(label);
 	spinLayout->addWidget(xSpinBox);
 	spinLayout->addWidget(ySpinBox);
 	spinLayout->addWidget(zSpinBox);
 
-	connect(xSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [=](int val) {
+	connect(xSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
 		x = val;
 		emit valueChanged(QVector3D(x, y, z));
 	});
-	connect(ySpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [=](int val) {
+	connect(ySpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
 		y = val;
 		emit valueChanged(QVector3D(x, y, z));
 	});
-	connect(zSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [=](int val) {
+	connect(zSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
 		z = val;
 		emit valueChanged(QVector3D(x, y, z));
 	});
@@ -223,6 +225,7 @@ Vector4DPropertyWidget::Vector4DPropertyWidget() : QWidget()
 	auto label = new QLabel("Display Name", this);
 
 	textLayout->addWidget(label);
+	textLayout->addStretch();
 	textLayout->addWidget(displayName);
 	auto wid = getValueWidget();
 
@@ -258,10 +261,10 @@ QWidget * Vector4DPropertyWidget::getValueWidget()
 	widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	widget->setLayout(spinLayout);
 
-	xSpinBox = new QSpinBox(this);
-	ySpinBox = new QSpinBox(this);
-	zSpinBox = new QSpinBox(this);
-	wSpinBox = new QSpinBox(this);
+	xSpinBox = new QDoubleSpinBox(this);
+	ySpinBox = new QDoubleSpinBox(this);
+	zSpinBox = new QDoubleSpinBox(this);
+	wSpinBox = new QDoubleSpinBox(this);
 
 	spinLayout->addWidget(label);
 	spinLayout->addWidget(xSpinBox);
@@ -269,19 +272,19 @@ QWidget * Vector4DPropertyWidget::getValueWidget()
 	spinLayout->addWidget(zSpinBox);
 	spinLayout->addWidget(wSpinBox);
 
-	connect(xSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [=](int val) {
+	connect(xSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
 		x = val;
 		emit valueChanged(QVector4D(x, y, z, w));
 	});
-	connect(ySpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [=](int val) {
+	connect(ySpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
 		y = val;
 		emit valueChanged(QVector4D(x, y, z, w));
 	});
-	connect(zSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [=](int val) {
+	connect(zSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
 		z = val;
 		emit valueChanged(QVector4D(x, y, z, w));
 	});
-	connect(wSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [=](int val) {
+	connect(wSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
 		w = val;
 		emit valueChanged(QVector4D(x, y, z, w));
 	});
