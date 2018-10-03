@@ -14,6 +14,11 @@ GraphicsView::GraphicsView( QWidget *parent) : QGraphicsView(parent)
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	//setCacheMode(QGraphicsView::CacheBackground);
 	setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+
+	setCacheMode(QGraphicsView::CacheBackground);
+	setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
+	setDragMode(QGraphicsView::RubberBandDrag);
+
 	QGraphicsView::setAcceptDrops(true);
 }
 
