@@ -84,7 +84,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	newNodeGraph();
 	generateTileNode();
 	configureStyleSheet();
-
+	setMinimumSize(300, 400);
 }
 
 void MainWindow::setNodeGraph(NodeGraph *graph)
@@ -432,6 +432,17 @@ GraphNodeScene *MainWindow::createNewScene()
     scene->setBackgroundBrush(QBrush(QColor(60, 60, 60)));
 
     connect(scene, &GraphNodeScene::newConnection, [this, scene](SocketConnection* connection)
+    {
+        auto graph = scene->getNodeGraph();
+        ShaderGenerator shaderGen;
+        auto code = shaderGen.generateShader(graph);
+        textEdit->setPlainText(code);
+        sceneWidget->updateShader(code);
+        sceneWidget->resetRenderTime();
+
+    });
+	
+	connect(scene, &GraphNodeScene::connectionRemoved, [this, scene](SocketConnection* connection)
     {
         auto graph = scene->getNodeGraph();
         ShaderGenerator shaderGen;

@@ -80,6 +80,7 @@ public:
 
     Socket(QGraphicsItem* parent, SocketType socketType, QString title);
     void addConnection(SocketConnection* con);
+    void removeConnection(SocketConnection* con);
     float calcHeight();
     float getRadius();
     QPointF getPos();
@@ -187,6 +188,7 @@ public:
         return node;
     }
     SocketConnection* addConnection(QString leftNodeId, int leftSockIndex, QString rightNodeId, int rightSockIndex);
+    SocketConnection* removeConnection(SocketConnection* connection);
     SocketConnection* addConnection(Socket* leftCon, Socket* rightCon);
 
 

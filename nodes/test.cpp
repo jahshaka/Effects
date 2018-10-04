@@ -153,7 +153,9 @@ void SurfaceMasterNode::process(ModelContext* ctx)
 	code += "material.alpha = " + alphaVar + ";\n";
 	//context->addCodeChunk(this, "material.diffuse = " + diffVar + ";");
 
+	context->clear();
 	context->addCodeChunk(this, code);
+	
 }
 
 FloatNodeModel::FloatNodeModel() :
