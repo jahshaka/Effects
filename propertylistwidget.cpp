@@ -5,6 +5,7 @@
 #include "propertywidgets/floatpropertywidget.h"
 #include "propertywidgets/vectorpropertywidget.h"
 #include "propertywidgets/intpropertywidget.h"
+#include "propertywidgets/texturepropertywidget.h"
 #include "properties.h"
 #include "graph/nodegraph.h"
 //#include "nodemodel.h"
@@ -22,7 +23,7 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 	auto action2 = menu->addAction("Add Vector2 Property");
 	auto action3 = menu->addAction("Add Vector3 Property");
 	auto action4 = menu->addAction("Add Vector4 Property");
-    menu->addAction("Add Texture Property");
+    auto action5 = menu->addAction("Add Texture Property");
     ui->addPropertyButton->setMenu(menu);
     ui->addPropertyButton->setPopupMode(QToolButton::InstantPopup);
 
@@ -30,6 +31,7 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 	connect(action2, &QAction::triggered, this, &PropertyListWidget::addNewVec2Property);
 	connect(action3, &QAction::triggered, this, &PropertyListWidget::addNewVec3Property);
 	connect(action4, &QAction::triggered, this, &PropertyListWidget::addNewVec4Property);
+	connect(action5, &QAction::triggered, this, &PropertyListWidget::addNewTextureProperty);
 
 
     delete ui->widgetList->layout();
@@ -149,4 +151,22 @@ void PropertyListWidget::addIntProperty(IntProperty * intProp)
 	auto propWidget = new IntPropertyWidget();
 	this->layout->insertWidget(this->layout->count() - 1, propWidget);
 	propWidget->setProp(intProp);
+}
+
+////
+
+void PropertyListWidget::addNewTextureProperty()
+{
+	auto prop = new TextureProperty;
+	prop->displayName = "Texture property";
+	prop->name = QString("property%1").arg(graph->properties.count());
+	this->addTextureProperty(prop);
+	this->graph->addProperty(prop);
+}
+
+void PropertyListWidget::addTextureProperty(TextureProperty * texProp)
+{
+	auto propWidget = new TexturePropertyWidget;
+	this->layout->insertWidget(this->layout->count() - 1, propWidget);
+	propWidget->setProp(texProp);
 }

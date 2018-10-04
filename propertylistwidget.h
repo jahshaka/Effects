@@ -14,6 +14,7 @@ class Vec2Property;
 class Vec3Property;
 class Vec4Property;
 class IntProperty;
+class TextureProperty;
 
 class PropertyListWidget : public QWidget
 {
@@ -41,6 +42,9 @@ private:
 
 	void addNewIntProperty();
 	void addIntProperty(IntProperty* intProp);
+	
+	void addNewTextureProperty();
+	void addTextureProperty(TextureProperty* texProp);
 
 private:
     Ui::PropertyListWidget *ui;

@@ -24,6 +24,7 @@ set(CPP
     propertywidgets/vectorpropertywidget.cpp
     propertywidgets/intpropertywidget.cpp
     propertywidgets/floatpropertywidget.cpp
+    propertywidgets/texturepropertywidget.cpp
     properties.cpp
     materialwriter.cpp
     #graphtest.cpp
@@ -53,6 +54,7 @@ set(HEADERS
         propertywidgets/floatpropertywidget.h
         propertywidgets/vectorpropertywidget.h
         propertywidgets/intpropertywidget.h
+        propertywidgets/texturepropertywidget.h
         materialwriter.h
         #graphtest.h
 		#graph

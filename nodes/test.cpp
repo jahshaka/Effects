@@ -514,7 +514,6 @@ TextureNode::TextureNode()
 		auto filename = QFileDialog::getOpenFileName();
 		QIcon icon(filename);
 		texture->setIcon(icon);
-		//label->setPixmap(QPixmap(filename));
 	});
 	
 	widget->setStyleSheet("background:rgba(0,0,0,0); color: rgba(250,250,250,.9);");
