@@ -30,15 +30,12 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    ui->setupUi(this);
+  //  ui->setupUi(this);
 	configureUI();
 
     scene = nullptr;
 	sceneWidget = new SceneWidget();
 
-    connect(ui->actionSave, &QAction::triggered, this, &MainWindow::saveGraph);
-	connect(ui->actionLoad, &QAction::triggered, this, &MainWindow::loadGraph);
-	connect(ui->actionExport, &QAction::triggered, this, &MainWindow::exportGraph);
 
 	installEventFilter(this);
 
@@ -51,10 +48,43 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->sceneContainer->setLayout(grid);*/
 
     // add menu items to property widget
-    newNodeGraph();
+
+	bar = new QMenuBar(this);
+	file = new QMenu("File", bar);
+	window = new QMenu("Window", bar);
+	auto barLayout = new QVBoxLayout;
+	auto actionSave = new QAction("save shader", bar);
+	auto actionLoad = new QAction("load shader", bar);
+	auto actionExport = new QAction("export shader", bar);
+	auto actionNew = new QAction("new shader", bar);
+
+	bar->addMenu(file);
+	bar->addMenu(window);
+	bar->setLayout(barLayout);
+
+	file->addAction(actionNew);
+	file->addAction(actionSave);
+	file->addAction(actionLoad);
+	file->addAction(actionExport);
+
+	window->addAction(nodeTray->toggleViewAction());
+	window->addAction(textWidget->toggleViewAction());
+	window->addAction(displayWidget->toggleViewAction());
+	window->addAction(propertyWidget->toggleViewAction());
+	window->addAction(materialSettingsWidget->toggleViewAction());
+	
+	setMenuBar(bar);
+	
+
+	connect(actionSave, &QAction::triggered, this, &MainWindow::saveGraph);
+	connect(actionLoad, &QAction::triggered, this, &MainWindow::loadGraph);
+	connect(actionExport, &QAction::triggered, this, &MainWindow::exportGraph);
+	connect(actionNew, &QAction::triggered, this, &MainWindow::newNodeGraph);
+
+	newNodeGraph();
 	generateTileNode();
 	configureStyleSheet();
-	
+
 }
 
 void MainWindow::setNodeGraph(NodeGraph *graph)
@@ -174,6 +204,15 @@ void MainWindow::configureStyleSheet()
 		"QDockWidget::tab{	background:rgba(32,32,32,1);}"
 		
 	);
+
+	bar->setStyleSheet(
+		"QMenuBar{spacing : 5px; border: 3px solid rgba(0,0,0,.4); }"
+		"QMenuBar::item:selected{ background: rgba(53,53,53,1);}"
+
+		"QMenu{	background: rgba(26,26,26,.9); color: rgba(250,250, 250,.9);}"
+		"QMenu::item{padding: 2px 5px 2px 20px;	}"
+		"QMenu::item:hover{	background: rgba(40,128, 185,.9);}"
+		"QMenu::item:selected{	background: rgba(40,128, 185,.9);}");
 
 	/*nodeContainer->setStyleSheet("QListWidget::item{background: rgba(70,70,70,1); color: rgba(200,200,200,1);}"
 		"QListView::item:selected:active {background: qlineargradient(x1 : 0, y1 : 0, x2 : 0, y2 : 1,stop : 0 #6a6ea9, stop: 1 #888dd9);}"

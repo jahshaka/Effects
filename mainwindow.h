@@ -69,6 +69,9 @@ private:
 	QTextEdit* textEdit;
 	PropertyListWidget* propertyListWidget;
 	QListWidget *nodeContainer;
+	QMenuBar *bar;  
+	QMenu *file;
+	QMenu *window;
 
 	void configureStyleSheet();
 };

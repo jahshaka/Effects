@@ -31,12 +31,12 @@
 
 
 Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title):
-    QGraphicsPathItem(parent),
+    QGraphicsPathItem(parent), QObject(nullptr),
     socketType(socketType)
 {
 	this->setFlag(QGraphicsItem::ItemSendsScenePositionChanges);
 
-
+	
 	text = new QGraphicsTextItem(this);
     text->setPlainText(title);
     text->setDefaultTextColor(QColor(200,200,200));
@@ -47,7 +47,6 @@ Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title):
     radius = qCeil(textRect.height()/2.0f);
     dimentions = textRect.height();
     QPainterPath path;
-
 
 
     // socket positions are at the outer right or outer left of the graph node
@@ -72,9 +71,6 @@ Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title):
     QPen pen(QColor(97,97,97),3);
     setPen(pen);
     setPath(path);
-
-	
-
 }
 
 void Socket::addConnection(SocketConnection* con)
@@ -157,6 +153,14 @@ void Socket::updateSocket()
 	setPen(pen);
     setPath(path);
 }
+
+void Socket::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
+{
+	QGraphicsPathItem::paint(painter, option, widget);
+}
+
+
+
 
 
 SocketConnection::SocketConnection()
@@ -730,6 +734,11 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
         if (con) {
             con->pos2 = me->scenePos();
             con->updatePath();
+
+			auto sock = getSocketAt(me->scenePos().x(), me->scenePos().y());
+			if (sock != nullptr && con->socket1 != sock) {
+				qDebug() << "connection entered";
+			}
             return true;
         }
     }
@@ -789,10 +798,6 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 	}
 		break;	
 
-	case QEvent::GraphicsSceneDragEnter:{
-		qDebug() << "testing";
-	}
-	break;
     }
 
     return QObject::eventFilter(o, e);

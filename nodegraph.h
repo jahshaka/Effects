@@ -6,11 +6,13 @@
 #include <QGraphicsPathItem>
 #include <QGraphicsTextItem>
 #include <QGraphicsItem>
+#include <QGraphicsObject>
 #include <QFontMetrics>
 #include <QtMath>
 #include <QGraphicsSceneMouseEvent>
 #include <QJsonObject>
 #include <QPointf>
+#include <QPropertyAnimation>
 
 enum class SocketType
 {
@@ -59,14 +61,17 @@ public:
 };
 
 
-class Socket : public QGraphicsPathItem
+class Socket : public QObject, public QGraphicsPathItem
 {
+	Q_OBJECT
 public:
+	
     // note: in sockets can only have one connection
     QVector<SocketConnection*> connections;
     SocketType socketType;
     float radius;
     float dimentions;
+	qreal opactyValue = 0.0;
     QGraphicsTextItem* text;
     GraphNode* node;
     GraphNode* owner;
@@ -80,6 +85,9 @@ public:
     QPointF getPos();
     float getSocketOffset();
     virtual int type() const override;
+	QColor getSocketColor();
+	void setSocketColor(QColor color);
+	void updateSocket();
 
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 private:
@@ -90,11 +98,15 @@ private:
     bool connected;
     bool rounded = true;
 
-    QColor getSocketColor();
-    void setSocketColor(QColor color);
-    void setConnected(bool value);
-    void updateSocket();
 
+
+    void setConnected(bool value);
+
+protected:
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR);
+	
+
+signals:
 };
 
 class GraphNode : public QGraphicsPathItem
