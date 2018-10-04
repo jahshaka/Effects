@@ -121,7 +121,7 @@ SurfaceMasterNode::SurfaceMasterNode()
 {
 	title = "Surface Material";
 	typeName = "Material";
-	addInputSocket(new Vector3SocketModel("diffuse"));
+	addInputSocket(new Vector3SocketModel("diffuse","vec3(1.0,1.0,1.0)"));
 	addInputSocket(new Vector3SocketModel("specular"));
 	addInputSocket(new FloatSocketModel("shininess"));
 	addInputSocket(new Vector3SocketModel("normal", "v_normal"));

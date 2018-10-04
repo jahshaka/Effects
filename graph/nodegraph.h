@@ -46,6 +46,8 @@ public:
 	ConnectionModel* addConnection(NodeModel* leftNode, int leftSockIndex, NodeModel* rightNode, int rightSockIndex);
 	ConnectionModel* addConnection(QString leftNodeId, int leftSockIndex, QString rightNodeId, int rightSockIndex);
 
+	void removeConnection(QString connectionId);
+
 	// gets the output node and socket for a given input node and socket
 	ConnectionModel* getConnectionFromOutputNode(NodeModel* node, int socketIndex);
 

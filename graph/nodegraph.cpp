@@ -84,6 +84,19 @@ ConnectionModel* NodeGraph::addConnection(QString leftNodeId, int leftSockIndex,
 	return con;
 }
 
+void NodeGraph::removeConnection(QString connectionId)
+{
+	//if (!connections.contains(connectionId))
+	//	return;
+
+	auto con = connections[connectionId];
+
+	// assuming it's a complete connection
+	con->leftSocket->connection = nullptr;
+	con->rightSocket->connection = nullptr;
+	connections.remove(connectionId);
+}
+
 QJsonObject NodeGraph::serialize()
 {
 	QJsonObject graph;

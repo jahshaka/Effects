@@ -703,7 +703,10 @@ SocketConnection * GraphNodeScene::removeConnection(SocketConnection * connectio
 	auto socket2 = connection->socket2;
 	socket1->removeConnection(connection);
 	socket2->removeConnection(connection);
+
 	this->removeItem(connection);
+	this->nodeGraph->removeConnection(connection->connectionId);
+
 	emit connectionRemoved(connection);
 	return connection;
 }
@@ -738,16 +741,43 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
         auto sock = getSocketAt(me->scenePos().x(), me->scenePos().y());
         if (sock != nullptr) {
 			if (me->button() == Qt::LeftButton) {
-				con = new SocketConnection();
-				con->socket1 = sock;
-				con->pos1 = me->scenePos();
-				con->pos2 = me->scenePos();
-				con->status = SocketConnectionStatus::Started;
-				con->updatePath();
-				conGroup->addToGroup(con);
-				// this->addItem(con);
-				views().at(0)->setDragMode(QGraphicsView::NoDrag);
 
+				// if it's an insocket with a connection then we're removing the connection
+				if (sock->socketType == SocketType::In && sock->connections.size() == 1) {
+					// insockets only have one connection
+					con = sock->connections[0];
+
+					// remove connection from nodegraph model
+					this->nodeGraph->removeConnection(con->connectionId);
+
+					// should be socket2 of the connection
+					con->socket1->removeConnection(con);
+					con->socket2->removeConnection(con);
+
+					// emit event before modifying the nodes
+					emit connectionRemoved(con);
+
+					con->socket2 = nullptr;
+					con->status = SocketConnectionStatus::Started;
+
+					con->pos2 = me->scenePos();
+					con->updatePath();
+
+					views().at(0)->setDragMode(QGraphicsView::NoDrag);
+					
+				}
+				else {
+					con = new SocketConnection();
+					con->socket1 = sock;
+					con->pos1 = me->scenePos();
+					con->pos2 = me->scenePos();
+					con->status = SocketConnectionStatus::Started;
+					con->updatePath();
+					conGroup->addToGroup(con);
+					// this->addItem(con);
+					views().at(0)->setDragMode(QGraphicsView::NoDrag);
+				}
+				
 			}
 			if (me->button() == Qt::RightButton) {
 				auto x = me->scenePos().x();
@@ -816,11 +846,13 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
                         if (nodeGraph != nullptr) {
                             // check the order of nodes
                             if (con->socket1->socketType ==SocketType::Out) {
-                                this->nodeGraph->addConnection(con->socket1->node->nodeId,con->socket1->socketIndex,
+                                auto conModel = this->nodeGraph->addConnection(con->socket1->node->nodeId,con->socket1->socketIndex,
                                                                con->socket2->node->nodeId,con->socket2->socketIndex);
+								con->connectionId = conModel->id; // very important!
                             } else {
-                                this->nodeGraph->addConnection(con->socket2->node->nodeId,con->socket2->socketIndex,
+								auto conModel = this->nodeGraph->addConnection(con->socket2->node->nodeId,con->socket2->socketIndex,
                                                                con->socket1->node->nodeId,con->socket1->socketIndex);
+								con->connectionId = conModel->id; // very important!
                             }
                         }
 
