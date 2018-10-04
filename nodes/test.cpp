@@ -1,6 +1,8 @@
 #include "test.h"
 #include "../graph/library.h"
 
+#include <QFileDialog>
+
 void registerModels(NodeGraph* graph)
 {
 	/*
@@ -102,8 +104,13 @@ void registerModels(NodeGraph* graph)
 	});
 
 	//make color
-	lib->addNode("makeColor", "", "", []() {
+	lib->addNode("makeColor", "Make Color", "", []() {
 		return new MakeColorNode();
+	});
+
+	//texture
+	lib->addNode("texture", "Texture", "", []() {
+		return new TextureNode();
 	});
 
 	graph->setNodeLibrary(lib);
@@ -475,4 +482,48 @@ void PropertyNode::process(ModelContext* context)
 
 	if (this->outSockets.count() > 0)
 		outSockets[0]->setVarName(prop->getUniformName());
+}
+
+TextureNode::TextureNode()
+{
+	setNodeType(NodeType::Surface);
+	title = "Texture";
+	auto widget = new QWidget;
+	auto layout = new QVBoxLayout;
+	widget->setLayout(layout);
+	widget->setMinimumSize(170, 155);
+	texture = new QPushButton();
+	texture->setIconSize(QSize(145, 145));
+	texture->setMinimumSize(160, 146);
+	
+
+	auto label = new QLabel;
+	auto text = new QLabel("value :");
+
+	auto pushLayout = new QVBoxLayout;
+	texture->setLayout(pushLayout);
+	//pushLayout->addWidget(label);
+
+	layout->setContentsMargins(3, 0, 3, 2);
+	layout->addWidget(text);
+	layout->addStretch();
+	layout->addWidget(texture);
+	this->widget = widget;
+
+	connect(texture, &QPushButton::clicked, [=]() {
+		auto filename = QFileDialog::getOpenFileName();
+		QIcon icon(filename);
+		texture->setIcon(icon);
+	});
+	
+	widget->setStyleSheet("background:rgba(0,0,0,0); color: rgba(250,250,250,.9);");
+	texture->setStyleSheet("background:rgba(0,0,0,0); border : 2px solid rgba(50,50,50,.3);");
+
+
+	addOutputSocket(new Vector4SocketModel("texture"));
+
+}
+
+void TextureNode::process(ModelContext * context)
+{
 }

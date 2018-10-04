@@ -2,6 +2,8 @@
 #include <QComboBox>
 #include <QDoubleValidator>
 #include <QVBoxLayout>
+#include <QPushButton>
+#include <QLabel>
 
 #include "../graph/nodegraph.h"
 #include "../graph/nodemodel.h"
@@ -94,6 +96,16 @@ public:
 	virtual void process(ModelContext* context) override;
 
 	void comboTextChanged(const QString& text);
+};
+
+class TextureNode : public NodeModel
+{
+	QPushButton *texture;
+
+public:
+	TextureNode();
+	virtual void process(ModelContext* context) override;
+
 };
 
 
