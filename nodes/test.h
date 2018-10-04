@@ -84,6 +84,19 @@ public:
 	void comboTextChanged(const QString& text);
 };
 
+class TextureSamplerNode : public NodeModel
+{
+	QComboBox* combo;
+	QString uv;
+public:
+	TextureSamplerNode();
+
+	virtual void process(ModelContext* context) override;
+
+	void comboTextChanged(const QString& text);
+};
+
+
 class PropertyNode : public NodeModel
 {
 	Property* prop;

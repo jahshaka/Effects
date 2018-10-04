@@ -86,4 +86,23 @@ public:
 	}
 };
 
+class TextureSocketModel : public SocketModel
+{
+public:
+	TextureSocketModel(QString name) :
+		SocketModel(name, "texture")
+	{
+	}
+
+	virtual bool canConvertTo(SocketModel* other)
+	{
+		return false;
+	}
+
+	virtual SocketModel* duplicate()
+	{
+		return new TextureSocketModel(name);
+	}
+};
+
 #endif// SOCKETS_H

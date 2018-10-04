@@ -393,6 +393,29 @@ void TextureCoordinateNode::comboTextChanged(const QString& text)
 }
 
 
+TextureSamplerNode::TextureSamplerNode()
+{
+	setNodeType(NodeType::Calculation);
+
+	title = "Sample Texture";
+
+	addInputSocket(new TextureSocketModel("Texture"));
+	addInputSocket(new Vector2SocketModel("UV","texCoord0"));
+	addOutputSocket(new Vector4SocketModel("RGBA"));
+}
+
+void TextureSamplerNode::process(ModelContext* context)
+{
+	auto ctx = (ShaderContext*)context;
+
+	auto tex = this->getValueFromInputSocket(0);
+	auto uv = this->getValueFromInputSocket(1);
+	auto rgba = this->getOutputSocketVarName(0);
+	auto code = rgba + " = texture("+tex+","+uv+");";
+
+	ctx->addCodeChunk(this, code);
+}
+
 PropertyNode::PropertyNode()
 {
 	this->typeName = "property";
@@ -423,6 +446,10 @@ void PropertyNode::setProperty(Property* property)
 
 	case PropertyType::Vec4:
 		this->addOutputSocket(new Vector4SocketModel("vector4"));
+		break;
+
+	case PropertyType::Texture:
+		this->addOutputSocket(new TextureSocketModel("texture"));
 		break;
 
 	default:

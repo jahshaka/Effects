@@ -36,6 +36,7 @@ public:
 
 	// created a temporary variable using the socket
 	TempVar createTempVar(SocketModel* sock);
+	TempVar createTempVar(QString typeName);
 
 	QList<TempVar> getTempVars();
 	void clear();

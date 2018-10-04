@@ -34,9 +34,8 @@ Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title):
     QGraphicsPathItem(parent), QObject(nullptr),
     socketType(socketType)
 {
-	this->setFlag(QGraphicsItem::ItemSendsScenePositionChanges);
 
-	
+  this->setFlag(QGraphicsItem::ItemSendsScenePositionChanges);
 	text = new QGraphicsTextItem(this);
     text->setPlainText(title);
     text->setDefaultTextColor(QColor(200,200,200));
@@ -412,15 +411,22 @@ void GraphNode::paint(QPainter *painter,
 	painter->setRenderHint(QPainter::Antialiasing);
 
 
-	if (isHighlighted) {
+	if (option->state.testFlag(QStyle::State_Selected) != currentSelectedState) {
+		currentSelectedState = option->state.testFlag(QStyle::State_Selected);
+		highlightNode(currentSelectedState, 0);
+	}
+
+	if (isHighlighted && level ==0) {
 		auto rect = boundingRect();
         painter->setPen(QPen(connectedColor,3));
         painter->drawRoundedRect(rect ,7,7);
     }
-	if (option->state.testFlag(QStyle::State_Selected) != currentSelectedState) {
-		currentSelectedState = option->state.testFlag(QStyle::State_Selected);
-		highlightNode(currentSelectedState);
+	else if(isHighlighted && level > 0) {
+		auto rect = boundingRect();
+		painter->setPen(QPen(QColor(160,150,100), 8));
+		painter->drawRoundedRect(rect, 7, 7);
 	}
+	
 	
 
 
@@ -446,22 +452,31 @@ int GraphNode::type() const
     return (int)GraphicsItemType::Node;
 }
 
-void GraphNode::highlightNode(bool val)
+void GraphNode::highlightNode(bool val, int lvl)
 {
-
+	qDebug() << lvl << level;
 	isHighlighted = val;
+	level = lvl;
+
+	auto setLevel = [val, lvl]() {
+		int i = 0;
+		if (lvl == 0)  i = 0;
+		else  i = lvl+1;
+		return i;
+
+	};
 
     for( Socket* sock : sockets){
         if(sock->socketType == SocketType::In){
             for( SocketConnection* con : sock->connections){
                 if(con->socket1->socketType == SocketType::Out){					
 					con->socket1->owner->isHighlighted = val;
-					con->socket1->owner->highlightNode(val);
+					con->socket1->owner->highlightNode(val, level+1);
 					con->socket1->owner->currentSelectedState = false;
 				}
                 if(con->socket2->socketType == SocketType::Out){
 					con->socket2->owner->isHighlighted = val;
-                    con->socket2->owner->highlightNode(val);		
+					con->socket1->owner->highlightNode(val, level+1);
 					con->socket2->owner->currentSelectedState = false;
 
                 }
@@ -475,6 +490,7 @@ void GraphNode::highlightNode(bool val)
 void GraphNode::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
 	check = true;
+	qDebug() << level;
     QGraphicsPathItem::mousePressEvent( event);
 
 }
