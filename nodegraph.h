@@ -6,11 +6,13 @@
 #include <QGraphicsPathItem>
 #include <QGraphicsTextItem>
 #include <QGraphicsItem>
+#include <QGraphicsObject>
 #include <QFontMetrics>
 #include <QtMath>
 #include <QGraphicsSceneMouseEvent>
 #include <QJsonObject>
 #include <QPointf>
+#include <QPropertyAnimation>
 
 enum class SocketType
 {
@@ -23,6 +25,14 @@ enum class GraphicsItemType : int
     Node = QGraphicsItem::UserType + 1,
     Socket = QGraphicsItem::UserType + 2,
     Connection = QGraphicsItem::UserType + 3
+};
+
+enum class SocketConnectionStatus
+{
+	Started,
+	Inprogress,
+	Finished,
+	Cancelled,
 };
 
 class Socket;
@@ -39,24 +49,29 @@ public:
     QPointF pos1;
     QPointF pos2;
 
+	SocketConnectionStatus status;
+	QPainterPath* p;
+
     SocketConnection();
 
     void updatePosFromSockets();
     void updatePath();
     virtual int type() const override;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR) override;
-
 };
 
 
-class Socket : public QGraphicsPathItem
+class Socket : public QObject, public QGraphicsPathItem
 {
+	Q_OBJECT
 public:
+	
     // note: in sockets can only have one connection
     QVector<SocketConnection*> connections;
     SocketType socketType;
     float radius;
     float dimentions;
+	qreal opactyValue = 0.0;
     QGraphicsTextItem* text;
     GraphNode* node;
     GraphNode* owner;
@@ -65,11 +80,15 @@ public:
 
     Socket(QGraphicsItem* parent, SocketType socketType, QString title);
     void addConnection(SocketConnection* con);
+    void removeConnection(SocketConnection* con);
     float calcHeight();
     float getRadius();
     QPointF getPos();
     float getSocketOffset();
     virtual int type() const override;
+	QColor getSocketColor();
+	void setSocketColor(QColor color);
+	void updateSocket();
 
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 private:
@@ -80,11 +99,15 @@ private:
     bool connected;
     bool rounded = true;
 
-    QColor getSocketColor();
-    void setSocketColor(QColor color);
-    void setConnected(bool value);
-    void updateSocket();
 
+
+    void setConnected(bool value);
+
+protected:
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR);
+	
+
+signals:
 };
 
 class GraphNode : public QGraphicsPathItem
@@ -166,6 +189,7 @@ public:
         return node;
     }
     SocketConnection* addConnection(QString leftNodeId, int leftSockIndex, QString rightNodeId, int rightSockIndex);
+    SocketConnection* removeConnection(SocketConnection* connection);
     SocketConnection* addConnection(Socket* leftCon, Socket* rightCon);
 
 
@@ -180,6 +204,7 @@ public:
     void addPropertyNode(Property* prop, float x, float y, bool addToGraph = true);
 
     QMenu* createContextMenu(float x, float y);
+	QMenu* removeConnectionContextMenu(float x, float y);
 
     QJsonObject serialize();
 

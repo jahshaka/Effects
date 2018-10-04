@@ -1,81 +1,42 @@
 #include <QWidget>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QTextEdit>
+#include <QGridLayout>
+#include <QSpinBox>
 #include <QLineEdit>
-#include <QDoubleSpinBox>
 #include <QPainter>
-#include "../properties.h"
+#include "properties.h"
+
 
 class FloatPropertyWidget : public QWidget
 {
+	Q_OBJECT
 public:
-    FloatPropertyWidget():
-        QWidget(nullptr)
-    {
-        buildUi();
-    }
+	FloatPropertyWidget();
+	~FloatPropertyWidget();
+	void setProp(FloatProperty *prop);
+	float getValue();
+	QWidget* getValueWidget();
+	QWidget* getWidget();
 
-    void buildUi()
-    {
-        auto layout = new QVBoxLayout();
+private:
+	QDoubleSpinBox* intSpinBox;
+	QDoubleSpinBox* maxSpinBox;
+	QDoubleSpinBox* minSpinBox;
+	QDoubleSpinBox* stepSpinBox;
+	FloatProperty *prop;
+	QLineEdit *displayName;
+	float x = 0;
+	float min =0;
+	float max =0;
+	float step =0;
+	QWidget *widget;
 
-        // title
-        auto line = new QHBoxLayout();
-        line->addWidget(new QLabel("Display Name"));
-        displayName = new QLineEdit("Float Property");
-        line->addWidget(displayName);
-        layout->addLayout(line);
-
-        line = new QHBoxLayout();
-        line->addWidget(new QLabel("Value"));
-        spinBox = new QDoubleSpinBox();
-        line->addWidget(spinBox);
-        layout->addLayout(line);
-
-        connect(spinBox, SIGNAL(valueChanged(double)), this, SLOT(valueChanged(double)));
-        connect(spinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
-            [=](double d){
-            valueChanged(d);
-        });
-
-        this->setLayout(layout);
-		setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-
-	//	setStyleSheet("background: rgba(0,0,0,0); border: 1px solid rgba(200,200,200,.5);");
-    }
-
-    void setProperty(FloatProperty* prop)
-    {
-        this->prop = prop;
-        displayName->setText(prop->displayName);
-        spinBox->setValue(prop->getValue().toFloat());
-    }
-
-    QDoubleSpinBox* spinBox;
-    FloatProperty* prop;
-    QLineEdit* displayName;
+protected:
+	void paintEvent(QPaintEvent *event) override;
 
 public slots:
-	void valueChanged(double newVal)
-	{
-		prop->setValue((float)newVal);
-	}
-protected:
-	void paintEvent(QPaintEvent *event) override
-	{
-
-		QWidget::paintEvent(event);
-		QPainter painter(this);
-		painter.setRenderHint(QPainter::Antialiasing);
-	//	QPen pen(QColor(200, 200, 200),2);
-		painter.setPen(QPen(QColor(200, 200, 200, 70), 2));
-		painter.drawRect(0, 0, width(), height());
-		
-	}
-
-
-
+	void setPropValue(double value);
+signals:
+	void valueChanged(double val);
+	void nameChanged(QString name);
 
 };

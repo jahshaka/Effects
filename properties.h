@@ -97,8 +97,13 @@ struct IntProperty : public Property
     int value;
     int minValue;
     int maxValue;
+	int step;
 
     IntProperty() {
+		value = 0;
+		minValue = 0;
+		maxValue = 100;
+		step = 1;
         type = PropertyType::Int;
     }
 
@@ -138,11 +143,13 @@ struct FloatProperty : public Property
     float value;
     float minValue;
     float maxValue;
+	float step;
 
     FloatProperty() {
         value = 0;
 		minValue = 0;
 		maxValue = 1;
+		step = 0.1;
         type = PropertyType::Float;
     }
 

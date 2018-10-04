@@ -26,14 +26,16 @@
 #include "../graph/connectionmodel.h"
 #include "../graph/nodegraph.h"
 #include "../graph/library.h"
+#include "../graph/graphicsview.h"
 #include "../nodes/test.h"
 
 
 Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title):
-    QGraphicsPathItem(parent),
+    QGraphicsPathItem(parent), QObject(nullptr),
     socketType(socketType)
 {
-    this->setFlag(QGraphicsItem::ItemSendsScenePositionChanges);
+
+  this->setFlag(QGraphicsItem::ItemSendsScenePositionChanges);
 	text = new QGraphicsTextItem(this);
     text->setPlainText(title);
     text->setDefaultTextColor(QColor(200,200,200));
@@ -44,7 +46,6 @@ Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title):
     radius = qCeil(textRect.height()/2.0f);
     dimentions = textRect.height();
     QPainterPath path;
-
 
 
     // socket positions are at the outer right or outer left of the graph node
@@ -69,9 +70,6 @@ Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title):
     QPen pen(QColor(97,97,97),3);
     setPen(pen);
     setPath(path);
-
-	
-
 }
 
 void Socket::addConnection(SocketConnection* con)
@@ -80,6 +78,17 @@ void Socket::addConnection(SocketConnection* con)
     setSocketColor(connectedColor);
     text->setDefaultTextColor(QColor(255,255,255));
     updateSocket();
+}
+
+void Socket::removeConnection(SocketConnection * con)
+{
+	connections.removeOne(con);
+	if (connections.length() <= 0) {
+		setSocketColor(disconnectedColor);
+		setConnected(false);
+	}
+	text->setDefaultTextColor(QColor(200, 200, 200));
+	updateSocket();
 }
 
 float Socket::calcHeight()
@@ -150,10 +159,24 @@ void Socket::updateSocket()
         else path.addRect(0, -radius/2, dimentions, dimentions);
     }
     setBrush(getSocketColor());
-	QPen pen(QColor(27, 27, 27), 3);
+	QPen pen;
+	pen.setWidth(3);
+	if (connected) pen.setColor(QColor(27, 27, 27));
+	else pen.setColor(QColor(97, 97, 97));
+			
+
 	setPen(pen);
     setPath(path);
 }
+
+void Socket::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
+{
+	QGraphicsPathItem::paint(painter, option, widget);
+}
+
+
+
+
 
 SocketConnection::SocketConnection()
 {
@@ -163,12 +186,9 @@ SocketConnection::SocketConnection()
     pos1 = QPointF(0,0);
     pos2 = QPointF(0,0);
 
+	setFlag(QGraphicsItem::ItemAcceptsInputMethod);
 	setFlag(QGraphicsItem::ItemIsSelectable);
 	setFlag(QGraphicsItem::ItemIsMovable);
-
-    QLinearGradient grad(0,0,0,100);
-    grad.setColorAt(0.0,QColor(0,0,50));
-    grad.setColorAt(1.0,QColor(250,250,250));
 
     auto pen = QPen(QColor(200, 200, 200));
     pen.setBrush(QColor(50,150,250));
@@ -185,9 +205,9 @@ void SocketConnection::updatePosFromSockets()
 
 void SocketConnection::updatePath()
 {
-    QPainterPath p;
-
-    p.moveTo(pos1);
+ 
+	p = new QPainterPath;
+    p->moveTo(pos1);
 
     qreal dx = pos2.x() - pos1.x();
     qreal dy = pos2.y() - pos1.y();
@@ -195,10 +215,25 @@ void SocketConnection::updatePath()
     QPointF ctr1(pos1.x() + dx * 0.25, pos1.y() + dy * 0.1);
     QPointF ctr2(pos1.x() + dx * 0.75, pos1.y() + dy * 0.9);
 
-    p.cubicTo(ctr1, ctr2, pos2);
-    p.setFillRule(Qt::OddEvenFill);
+    p->cubicTo(ctr1, ctr2, pos2);
+    p->setFillRule(Qt::OddEvenFill);
 
-    setPath(p);
+	//if (status == SocketConnectionStatus::Started || status == SocketConnectionStatus::Inprogress) {
+	//	QPainterPathStroker str;
+	//	str.setCapStyle(Qt::RoundCap);
+	//	str.setWidth(10.0);
+	//	str.setDashPattern(Qt::CustomDashLine);
+	//	str.setDashOffset(19);
+	//	QPainterPath resultPath = str.createStroke(p).simplified();
+
+
+	//	setPath(resultPath);
+	//}
+	//else {
+		
+		setPath(*p);
+
+	//}
 }
 
 int SocketConnection::type() const
@@ -209,8 +244,20 @@ int SocketConnection::type() const
 void SocketConnection::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
 	painter->setRenderHint(QPainter::Antialiasing);
-	QGraphicsPathItem::paint(painter, option, widget);
+	if (status == SocketConnectionStatus::Started || status == SocketConnectionStatus::Inprogress) {	
+		QPen pen(QColor(90, 90, 90), 2);
+		pen.setStyle(Qt::DashLine);
+		pen.setDashOffset(6);
+		painter->setPen(pen);
+		painter->drawPath(*p);
+	}
+	else {
+		QGraphicsPathItem::paint(painter, option, widget);
+	}
+
+
 }
+
 
 
 GraphNode::GraphNode(QGraphicsItem* parent):
@@ -545,6 +592,28 @@ QMenu *GraphNodeScene::createContextMenu(float x, float y)
     return menu;
 }
 
+QMenu * GraphNodeScene::removeConnectionContextMenu(float x, float y)
+{
+	auto menu = new QMenu();
+	auto sock = getSocketAt(x, y);
+	
+	auto getAppropriateText = [&] (SocketConnection *conn, int i) {
+		if (i == 2) return conn->socket2->text->toPlainText();
+		if (i == 1) return conn->socket1->text->toPlainText();
+	};
+
+	QString string;
+
+	for (SocketConnection* connection : sock->connections) {
+		string = QString("remove %1 - %2 connection").arg(getAppropriateText(connection,1)).arg(getAppropriateText(connection, 2));
+		connect(menu->addAction(string), &QAction::triggered, [this, connection]() {
+			removeConnection(connection);
+		});
+	}
+
+	return menu;
+}
+
 QJsonObject GraphNodeScene::serialize()
 {
     QJsonObject data;
@@ -597,7 +666,6 @@ void GraphNodeScene::drawBackground(QPainter * painter, const QRectF & rect)
 	//does not draw background
 }
 
-
 GraphNodeScene::GraphNodeScene(QWidget* parent):
     QGraphicsScene(parent)
 {
@@ -628,6 +696,18 @@ SocketConnection *GraphNodeScene::addConnection(QString leftNodeId, int leftSock
 
 	return con;
 }
+
+SocketConnection * GraphNodeScene::removeConnection(SocketConnection * connection)
+{
+	auto socket1 = connection->socket1;
+	auto socket2 = connection->socket2;
+	socket1->removeConnection(connection);
+	socket2->removeConnection(connection);
+	this->removeItem(connection);
+	emit connectionRemoved(connection);
+	return connection;
+}
+
 /*
 SocketConnection* GraphNodeScene::addConnection(Socket* leftCon, Socket* rightCon)
 {
@@ -657,16 +737,30 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
     {
         auto sock = getSocketAt(me->scenePos().x(), me->scenePos().y());
         if (sock != nullptr) {
+			if (me->button() == Qt::LeftButton) {
+				con = new SocketConnection();
+				con->socket1 = sock;
+				con->pos1 = me->scenePos();
+				con->pos2 = me->scenePos();
+				con->status = SocketConnectionStatus::Started;
+				con->updatePath();
+				conGroup->addToGroup(con);
+				// this->addItem(con);
+				views().at(0)->setDragMode(QGraphicsView::NoDrag);
 
-            con = new SocketConnection();
-            con->socket1 = sock;
-            con->pos1 = me->scenePos();
-            con->pos2 = me->scenePos();
-            con->updatePath();
-			conGroup->addToGroup(con);
-           // this->addItem(con);
+			}
+			if (me->button() == Qt::RightButton) {
+				auto x = me->scenePos().x();
+				auto y = me->scenePos().y();
+				auto menu = removeConnectionContextMenu(x,y);
+				auto view = this->views().first();
+				auto scenePoint = view->mapFromScene(me->scenePos());
+				auto p = view->viewport()->mapToGlobal(scenePoint);
 
-            return true;
+				menu->exec(p);
+			}
+
+			return true;
         }
         else if (me->button() == Qt::RightButton)
         {
@@ -689,12 +783,20 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
         if (con) {
             con->pos2 = me->scenePos();
             con->updatePath();
+
+			auto sock = getSocketAt(me->scenePos().x(), me->scenePos().y());
+			if (sock != nullptr && con->socket1 != sock) {
+				qDebug() << "connection entered";
+			}
             return true;
         }
     }
     break;
     case QEvent::GraphicsSceneMouseRelease:
     {
+		views().at(0)->setDragMode(QGraphicsView::RubberBandDrag);
+
+
         if (con) {
             // make it an official connection
             auto sock = getSocketAt(me->scenePos().x(), me->scenePos().y());
@@ -704,7 +806,7 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
                     // todo: prevent recursive connection
                     if (con->socket1->node != sock->node) {// prevent it connecting to itself
                         con->socket2 = sock;
-
+						con->status = SocketConnectionStatus::Finished;
                         con->socket1->addConnection(con);
                         con->socket2->addConnection(con);
                         con->updatePosFromSockets();
@@ -744,6 +846,7 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 		event->acceptProposedAction();
 	}
 		break;	
+
     }
 
     return QObject::eventFilter(o, e);
@@ -785,3 +888,4 @@ GraphNode *GraphNodeScene::getNodeByPos(QPointF point)
 
     return nullptr;
 }
+

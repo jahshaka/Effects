@@ -1,4 +1,5 @@
 #include "graphicsview.h"
+#include <QApplication>
 #include <QDebug>
 #include <QDragEnterEvent>
 #include <QMimeData>
@@ -13,6 +14,11 @@ GraphicsView::GraphicsView( QWidget *parent) : QGraphicsView(parent)
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	//setCacheMode(QGraphicsView::CacheBackground);
 	setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+
+	setCacheMode(QGraphicsView::CacheBackground);
+	setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
+	setDragMode(QGraphicsView::RubberBandDrag);
+
 	QGraphicsView::setAcceptDrops(true);
 }
 
@@ -113,4 +119,37 @@ void GraphicsView::wheelEvent(QWheelEvent * event)
 		decreaseScale();
 
 	QGraphicsView::wheelEvent(event);
+}
+
+void GraphicsView::mousePressEvent(QMouseEvent * event)
+{
+	QGraphicsView::mousePressEvent(event);
+
+	if (event->button() == Qt::MiddleButton) {
+		clickPos = mapToScene(event->pos());
+		dragging = true;
+	}
+}
+
+void GraphicsView::mouseReleaseEvent(QMouseEvent * event)
+{
+	QGraphicsView::mouseReleaseEvent(event);
+	if (dragging) {
+		dragging = false;
+		QApplication::setOverrideCursor(Qt::ArrowCursor);
+	}
+}
+
+void GraphicsView::mouseMoveEvent(QMouseEvent * event)
+{
+	QGraphicsView::mouseMoveEvent(event);
+
+	if (dragging) {
+		QApplication::setOverrideCursor(Qt::ClosedHandCursor);
+
+		auto diff = clickPos - mapToScene(event->pos());
+		setSceneRect(sceneRect().translated(diff.x(), diff.y()));
+	
+	}
+
 }
