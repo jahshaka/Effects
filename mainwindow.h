@@ -10,6 +10,7 @@
 #include "propertylistwidget.h"
 //#include "nodemodel.h"
 #include "graph/graphicsview.h"
+#include "materialsettingswidget.h"
 
 namespace Ui {
 class MainWindow;
@@ -61,9 +62,10 @@ private:
 	QWidget *centralWidget;
 	QDockWidget* textWidget;
 	QDockWidget* displayWidget;
+	MaterialSettingsWidget *materialSettingsWidget;
 
 	QDockWidget *propertyWidget;
-	QDockWidget *materialSettingsWidget;
+	QDockWidget *materialSettingsDock;
 	QTabWidget *tabbedWidget;
 	GraphicsView* graphicsView;
 	QTextEdit* textEdit;
