@@ -45,7 +45,7 @@ MaterialSettingsWidget::MaterialSettingsWidget(QWidget *parent):
 	comboBox = new QComboBox(this);
 	comboBox->setObjectName(QStringLiteral("comboBox"));
 	formLayout->setWidget(3, QFormLayout::FieldRole, comboBox);
-	label_5 = new QLabel("Cul Mode", this);
+	label_5 = new QLabel("Cull Mode", this);
 	label_5->setObjectName(QStringLiteral("label_5"));
 	formLayout->setWidget(4, QFormLayout::LabelRole, label_5);
 	comboBox_2 = new QComboBox(this);
@@ -88,6 +88,20 @@ MaterialSettingsWidget::MaterialSettingsWidget(QWidget *parent):
 	gridLayout->addLayout(formLayout, 0, 0, 1, 1);
 	formLayout->setSpacing(5);
 	setLayout(gridLayout);
+
+
+	QStringList list;
+	list << "Opaque" << "Blend" << "Additive";
+	comboBox->addItems(list);
+
+	list.clear();
+	list << "Font" << "Back" << "None";
+	comboBox_2->addItems(list);
+
+	list.clear();
+	list << "Opaque" << "AlphaTested" << "Transparent" << "Overlay";
+	comboBox_3->addItems(list);
+
 
 	setConnections();
 }
