@@ -9,6 +9,20 @@
 #include <QComboBox>
 #include <QFormLayout>
 
+struct MaterialSettings {
+	QString name;
+	Qt::CheckState zwrite;
+	Qt::CheckState depthTest;
+	Qt::CheckState fog;
+	Qt::CheckState castShadow;
+	Qt::CheckState receiveShadow;
+	Qt::CheckState acceptLighting;
+	int blendMode;
+	int cullMode;
+	int renderLayer;
+
+};
+
 namespace Ui {
 class MaterialSettingsWidget;
 }
@@ -18,8 +32,11 @@ class MaterialSettingsWidget : public QWidget
 	Q_OBJECT
 
 public:
-	explicit MaterialSettingsWidget(QWidget *parent = 0);
+	MaterialSettingsWidget(QWidget *parent = 0);
+	MaterialSettingsWidget(MaterialSettings settings, QWidget *parent = 0);
 	~MaterialSettingsWidget();
+
+	void setMaterialSettings(MaterialSettings settings);
 
 	void setName(QString name);
 	void setZWrite(Qt::CheckState val);
@@ -36,12 +53,8 @@ public:
 	void setRenderLayer(QString string);
 	void setRenderLayer(int index);
 
-
-
-
-
-
 private:
+	MaterialSettings settings;
 
 	void setConnections();
 	Ui::MaterialSettingsWidget* ui;
@@ -67,6 +80,9 @@ private:
 	QCheckBox *checkBox_4;
 	QCheckBox *checkBox_5;
 	QCheckBox *checkBox_6;
+
+signals:
+	void settingsChanged(MaterialSettings value);
 };
 
 #endif

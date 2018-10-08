@@ -1,12 +1,11 @@
 #include "materialsettingswidget.h"
 #include "ui_materialsettingswidget.h"
+#include <QDebug>
 
 
 MaterialSettingsWidget::MaterialSettingsWidget(QWidget *parent):
-	QWidget(parent),
-	ui(new Ui::MaterialSettingsWidget)
+	QWidget(parent)
 {
-	//ui->setupUi(this);
 
 	if (this->objectName().isEmpty())
 		this->setObjectName(QStringLiteral("MaterialSettingsWidget"));
@@ -101,14 +100,35 @@ MaterialSettingsWidget::MaterialSettingsWidget(QWidget *parent):
 	list.clear();
 	list << "Opaque" << "AlphaTested" << "Transparent" << "Overlay";
 	comboBox_3->addItems(list);
-
-
 	setConnections();
+
+
+}
+
+MaterialSettingsWidget::MaterialSettingsWidget(MaterialSettings settings , QWidget *parent)
+{
+	MaterialSettingsWidget();
+	setMaterialSettings(settings);
 }
 
 MaterialSettingsWidget::~MaterialSettingsWidget()
 {
-	delete ui;
+}
+
+void MaterialSettingsWidget::setMaterialSettings(MaterialSettings settings)
+{
+	setName(settings.name);
+	setZWrite(settings.zwrite);
+	setDepthText(settings.depthTest);
+	setFog(settings.fog);
+	setCastShadows(settings.castShadow);
+	setReceiveShadows(settings.receiveShadow);
+	setAcceptLighting(settings.acceptLighting);
+	setBlendMode(settings.blendMode);
+	setCullMode(settings.cullMode);
+	setRenderLayer(settings.renderLayer);
+	this->settings = settings;
+
 }
 
 void MaterialSettingsWidget::setName(QString name)
@@ -178,18 +198,18 @@ void MaterialSettingsWidget::setRenderLayer(int index)
 
 void MaterialSettingsWidget::setConnections()
 {
-	connect(checkBox, &QCheckBox::stateChanged, [](int state) {}); // Z Write
-	connect(checkBox_2, &QCheckBox::stateChanged, [](int state) {}); // Depth Test
-	connect(checkBox_3, &QCheckBox::stateChanged, [](int state) {}); // Fog
-	connect(checkBox_4, &QCheckBox::stateChanged, [](int state) {}); // Cast Shadow
-	connect(checkBox_5, &QCheckBox::stateChanged, [](int state) {}); // Recieve shadows
-	connect(checkBox_6, &QCheckBox::stateChanged, [](int state) {}); // Accept light
+	connect(checkBox, &QCheckBox::stateChanged,   [=](int state) { settings.zwrite = (Qt::CheckState)state; emit settingsChanged(settings); qDebug() << settings.name;  }); // Z Write
+	connect(checkBox_2, &QCheckBox::stateChanged, [=](int state) { settings.depthTest = (Qt::CheckState)state; emit settingsChanged(settings);}); // Depth Test
+	connect(checkBox_3, &QCheckBox::stateChanged, [=](int state) { settings.fog = (Qt::CheckState)state; emit settingsChanged(settings);}); // Fog
+	connect(checkBox_4, &QCheckBox::stateChanged, [=](int state) { settings.castShadow = (Qt::CheckState)state; emit settingsChanged(settings);}); // Cast Shadow
+	connect(checkBox_5, &QCheckBox::stateChanged, [=](int state) { settings.receiveShadow = (Qt::CheckState)state; emit settingsChanged(settings);}); // Recieve shadows
+	connect(checkBox_6, &QCheckBox::stateChanged, [=](int state) { settings.acceptLighting = (Qt::CheckState)state; emit settingsChanged(settings);}); // Accept light
 
-	connect(lineEdit, &QLineEdit::textChanged, [](QString string) {}); // Name
-	connect(comboBox, QOverload<int>::of( &QComboBox::currentIndexChanged), [](int index) {}); //blendmode
-	connect(comboBox, QOverload<const QString &>::of( &QComboBox::currentIndexChanged), [](QString text) {}); // blendmode
-	connect(comboBox_2, QOverload<int>::of( &QComboBox::currentIndexChanged), [](int index) {}); // cull mode
-	connect(comboBox_2, QOverload<const QString &>::of( &QComboBox::currentIndexChanged), [](QString text) {}); //cull mode
-	connect(comboBox_3, QOverload<int>::of( &QComboBox::currentIndexChanged), [](int index) {}); // render layer
-	connect(comboBox_3, QOverload<const QString &>::of( &QComboBox::currentIndexChanged), [](QString text) {}); //rendr Layer
+	connect(lineEdit, &QLineEdit::textChanged, [=](QString string) {settings.name = string;  emit settingsChanged(settings); }); // Name
+	connect(comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {settings.blendMode = index; settingsChanged(settings); }); //blendmode
+//	connect(comboBox, QOverload<const QString &>::of( &QComboBox::currentIndexChanged), [=](QString text) {}); // blendmode
+	connect(comboBox_2, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {settings.cullMode = index; emit settingsChanged(settings); }); // cull mode
+//	connect(comboBox_2, QOverload<const QString &>::of( &QComboBox::currentIndexChanged), [=](QString text) {}); //cull mode
+	connect(comboBox_3, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) { settings.renderLayer = index; emit settingsChanged(settings); }); // render layer
+//	connect(comboBox_3, QOverload<const QString &>::of( &QComboBox::currentIndexChanged), [=](QString text) {}); //rendr Layer
 }
