@@ -8,6 +8,7 @@
 #include <QVector4D>
 
 #include "graph/nodegraph.h"
+#include "texturemanager.h"
 
 QString assetPath(QString relPath)
 {
@@ -106,6 +107,17 @@ void SceneWidget::render()
     graphics->setShaderUniform("u_eyePos", cam->getLocalPos());
     graphics->setShaderUniform("u_sceneAmbient", QVector3D(0,0,0));
     graphics->setShaderUniform("u_time", renderTime);
+
+	// pass textures
+	auto texMan = TextureManager::getSingleton();
+	texMan->loadUnloadedTextures();
+	int i = 0;
+	for (auto tex : texMan->textures) {
+		graphics->setTexture(i, tex->texture);
+		graphics->setShaderUniform(tex->uniformName, i);
+		i++;
+	}
+	
 
     // lights
     //qDebug()<<lights.size();

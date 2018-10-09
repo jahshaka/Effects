@@ -47,9 +47,11 @@ void ShaderContext::addCodeChunk(NodeModel* node, QString code)
 }
 
 // add declaration for uniform here
+// only adds it once
 void ShaderContext::addUniform(QString uniformDecl)
 {
-	uniforms.append(uniformDecl);
+	if (uniforms.indexOf(uniformDecl) == -1)
+		uniforms.append(uniformDecl);
 }
 
 QString ShaderContext::generateVars()
@@ -58,6 +60,13 @@ QString ShaderContext::generateVars()
 
 	// generate temp vars
 	for (auto& var : tempVars) {
+		// todo: ensure only valid types
+		// for example, there is a texture type but it's not a valid shader type
+		// it is still however used in calculations
+		// so it' excluded
+		if (var.typeName == "texture")
+			continue;
+
 		auto c = var.typeName + " " + var.name + ";\n";
 		finalCode = c + finalCode;
 	}

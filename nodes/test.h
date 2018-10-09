@@ -66,6 +66,23 @@ public:
 	virtual void process(ModelContext* context) override;
 };
 
+class PulsateNode : public NodeModel
+{
+public:
+	PulsateNode();
+
+	virtual void process(ModelContext* context) override;
+};
+
+class PannerNode : public NodeModel
+{
+public:
+	PannerNode();
+
+	virtual void process(ModelContext* context) override;
+};
+
+
 class MakeColorNode : public NodeModel
 {
 public:
@@ -98,9 +115,11 @@ public:
 	void comboTextChanged(const QString& text);
 };
 
+class GraphTexture;
 class TextureNode : public NodeModel
 {
 	QPushButton *texture;
+	GraphTexture* graphTexture;
 
 public:
 	TextureNode();

@@ -27,6 +27,7 @@ set(CPP
     propertywidgets/texturepropertywidget.cpp
     properties.cpp
     materialwriter.cpp
+    texturemanager.cpp
     #graphtest.cpp
 	# graph
 	graph/nodegraph.cpp
@@ -56,6 +57,7 @@ set(HEADERS
         propertywidgets/intpropertywidget.h
         propertywidgets/texturepropertywidget.h
         materialwriter.h
+		texturemanager.h
         #graphtest.h
 		#graph
 		graph/nodegraph.h

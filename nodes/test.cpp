@@ -1,5 +1,6 @@
 #include "test.h"
 #include "../graph/library.h"
+#include "../texturemanager.h"
 
 #include <QFileDialog>
 
@@ -102,10 +103,21 @@ void registerModels(NodeGraph* graph)
 	{
 		return new SineNode();
 	});
+	
+	// pulsate
+	lib->addNode("pulsate", "Pulsate Node", "", []()
+	{
+		return new PulsateNode();
+	});
 
 	//make color
 	lib->addNode("makeColor", "Make Color", "", []() {
 		return new MakeColorNode();
+	});
+
+	//sample texture
+	lib->addNode("sampleTexture", "Sample Texture", "", []() {
+		return new TextureSamplerNode();
 	});
 
 	//texture
@@ -160,7 +172,7 @@ void SurfaceMasterNode::process(ModelContext* ctx)
 	code += "material.alpha = " + alphaVar + ";\n";
 	//context->addCodeChunk(this, "material.diffuse = " + diffVar + ";");
 
-	context->clear();
+	//context->clear();
 	context->addCodeChunk(this, code);
 	
 }
@@ -407,7 +419,7 @@ TextureSamplerNode::TextureSamplerNode()
 	title = "Sample Texture";
 
 	addInputSocket(new TextureSocketModel("Texture"));
-	addInputSocket(new Vector2SocketModel("UV","texCoord0"));
+	addInputSocket(new Vector2SocketModel("UV","v_texCoord"));
 	addOutputSocket(new Vector4SocketModel("RGBA"));
 }
 
@@ -418,7 +430,13 @@ void TextureSamplerNode::process(ModelContext* context)
 	auto tex = this->getValueFromInputSocket(0);
 	auto uv = this->getValueFromInputSocket(1);
 	auto rgba = this->getOutputSocketVarName(0);
-	auto code = rgba + " = texture("+tex+","+uv+");";
+
+	QString code = "";
+
+	if (tex.isEmpty())
+		code = rgba + " = vec4(0.0,0.0,0.0,0.0);";
+	else
+		code = rgba + " = texture("+tex+","+uv+");";
 
 	ctx->addCodeChunk(this, code);
 }
@@ -498,32 +516,80 @@ TextureNode::TextureNode()
 	
 
 	auto label = new QLabel;
-	auto text = new QLabel("value :");
 
 	auto pushLayout = new QVBoxLayout;
 	texture->setLayout(pushLayout);
 	//pushLayout->addWidget(label);
 
 	layout->setContentsMargins(3, 0, 3, 2);
-	layout->addWidget(text);
-	layout->addStretch();
 	layout->addWidget(texture);
 	this->widget = widget;
 
+	graphTexture = nullptr;
 	connect(texture, &QPushButton::clicked, [=]() {
 		auto filename = QFileDialog::getOpenFileName();
 		QIcon icon(filename);
 		texture->setIcon(icon);
+
+		if (graphTexture != nullptr) {
+			TextureManager::getSingleton()->removeTexture(graphTexture);
+			delete graphTexture;
+		}
+
+		graphTexture = TextureManager::getSingleton()->createTexture();
+		graphTexture->path = filename;
 	});
 	
 	widget->setStyleSheet("background:rgba(0,0,0,0); color: rgba(250,250,250,.9);");
 	texture->setStyleSheet("background:rgba(0,0,0,0); border : 2px solid rgba(50,50,50,.3);");
 
 
-	addOutputSocket(new Vector4SocketModel("texture"));
+	addOutputSocket(new TextureSocketModel("texture"));
 
 }
 
 void TextureNode::process(ModelContext * context)
+{
+	auto ctx = (ShaderContext*)context;
+	auto texName = this->getOutputSocketVarName(0);
+	ctx->addUniform("uniform sampler2D "+texName+"");
+	if (graphTexture != nullptr) {
+		graphTexture->uniformName = texName;
+	}
+}
+
+PulsateNode::PulsateNode()
+{
+	setNodeType(NodeType::Modifier);
+
+	title = "Pulsate";
+
+	addInputSocket(new FloatSocketModel("Speed", "1.0"));
+	addOutputSocket(new FloatSocketModel("Result"));
+}
+
+void PulsateNode::process(ModelContext * context)
+{
+	auto ctx = (ShaderContext*)context;
+	auto valA = this->getValueFromInputSocket(0);
+	auto res = this->getOutputSocketVarName(0);
+
+	auto code = res + " = sin(u_time *" + valA + ") * 0.5 + 0.5;";
+	ctx->addCodeChunk(this, code);
+}
+
+PannerNode::PannerNode()
+{
+	setNodeType(NodeType::Modifier);
+
+	title = "Panner";
+
+	addInputSocket(new Vector2SocketModel("UV", "v_texCoord"));
+	addInputSocket(new Vector2SocketModel("Speed", "vec2(1.0,1.0)"));
+	addInputSocket(new FloatSocketModel("Time", "u_time"));
+	addOutputSocket(new Vector2SocketModel("Result"));
+}
+
+void PannerNode::process(ModelContext * context)
 {
 }
