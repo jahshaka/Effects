@@ -71,7 +71,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	window->addAction(textWidget->toggleViewAction());
 	window->addAction(displayWidget->toggleViewAction());
 	window->addAction(propertyWidget->toggleViewAction());
-	window->addAction(materialSettingsWidget->toggleViewAction());
+	window->addAction(materialSettingsDock->toggleViewAction());
 	
 	setMenuBar(bar);
 	
@@ -256,7 +256,8 @@ void MainWindow::configureUI()
 	displayWidget = new QDockWidget("Display");
 
 	propertyWidget = new QDockWidget("Properties");
-	materialSettingsWidget = new QDockWidget("Material Settings");
+	materialSettingsDock = new QDockWidget("Material Settings");
+	materialSettingsWidget = new MaterialSettingsWidget;
 	tabbedWidget = new QTabWidget;
 	graphicsView = new GraphicsView;
 	textEdit = new QTextEdit;
@@ -267,14 +268,14 @@ void MainWindow::configureUI()
 	textWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	displayWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	propertyWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	materialSettingsWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	materialSettingsDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 
 	setDockNestingEnabled(true);
 	this->setCentralWidget(graphicsView);
 	addDockWidget(Qt::LeftDockWidgetArea, nodeTray, Qt::Vertical);
 	addDockWidget(Qt::RightDockWidgetArea, textWidget, Qt::Vertical);
 	addDockWidget(Qt::RightDockWidgetArea, displayWidget, Qt::Vertical);
-	addDockWidget(Qt::RightDockWidgetArea, materialSettingsWidget, Qt::Vertical);
+	addDockWidget(Qt::RightDockWidgetArea, materialSettingsDock, Qt::Vertical);
 	addDockWidget(Qt::LeftDockWidgetArea, propertyWidget, Qt::Vertical);
 	//QMainWindow::tabifyDockWidget(propertyWidget, materialSettingsWidget);
 
@@ -313,6 +314,7 @@ void MainWindow::configureUI()
 	});
 
 	nodeTray->setWidget(container);
+	materialSettingsDock->setWidget(materialSettingsWidget);
 
 	containerLayout->addWidget(searchContainer);
 	containerLayout->addWidget(nodeContainer);
