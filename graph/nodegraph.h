@@ -15,6 +15,20 @@ class NodeModel;
 class ConnectionModel;
 class NodeLibrary;
 
+
+struct MaterialSettings {
+	QString name;
+	bool zwrite;
+	bool depthTest;
+	bool fog;
+	bool castShadow;
+	bool receiveShadow;
+	bool acceptLighting;
+	int blendMode;
+	int cullMode;
+	int renderLayer;
+};
+
 class ModelContext
 {
 };
@@ -26,7 +40,7 @@ public:
 	QMap<QString, ConnectionModel*> connections;
 	NodeModel* masterNode = nullptr;
 	QList<Property*> properties;
-
+	MaterialSettings settings;
 
 	void addProperty(Property* prop);
 	Property* getPropertyByName(const QString& name);
@@ -48,9 +62,12 @@ public:
 
 	// gets the output node and socket for a given input node and socket
 	ConnectionModel* getConnectionFromOutputNode(NodeModel* node, int socketIndex);
-
 	QJsonObject serialize();
 	static NodeGraph* deserialize(QJsonObject obj);
+	QJsonObject serializeMaterialSettings();
+	MaterialSettings deserializeMaterialSettings(QJsonObject obj);
+
+	void setMaterialSettings(MaterialSettings setting);
 };
 
 #endif// NODEGRAPH2_H

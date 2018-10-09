@@ -10,17 +10,17 @@ QJsonObject MaterialWriter::serializeMaterial(NodeGraph* graph)
 {
 	QJsonObject matObj;
 
-	matObj["name"] = "Material";// graph->getName();
-    matObj["type"] = "shadergraph";
-	matObj["zWrite"] = true;
-	matObj["depthTest"] = true;
-	matObj["blendMode"] = "none";
-	matObj["cullMode"] = "back";
-	matObj["renderLayer"] = "opaque";
-	matObj["fog"] = true;
-	matObj["castShadows"] = true;
-	matObj["receiveShadows"] = true;
-	matObj["lighting"] = true;
+	matObj["name"] =				graph->settings.name;
+    matObj["type"] =				"shaderGraph";
+	matObj["zWrite"] =				graph->settings.zwrite;
+	matObj["depthTest"] =		    graph->settings.depthTest;
+	matObj["blendMode"] =			graph->settings.blendMode;
+	matObj["cullMode"] =			graph->settings.cullMode;
+	matObj["renderLayer"] =			graph->settings.renderLayer;
+	matObj["fog"] =					graph->settings.fog;
+	matObj["castShadows"] =			graph->settings.castShadow;
+	matObj["receiveShadows"] =		graph->settings.receiveShadow;
+	matObj["lighting"] =			graph->settings.acceptLighting;
 
 	QJsonArray uniformArray;
 	// convert properties to uniforms
