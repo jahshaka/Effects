@@ -2,49 +2,36 @@
 #define MATERIALSETTINGSWIDGET_H
 
 #include <QWidget>
+#include <QJsonObject>
 #include <QLabel>
 #include <QLineEdit>
 #include <QLayout>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QFormLayout>
-
-struct MaterialSettings {
-	QString name;
-	Qt::CheckState zwrite;
-	Qt::CheckState depthTest;
-	Qt::CheckState fog;
-	Qt::CheckState castShadow;
-	Qt::CheckState receiveShadow;
-	Qt::CheckState acceptLighting;
-	int blendMode;
-	int cullMode;
-	int renderLayer;
-
-};
+#include "graph/nodegraph.h"
 
 namespace Ui {
 class MaterialSettingsWidget;
 }
-
 class MaterialSettingsWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
 	MaterialSettingsWidget(QWidget *parent = 0);
-	MaterialSettingsWidget(MaterialSettings settings, QWidget *parent = 0);
+	MaterialSettingsWidget(MaterialSettings* settings, QWidget *parent = 0);
 	~MaterialSettingsWidget();
 
-	void setMaterialSettings(MaterialSettings settings);
+	void setMaterialSettings(MaterialSettings* settings);
 
 	void setName(QString name);
-	void setZWrite(Qt::CheckState val);
-	void setDepthText(Qt::CheckState val);
-	void setFog(Qt::CheckState val);
-	void setCastShadows(Qt::CheckState val);
-	void setReceiveShadows(Qt::CheckState val);
-	void setAcceptLighting(Qt::CheckState val);
+	void setZWrite(bool val);
+	void setDepthText(bool val);
+	void setFog(bool val);
+	void setCastShadows(bool val);
+	void setReceiveShadows(bool val);
+	void setAcceptLighting(bool val);
 
 	void setBlendMode(QString string);
 	void setBlendMode(int index);
@@ -54,7 +41,7 @@ public:
 	void setRenderLayer(int index);
 
 private:
-	MaterialSettings settings;
+	MaterialSettings* settings;
 
 	void setConnections();
 	Ui::MaterialSettingsWidget* ui;

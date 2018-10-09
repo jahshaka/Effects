@@ -129,7 +129,8 @@ QJsonObject NodeGraph::serialize()
 	graph.insert("masternode", this->masterNode->id);
 
 	//todo: save settings (acceptLighting, blendstate, depthstate, etc..)
-	graph["settings"] = QJsonObject();
+
+	graph["settings"] = serializeMaterialSettings();
 
 	//todo: save parameters
 	QJsonArray propJson;
@@ -202,7 +203,47 @@ NodeGraph* NodeGraph::deserialize(QJsonObject obj)
 
 		graph->addConnection(leftNodeId, leftSockIndex, rightNodeId, rightSockIndex);
 	}
-
-
+	
+		// deserialize material settings
+	graph->settings = graph->deserializeMaterialSettings(graphObj["settings"].toObject());
+	
 	return graph;
 }
+
+
+QJsonObject NodeGraph::serializeMaterialSettings()
+{
+	QJsonObject obj;
+	obj["name"] = settings.name;
+	obj["zWrite"] = settings.zwrite;
+	obj["depthTest"] = settings.depthTest;
+	obj["fog"] = settings.fog;
+	obj["castShadow"] = settings.castShadow;
+	obj["receiveShadow"] = settings.receiveShadow;
+	obj["acceptLighting"] = settings.acceptLighting;
+	obj["blendMode"] = settings.blendMode;
+	obj["cullMode"] = settings.cullMode;
+	obj["renderLayer"] = settings.renderLayer;
+	return obj;
+}
+
+MaterialSettings NodeGraph::deserializeMaterialSettings(QJsonObject obj)
+{
+	settings.name = obj["name"].toString();
+	settings.zwrite = obj["zWrite"].toBool();
+	settings.depthTest = obj["depthTest"].toBool();
+	settings.fog = obj["fog"].toBool();
+	settings.castShadow = obj["castShadow"].toBool();
+	settings.receiveShadow = obj["receiveShadow"].toBool();
+	settings.acceptLighting = obj["acceptLighting"].toBool();
+	settings.blendMode = obj["blendMode"].toInt();
+	settings.cullMode = obj["cullMode"].toInt();
+	settings.renderLayer = obj["renderLayer"].toInt();
+	return settings;
+}
+
+void NodeGraph::setMaterialSettings(MaterialSettings setting)
+{
+	this->settings = setting;
+}
+
