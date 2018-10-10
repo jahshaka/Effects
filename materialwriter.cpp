@@ -11,7 +11,7 @@ QJsonObject MaterialWriter::serializeMaterial(NodeGraph* graph)
 	QJsonObject matObj;
 
 	matObj["name"] =				graph->settings.name;
-    matObj["type"] =				"shaderGraph";
+    matObj["type"] =				"shadergraph";
 	matObj["zWrite"] =				graph->settings.zwrite;
 	matObj["depthTest"] =		    graph->settings.depthTest;
 	matObj["blendMode"] =			graph->settings.blendMode;

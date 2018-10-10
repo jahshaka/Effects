@@ -13,6 +13,7 @@ MaterialSettingsWidget::MaterialSettingsWidget(QWidget *parent):
 	if (this->objectName().isEmpty())
 		this->setObjectName(QStringLiteral("MaterialSettingsWidget"));
 
+	
 	this->resize(330, 433);
 	gridLayout = new QGridLayout(this);
 	gridLayout->setObjectName(QStringLiteral("gridLayout"));
@@ -103,7 +104,6 @@ MaterialSettingsWidget::MaterialSettingsWidget(QWidget *parent):
 	list.clear();
 	list << "Opaque" << "AlphaTested" << "Transparent" << "Overlay";
 	comboBox_3->addItems(list);
-	setConnections();
 
 
 }
@@ -131,6 +131,8 @@ void MaterialSettingsWidget::setMaterialSettings(MaterialSettings* settings)
 	setCullMode(settings->cullMode);
 	setRenderLayer(settings->renderLayer);
 	this->settings = settings;
+	setConnections();
+
 
 }
 
