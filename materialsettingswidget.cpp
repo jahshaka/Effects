@@ -170,34 +170,59 @@ void MaterialSettingsWidget::setAcceptLighting(bool val)
 	checkBox_6->setChecked(val);
 }
 
-void MaterialSettingsWidget::setBlendMode(QString string)
+
+void MaterialSettingsWidget::setBlendMode(BlendMode index)
 {
-	comboBox->setCurrentText(string);
+	int i = 0;
+	switch (index) {
+	case BlendMode::Opaque:
+		i = 0;
+		break;
+	case BlendMode::Blend:
+		i = 1;
+		break;
+	case BlendMode::Additive:
+		i = 2;
+	}
+	comboBox->setCurrentIndex(i);
 }
 
-void MaterialSettingsWidget::setBlendMode(int index)
+
+void MaterialSettingsWidget::setCullMode(CullMode index)
 {
-	comboBox->setCurrentIndex(index);
+	int i = 0;
+	switch (index) {
+	case CullMode::Front:
+		i = 0;
+		break;
+	case CullMode::Back:
+		i = 1;
+		break;
+	case CullMode::None:
+		i = 2;
+	}
+	comboBox_2->setCurrentIndex(i);
 }
 
-void MaterialSettingsWidget::setCullMode(QString string)
-{
-	comboBox_2->setCurrentText(string);
-}
 
-void MaterialSettingsWidget::setCullMode(int index)
+void MaterialSettingsWidget::setRenderLayer(RenderLayer index)
 {
-	comboBox_2->setCurrentIndex(index);
-}
-
-void MaterialSettingsWidget::setRenderLayer(QString string)
-{
-	comboBox_3->setCurrentText(string);
-}
-
-void MaterialSettingsWidget::setRenderLayer(int index)
-{
-	comboBox_3->setCurrentIndex(index);
+	int i = 0;
+	switch (index) {
+	case RenderLayer::Opaque:
+		i = 0;
+		break;
+	case RenderLayer::AlphaTested:
+		i = 1;
+		break;
+	case RenderLayer::Transparent:
+		i = 2;
+		break;
+	case RenderLayer::Overlay:
+		i = 3;
+		break;
+	}
+	comboBox_3->setCurrentIndex(i);
 }
 
 void MaterialSettingsWidget::setConnections()
@@ -210,10 +235,7 @@ void MaterialSettingsWidget::setConnections()
 	connect(checkBox_6, &QCheckBox::stateChanged, [=](int state) { settings->acceptLighting = checkBox_6->isChecked(); }); // Accept light
 
 	connect(lineEdit, &QLineEdit::textChanged, [=](QString string) {settings->name = string;   }); // Name
-	connect(comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {settings->blendMode = index; }); //blendmode
-//	connect(comboBox, QOverload<const QString &>::of( &QComboBox::currentIndexChanged), [=](QString text) {}); // blendmode
-	connect(comboBox_2, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {settings->cullMode = index;  }); // cull mode
-//	connect(comboBox_2, QOverload<const QString &>::of( &QComboBox::currentIndexChanged), [=](QString text) {}); //cull mode
-	connect(comboBox_3, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) { settings->renderLayer = index;  }); // render layer
-//	connect(comboBox_3, QOverload<const QString &>::of( &QComboBox::currentIndexChanged), [=](QString text) {}); //rendr Layer
+	connect(comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {settings->blendMode = static_cast<BlendMode>(index); }); //blendmode
+	connect(comboBox_2, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {settings->cullMode = static_cast<CullMode>(index);   }); // cull mode
+	connect(comboBox_3, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) { settings->renderLayer = static_cast<RenderLayer>(index);   }); // render layer
 }

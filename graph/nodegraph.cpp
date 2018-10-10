@@ -214,6 +214,47 @@ NodeGraph* NodeGraph::deserialize(QJsonObject obj)
 QJsonObject NodeGraph::serializeMaterialSettings()
 {
 	QJsonObject obj;
+
+	QString blendType;
+	switch (settings.blendMode) {
+	case BlendMode::Opaque:
+		blendType = "Opaque";
+		break;
+	case BlendMode::Blend:
+		blendType = "Blend";
+		break;
+	case BlendMode::Additive:
+		blendType = "Blend";
+	}
+
+	QString cullMode;
+	switch (settings.cullMode) {
+	case CullMode::Front:
+		cullMode = "Front";
+		break;
+	case CullMode::Back:
+		cullMode = "Back";
+		break;
+	case CullMode::None:
+		cullMode = "None";
+	}
+
+	QString renderLayer;
+	switch (settings.renderLayer) {
+	case RenderLayer::Opaque:
+		renderLayer = "Opaque";
+		break;
+	case RenderLayer::AlphaTested:
+		renderLayer = "AlphaTested";
+		break;
+	case RenderLayer::Transparent:
+		renderLayer = "Transparent";
+		break;
+	case RenderLayer::Overlay:
+		renderLayer = "Overlay";
+		break;
+	}
+
 	obj["name"] = settings.name;
 	obj["zWrite"] = settings.zwrite;
 	obj["depthTest"] = settings.depthTest;
@@ -221,14 +262,35 @@ QJsonObject NodeGraph::serializeMaterialSettings()
 	obj["castShadow"] = settings.castShadow;
 	obj["receiveShadow"] = settings.receiveShadow;
 	obj["acceptLighting"] = settings.acceptLighting;
-	obj["blendMode"] = settings.blendMode;
-	obj["cullMode"] = settings.cullMode;
-	obj["renderLayer"] = settings.renderLayer;
+	obj["blendMode"] = blendType;
+	obj["cullMode"] = cullMode;
+	obj["renderLayer"] = renderLayer;
 	return obj;
 }
 
 MaterialSettings NodeGraph::deserializeMaterialSettings(QJsonObject obj)
 {
+
+	auto getBlendmode = [](QJsonObject obj) {
+		if (obj["blendMode"].toString().compare("Opaque")) return 0;
+		if (obj["blendMode"].toString().compare("Blend")) return 1;
+		if (obj["blendMode"].toString().compare("Additive")) return 2;
+		return 0;
+	};
+	auto getCullMode = [](QJsonObject obj) {
+		if (obj["blendMode"].toString().compare("Front")) return 0;
+		if (obj["blendMode"].toString().compare("Back")) return 1;
+		if (obj["blendMode"].toString().compare("None")) return 2;
+		return 0;
+	};
+	auto getRenderLayer = [](QJsonObject obj) {
+		if (obj["blendMode"].toString().compare("Opaque")) return 0;
+		if (obj["blendMode"].toString().compare("AlphaTested")) return 1;
+		if (obj["blendMode"].toString().compare("Transparent")) return 2;
+		if (obj["blendMode"].toString().compare("Overlay")) return 3;
+		return 0;
+	};
+
 	settings.name = obj["name"].toString();
 	settings.zwrite = obj["zWrite"].toBool();
 	settings.depthTest = obj["depthTest"].toBool();
@@ -236,9 +298,9 @@ MaterialSettings NodeGraph::deserializeMaterialSettings(QJsonObject obj)
 	settings.castShadow = obj["castShadow"].toBool();
 	settings.receiveShadow = obj["receiveShadow"].toBool();
 	settings.acceptLighting = obj["acceptLighting"].toBool();
-	settings.blendMode = obj["blendMode"].toInt();
-	settings.cullMode = obj["cullMode"].toInt();
-	settings.renderLayer = obj["renderLayer"].toInt();
+	settings.blendMode = static_cast<BlendMode>(getBlendmode(obj));
+	settings.cullMode = static_cast<CullMode>(getCullMode(obj));
+	settings.renderLayer = static_cast<RenderLayer>(getRenderLayer(obj));
 	return settings;
 }
 

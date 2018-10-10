@@ -33,12 +33,9 @@ public:
 	void setReceiveShadows(bool val);
 	void setAcceptLighting(bool val);
 
-	void setBlendMode(QString string);
-	void setBlendMode(int index);
-	void setCullMode(QString string);
-	void setCullMode(int index);
-	void setRenderLayer(QString string);
-	void setRenderLayer(int index);
+	void setBlendMode(BlendMode index);
+	void setCullMode(CullMode index);
+	void setRenderLayer(RenderLayer index);
 
 private:
 	MaterialSettings* settings;
