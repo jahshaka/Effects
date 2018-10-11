@@ -1,5 +1,4 @@
 #include "materialsettingswidget.h"
-#include "nodegraph.h"
 #include <QDebug>
 #include <QJsonObject>
 #include <QJsonValue>

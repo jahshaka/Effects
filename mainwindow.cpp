@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "nodegraph.h"
-//#include "nodemodel.h"
+#include "graphnode.h"
 #include <QMouseEvent>
 #include <QDebug>
 #include <QDrag>
@@ -26,6 +25,8 @@
 #include "graph/library.h"
 #include "nodes/libraryv1.h"
 #include <QPointer>
+#include "graphnodescene.h"
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),

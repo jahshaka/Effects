@@ -16,7 +16,7 @@ set_target_properties(assimp PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_
 set(CPP
 	main.cpp
 	mainwindow.cpp
-	nodegraph.cpp
+	#nodegraph.cpp
     #nodemodel.cpp
     scenewidget.cpp
     propertylistwidget.cpp
@@ -28,6 +28,10 @@ set(CPP
     properties.cpp
     materialwriter.cpp
     texturemanager.cpp
+	socketconnection.cpp
+	socket.cpp
+	graphnode.cpp
+	graphnodescene.cpp
     #graphtest.cpp
 	# graph
 	graph/nodegraph.cpp
@@ -50,7 +54,7 @@ set(CPP
 set(HEADERS
 	mainwindow.h
         properties.h
-	nodegraph.h
+	#nodegraph.h
         scenewidget.h
         propertylistwidget.h
         materialsettingswidget.h
@@ -60,6 +64,10 @@ set(HEADERS
         propertywidgets/texturepropertywidget.h
         materialwriter.h
 		texturemanager.h
+		socketconnection.h
+		socket.h
+		graphnode.h
+		graphnodescene.h
         #graphtest.h
 		#graph
 		graph/nodegraph.h

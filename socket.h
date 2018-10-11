@@ -1,0 +1,60 @@
+#pragma once
+#include <QGraphicsPathItem>
+#include "graphnode.h"
+
+enum class SocketType
+{
+	In,
+	Out
+};
+class GraphNode;
+class GraphNodeScene;
+class SocketConnection;
+class Socket : public QObject, public QGraphicsPathItem
+{
+	Q_OBJECT
+public:
+
+	// note: in sockets can only have one connection
+	QVector<SocketConnection*> connections;
+	SocketType socketType;
+	float radius;
+	float dimentions;
+	qreal opactyValue = 0.0;
+	QGraphicsTextItem* text;
+	GraphNode* node;
+	GraphNode* owner;
+
+	int socketIndex = -1;
+
+	Socket(QGraphicsItem* parent, SocketType socketType, QString title);
+	void addConnection(SocketConnection* con);
+	void removeConnection(SocketConnection* con);
+	float calcHeight();
+	float getRadius();
+	QPointF getPos();
+	float getSocketOffset();
+	virtual int type() const override;
+	QColor getSocketColor();
+	void setSocketColor(QColor color);
+	void updateSocket();
+
+	QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+private:
+	QPointF socketPos;
+	QColor socketColor;
+	QColor connectedColor = QColor(50, 150, 250);
+	QColor disconnectedColor = QColor(90, 90, 90).darker(175);
+	bool connected;
+	bool rounded = true;
+
+
+
+	void setConnected(bool value);
+
+protected:
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR);
+
+
+signals:
+};
