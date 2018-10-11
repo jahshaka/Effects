@@ -104,7 +104,6 @@ MaterialSettingsWidget::MaterialSettingsWidget(QWidget *parent):
 	list << "Opaque" << "AlphaTested" << "Transparent" << "Overlay";
 	comboBox_3->addItems(list);
 
-
 }
 
 MaterialSettingsWidget::MaterialSettingsWidget(MaterialSettings* settings , QWidget *parent)
@@ -218,3 +217,5 @@ void MaterialSettingsWidget::setConnections()
 	connect(comboBox_3, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) { settings->renderLayer = index;  }); // render layer
 //	connect(comboBox_3, QOverload<const QString &>::of( &QComboBox::currentIndexChanged), [=](QString text) {}); //rendr Layer
 }
+
+

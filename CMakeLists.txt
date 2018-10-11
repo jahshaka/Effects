@@ -92,6 +92,10 @@ set(FORMS
 		materialsettingswidget.ui
         propertylistwidget.ui)
 
+Qt5_add_resources(QRCS
+		images.qrc)
+
+
 set(LIBS IrisGL Qt5::Widgets)
 
 
@@ -103,7 +107,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 #qt5_wrap_cpp(HEADERS_moc ${HEADERS})
 #qt5_wrap_ui(UI_moc ${FORMS})
 
-add_executable(MaterialNodeGraph ${HEADERS} ${CPP} ${FORMS})
+add_executable(MaterialNodeGraph ${HEADERS} ${CPP} ${FORMS} ${QRCS})
 include_directories(MaterialNodeGraph "irisgl/include")
 target_link_libraries(MaterialNodeGraph ${LIBS})
 
