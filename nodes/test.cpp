@@ -249,9 +249,9 @@ VectorMultiplyNode::VectorMultiplyNode()
 	title = "Vector Multiply";
 	typeName = "vectorMultiply";
 
-	addInputSocket(new Vector3SocketModel("A"));
-	addInputSocket(new Vector3SocketModel("B"));
-	addOutputSocket(new Vector3SocketModel("Result"));
+	addInputSocket(new Vector4SocketModel("A"));
+	addInputSocket(new Vector4SocketModel("B"));
+	addOutputSocket(new Vector4SocketModel("Result"));
 }
 
 void VectorMultiplyNode::process(ModelContext* context)

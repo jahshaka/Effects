@@ -43,6 +43,8 @@ set(CPP
 	generator/shadercontext.cpp
 	# nodes
 	nodes/test.cpp
+	nodes/libraryv1.cpp
+	nodes/math.cpp
 	)
 
 set(HEADERS
@@ -73,6 +75,8 @@ set(HEADERS
 		generator/shadercontext.h
 		# nodes
 		nodes/test.h
+		nodes/libraryv1.h
+		nodes/math.h
 	)
 
 set(FORMS

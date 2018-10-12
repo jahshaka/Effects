@@ -2,6 +2,7 @@
 #include "connectionmodel.h"
 #include "../nodes/test.h"
 #include "library.h"
+///#include "../nodes/libraryv1.h"
 
 #include <QJsonObject>
 #include <QJsonArray>
@@ -143,10 +144,11 @@ QJsonObject NodeGraph::serialize()
 	return graph;
 }
 
-NodeGraph* NodeGraph::deserialize(QJsonObject obj)
+NodeGraph* NodeGraph::deserialize(QJsonObject obj, NodeLibrary* library)
 {
 	auto graph = new NodeGraph();
-	registerModels(graph);
+	graph->setNodeLibrary(library);
+	//registerModels(graph);
 
 	// read settings
 

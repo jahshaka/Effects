@@ -94,6 +94,9 @@ void Vector2DPropertyWidget::setPropValues(QVector2D values) {
 	x = values.x();
 	y = values.y();
 	value = values;
+
+	prop->value.setX(x);
+	prop->value.setY(x);
 }
 
 void Vector2DPropertyWidget::paintEvent(QPaintEvent * event)

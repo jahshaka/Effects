@@ -65,7 +65,7 @@ public:
 	// gets the output node and socket for a given input node and socket
 	ConnectionModel* getConnectionFromOutputNode(NodeModel* node, int socketIndex);
 	QJsonObject serialize();
-	static NodeGraph* deserialize(QJsonObject obj);
+	static NodeGraph* deserialize(QJsonObject obj, NodeLibrary* lib);
 	QJsonObject serializeMaterialSettings();
 	MaterialSettings deserializeMaterialSettings(QJsonObject obj);
 

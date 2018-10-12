@@ -24,6 +24,7 @@
 #include "materialwriter.h"
 //#include "nodelistitem.h"
 #include "graph/library.h"
+#include "nodes/libraryv1.h"
 #include <QPointer>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -114,7 +115,8 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
 void MainWindow::newNodeGraph()
 {
     auto graph = new NodeGraph;
-    registerModels(graph);
+	graph->setNodeLibrary(new LibraryV1());
+    //registerModels(graph);
     auto masterNode = new SurfaceMasterNode();
     graph->addNode(masterNode);
     graph->setMasterNode(masterNode);
@@ -151,7 +153,7 @@ void MainWindow::loadGraph()
     file.close();
     QJsonDocument d = QJsonDocument::fromJson(val);
 
-    auto graph = NodeGraph::deserialize(d.object());
+    auto graph = NodeGraph::deserialize(d.object(), new LibraryV1());
     this->setNodeGraph(graph);
     this->restoreGraphPositions(d.object());
 }

@@ -30,7 +30,7 @@ QString SocketHelper::convertVectorValue(QString fromValue, SocketModel* from, S
 	{
 		// eg vec2 > vec4 = var.xyyy
 		for (int i = 0; i<numTo; i++) {
-			suffix += getVectorComponent(qMin(i, numTo - 2));
+			suffix += getVectorComponent(qMin(i, numFrom - 1));
 		}
 		return fromValue + suffix;
 	}
