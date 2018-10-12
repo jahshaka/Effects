@@ -16,7 +16,7 @@ set_target_properties(assimp PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_
 set(CPP
 	main.cpp
 	mainwindow.cpp
-	nodegraph.cpp
+	#nodegraph.cpp
     #nodemodel.cpp
     scenewidget.cpp
     propertylistwidget.cpp
@@ -25,9 +25,14 @@ set(CPP
     propertywidgets/intpropertywidget.cpp
     propertywidgets/floatpropertywidget.cpp
     propertywidgets/texturepropertywidget.cpp
+    propertywidgets/basepropertywidget.cpp
     properties.cpp
     materialwriter.cpp
     texturemanager.cpp
+	socketconnection.cpp
+	socket.cpp
+	graphnode.cpp
+	graphnodescene.cpp
     #graphtest.cpp
 	# graph
 	graph/nodegraph.cpp
@@ -50,7 +55,7 @@ set(CPP
 set(HEADERS
 	mainwindow.h
         properties.h
-	nodegraph.h
+	#nodegraph.h
         scenewidget.h
         propertylistwidget.h
         materialsettingswidget.h
@@ -58,8 +63,13 @@ set(HEADERS
         propertywidgets/vectorpropertywidget.h
         propertywidgets/intpropertywidget.h
         propertywidgets/texturepropertywidget.h
+        propertywidgets/basepropertywidget.h
         materialwriter.h
 		texturemanager.h
+		socketconnection.h
+		socket.h
+		graphnode.h
+		graphnodescene.h
         #graphtest.h
 		#graph
 		graph/nodegraph.h
@@ -84,6 +94,10 @@ set(FORMS
 		materialsettingswidget.ui
         propertylistwidget.ui)
 
+Qt5_add_resources(QRCS
+		images.qrc)
+
+
 set(LIBS IrisGL Qt5::Widgets)
 
 
@@ -95,7 +109,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 #qt5_wrap_cpp(HEADERS_moc ${HEADERS})
 #qt5_wrap_ui(UI_moc ${FORMS})
 
-add_executable(MaterialNodeGraph ${HEADERS} ${CPP} ${FORMS})
+add_executable(MaterialNodeGraph ${HEADERS} ${CPP} ${FORMS} ${QRCS})
 include_directories(MaterialNodeGraph "irisgl/include")
 target_link_libraries(MaterialNodeGraph ${LIBS})
 

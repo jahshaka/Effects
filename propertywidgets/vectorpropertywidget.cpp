@@ -1,6 +1,6 @@
 #include "vectorpropertywidget.h"
 #include <QLabel>
-
+#include <QDebug>
 
 VectorPropertyWidget::VectorPropertyWidget()
 {
@@ -12,24 +12,15 @@ VectorPropertyWidget::~VectorPropertyWidget()
 }
 
 
-Vector2DPropertyWidget::Vector2DPropertyWidget() : QWidget()
+Vector2DPropertyWidget::Vector2DPropertyWidget() : BasePropertyWidget()
 {
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-	auto mainLayout = new QVBoxLayout();
-	auto textLayout = new QHBoxLayout();
-
-	displayName = new QLineEdit(this);
-	auto label = new QLabel("Display Name", this);
-
-	textLayout->addWidget(label);
-	textLayout->addStretch();
-	textLayout->addWidget(displayName);
+	auto mainLayout = layout;
 	auto wid = getValueWidget();
-
-	mainLayout->addLayout(textLayout);
 	mainLayout->addWidget(wid);
 	setLayout(mainLayout);
+
 }
 
 
@@ -54,7 +45,7 @@ QWidget * Vector2DPropertyWidget::getValueWidget()
 	auto spinLayout = new QHBoxLayout();
 	auto label = new QLabel("Values", this);
 
-	spinLayout->setContentsMargins(0, 0, 0, 0);
+	spinLayout->setContentsMargins(5, 0, 5, 0);
 
 
 	widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -99,14 +90,7 @@ void Vector2DPropertyWidget::setPropValues(QVector2D values) {
 	prop->value.setY(x);
 }
 
-void Vector2DPropertyWidget::paintEvent(QPaintEvent * event)
-{
-	QWidget::paintEvent(event);
-	QPainter painter(this);
-	painter.setRenderHint(QPainter::Antialiasing);
-	painter.setPen(QPen(QColor(200, 200, 200, 70), 2));
-	painter.drawRect(0, 0, width(), height());
-}
+
 
 
 /////////////////////////////
@@ -114,24 +98,17 @@ void Vector2DPropertyWidget::paintEvent(QPaintEvent * event)
 
 
 
-Vector3DPropertyWidget::Vector3DPropertyWidget() : QWidget()
+Vector3DPropertyWidget::Vector3DPropertyWidget() : BasePropertyWidget()
 {
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-	auto mainLayout = new QVBoxLayout();
-	auto textLayout = new QHBoxLayout();
-
-	displayName = new QLineEdit(this);
-	auto label = new QLabel("Display Name", this);
-
-	textLayout->addWidget(label);
-	textLayout->addStretch();
-	textLayout->addWidget(displayName);
+	auto mainLayout = layout;
+	
 	auto wid = getValueWidget();
 
-	mainLayout->addLayout(textLayout);
 	mainLayout->addWidget(wid);
 	setLayout(mainLayout);
+
 }
 
 
@@ -157,7 +134,7 @@ QWidget * Vector3DPropertyWidget::getValueWidget()
 	auto spinLayout = new QHBoxLayout();
 	auto label = new QLabel("Values", this);
 
-	spinLayout->setContentsMargins(0, 0, 0, 0);
+	spinLayout->setContentsMargins(5, 0, 5, 0);
 
 
 	widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -206,39 +183,23 @@ void Vector3DPropertyWidget::setPropValues(QVector3D values) {
 	value = values;
 }
 
-void Vector3DPropertyWidget::paintEvent(QPaintEvent * event)
-{
-	QWidget::paintEvent(event);
-	QPainter painter(this);
-	painter.setRenderHint(QPainter::Antialiasing);
-	painter.setPen(QPen(QColor(200, 200, 200, 70), 2));
-	painter.drawRect(0, 0, width(), height());
-}
-
 
 /////////////////////////////
 
 
 
 
-Vector4DPropertyWidget::Vector4DPropertyWidget() : QWidget()
+Vector4DPropertyWidget::Vector4DPropertyWidget() : BasePropertyWidget()
 {
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-	auto mainLayout = new QVBoxLayout();
-	auto textLayout = new QHBoxLayout();
-
-	displayName = new QLineEdit(this);
-	auto label = new QLabel("Display Name", this);
-
-	textLayout->addWidget(label);
-	textLayout->addStretch();
-	textLayout->addWidget(displayName);
+	auto mainLayout = layout;
+	
 	auto wid = getValueWidget();
 
-	mainLayout->addLayout(textLayout);
 	mainLayout->addWidget(wid);
 	setLayout(mainLayout);
+
 }
 
 
@@ -263,7 +224,7 @@ QWidget * Vector4DPropertyWidget::getValueWidget()
 	auto spinLayout = new QHBoxLayout();
 	auto label = new QLabel("Values", this);
 
-	spinLayout->setContentsMargins(0, 0, 0, 0);
+	spinLayout->setContentsMargins(5, 0, 5, 0);
 
 
 	widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -319,14 +280,7 @@ void Vector4DPropertyWidget::setPropValues(QVector4D values) {
 	value = values;
 }
 
-void Vector4DPropertyWidget::paintEvent(QPaintEvent * event)
-{
-	QWidget::paintEvent(event);
-	QPainter painter(this);
-	painter.setRenderHint(QPainter::Antialiasing);
-	painter.setPen(QPen(QColor(200, 200, 200, 70), 2));
-	painter.drawRect(0, 0, width(), height());
-}
+
 
 
 

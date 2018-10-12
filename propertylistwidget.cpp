@@ -37,6 +37,7 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
     delete ui->widgetList->layout();
     layout = new QVBoxLayout();
     layout->addStretch();
+	layout->setSpacing(15);
     ui->widgetList->setLayout(layout);
 }
 
@@ -133,6 +134,8 @@ void PropertyListWidget::addVec4Property(Vec4Property * vec4Prop)
 	auto propWidget = new Vector4DPropertyWidget();
 	this->layout->insertWidget(this->layout->count() - 1, propWidget);
 	propWidget->setProp(vec4Prop);
+	updateGeometry();
+
 }
 
 ///////

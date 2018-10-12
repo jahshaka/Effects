@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "nodegraph.h"
-//#include "nodemodel.h"
+#include "graphnode.h"
 #include <QMouseEvent>
 #include <QDebug>
 #include <QDrag>
@@ -26,6 +25,8 @@
 #include "graph/library.h"
 #include "nodes/libraryv1.h"
 #include <QPointer>
+#include "graphnodescene.h"
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -230,7 +231,6 @@ void MainWindow::configureStyleSheet()
 		"QListView::item{ border-radius: 2px; border: 1px solid rgba(0,0,0,1); background: rgba(80,80,80,1);  }"	
 		"QListView::item:selected{ background: rgba(65,65,65,1); border: 1px solid rgba(50,150,250,1); }"
 	);
-
 	nodeTray->setStyleSheet(
 		"QDockWidget{color: rgba(250,250,250,.9); background: rgba(32,32,32,1);}"
 		"QDockWidget::title{ padding: 8px; background: rgba(22,22,22,1);	border: 1px solid rgba(20,20,20, .8);	text-align: center;}"
@@ -241,8 +241,10 @@ void MainWindow::configureStyleSheet()
 		"QScrollBar:vertical {border : 0px solid black;	background: rgba(32, 32, 32, .7);width: 3px;padding: 1px;}"
 		"QScrollBar::handle{ background: rgba(20, 20, 20, .9);	border-radius: 4px; right: 1px; width: 3px;}"
 		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
-		" QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
+		"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
 		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .1);}"
+		"QComboBox::drop-down {	width: 15px;  border: none; subcontrol-position: center right;}"
+		"QComboBox::down-arrow{image : url(:/images/drop-down-24.png); }"
 	);
 
 	textWidget->setStyleSheet(nodeTray->styleSheet());

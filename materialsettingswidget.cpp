@@ -1,5 +1,4 @@
 #include "materialsettingswidget.h"
-#include "nodegraph.h"
 #include <QDebug>
 #include <QJsonObject>
 #include <QJsonValue>
@@ -104,7 +103,6 @@ MaterialSettingsWidget::MaterialSettingsWidget(QWidget *parent):
 	list.clear();
 	list << "Opaque" << "AlphaTested" << "Transparent" << "Overlay";
 	comboBox_3->addItems(list);
-
 
 }
 
@@ -241,3 +239,5 @@ void MaterialSettingsWidget::setConnections()
 	connect(comboBox_2, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {settings->cullMode = static_cast<CullMode>(index);   }); // cull mode
 	connect(comboBox_3, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) { settings->renderLayer = static_cast<RenderLayer>(index);   }); // render layer
 }
+
+
