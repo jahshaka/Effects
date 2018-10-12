@@ -1,22 +1,14 @@
 #include "floatpropertywidget.h"
 #include <QLabel>
 
-FloatPropertyWidget::FloatPropertyWidget()
+FloatPropertyWidget::FloatPropertyWidget() : BasePropertyWidget()
 {
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-	auto mainLayout = new QVBoxLayout();
-	auto textLayout = new QHBoxLayout();
-
-	displayName = new QLineEdit(this);
-	auto label = new QLabel("Display Name", this);
-
-	textLayout->addWidget(label);
-	textLayout->addStretch();
-	textLayout->addWidget(displayName);
+	auto mainLayout = layout;
+	
 	auto wid = getValueWidget();
 
-	mainLayout->addLayout(textLayout);
 	mainLayout->addWidget(wid);
 	setLayout(mainLayout);
 }
@@ -108,11 +100,4 @@ QWidget * FloatPropertyWidget::getWidget()
 	return nullptr;
 }
 
-void FloatPropertyWidget::paintEvent(QPaintEvent * event)
-{
-	QWidget::paintEvent(event);
-	QPainter painter(this);
-	painter.setRenderHint(QPainter::Antialiasing);
-	painter.setPen(QPen(QColor(200, 200, 200, 70), 2));
-	painter.drawRect(0, 0, width(), height());
-}
+

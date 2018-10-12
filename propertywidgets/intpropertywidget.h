@@ -4,9 +4,10 @@
 #include <QLineEdit>
 #include <QPainter>
 #include "properties.h"
+#include "basepropertywidget.h"
 
 
-class IntPropertyWidget : public QWidget
+class IntPropertyWidget : public BasePropertyWidget
 {
 	Q_OBJECT
 public:
@@ -23,7 +24,6 @@ private:
 	QSpinBox* minSpinBox;
 	QSpinBox* stepSpinBox;
 	IntProperty *prop;
-	QLineEdit *displayName;
 	int x = 0;
 	int min =0;
 	int max =0;
@@ -31,7 +31,6 @@ private:
 	QWidget *widget;
 
 protected:
-	void paintEvent(QPaintEvent *event) override;
 
 public slots:
 	void setPropValue(int value);

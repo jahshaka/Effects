@@ -6,15 +6,16 @@
 #include <QLineEdit>
 #include <QPainter>
 #include "properties.h"
+#include "basepropertywidget.h"
 
-class VectorPropertyWidget : public QWidget
+class VectorPropertyWidget : public BasePropertyWidget
 {
 public:
 	VectorPropertyWidget();
 	~VectorPropertyWidget();
 };
 
-class Vector2DPropertyWidget : public QWidget
+class Vector2DPropertyWidget : public BasePropertyWidget
 {
 	Q_OBJECT
 public:
@@ -29,14 +30,13 @@ private:
 	QDoubleSpinBox* xSpinBox;
 	QDoubleSpinBox* ySpinBox;
 	Vec2Property *prop;
-	QLineEdit *displayName;
+	//QLineEdit *displayName;
 	double x;
 	double y;
 	QVector2D value;
 	QWidget *widget;
 
 protected:
-	void paintEvent(QPaintEvent *event) override;
 
 public slots:
 	void setPropValues(QVector2D values);
@@ -47,7 +47,7 @@ signals:
 
 };
 
-class Vector3DPropertyWidget : public QWidget
+class Vector3DPropertyWidget : public BasePropertyWidget
 {
 	Q_OBJECT
 public:
@@ -63,7 +63,7 @@ private:
 	QDoubleSpinBox* ySpinBox;
 	QDoubleSpinBox* zSpinBox;
 	Vec3Property *prop;
-	QLineEdit *displayName;
+	//QLineEdit *displayName;
 	double x;
 	double y;
 	double z;
@@ -71,7 +71,6 @@ private:
 	QWidget *widget;
 
 protected:
-	void paintEvent(QPaintEvent *event) override;
 
 public slots:
 	void setPropValues(QVector3D values);
@@ -82,7 +81,7 @@ signals:
 
 
 
-class Vector4DPropertyWidget : public QWidget
+class Vector4DPropertyWidget : public BasePropertyWidget
 {
 	Q_OBJECT
 public:
@@ -99,7 +98,7 @@ private:
 	QDoubleSpinBox* zSpinBox;
 	QDoubleSpinBox* wSpinBox;
 	Vec4Property *prop;
-	QLineEdit *displayName;
+	//QLineEdit *displayName;
 	double x;
 	double y;
 	double z;
@@ -108,7 +107,6 @@ private:
 	QWidget *widget;
 
 protected:
-	void paintEvent(QPaintEvent *event) override;
 
 public slots:
 	void setPropValues(QVector4D values);

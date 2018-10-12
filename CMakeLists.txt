@@ -25,6 +25,7 @@ set(CPP
     propertywidgets/intpropertywidget.cpp
     propertywidgets/floatpropertywidget.cpp
     propertywidgets/texturepropertywidget.cpp
+    propertywidgets/basepropertywidget.cpp
     properties.cpp
     materialwriter.cpp
     texturemanager.cpp
@@ -62,6 +63,7 @@ set(HEADERS
         propertywidgets/vectorpropertywidget.h
         propertywidgets/intpropertywidget.h
         propertywidgets/texturepropertywidget.h
+        propertywidgets/basepropertywidget.h
         materialwriter.h
 		texturemanager.h
 		socketconnection.h
