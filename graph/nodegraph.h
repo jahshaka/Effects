@@ -15,6 +15,24 @@ class NodeModel;
 class ConnectionModel;
 class NodeLibrary;
 
+enum class BlendMode {
+	Opaque ,
+	Blend,
+	Additive,
+};
+
+enum class CullMode {
+	Front,
+	Back,
+	None,
+};
+
+enum class RenderLayer {
+	Opaque,
+	AlphaTested,
+	Transparent,
+	Overlay,
+};
 
 struct MaterialSettings {
 	QString name;
@@ -24,9 +42,9 @@ struct MaterialSettings {
 	bool castShadow;
 	bool receiveShadow;
 	bool acceptLighting;
-	int blendMode;
-	int cullMode;
-	int renderLayer;
+	BlendMode blendMode;
+	CullMode cullMode;
+	RenderLayer renderLayer;
 };
 
 class ModelContext

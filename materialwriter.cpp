@@ -10,13 +10,53 @@ QJsonObject MaterialWriter::serializeMaterial(NodeGraph* graph)
 {
 	QJsonObject matObj;
 
+	QString blendType;
+	switch (graph->settings.blendMode) {
+	case BlendMode::Opaque:
+		blendType = "Opaque";
+		break;
+	case BlendMode::Blend:
+		blendType = "Blend";
+		break;
+	case BlendMode::Additive:
+		blendType = "Blend";
+	}
+
+	QString cullMode;
+	switch (graph->settings.cullMode) {
+	case CullMode::Front:
+		cullMode = "Front";
+		break;
+	case CullMode::Back:
+		cullMode = "Back";
+		break;
+	case CullMode::None:
+		cullMode = "None";
+	}
+
+	QString renderLayer;
+	switch (graph->settings.renderLayer) {
+	case RenderLayer::Opaque:
+		renderLayer = "Opaque";
+		break;
+	case RenderLayer::AlphaTested:
+		renderLayer = "AlphaTested";
+		break;
+	case RenderLayer::Transparent:
+		renderLayer = "Transparent";
+		break;
+	case RenderLayer::Overlay:
+		renderLayer = "Overlay";
+		break;
+	}
+
 	matObj["name"] =				graph->settings.name;
     matObj["type"] =				"shadergraph";
 	matObj["zWrite"] =				graph->settings.zwrite;
 	matObj["depthTest"] =		    graph->settings.depthTest;
-	matObj["blendMode"] =			graph->settings.blendMode;
-	matObj["cullMode"] =			graph->settings.cullMode;
-	matObj["renderLayer"] =			graph->settings.renderLayer;
+	matObj["blendMode"] =			blendType;
+	matObj["cullMode"] =			cullMode;
+	matObj["renderLayer"] =			renderLayer;
 	matObj["fog"] =					graph->settings.fog;
 	matObj["castShadows"] =			graph->settings.castShadow;
 	matObj["receiveShadows"] =		graph->settings.receiveShadow;
