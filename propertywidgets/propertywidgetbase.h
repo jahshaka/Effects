@@ -13,10 +13,10 @@ public:
 	PropertyWidgetBase();
 	~PropertyWidgetBase();
 
-	QHBoxLayout *layout;
+	QLayout *layout;
 };
 
-class Widget2D : PropertyWidgetBase
+class Widget2D : public PropertyWidgetBase
 {
 	Q_OBJECT
 public:
@@ -36,7 +36,7 @@ signals:
 };
 
 
-class Widget3D : PropertyWidgetBase
+class Widget3D : public PropertyWidgetBase
 {
 	Q_OBJECT
 public:
@@ -59,7 +59,7 @@ signals:
 };
 
 
-class Widget4D : PropertyWidgetBase
+class Widget4D : public PropertyWidgetBase
 {
 	Q_OBJECT
 public:
@@ -90,7 +90,7 @@ enum class LabelState {
 	Hidden
 };
 
-class WidgetInt : PropertyWidgetBase
+class WidgetInt : public PropertyWidgetBase
 {
 	Q_OBJECT
 public:
@@ -101,7 +101,13 @@ public:
 	void setIntSpinBoxConnection(std::function<void(int val)> func = nullptr);
 
 	QSpinBox* spinBox;
+	QSpinBox* maxSpinBox;
+	QSpinBox* minSpinBox;
+	QSpinBox* stepSpinBox;
 	int value;
+	int min = 0;
+	int max = 0;
+	int step = 0;
 	LabelState state = LabelState::Visible;
 signals:
 	void valueChanged(int val);
@@ -109,7 +115,7 @@ signals:
 };
 
 
-class WidgetFloat : PropertyWidgetBase
+class WidgetFloat : public PropertyWidgetBase
 {
 	Q_OBJECT
 public:
@@ -119,8 +125,15 @@ public:
 
 	void setFloatSpinBoxConnection(std::function<void(double val)> func = nullptr);
 
-	QDoubleSpinBox* spinBox;
+	QDoubleSpinBox* floatSpinBox;
+	QDoubleSpinBox* maxSpinBox;
+	QDoubleSpinBox* minSpinBox;
+	QDoubleSpinBox* stepSpinBox;
 	double value;
+	double min;
+	double max;
+	double step;
+
 	LabelState state = LabelState::Visible;
 signals:
 	void valueChanged(double val);

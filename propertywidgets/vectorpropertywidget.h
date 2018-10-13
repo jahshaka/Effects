@@ -7,6 +7,7 @@
 #include <QPainter>
 #include "properties.h"
 #include "basepropertywidget.h"
+#include "propertywidgetbase.h"
 
 class VectorPropertyWidget : public BasePropertyWidget
 {

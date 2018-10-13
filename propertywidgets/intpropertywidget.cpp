@@ -7,7 +7,12 @@ IntPropertyWidget::IntPropertyWidget() : BasePropertyWidget()
 
 	auto mainLayout = layout;
 
-	auto wid = getValueWidget();
+	auto wid = new WidgetInt;
+	intSpinBox = wid->spinBox;
+	minSpinBox = wid->minSpinBox;
+	maxSpinBox = wid->maxSpinBox;
+	stepSpinBox = wid->stepSpinBox;
+	setConnections();
 
 	mainLayout->addWidget(wid);
 	setLayout(mainLayout);
@@ -39,38 +44,8 @@ void IntPropertyWidget::setPropValue(int value)
 	prop->setValue(value);
 }
 
-QWidget * IntPropertyWidget::getValueWidget()
-{
-	widget = new QWidget(this);
-	auto mainLayout = new QVBoxLayout;
-	auto spinLayout = new QHBoxLayout();
-	auto label = new QLabel("Values", this);
 
-	spinLayout->setContentsMargins(0, 0, 0, 0);
-
-
-	widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-	widget->setLayout(mainLayout);
-
-	intSpinBox = new QSpinBox(this);
-	maxSpinBox = new QSpinBox(this);
-	minSpinBox = new QSpinBox(this);
-	stepSpinBox = new QSpinBox(this);
-
-	auto gridLayout = new QGridLayout;
-	gridLayout->addWidget(minSpinBox, 0, 1);
-	gridLayout->addWidget(maxSpinBox, 1, 1);
-	gridLayout->addWidget(stepSpinBox, 2,1);
-	gridLayout->addWidget(new QLabel("min"), 0, 0);
-	gridLayout->addWidget(new QLabel("max"), 1, 0);
-	gridLayout->addWidget(new QLabel("step"), 2, 0);
-	
-	spinLayout->addWidget(label);
-	spinLayout->addWidget(intSpinBox);
-
-	mainLayout->addLayout(spinLayout);
-	mainLayout->addLayout(gridLayout);
-
+void IntPropertyWidget::setConnections() {
 	connect(intSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [=](int val) {
 		x = val;
 		emit valueChanged(x);
@@ -84,19 +59,11 @@ QWidget * IntPropertyWidget::getValueWidget()
 	});
 	connect(stepSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [=](int val) {
 		intSpinBox->setSingleStep(val);
-
 	});
 
 
 	connect(this, &IntPropertyWidget::valueChanged, [=](int val) {
 		setPropValue(val);
 	});
-	return widget;
-}
-
-QWidget * IntPropertyWidget::getWidget()
-{
-	if (widget) return widget;
-	return nullptr;
 }
 

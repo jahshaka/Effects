@@ -168,12 +168,41 @@ void Widget4D::setWSpinBoxConnection(std::function<void(double val)> func)
 
 WidgetInt::WidgetInt() : PropertyWidgetBase()
 {
-	spinBox = new QSpinBox;
-	auto label = new QLabel("Value");
+	spinBox = new QSpinBox; 
+	maxSpinBox = new QSpinBox(this);
+	minSpinBox = new QSpinBox(this);
+	stepSpinBox = new QSpinBox(this);
 
-	if (state == LabelState::Visible)
-		layout->addWidget(label);
-	layout->addWidget(spinBox);
+	auto label = new QLabel("Value");
+	auto label1 = new QLabel("Min");
+	auto label2 = new QLabel("Max");
+	auto label3 = new QLabel("Step");
+
+
+	auto vbox = new QHBoxLayout;
+	auto minbox = new QHBoxLayout;
+	auto maxbox = new QHBoxLayout;
+	auto stepbox = new QHBoxLayout;
+
+	vbox->addWidget(label);
+	vbox->addWidget(spinBox);
+	minbox->addWidget(label2);
+	minbox->addWidget(maxSpinBox);
+	maxbox->addWidget(label1);
+	maxbox->addWidget(minSpinBox);
+	stepbox->addWidget(label3);
+	stepbox->addWidget(stepSpinBox);
+
+	auto wid = new QWidget;
+	auto widLayout = new QVBoxLayout;
+	wid->setLayout(widLayout);
+
+	widLayout->addLayout(vbox);
+	widLayout->addLayout(minbox);
+	widLayout->addLayout(maxbox);
+	widLayout->addLayout(stepbox);
+
+	layout->addWidget(wid);
 }
 
 
@@ -194,18 +223,59 @@ void WidgetInt::setIntSpinBoxConnection(std::function<void(int val)> func)
 		func(val);
 		emit valueChanged(value);
 	});
+
+	connect(minSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [=](int val) {
+		spinBox->setMinimum(val);
+	});
+	connect(maxSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [=](int val) {
+		spinBox->setMaximum(val);
+
+	});
+	connect(stepSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [=](int val) {
+		spinBox->setSingleStep(val);
+	});
+
 }
 
 
 
 WidgetFloat::WidgetFloat() : PropertyWidgetBase()
 {
-	spinBox = new QDoubleSpinBox;
-	auto label = new QLabel("Value");
+	floatSpinBox = new QDoubleSpinBox;
+	maxSpinBox = new QDoubleSpinBox(this);
+	minSpinBox = new QDoubleSpinBox(this);
+	stepSpinBox = new QDoubleSpinBox(this);
 
-	if (state == LabelState::Visible)
-		layout->addWidget(label);
-	layout->addWidget(spinBox);
+	auto label = new QLabel("Value");
+	auto label1 = new QLabel("Min");
+	auto label2 = new QLabel("Max");
+	auto label3 = new QLabel("Step");
+
+
+	auto vbox = new QHBoxLayout;
+	auto minbox = new QHBoxLayout;
+	auto maxbox = new QHBoxLayout;
+	auto stepbox = new QHBoxLayout;
+
+	vbox->addWidget(label);
+	vbox->addWidget(floatSpinBox);
+	minbox->addWidget(label2);
+	minbox->addWidget(maxSpinBox);
+	maxbox->addWidget(label1);
+	maxbox->addWidget(minSpinBox);
+	stepbox->addWidget(label3);
+	stepbox->addWidget(stepSpinBox);
+
+	auto wid = new QWidget;
+	auto widLayout = new QVBoxLayout;
+	wid->setLayout(widLayout);
+
+	widLayout->addLayout(vbox);
+	widLayout->addLayout(minbox);
+	widLayout->addLayout(maxbox);
+	widLayout->addLayout(stepbox);
+
+	layout->addWidget(wid);
 }
 
 
@@ -221,7 +291,7 @@ WidgetFloat::~WidgetFloat()
 
 void WidgetFloat::setFloatSpinBoxConnection(std::function<void(double val)> func)
 {
-	connect(spinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
+	connect(floatSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
 		value = val;
 		func(val);
 		emit valueChanged(value);
