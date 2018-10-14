@@ -310,6 +310,10 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 
 			menu->exec(p);
 		}
+		else if (me->button() == Qt::MiddleButton)
+		{
+			views().at(0)->setDragMode(QGraphicsView::NoDrag);
+		}
 	}
 	break;
 	case QEvent::GraphicsSceneMouseMove:

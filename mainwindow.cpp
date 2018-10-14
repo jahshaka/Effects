@@ -17,6 +17,7 @@
 #include <QMimeData>
 #include <QFile>
 #include <QByteArray>
+#include <QScrollBar>
 //#include "graphtest.h"
 #include "generator/shadergenerator.h"
 #include "nodes/test.h"
@@ -30,8 +31,7 @@
 
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    QMainWindow(parent)
 {
   //  ui->setupUi(this);
 	configureUI();
@@ -128,7 +128,7 @@ void MainWindow::newNodeGraph()
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+    
 }
 
 void MainWindow::saveGraph()
@@ -207,6 +207,12 @@ void MainWindow::configureStyleSheet()
 		"QTabWidget::pane{border: 1px solid rgba(0,0,0,.5);	border - top: 0px solid rgba(0,0,0,0);	}"
 		"QTabWidget::tab - bar{	left: 1px;	}"
 		"QDockWidget::tab{	background:rgba(32,32,32,1);}"
+
+		"QScrollBar:vertical {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 24px; padding: 4px;}"
+		"QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 8px; width: 14px; }"
+		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
+		"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
+		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .0);}"
 		
 	);
 
@@ -228,10 +234,18 @@ void MainWindow::configureStyleSheet()
 	);
 
 	nodeContainer->setStyleSheet(
-	
-		"QListView::item{ border-radius: 2px; border: 1px solid rgba(0,0,0,1); background: rgba(80,80,80,1);  }"	
-		"QListView::item:selected{ background: rgba(65,65,65,1); border: 1px solid rgba(50,150,250,1); }"
+	"QListView::item{ border-radius: 2px; border: 1px solid rgba(0,0,0,1); background: rgba(80,80,80,1);  }"	
+	"QListView::item:selected{ background: rgba(65,65,65,1); border: 1px solid rgba(50,150,250,1); }"
 	);
+
+	nodeContainer->verticalScrollBar()->setStyleSheet(
+		"QScrollBar:vertical {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 22px; padding: 2px;}"
+		"QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 8px; width: 14px; }"
+		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
+		"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
+		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .0);}"
+	);
+
 	nodeTray->setStyleSheet(
 		"QDockWidget{color: rgba(250,250,250,.9); background: rgba(32,32,32,1);}"
 		"QDockWidget::title{ padding: 8px; background: rgba(22,22,22,1);	border: 1px solid rgba(20,20,20, .8);	text-align: center;}"
@@ -239,11 +253,6 @@ void MainWindow::configureStyleSheet()
 		"QDockWidget::float-button{ background: rgba(0,0,0,0); color: rgba(200,200,200,0); icon-size: 0px; padding: 22px; }"
 		//"QDockWidget::close-button, QDockWidget::float-button{	background: rgba(10,10,10,1); color: white;padding: 0px;}"
 		//"QDockWidget::close-button:hover, QDockWidget::float-button:hover{background: rgba(0,220,0,0);padding: 0px;}"
-		"QScrollBar:vertical {border : 0px solid black;	background: rgba(32, 32, 32, .7);width: 3px;padding: 1px;}"
-		"QScrollBar::handle{ background: rgba(20, 20, 20, .9);	border-radius: 4px; right: 1px; width: 3px;}"
-		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
-		"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
-		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .1);}"
 		"QComboBox::drop-down {	width: 15px;  border: none; subcontrol-position: center right;}"
 		"QComboBox::down-arrow{image : url(:/images/drop-down-24.png); }"
 	);

@@ -48,7 +48,6 @@ private:
 	void addTextureProperty(TextureProperty* texProp);
 
 private:
-    Ui::PropertyListWidget *ui;
     QVBoxLayout* layout;
     NodeGraph* graph;
 	int added = -1;
