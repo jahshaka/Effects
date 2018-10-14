@@ -1,5 +1,6 @@
 #include "propertywidgetbase.h"
 #include <QLabel>
+#include <QFileDialog>
 
 
 PropertyWidgetBase::PropertyWidgetBase() : QWidget()
@@ -296,4 +297,29 @@ void WidgetFloat::setFloatSpinBoxConnection(std::function<void(double val)> func
 		func(val);
 		emit valueChanged(value);
 	});
+}
+
+WidgetTexture::WidgetTexture()
+{
+
+	auto wid = new QWidget;
+	auto winHolder = new QVBoxLayout;
+	winHolder->setContentsMargins(0, 0, 0, 0);
+	wid->setLayout(winHolder);
+	
+	auto label = new QLabel("Value :");
+	texture = new QPushButton();
+	texture->setIconSize(QSize(145, 145));
+	texture->setMinimumSize(160, 146);
+	winHolder->addWidget(label);
+	winHolder->addWidget(texture);
+
+	layout->addWidget(wid);
+
+	setStyleSheet("background:rgba(0,0,0,0); color: rgba(250,250,250,.9);");
+	texture->setStyleSheet("background:rgba(0,0,0,0); border : 2px solid rgba(50,50,50,.3);");
+}
+
+WidgetTexture::~WidgetTexture()
+{
 }

@@ -76,3 +76,21 @@ void BasePropertyWidget::paintEvent(QPaintEvent * event)
 
 
 }
+
+void BasePropertyWidget::mouseMoveEvent(QMouseEvent * event)
+{
+	pressed = true;
+	QWidget::mouseMoveEvent(event);
+}
+
+void BasePropertyWidget::mousePressEvent(QMouseEvent * event)
+{
+	emit currentWidget(this);
+	QWidget::mousePressEvent(event);
+}
+
+void BasePropertyWidget::mouseReleaseEvent(QMouseEvent * event)
+{
+	pressed = false;
+	QWidget::mouseReleaseEvent(event);
+}

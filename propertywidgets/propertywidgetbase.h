@@ -1,6 +1,7 @@
 #pragma once
 #include <QWidget>
 #include <QHBoxLayout>
+#include <QPushButton>
 #include <QSpinBox>
 #include <QVector2D>
 #include <QVector3D>
@@ -139,4 +140,17 @@ signals:
 	void valueChanged(double val);
 
 };
+
+class WidgetTexture : public PropertyWidgetBase
+{
+	Q_OBJECT
+public:
+	WidgetTexture();
+	~WidgetTexture();
+
+	QPushButton *texture;
+	QString fileName;
+};
+
+
 

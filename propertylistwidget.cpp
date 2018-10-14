@@ -80,9 +80,15 @@ void PropertyListWidget::addNewFloatProperty()
 
 void PropertyListWidget::addFloatProperty(FloatProperty* floatProp)
 {
+	added++;
 	auto propWidget = new FloatPropertyWidget();
+	propWidget->index = added;
 	this->layout->insertWidget(this->layout->count() - 1, propWidget);
 	propWidget->setProp(floatProp);
+	connect(propWidget, &BasePropertyWidget::currentWidget, [=](BasePropertyWidget *wid) {
+		currentWidget = wid;
+	});
+
 }
 
 void PropertyListWidget::addNewVec2Property()
@@ -96,9 +102,14 @@ void PropertyListWidget::addNewVec2Property()
 
 void PropertyListWidget::addVec2Property(Vec2Property * vec2Prop)
 {
+	added++;
 	auto propWidget = new Vector2DPropertyWidget();
+	propWidget->index = added;
 	this->layout->insertWidget(this->layout->count() - 1, propWidget);
 	propWidget->setProp(vec2Prop);
+	connect(propWidget, &BasePropertyWidget::currentWidget, [=](BasePropertyWidget *wid) {
+		currentWidget = wid;
+	});
 }
 ///////
 
@@ -113,9 +124,14 @@ void PropertyListWidget::addNewVec3Property()
 
 void PropertyListWidget::addVec3Property(Vec3Property * vec3Prop)
 {
+	added++;
 	auto propWidget = new Vector3DPropertyWidget();
+	propWidget->index = added;
 	this->layout->insertWidget(this->layout->count() - 1, propWidget);
 	propWidget->setProp(vec3Prop);
+	connect(propWidget, &BasePropertyWidget::currentWidget, [=](BasePropertyWidget *wid) {
+		currentWidget = wid;
+	});
 }
 
 ///////
@@ -131,11 +147,14 @@ void PropertyListWidget::addNewVec4Property()
 
 void PropertyListWidget::addVec4Property(Vec4Property * vec4Prop)
 {
+	added++;
 	auto propWidget = new Vector4DPropertyWidget();
+	propWidget->index = added;
 	this->layout->insertWidget(this->layout->count() - 1, propWidget);
 	propWidget->setProp(vec4Prop);
-	updateGeometry();
-
+	connect(propWidget, &BasePropertyWidget::currentWidget, [=](BasePropertyWidget *wid) {
+		currentWidget = wid;
+	});
 }
 
 ///////
@@ -151,9 +170,14 @@ void PropertyListWidget::addNewIntProperty()
 
 void PropertyListWidget::addIntProperty(IntProperty * intProp)
 {
+	added++;
 	auto propWidget = new IntPropertyWidget();
+	propWidget->index = added;
 	this->layout->insertWidget(this->layout->count() - 1, propWidget);
 	propWidget->setProp(intProp);
+	connect(propWidget, &BasePropertyWidget::currentWidget, [=](BasePropertyWidget *wid) {
+		currentWidget = wid;
+	});
 }
 
 ////
@@ -169,7 +193,12 @@ void PropertyListWidget::addNewTextureProperty()
 
 void PropertyListWidget::addTextureProperty(TextureProperty * texProp)
 {
+	added++;
 	auto propWidget = new TexturePropertyWidget;
+	propWidget->index = added;
 	this->layout->insertWidget(this->layout->count() - 1, propWidget);
 	propWidget->setProp(texProp);
+	connect(propWidget, &BasePropertyWidget::currentWidget, [=](BasePropertyWidget *wid) {
+		currentWidget = wid;
+	});
 }

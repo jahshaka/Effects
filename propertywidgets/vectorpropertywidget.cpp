@@ -54,6 +54,7 @@ void Vector2DPropertyWidget::setProp(Vec2Property *prop)
 	displayName->setText(prop->displayName);
 	xSpinBox->setValue(prop->value.x());
 	ySpinBox->setValue(prop->value.y());
+	modelProperty = prop;
 	emit nameChanged(displayName->text());
 
 }
@@ -103,6 +104,7 @@ void Vector3DPropertyWidget::setProp(Vec3Property *prop)
 	xSpinBox->setValue(prop->value.x());
 	ySpinBox->setValue(prop->value.y());
 	zSpinBox->setValue(prop->value.z());
+	modelProperty = prop;
 	emit nameChanged(displayName->text());
 
 }
@@ -175,6 +177,7 @@ void Vector4DPropertyWidget::setProp(Vec4Property *prop)
 	xSpinBox->setValue(prop->value.x());
 	ySpinBox->setValue(prop->value.y());
 	zSpinBox->setValue(prop->value.z());
+	modelProperty = prop;
 	emit nameChanged(displayName->text());
 }
 

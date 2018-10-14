@@ -168,7 +168,19 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 	auto node = nodeGraph->library->createNode(event->mimeData()->text());
 
 	//	auto factory = nodeGraph->modelFactories[event->mimeData()->text()];
-	this->addNodeModel(node, event->scenePos().x(), event->scenePos().y());
+	if (node) {
+		this->addNodeModel(node, event->scenePos().x(), event->scenePos().y());
+		return;
+	}
+	qDebug() << event->mimeData()->data("index").toInt();
+	auto prop = nodeGraph->properties.at(event->mimeData()->data("index").toInt());
+	qDebug() << prop << prop->id << prop->displayName << prop->getValue();
+	if (prop) {
+		auto propNode = new PropertyNode();
+		propNode->setProperty(prop);
+		this->addNodeModel(propNode, event->scenePos().x(), event->scenePos().y());
+		qDebug() << "no node element";
+	}
 }
 
 void GraphNodeScene::drawBackground(QPainter * painter, const QRectF & rect)
@@ -370,7 +382,7 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 		auto event = (QDropEvent*)e;
 		event->acceptProposedAction();
 	}
-									break;
+		break;
 
 	}
 

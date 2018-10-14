@@ -26,6 +26,7 @@
 #include "nodes/libraryv1.h"
 #include <QPointer>
 #include "graphnodescene.h"
+#include "propertywidgets/basepropertywidget.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -343,7 +344,7 @@ void MainWindow::configureUI()
 	nodeContainer->viewport()->installEventFilter(this);
 	nodeContainer->setWordWrap(true);
 	nodeContainer->setGridSize(QSize(70, 100));
-	
+	propertyListWidget->installEventFilter(this);
 
 	searchContainer->setStyleSheet("background:rgba(32,32,32,1);");
 	searchBar->setStyleSheet("QLineEdit{ background:rgba(41,41,41,1); border: 1px solid rgba(150,150,150,.2); border-radius: 2px; }");
@@ -424,6 +425,58 @@ bool MainWindow::eventFilter(QObject * watched, QEvent * event)
 				break;
 			}
 			
+			default: break;
+		}
+	}
+
+	if (watched == propertyListWidget) {
+		
+		switch (event->type()) {
+			case QEvent::MouseButtonPress: {
+
+				
+
+				break;
+			}
+
+			case QEvent::MouseButtonRelease: {
+				break;
+			}
+
+			case QEvent::MouseMove: {
+				auto evt = static_cast<QMouseEvent*>(event);
+				QPoint dragStartPosition(300, 0);
+				if ((evt->pos() - dragStartPosition).manhattanLength()
+					< QApplication::startDragDistance())
+					return true;
+
+				if (evt->buttons() & Qt::LeftButton) {
+
+				//	auto data = static_cast<BasePropertyWidget>(watched);
+
+					auto wid = propertyListWidget->currentWidget;
+					if (!wid) return true;
+					if (!wid->pressed) return true;
+					
+					qDebug() << wid->index;
+					auto drag = new QDrag(this);
+					auto mimeData = new QMimeData;
+					QByteArray arr;
+					arr.setNum(wid->index);
+					drag->setMimeData(mimeData);
+
+					
+
+					mimeData->setText(wid->modelProperty->displayName);
+					mimeData->setData("index", arr);
+					Qt::DropAction dropev = drag->exec(Qt::CopyAction);
+
+					 
+				}
+
+				break;
+			}
+
 			default: break;
 		}
 	}
