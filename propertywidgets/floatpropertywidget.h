@@ -27,7 +27,7 @@ private:
 	float min =0;
 	float max =0;
 	float step =0;
-
+	WidgetFloat *wid;
 	void setConnections();
 protected:
 

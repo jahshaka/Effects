@@ -19,6 +19,7 @@ public:
 	Property *modelProperty;
 
 	bool pressed = false;
+	bool minimized = false;
 	int index = 0;
 
 protected:
@@ -33,6 +34,7 @@ private:
 signals:
 	void buttonPressed();
 	void currentWidget(BasePropertyWidget *widget);
+	void shouldSetVisible(bool val);
 	//void requestMimeData(Property *prop);
 };
 

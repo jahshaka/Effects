@@ -7,7 +7,7 @@ FloatPropertyWidget::FloatPropertyWidget() : BasePropertyWidget()
 
 	auto mainLayout = layout;
 	
-	auto wid = new WidgetFloat;
+	wid = new WidgetFloat;
 	floatSpinBox = wid->floatSpinBox;
 	minSpinBox = wid->minSpinBox;
 	maxSpinBox = wid->maxSpinBox;
@@ -16,7 +16,6 @@ FloatPropertyWidget::FloatPropertyWidget() : BasePropertyWidget()
 
 	setConnections();
 	mainLayout->addWidget(wid);
-	setLayout(mainLayout);
 }
 
 FloatPropertyWidget::~FloatPropertyWidget()
@@ -66,6 +65,10 @@ void FloatPropertyWidget::setConnections() {
 
 	connect(this, &FloatPropertyWidget::valueChanged, [=](double val) {
 		setPropValue(val);
+	});
+
+	connect(this, &BasePropertyWidget::shouldSetVisible, [=](bool val) {
+		wid->setVisible(val);
 	});
 }
 

@@ -7,7 +7,7 @@ IntPropertyWidget::IntPropertyWidget() : BasePropertyWidget()
 
 	auto mainLayout = layout;
 
-	auto wid = new WidgetInt;
+	wid = new WidgetInt;
 	intSpinBox = wid->spinBox;
 	minSpinBox = wid->minSpinBox;
 	maxSpinBox = wid->maxSpinBox;
@@ -15,7 +15,6 @@ IntPropertyWidget::IntPropertyWidget() : BasePropertyWidget()
 	setConnections();
 
 	mainLayout->addWidget(wid);
-	setLayout(mainLayout);
 }
 
 IntPropertyWidget::~IntPropertyWidget()
@@ -65,6 +64,10 @@ void IntPropertyWidget::setConnections() {
 
 	connect(this, &IntPropertyWidget::valueChanged, [=](int val) {
 		setPropValue(val);
+	});
+
+	connect(this, &BasePropertyWidget::shouldSetVisible, [=](bool val) {
+		wid->setVisible(val);
 	});
 }
 

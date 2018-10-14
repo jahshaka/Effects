@@ -33,7 +33,7 @@ private:
 	double x;
 	double y;
 	QVector2D value;
-	QWidget *widget;
+	Widget2D *wid;
 
 	void setConnections();
 
@@ -68,6 +68,7 @@ private:
 	double y;
 	double z;
 	QVector3D value;
+	Widget3D *wid;
 
 	void setConnections();
 
@@ -102,6 +103,7 @@ private:
 	double z;
 	double w;
 	QVector4D value;
+	Widget4D *wid;
 
 	void setConnections();
 protected:

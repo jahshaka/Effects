@@ -7,12 +7,10 @@ TexturePropertyWidget::TexturePropertyWidget() : BasePropertyWidget()
 //	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
 	auto mainLayout = layout;
-	auto wid = new WidgetTexture;
+	wid = new WidgetTexture;
 	texture = wid->texture;
 	setConnections();
 	mainLayout->addWidget(wid);
-	setLayout(mainLayout);
-
 }
 
 
@@ -25,6 +23,7 @@ void TexturePropertyWidget::setProp(TextureProperty * prop)
 	this->prop = prop;
 	displayName->setText(prop->displayName);
 	value = prop->value;
+	modelProperty = prop;
 	emit nameChanged(displayName->text());
 	emit valueChanged(value);
 }
@@ -45,6 +44,10 @@ void TexturePropertyWidget::setConnections()
 
 	connect(this, &TexturePropertyWidget::valueChanged, [=](QString val) {
 		setPropValue(val);
+	});
+
+	connect(this, &BasePropertyWidget::shouldSetVisible, [=](bool val) {
+		wid->setVisible(val);
 	});
 }
 

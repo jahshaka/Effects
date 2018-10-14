@@ -27,7 +27,7 @@ private:
 	int min =0;
 	int max =0;
 	int step =0;
-	QWidget *widget;
+	WidgetInt *wid;
 	void setConnections();
 
 protected:

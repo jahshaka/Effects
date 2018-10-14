@@ -433,9 +433,6 @@ bool MainWindow::eventFilter(QObject * watched, QEvent * event)
 		
 		switch (event->type()) {
 			case QEvent::MouseButtonPress: {
-
-				
-
 				break;
 			}
 
@@ -452,8 +449,6 @@ bool MainWindow::eventFilter(QObject * watched, QEvent * event)
 
 				if (evt->buttons() & Qt::LeftButton) {
 
-				//	auto data = static_cast<BasePropertyWidget>(watched);
-
 					auto wid = propertyListWidget->currentWidget;
 					if (!wid) return true;
 					if (!wid->pressed) return true;
@@ -465,13 +460,9 @@ bool MainWindow::eventFilter(QObject * watched, QEvent * event)
 					arr.setNum(wid->index);
 					drag->setMimeData(mimeData);
 
-					
-
 					mimeData->setText(wid->modelProperty->displayName);
 					mimeData->setData("index", arr);
-					Qt::DropAction dropev = drag->exec(Qt::CopyAction);
-
-					 
+					Qt::DropAction dropev = drag->exec(Qt::CopyAction); 
 				}
 
 				break;

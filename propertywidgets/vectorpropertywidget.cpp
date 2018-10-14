@@ -17,12 +17,11 @@ Vector2DPropertyWidget::Vector2DPropertyWidget() : BasePropertyWidget()
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
 	auto mainLayout = layout;
-	auto wid = new Widget2D();
+	wid = new Widget2D(); 
 	xSpinBox = wid->xSpinBox;
 	ySpinBox = wid->ySpinBox;
 	setConnections();
 	mainLayout->addWidget(wid);
-	setLayout(mainLayout);
 
 }
 
@@ -41,7 +40,9 @@ void Vector2DPropertyWidget::setConnections()
 		setPropValues(val);
 	});
 
-
+	connect(this, &BasePropertyWidget::shouldSetVisible, [=](bool val) {
+		wid->setVisible(val);
+	});
 }
 
 Vector2DPropertyWidget::~Vector2DPropertyWidget()
@@ -82,13 +83,12 @@ Vector3DPropertyWidget::Vector3DPropertyWidget() : BasePropertyWidget()
 
 	auto mainLayout = layout;
 	
-	auto wid = new Widget3D;
+	wid = new Widget3D;
 	xSpinBox = wid->xSpinBox;
 	ySpinBox = wid->ySpinBox;
 	zSpinBox = wid->zSpinBox;	
 	setConnections();
 	mainLayout->addWidget(wid);
-	setLayout(mainLayout);
 
 }
 
@@ -129,6 +129,9 @@ void Vector3DPropertyWidget::setConnections()
 		setPropValues(val);
 	});
 
+	connect(this, &BasePropertyWidget::shouldSetVisible, [=](bool val) {
+		wid->setVisible(val);
+	});
 }
 
 void Vector3DPropertyWidget::setPropValues(QVector3D values) {
@@ -154,14 +157,13 @@ Vector4DPropertyWidget::Vector4DPropertyWidget() : BasePropertyWidget()
 
 	auto mainLayout = layout;
 	
-	auto wid = new Widget4D;
+	wid = new Widget4D;
 	xSpinBox = wid->xSpinBox;
 	ySpinBox = wid->ySpinBox;
 	zSpinBox = wid->zSpinBox;
 	wSpinBox = wid->wSpinBox;
 	setConnections();
 	mainLayout->addWidget(wid);
-	setLayout(mainLayout);
 
 }
 
@@ -202,6 +204,10 @@ void Vector4DPropertyWidget::setConnections()
 
 	connect(this, &Vector4DPropertyWidget::valueChanged, [=](QVector4D val) {
 		setPropValues(val);
+	});
+
+	connect(this, &BasePropertyWidget::shouldSetVisible, [=](bool val) {
+		wid->setVisible(val);
 	});
 }
 

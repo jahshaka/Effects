@@ -23,7 +23,7 @@ public:
 
 private:
 	TextureProperty *prop;
-
+	WidgetTexture *wid;
 	QString value;
 	QPushButton *texture;
 	void setConnections();

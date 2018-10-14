@@ -1,9 +1,6 @@
 #include "basepropertywidget.h"
 #include <QPushButton>
 #include <QDebug>
-#include <QResizeEvent>
-#include <QApplication>
-#include <QAction>
 #include <QPainter>
 
 
@@ -18,9 +15,6 @@ BasePropertyWidget::BasePropertyWidget(QWidget * parent) : QWidget(parent)
 	button->setIcon(QIcon(":/images/delete-26.png"));
 	button->setIconSize(QSize(12, 12));
 
-
-
-
 	displayWidget = new QWidget;
 	displayWidget->setStyleSheet("background: rgba(0,0,0,0);");
 	auto displayLayout = new QHBoxLayout;
@@ -29,14 +23,17 @@ BasePropertyWidget::BasePropertyWidget(QWidget * parent) : QWidget(parent)
 	displayLayout->addWidget(displayName);
 	displayLayout->addStretch();
 	displayLayout->addWidget(button);
-	displayLayout->setContentsMargins(5, 5, 2, 5);
+	displayLayout->setContentsMargins(5, 7, 2, 7);
 
 
 	layout = new QVBoxLayout;
-	layout->setContentsMargins(5, 0, 5, 5);
-	layout->addWidget(displayWidget);
-	layout->addSpacing(7);
-	setLayout(layout);
+	auto mainLayout = new QVBoxLayout;
+	mainLayout->addWidget(displayWidget);
+	mainLayout->addLayout(layout);
+	mainLayout->addSpacing(0);
+	mainLayout->setContentsMargins(5, 0, 5, 5);
+
+	setLayout(mainLayout);
 
 	connect(button, &QPushButton::clicked, [=]() {
 		emit buttonPressed();
@@ -46,6 +43,32 @@ BasePropertyWidget::BasePropertyWidget(QWidget * parent) : QWidget(parent)
 		"QMenu::item{padding: 2px 5px 2px 20px;	}"
 		"QMenu::item:hover{	background: rgba(40,128, 185,.9);}"
 		"QMenu::item:selected{	background: rgba(40,128, 185,.9);}"
+	);
+
+	auto visibilityBtn = new QPushButton;
+	visibilityBtn->setText(tr("minimize"));
+	visibilityBtn->setCursor(Qt::PointingHandCursor);
+	connect(visibilityBtn, &QPushButton::clicked, [=]() {
+		if (minimized) {
+			// maximize
+			emit shouldSetVisible(minimized);
+			visibilityBtn->setText(tr("minimize"));
+			minimized = !minimized;
+		}
+		else {
+			 // minimize
+			emit shouldSetVisible(minimized);
+			visibilityBtn->setText(tr("maximize"));
+			minimized = !minimized;
+
+		}
+	});
+
+	mainLayout->addWidget(visibilityBtn);
+
+	visibilityBtn->setStyleSheet(""
+		"QPushButton{ background: rgba(23,23,23,1); border: .5px solid rgba(0,0,0,1); }"
+		"QPushButton:hover{  border: .5px solid rgba(50,150,250,.2); }"
 	);
 }
 
