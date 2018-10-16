@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "graphnode.h"
 #include <QMouseEvent>
@@ -17,6 +17,7 @@
 #include <QMimeData>
 #include <QFile>
 #include <QByteArray>
+#include <QScrollBar>
 //#include "graphtest.h"
 #include "generator/shadergenerator.h"
 #include "nodes/test.h"
@@ -26,11 +27,11 @@
 #include "nodes/libraryv1.h"
 #include <QPointer>
 #include "graphnodescene.h"
+#include "propertywidgets/basepropertywidget.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    QMainWindow(parent)
 {
   //  ui->setupUi(this);
 	configureUI();
@@ -127,7 +128,7 @@ void MainWindow::newNodeGraph()
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+    
 }
 
 void MainWindow::saveGraph()
@@ -206,7 +207,13 @@ void MainWindow::configureStyleSheet()
 		"QTabWidget::pane{border: 1px solid rgba(0,0,0,.5);	border - top: 0px solid rgba(0,0,0,0);	}"
 		"QTabWidget::tab - bar{	left: 1px;	}"
 		"QDockWidget::tab{	background:rgba(32,32,32,1);}"
-		
+
+		"QScrollBar:vertical {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 24px; padding: 4px;}"
+		"QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 8px; width: 14px; }"
+		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
+		"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
+		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .0);}"
+	
 	);
 
 	bar->setStyleSheet(
@@ -227,10 +234,18 @@ void MainWindow::configureStyleSheet()
 	);
 
 	nodeContainer->setStyleSheet(
-	
-		"QListView::item{ border-radius: 2px; border: 1px solid rgba(0,0,0,1); background: rgba(80,80,80,1);  }"	
-		"QListView::item:selected{ background: rgba(65,65,65,1); border: 1px solid rgba(50,150,250,1); }"
+	"QListView::item{ border-radius: 2px; border: 1px solid rgba(0,0,0,1); background: rgba(80,80,80,1);  }"	
+	"QListView::item:selected{ background: rgba(65,65,65,1); border: 1px solid rgba(50,150,250,1); }"
 	);
+
+	nodeContainer->verticalScrollBar()->setStyleSheet(
+		"QScrollBar:vertical {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 22px; padding: 2px;}"
+		"QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 8px; width: 14px; }"
+		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
+		"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
+		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .0);}"
+	);
+
 	nodeTray->setStyleSheet(
 		"QDockWidget{color: rgba(250,250,250,.9); background: rgba(32,32,32,1);}"
 		"QDockWidget::title{ padding: 8px; background: rgba(22,22,22,1);	border: 1px solid rgba(20,20,20, .8);	text-align: center;}"
@@ -238,11 +253,6 @@ void MainWindow::configureStyleSheet()
 		"QDockWidget::float-button{ background: rgba(0,0,0,0); color: rgba(200,200,200,0); icon-size: 0px; padding: 22px; }"
 		//"QDockWidget::close-button, QDockWidget::float-button{	background: rgba(10,10,10,1); color: white;padding: 0px;}"
 		//"QDockWidget::close-button:hover, QDockWidget::float-button:hover{background: rgba(0,220,0,0);padding: 0px;}"
-		"QScrollBar:vertical {border : 0px solid black;	background: rgba(32, 32, 32, .7);width: 3px;padding: 1px;}"
-		"QScrollBar::handle{ background: rgba(20, 20, 20, .9);	border-radius: 4px; right: 1px; width: 3px;}"
-		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
-		"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
-		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .1);}"
 		"QComboBox::drop-down {	width: 15px;  border: none; subcontrol-position: center right;}"
 		"QComboBox::down-arrow{image : url(:/images/drop-down-24.png); }"
 	);
@@ -302,19 +312,19 @@ void MainWindow::configureUI()
 	searchContainer->setLayout(searchLayout);
 	searchLayout->addWidget(searchBar);
 
+	searchBar->setPlaceholderText("search");
+	searchBar->setAlignment(Qt::AlignHCenter);
 	connect(searchBar, &QLineEdit::textChanged, [=](QString str) {
-
-		auto entireList = nodeContainer->findItems("", Qt::MatchContains);
-		/*for (auto item : entireList) {
-			item->listWidget()->setVisible(false);
-			break;
-		}*/
 		nodeContainer->clear();
-
-		auto list = nodeContainer->findItems(str, Qt::MatchContains);
-		generateTileNode(list);
-
-		if (str.length() == 0) generateTileNode();
+		QList<NodeLibraryItem*> lis;
+		for (auto item : graph->library->items) {
+			if (item->displayName.contains(str, Qt::CaseInsensitive)) lis.append(item);
+		}
+		generateTileNode(lis);
+		if (str.length() == 0) {
+			nodeContainer->clear();
+			generateTileNode();
+		}
 		
 	});
 
@@ -324,10 +334,10 @@ void MainWindow::configureUI()
 	containerLayout->addWidget(searchContainer);
 	containerLayout->addWidget(nodeContainer);
 
-	nodeContainer->setAlternatingRowColors(false);
-	nodeContainer->setSpacing(5);
+	nodeContainer->setAlternatingRowColors(true);
+	nodeContainer->setSpacing(0);
 	nodeContainer->setContentsMargins(10, 3, 10, 10);
-	nodeContainer->setViewMode(QListWidget::IconMode);
+	nodeContainer->setViewMode(QListWidget::ListMode);
 	nodeContainer->setIconSize(currentSize);
 	nodeContainer->setMouseTracking(true);
 	nodeContainer->setDragDropMode(QAbstractItemView::DragDrop);
@@ -343,7 +353,10 @@ void MainWindow::configureUI()
 	nodeContainer->viewport()->installEventFilter(this);
 	nodeContainer->setWordWrap(true);
 	nodeContainer->setGridSize(QSize(70, 100));
-	
+	nodeContainer->setSortingEnabled(true);
+	nodeContainer->sortItems();
+	nodeContainer->setEditTriggers(QAbstractItemView::NoEditTriggers);
+	propertyListWidget->installEventFilter(this);
 
 	searchContainer->setStyleSheet("background:rgba(32,32,32,1);");
 	searchBar->setStyleSheet("QLineEdit{ background:rgba(41,41,41,1); border: 1px solid rgba(150,150,150,.2); border-radius: 2px; }");
@@ -357,6 +370,7 @@ void MainWindow::generateTileNode()
 	for (NodeLibraryItem *tile : graph->library->items) {
 		if (tile->name == "property") continue;
 		auto item = new QListWidgetItem;
+		item->setText(tile->displayName);
 		item->setData(Qt::DisplayRole, tile->displayName);
 		item->setData(Qt::UserRole, tile->name);
 		item->setSizeHint(currentSize);
@@ -369,15 +383,16 @@ void MainWindow::generateTileNode()
 	}
 }
 
-void MainWindow::generateTileNode(QList<QListWidgetItem*> list)
+void MainWindow::generateTileNode(QList<NodeLibraryItem*> list)
 {
 	QSize currentSize(80, 70);
 
 	for (auto tile : list) {
 		
 		auto item = new QListWidgetItem;
-		item->setData(Qt::DisplayRole, tile->data(Qt::DisplayRole));
-		item->setData(Qt::UserRole, tile->data(Qt::DisplayRole));
+		item->setText(tile->displayName);
+		item->setData(Qt::DisplayRole, tile->displayName);
+		item->setData(Qt::UserRole, tile->name);
 		item->setSizeHint(currentSize);
 		item->setTextAlignment(Qt::AlignCenter);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
@@ -424,6 +439,49 @@ bool MainWindow::eventFilter(QObject * watched, QEvent * event)
 				break;
 			}
 			
+			default: break;
+		}
+	}
+
+	if (watched == propertyListWidget) {
+		
+		switch (event->type()) {
+			case QEvent::MouseButtonPress: {
+				break;
+			}
+
+			case QEvent::MouseButtonRelease: {
+				break;
+			}
+
+			case QEvent::MouseMove: {
+				auto evt = static_cast<QMouseEvent*>(event);
+				QPoint dragStartPosition(300, 0);
+				if ((evt->pos() - dragStartPosition).manhattanLength()
+					< QApplication::startDragDistance())
+					return true;
+
+				if (evt->buttons() & Qt::LeftButton) {
+
+					auto wid = propertyListWidget->currentWidget;
+					if (!wid) return true;
+					if (!wid->pressed) return true;
+					
+					qDebug() << wid->index;
+					auto drag = new QDrag(this);
+					auto mimeData = new QMimeData;
+					QByteArray arr;
+					arr.setNum(wid->index);
+					drag->setMimeData(mimeData);
+
+					mimeData->setText(wid->modelProperty->displayName);
+					mimeData->setData("index", arr);
+					Qt::DropAction dropev = drag->exec(Qt::CopyAction); 
+				}
+
+				break;
+			}
+
 			default: break;
 		}
 	}

@@ -40,7 +40,61 @@
     </widget>
    </item>
    <item>
-    <widget class="QWidget" name="widgetList" native="true"/>
+    <widget class="QWidget" name="widgetList" native="true">
+     <widget class="QScrollArea" name="scrollArea">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>30</y>
+        <width>201</width>
+        <height>321</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border-left-color: rgb(255, 85, 127);
+border : 2px solid red;</string>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOn</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOn</enum>
+      </property>
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>187</width>
+         <height>307</height>
+        </rect>
+       </property>
+       <widget class="QWidget" name="widget_2" native="true">
+        <property name="geometry">
+         <rect>
+          <x>100</x>
+          <y>20</y>
+          <width>120</width>
+          <height>80</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QWidget" name="widget_3" native="true">
+        <property name="geometry">
+         <rect>
+          <x>70</x>
+          <y>170</y>
+          <width>120</width>
+          <height>191</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+    </widget>
    </item>
   </layout>
  </widget>

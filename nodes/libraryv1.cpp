@@ -129,7 +129,7 @@ void LibraryV1::initMath()
 		return new RoundNode();
 	});
 
-	addNode("trunc", "", "Truncate", []() {
+	addNode("trunc", "Truncate", "", []() {
 		return new TruncNode();
 	});
 

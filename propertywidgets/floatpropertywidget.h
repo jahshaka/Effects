@@ -5,6 +5,7 @@
 #include <QPainter>
 #include "properties.h"
 #include "basepropertywidget.h"
+#include "propertywidgetbase.h"
 
 
 class FloatPropertyWidget : public BasePropertyWidget
@@ -15,11 +16,9 @@ public:
 	~FloatPropertyWidget();
 	void setProp(FloatProperty *prop);
 	float getValue();
-	QWidget* getValueWidget();
-	QWidget* getWidget();
 
 private:
-	QDoubleSpinBox* intSpinBox;
+	QDoubleSpinBox* floatSpinBox;
 	QDoubleSpinBox* maxSpinBox;
 	QDoubleSpinBox* minSpinBox;
 	QDoubleSpinBox* stepSpinBox;
@@ -28,8 +27,8 @@ private:
 	float min =0;
 	float max =0;
 	float step =0;
-	QWidget *widget;
-
+	WidgetFloat *wid;
+	void setConnections();
 protected:
 
 public slots:

@@ -2,6 +2,7 @@
 #define PROPERTYLISTWIDGET_H
 
 #include <QWidget>
+#include <QListWidget>
 
 namespace Ui {
 class PropertyListWidget;
@@ -15,7 +16,7 @@ class Vec3Property;
 class Vec4Property;
 class IntProperty;
 class TextureProperty;
-
+class BasePropertyWidget;
 class PropertyListWidget : public QWidget
 {
     Q_OBJECT
@@ -26,7 +27,7 @@ public:
 
     void addProperty(QWidget* widget);
     void setNodeGraph(NodeGraph* graph);
-
+	BasePropertyWidget *currentWidget = Q_NULLPTR;
 private:
     void addNewFloatProperty();
 	void addFloatProperty(FloatProperty* floatProp);
@@ -47,9 +48,9 @@ private:
 	void addTextureProperty(TextureProperty* texProp);
 
 private:
-    Ui::PropertyListWidget *ui;
     QVBoxLayout* layout;
     NodeGraph* graph;
+	int added = -1;
 };
 
 #endif // PROPERTYLISTWIDGET_H

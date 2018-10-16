@@ -5,7 +5,7 @@
 #include <QFontMetrics>
 
 Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title) :
-	QGraphicsPathItem(parent), QObject(nullptr),
+	QGraphicsPathItem(parent), 
 	socketType(socketType)
 {
 
@@ -20,7 +20,6 @@ Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title) :
 	radius = qCeil(textRect.height() / 2.0f);
 	dimentions = textRect.height();
 	QPainterPath path;
-
 
 	// socket positions are at the outer right or outer left of the graph node
 	if (socketType == SocketType::Out)
@@ -48,6 +47,7 @@ Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title) :
 
 void Socket::addConnection(SocketConnection* con)
 {
+	setConnected(true);
 	connections.append(con);
 	setSocketColor(connectedColor);
 	text->setDefaultTextColor(QColor(255, 255, 255));
@@ -118,6 +118,23 @@ void Socket::setConnected(bool value)
 	connected = value;
 }
 
+QPainterPath Socket::addInvisibleCover()
+{
+	QPainterPath path;
+	if (socketType == SocketType::Out)
+	{
+		if (rounded)  path.addRoundedRect(-radius-8 * 2, -radius-4 / 2, dimentions*1.6, dimentions*1.6, radius*2, radius*2);
+		else path.addRect(-radius * 2, -radius / 2, dimentions, dimentions);
+	}
+	else
+	{
+		if (rounded) path.addRoundedRect(-6, -radius-4 / 2, dimentions*1.6, dimentions*1.6, radius*2, radius*2);
+		else path.addRect(0, -radius / 2, dimentions, dimentions);
+	}
+	setBrush(QColor(200, 100, 100));
+	return path;
+}
+
 void Socket::updateSocket()
 {
 	QPainterPath path;
@@ -138,7 +155,6 @@ void Socket::updateSocket()
 	if (connected) pen.setColor(QColor(27, 27, 27));
 	else pen.setColor(QColor(97, 97, 97));
 
-
 	setPen(pen);
 	setPath(path);
 }
@@ -146,4 +162,5 @@ void Socket::updateSocket()
 void Socket::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
 	QGraphicsPathItem::paint(painter, option, widget);
+
 }

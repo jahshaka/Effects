@@ -7,10 +7,15 @@ FloatPropertyWidget::FloatPropertyWidget() : BasePropertyWidget()
 
 	auto mainLayout = layout;
 	
-	auto wid = getValueWidget();
+	wid = new WidgetFloat;
+	floatSpinBox = wid->floatSpinBox;
+	minSpinBox = wid->minSpinBox;
+	maxSpinBox = wid->maxSpinBox;
+	stepSpinBox = wid->stepSpinBox;
 
+
+	setConnections();
 	mainLayout->addWidget(wid);
-	setLayout(mainLayout);
 }
 
 FloatPropertyWidget::~FloatPropertyWidget()
@@ -21,10 +26,11 @@ void FloatPropertyWidget::setProp(FloatProperty * prop)
 {
 	this->prop = prop;
 	displayName->setText(prop->displayName);
-	intSpinBox->setValue(prop->value);
+	floatSpinBox->setValue(prop->value);
 	minSpinBox->setValue(prop->minValue);
 	maxSpinBox->setValue(prop->maxValue);
 	stepSpinBox->setValue(prop->step);
+	modelProperty = prop;
 	emit nameChanged(displayName->text());
 
 }
@@ -39,65 +45,32 @@ void FloatPropertyWidget::setPropValue(double value)
 	prop->setValue(value);
 }
 
-QWidget * FloatPropertyWidget::getValueWidget()
-{
-	widget = new QWidget(this);
-	auto mainLayout = new QVBoxLayout;
-	auto spinLayout = new QHBoxLayout();
-	auto label = new QLabel("Values", this);
 
-	spinLayout->setContentsMargins(0, 0, 0, 0);
-
-
-	widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-	widget->setLayout(mainLayout);
-
-	intSpinBox = new QDoubleSpinBox(this);
-	maxSpinBox = new QDoubleSpinBox(this);
-	minSpinBox = new QDoubleSpinBox(this);
-	stepSpinBox= new QDoubleSpinBox(this);
-
-	auto gridLayout = new QGridLayout;
-	gridLayout->addWidget(minSpinBox, 0, 1);
-	gridLayout->addWidget(maxSpinBox, 1, 1);
-	gridLayout->addWidget(stepSpinBox, 2,1);
-	gridLayout->addWidget(new QLabel("min"), 0, 0);
-	gridLayout->addWidget(new QLabel("max"), 1, 0);
-	gridLayout->addWidget(new QLabel("step"), 2, 0);
-	
-	spinLayout->addWidget(label);
-	spinLayout->addWidget(intSpinBox);
-
-	mainLayout->addLayout(spinLayout);
-	mainLayout->addLayout(gridLayout);
-
-	connect(intSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
+void FloatPropertyWidget::setConnections() {
+	connect(floatSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
 		x = val;
 		emit valueChanged(x);
 	});
 	connect(minSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
-		intSpinBox->setMinimum(val);
+		floatSpinBox->setMinimum(val);
 	});
 	connect(maxSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
-		intSpinBox->setMaximum(val);
+		floatSpinBox->setMaximum(val);
 
 	});
 	connect(stepSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
-		intSpinBox->setSingleStep(val);
+		floatSpinBox->setSingleStep(val);
 
 	});
-
 
 	connect(this, &FloatPropertyWidget::valueChanged, [=](double val) {
 		setPropValue(val);
 	});
-	return widget;
+
+	connect(this, &BasePropertyWidget::shouldSetVisible, [=](bool val) {
+		wid->setVisible(val);
+	});
 }
 
-QWidget * FloatPropertyWidget::getWidget()
-{
-	if (widget) return widget;
-	return nullptr;
-}
 
 

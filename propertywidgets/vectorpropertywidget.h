@@ -7,6 +7,7 @@
 #include <QPainter>
 #include "properties.h"
 #include "basepropertywidget.h"
+#include "propertywidgetbase.h"
 
 class VectorPropertyWidget : public BasePropertyWidget
 {
@@ -22,19 +23,19 @@ public:
 	Vector2DPropertyWidget();
 	~Vector2DPropertyWidget();
 	void setProp(Vec2Property *prop);
-	QWidget* getValueWidget();
-	QWidget* getWidget();
+	
 
 
 private:
 	QDoubleSpinBox* xSpinBox;
 	QDoubleSpinBox* ySpinBox;
 	Vec2Property *prop;
-	//QLineEdit *displayName;
 	double x;
 	double y;
 	QVector2D value;
-	QWidget *widget;
+	Widget2D *wid;
+
+	void setConnections();
 
 protected:
 
@@ -54,8 +55,7 @@ public:
 	Vector3DPropertyWidget();
 	~Vector3DPropertyWidget();
 	void setProp(Vec3Property *prop);
-	QWidget* getValueWidget();
-	QWidget* getWidget();
+
 
 
 private:
@@ -68,7 +68,9 @@ private:
 	double y;
 	double z;
 	QVector3D value;
-	QWidget *widget;
+	Widget3D *wid;
+
+	void setConnections();
 
 protected:
 
@@ -88,9 +90,6 @@ public:
 	Vector4DPropertyWidget();
 	~Vector4DPropertyWidget();
 	void setProp(Vec4Property *prop);
-	QWidget* getValueWidget();
-	QWidget* getWidget();
-
 
 private:
 	QDoubleSpinBox* xSpinBox;
@@ -104,8 +103,9 @@ private:
 	double z;
 	double w;
 	QVector4D value;
-	QWidget *widget;
+	Widget4D *wid;
 
+	void setConnections();
 protected:
 
 public slots:

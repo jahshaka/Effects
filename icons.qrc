@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/check-checked.png</file>
+        <file>icons/check-disabled.png</file>
+        <file>icons/check-unchecked.png</file>
+        <file>icons/down_arrow_check.png</file>
+        <file>icons/down_arrow_check_disabled.png</file>
+        <file>icons/down-arrow.svg</file>
+        <file>icons/dropdown.png</file>
+        <file>icons/drop-down-arrow.svg</file>
+    </qresource>
+</RCC>

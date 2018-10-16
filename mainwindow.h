@@ -27,6 +27,7 @@ struct nodeListModel {
 class SceneWidget;
 class GraphNodeScene;
 class NodeGraph;
+class NodeLibraryItem;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -46,7 +47,7 @@ private:
 
 	void configureUI();
 	void generateTileNode();
-	void generateTileNode(QList<QListWidgetItem*> list);
+	void generateTileNode(QList<NodeLibraryItem*> list);
 
 	bool eventFilter(QObject *watched, QEvent *event);
 

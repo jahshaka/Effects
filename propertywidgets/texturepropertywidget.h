@@ -7,9 +7,11 @@
 #include <QPainter>
 #include <QPushButton>
 #include "properties.h"
+#include "basepropertywidget.h"
+#include "propertywidgetbase.h"
 
 
-class TexturePropertyWidget : public QWidget
+class TexturePropertyWidget : public BasePropertyWidget
 {
 	Q_OBJECT
 public:
@@ -17,20 +19,14 @@ public:
 	~TexturePropertyWidget();
 	void setProp(TextureProperty *prop);
 	QString getValue();
-	QWidget* getValueWidget();
-	QWidget* getWidget();
 
 
 private:
 	TextureProperty *prop;
-	QLineEdit *displayName;
-	QWidget *widget;
-
+	WidgetTexture *wid;
 	QString value;
 	QPushButton *texture;
-
-protected:
-	void paintEvent(QPaintEvent *event) override;
+	void setConnections();
 
 public slots:
 	void setPropValue(QString value);
