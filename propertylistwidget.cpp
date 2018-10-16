@@ -34,6 +34,11 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 	auto addProp = new QToolButton;
 	auto scrollArea = new QScrollArea;
 	auto contentWidget = new QWidget;
+	auto scrollLayout = new QHBoxLayout;
+
+	scrollLayout->addStretch();
+	scrollLayout->addWidget(scrollArea);
+	scrollLayout->addStretch();
 
 	addProp->setText(tr("Add Property"));
 	addProp->setMenu(menu);
@@ -47,14 +52,16 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 	mainLayout->addSpacing(15);
 	mainLayout->addWidget(addProp);
 	mainLayout->addSpacing(5);
-	mainLayout->addWidget(scrollArea);
+	mainLayout->addLayout(scrollLayout);
 
 	contentWidget->setLayout(layout);
 	scrollArea->setWidget(contentWidget);
 	scrollArea->setWidgetResizable(true);
 	scrollArea->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
-	scrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+	scrollArea->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
 	scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	scrollArea->setMaximumWidth(450);
+	scrollArea->setMinimumWidth(400);
 
 	setLayout(mainLayout);
 

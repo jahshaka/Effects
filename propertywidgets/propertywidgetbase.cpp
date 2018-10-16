@@ -22,6 +22,9 @@ Widget2D::Widget2D() : PropertyWidgetBase()
 	auto xLabel = new QLabel("X");
 	auto yLabel = new QLabel("Y");
 
+	xLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+	yLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+
 	layout->addWidget(xLabel);
 	layout->addWidget(xSpinBox);
 	layout->addWidget(yLabel);
@@ -61,6 +64,11 @@ Widget3D::Widget3D() : PropertyWidgetBase()
 	auto xLabel = new QLabel("X");
 	auto yLabel = new QLabel("Y");
 	auto zLabel = new QLabel("Z");
+
+	xLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+	yLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+	zLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+
 
 	layout->addWidget(xLabel);
 	layout->addWidget(xSpinBox);
@@ -105,7 +113,7 @@ void Widget3D::setZSpinBoxConnection(std::function<void(double val)> func)
 
 
 Widget4D::Widget4D() : PropertyWidgetBase()
-{
+{ 
 	xSpinBox = new QDoubleSpinBox;
 	ySpinBox = new QDoubleSpinBox;
 	zSpinBox = new QDoubleSpinBox;
@@ -114,6 +122,11 @@ Widget4D::Widget4D() : PropertyWidgetBase()
 	auto yLabel = new QLabel("Y");
 	auto zLabel = new QLabel("Z");
 	auto wLabel = new QLabel("W");
+
+	xLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+	yLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+	zLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+	wLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
 
 	layout->addWidget(xLabel);
 	layout->addWidget(xSpinBox);
@@ -178,6 +191,12 @@ WidgetInt::WidgetInt() : PropertyWidgetBase()
 	auto label1 = new QLabel("Min");
 	auto label2 = new QLabel("Max");
 	auto label3 = new QLabel("Step");
+
+	/*label->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+	label1->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+	label2->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+	label3->setAlignment(Qt::AlignVCenter | Qt::AlignRight);*/
+
 
 
 	auto vbox = new QHBoxLayout;
@@ -251,6 +270,11 @@ WidgetFloat::WidgetFloat() : PropertyWidgetBase()
 	auto label1 = new QLabel("Min");
 	auto label2 = new QLabel("Max");
 	auto label3 = new QLabel("Step");
+
+	/*label->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+	label1->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+	label2->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+	label3->setAlignment(Qt::AlignVCenter | Qt::AlignRight);*/
 
 
 	auto vbox = new QHBoxLayout;

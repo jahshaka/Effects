@@ -97,7 +97,8 @@ set(FORMS
         propertylistwidget.ui)
 
 Qt5_add_resources(QRCS
-		images.qrc)
+		images.qrc
+		icons.qrc)
 
 
 set(LIBS IrisGL Qt5::Widgets)

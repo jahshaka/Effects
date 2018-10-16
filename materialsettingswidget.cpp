@@ -104,6 +104,37 @@ MaterialSettingsWidget::MaterialSettingsWidget(QWidget *parent):
 	list << "Opaque" << "AlphaTested" << "Transparent" << "Overlay";
 	comboBox_3->addItems(list);
 
+
+	setStyleSheet("QCheckBox {   spacing: 2px 5px;}"
+		"QCheckBox::indicator {   width: 28px;   height: 28px; }"
+		"QCheckBox::indicator::unchecked {	image: url(:/icons/check-unchecked.png);}"
+		"QCheckBox::indicator::checked {		image: url(:/icons/check-checked.png);}"
+		"QLineEdit {	border: 0;	background: #292929;	padding: 6px;	margin: 0;}"
+		"QToolButton {	background: #1E1E1E;	border: 0;	padding: 6px;}"
+		"QToolButton:pressed {	background: #111;}"
+		"QToolButton:hover {	background: #404040;}"
+		"QDoubleSpinBox {	border-radius: 1px;	padding: 6px;	background: #292929;}"
+		"QComboBox:editable {}"
+		"QComboBox QAbstractItemView::item {    show-decoration-selected: 1;}"
+		"QComboBox QAbstractItemView::item {    padding: 6px;}"
+		"QListView::item:selected {    background: #404040;}"
+		"QComboBox:!editable, QComboBox::drop-down:editable {     background: #1A1A1A;}"
+		"QComboBox:!editable:on, QComboBox::drop-down:editable:on {    background: #1A1A1A;}"
+		"QComboBox QAbstractItemView {    background-color: #1A1A1A;    selection-background-color: #404040;    border: 0;    outline: none;}"
+		"QComboBox QAbstractItemView::item {    border: none;    padding-left: 5px;}"
+		"QComboBox QAbstractItemView::item:selected {    background: #404040;    padding-left: 5px;}"
+		"QComboBox::drop-down {    subcontrol-origin: padding;    subcontrol-position: top right;    width: 18px;    border-left-width: 1px;}"
+		"QComboBox::down-arrow {    image: url(:/icons/down_arrow_check.png);	width: 18px;	height: 14px;} "
+		"QComboBox::down-arrow:!enabled {    image: url(:/icons/down_arrow_check_disabled.png);    width: 18px;    height: 14px;}");
+	checkBox_6->setStyleSheet(styleSheet());
+	checkBox_5->setStyleSheet(styleSheet());
+	checkBox_4->setStyleSheet(styleSheet());
+	checkBox_3->setStyleSheet(styleSheet());
+	checkBox_2->setStyleSheet(styleSheet());
+	checkBox->setStyleSheet(styleSheet());
+	comboBox_3->setStyleSheet(styleSheet());
+	comboBox_2->setStyleSheet(styleSheet());
+	comboBox->setStyleSheet(styleSheet());
 }
 
 MaterialSettingsWidget::MaterialSettingsWidget(MaterialSettings* settings , QWidget *parent)

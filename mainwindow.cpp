@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "graphnode.h"
 #include <QMouseEvent>
@@ -213,7 +213,7 @@ void MainWindow::configureStyleSheet()
 		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
 		"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
 		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .0);}"
-		
+	
 	);
 
 	bar->setStyleSheet(
@@ -312,19 +312,19 @@ void MainWindow::configureUI()
 	searchContainer->setLayout(searchLayout);
 	searchLayout->addWidget(searchBar);
 
+	searchBar->setPlaceholderText("search");
+	searchBar->setAlignment(Qt::AlignHCenter);
 	connect(searchBar, &QLineEdit::textChanged, [=](QString str) {
-
-		auto entireList = nodeContainer->findItems("", Qt::MatchContains);
-		/*for (auto item : entireList) {
-			item->listWidget()->setVisible(false);
-			break;
-		}*/
 		nodeContainer->clear();
-
-		auto list = nodeContainer->findItems(str, Qt::MatchContains);
-		generateTileNode(list);
-
-		if (str.length() == 0) generateTileNode();
+		QList<NodeLibraryItem*> lis;
+		for (auto item : graph->library->items) {
+			if (item->displayName.contains(str, Qt::CaseInsensitive)) lis.append(item);
+		}
+		generateTileNode(lis);
+		if (str.length() == 0) {
+			nodeContainer->clear();
+			generateTileNode();
+		}
 		
 	});
 
@@ -334,10 +334,10 @@ void MainWindow::configureUI()
 	containerLayout->addWidget(searchContainer);
 	containerLayout->addWidget(nodeContainer);
 
-	nodeContainer->setAlternatingRowColors(false);
-	nodeContainer->setSpacing(5);
+	nodeContainer->setAlternatingRowColors(true);
+	nodeContainer->setSpacing(0);
 	nodeContainer->setContentsMargins(10, 3, 10, 10);
-	nodeContainer->setViewMode(QListWidget::IconMode);
+	nodeContainer->setViewMode(QListWidget::ListMode);
 	nodeContainer->setIconSize(currentSize);
 	nodeContainer->setMouseTracking(true);
 	nodeContainer->setDragDropMode(QAbstractItemView::DragDrop);
@@ -353,6 +353,9 @@ void MainWindow::configureUI()
 	nodeContainer->viewport()->installEventFilter(this);
 	nodeContainer->setWordWrap(true);
 	nodeContainer->setGridSize(QSize(70, 100));
+	nodeContainer->setSortingEnabled(true);
+	nodeContainer->sortItems();
+	nodeContainer->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	propertyListWidget->installEventFilter(this);
 
 	searchContainer->setStyleSheet("background:rgba(32,32,32,1);");
@@ -367,6 +370,7 @@ void MainWindow::generateTileNode()
 	for (NodeLibraryItem *tile : graph->library->items) {
 		if (tile->name == "property") continue;
 		auto item = new QListWidgetItem;
+		item->setText(tile->displayName);
 		item->setData(Qt::DisplayRole, tile->displayName);
 		item->setData(Qt::UserRole, tile->name);
 		item->setSizeHint(currentSize);
@@ -379,15 +383,16 @@ void MainWindow::generateTileNode()
 	}
 }
 
-void MainWindow::generateTileNode(QList<QListWidgetItem*> list)
+void MainWindow::generateTileNode(QList<NodeLibraryItem*> list)
 {
 	QSize currentSize(80, 70);
 
 	for (auto tile : list) {
 		
 		auto item = new QListWidgetItem;
-		item->setData(Qt::DisplayRole, tile->data(Qt::DisplayRole));
-		item->setData(Qt::UserRole, tile->data(Qt::DisplayRole));
+		item->setText(tile->displayName);
+		item->setData(Qt::DisplayRole, tile->displayName);
+		item->setData(Qt::UserRole, tile->name);
 		item->setSizeHint(currentSize);
 		item->setTextAlignment(Qt::AlignCenter);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);

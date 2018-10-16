@@ -10,9 +10,9 @@ enum class SocketType
 class GraphNode;
 class GraphNodeScene;
 class SocketConnection;
-class Socket : public QObject, public QGraphicsPathItem
+class Socket : public QGraphicsPathItem
 {
-	Q_OBJECT
+
 public:
 
 	// note: in sockets can only have one connection
@@ -51,10 +51,11 @@ private:
 
 
 	void setConnected(bool value);
+	QPainterPath addInvisibleCover();
+	bool setShouldAddInvisibleCover = false;
 
 protected:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR);
 
 
-signals:
 };
