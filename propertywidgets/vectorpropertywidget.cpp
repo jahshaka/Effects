@@ -18,6 +18,7 @@ Vector2DPropertyWidget::Vector2DPropertyWidget() : BasePropertyWidget()
 
 	auto mainLayout = layout;
 	wid = new Widget2D(); 
+	setWidget(wid);
 	xSpinBox = wid->xSpinBox;
 	ySpinBox = wid->ySpinBox;
 	setConnections();
@@ -84,6 +85,7 @@ Vector3DPropertyWidget::Vector3DPropertyWidget() : BasePropertyWidget()
 	auto mainLayout = layout;
 	
 	wid = new Widget3D;
+	setWidget(wid);
 	xSpinBox = wid->xSpinBox;
 	ySpinBox = wid->ySpinBox;
 	zSpinBox = wid->zSpinBox;	
@@ -158,6 +160,7 @@ Vector4DPropertyWidget::Vector4DPropertyWidget() : BasePropertyWidget()
 	auto mainLayout = layout;
 	
 	wid = new Widget4D;
+	setWidget(wid);
 	xSpinBox = wid->xSpinBox;
 	ySpinBox = wid->ySpinBox;
 	zSpinBox = wid->zSpinBox;
