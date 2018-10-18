@@ -29,7 +29,7 @@ GraphNode::GraphNode(QGraphicsItem* parent) :
 
 	text = new QGraphicsTextItem(this);
 	text->setPlainText("Title");
-	text->setPos(5, 5);
+	text->setPos(5, 2);
 
 	text->setDefaultTextColor(QColor(255, 255, 255));
 
@@ -97,7 +97,7 @@ void GraphNode::calcPath()
 {
 	QPainterPath path_content;
 	path_content.setFillRule(Qt::WindingFill);
-	path_content.addRoundedRect(QRect(0, 0, nodeWidth, calcHeight()), 7, 7);
+	path_content.addRoundedRect(QRect(0, 0, nodeWidth, calcHeight()), titleRadius, titleRadius);
 	setPath(path_content);
 
 
@@ -106,7 +106,7 @@ void GraphNode::calcPath()
 int GraphNode::calcHeight()
 {
 	int height = 0;
-	height += 35 + 22;// title + padding
+	height += titleHeight + 12;// title + padding
 
 	for (auto socket : sockets)
 	{
@@ -163,16 +163,13 @@ void GraphNode::paint(QPainter *painter,
 	if (isHighlighted && level == 0) {
 		auto rect = boundingRect();
 		painter->setPen(QPen(connectedColor, 3));
-		painter->drawRoundedRect(rect, 7, 7);
+		painter->drawRoundedRect(rect, titleRadius, titleRadius);
 	}
 	else if (isHighlighted && level > 0) {
 		auto rect = boundingRect();
 		painter->setPen(QPen(QColor(160, 150, 100), 8));
-		painter->drawRoundedRect(rect, 7, 7);
+		painter->drawRoundedRect(rect, titleRadius, titleRadius);
 	}
-
-
-
 
 	painter->setPen(pen());
 	setBrush(QColor(20, 20, 20));
@@ -180,13 +177,17 @@ void GraphNode::paint(QPainter *painter,
 
 	// title tab
 	QPainterPath titlePath;
+
+	titlePath.setFillRule(Qt::WindingFill);
 	//titlePath.addRoundedRect(0, 0, nodeWidth, 35, 7, 7);
-	titlePath.addRect(0, 30, nodeWidth, 5);
+	titlePath.addRect(0, 10, nodeWidth, titleHeight-10);
+	titlePath.addRoundedRect(0, 0, nodeWidth, titleHeight, titleRadius, titleRadius);
+	
 	painter->fillPath(titlePath, QBrush(titleColor));
 
 	QPen pen(QColor(200, 200, 200, 100), 3);
 	painter->setPen(pen);
-	painter->drawRoundedRect(boundingRect(), 7, 7);
+	painter->drawRoundedRect(boundingRect(), titleRadius, titleRadius);
 
 
 }

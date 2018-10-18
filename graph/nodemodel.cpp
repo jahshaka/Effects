@@ -59,16 +59,16 @@ QColor NodeModel::setNodeTitleColor()
 {
 	switch (nodeType) {
 	case NodeType::Number:
-		return titleColor = QColor(0, 103, 91);
+		return titleColor = QColor(0, 103, 91, 150);
 		break;
 	case NodeType::Calculation:
-		return titleColor = QColor(0, 103, 181);
+		return titleColor = QColor(0, 103, 181, 150);
 		break;
 	case NodeType::Modifier:
-		return titleColor = QColor(190, 20, 10);
+		return titleColor = QColor(190, 20, 10, 150);
 		break;
 	case NodeType::Surface:
-		return titleColor = QColor(52, 81, 94);
+		return titleColor = QColor(52, 81, 94, 150);
 		break;
 	default:
 		return titleColor = QColor(0, 0, 0, 0);

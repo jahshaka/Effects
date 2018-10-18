@@ -17,11 +17,13 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
     QWidget(parent)
 {
     auto menu = new QMenu(this);
+//	menu->setWindowFlag(Qt::NoDropShadowWindowHint );
+	menu->setAttribute(Qt::WA_TranslucentBackground);
     auto action = menu->addAction		("Float ");
     auto actionInt = menu->addAction	("Int ");
-	auto action2 = menu->addAction		("Vector2 ");
-	auto action3 = menu->addAction		("Vector3 ");
-	auto action4 = menu->addAction		("Vector4 ");
+	auto action2 = menu->addAction		("Vector 2 ");
+	auto action3 = menu->addAction		("Vector 3 ");
+	auto action4 = menu->addAction		("Vector 4 ");
     auto action5 = menu->addAction		("Texture ");
 
     layout = new QVBoxLayout();
@@ -35,17 +37,15 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 	auto scrollLayout = new QHBoxLayout;
 
 	QPushButton *pushButton = new QPushButton(QIcon(":/icons/add.png"), "  Add Property");
-	//QFont font = pushButton->font();
-	//font.setWeight(65);
-	//pushButton->setFont(font);
-	// window - widget where button is placed ( to get correct QMenu position )
+
 	QObject::connect(pushButton, &QPushButton::released, [=]() {
 		QPoint pos = this->mapToGlobal(pushButton->pos());
 		pos += QPoint(pushButton->width()/2.2, pushButton->height());
 		auto effect = new QGraphicsDropShadowEffect(menu);
 		effect->setBlurRadius(15);
-		effect->setOffset(0);
-		effect->setColor(QColor(0, 0, 0));
+		effect->setXOffset(10);
+		effect->setYOffset(10);
+		effect->setColor(QColor(110, 0, 0));
 		menu->setGraphicsEffect(effect);
 		menu->exec(pos);
 	});
@@ -55,17 +55,10 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 	scrollLayout->addWidget(scrollArea);
 	scrollLayout->addStretch();
 
-	addProp->setText(tr("Add Property"));
-	addProp->setIcon(QIcon(":/icons/add.png"));
-	addProp->setIconSize(QSize(22, 22));
-	addProp->setMenu(menu);
-	addProp->setPopupMode(QToolButton::InstantPopup);
-	addProp->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-
 	contentWidget->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Expanding);
 	contentWidget->setMinimumWidth(200);
 
-	mainLayout->setContentsMargins(0, 0, 0, 0);
+	mainLayout->setContentsMargins(3, 0, 3, 0);
 	mainLayout->addSpacing(15);
 	mainLayout->addWidget(pushButton);
 	mainLayout->addSpacing(5);
@@ -97,10 +90,11 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .0);}"
 	);
 
-	setStyleSheet(
-		"QMenu{padding : 5px}"
-		"QMenu::item{padding : 5px; }"
+	pushButton->setStyleSheet(
+		"PushButton{ background: rgba(0,0,0,1); border: 1px solid black}"
 	);
+
+
 }
 
 PropertyListWidget::~PropertyListWidget()
