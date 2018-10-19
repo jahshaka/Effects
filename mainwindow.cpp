@@ -239,8 +239,8 @@ void MainWindow::configureStyleSheet()
 	);
 
 	nodeContainer->verticalScrollBar()->setStyleSheet(
-		"QScrollBar:vertical {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 14px; }"
-		"QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 6px; width: 14px; left: 8px; }"
+		"QScrollBar:vertical {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 10px; }"
+		"QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 5px;  left: 8px; }"
 		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
 		"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
 		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .0);}"
@@ -261,6 +261,8 @@ void MainWindow::configureStyleSheet()
 	displayWidget->setStyleSheet(nodeTray->styleSheet());
 	propertyWidget->setStyleSheet(nodeTray->styleSheet());
 	materialSettingsWidget->setStyleSheet(nodeTray->styleSheet());
+	textEdit->setStyleSheet(nodeTray->styleSheet());
+	materialSettingsDock->setStyleSheet(nodeTray->styleSheet());
 }
 
 void MainWindow::configureUI()
@@ -333,11 +335,11 @@ void MainWindow::configureUI()
 	auto toggleIconView = new QPushButton(tr("Icon"));
 	toggleIconView->setCheckable(true);
 	toggleIconView->setCursor(Qt::PointingHandCursor);
-	//toggleIconView->setChecked(true);
+	toggleIconView->setChecked(true);
 
 	auto toggleListView = new QPushButton(tr("List"));
 	toggleListView->setCheckable(true);
-	toggleListView->setChecked(true);
+	//toggleListView->setChecked(true);
 	toggleListView->setCursor(Qt::PointingHandCursor);
 
 	assetViewToggleButtonGroup->addButton(toggleIconView);
@@ -352,12 +354,10 @@ void MainWindow::configureUI()
 
 	connect(toggleIconView, &QPushButton::pressed, [this]() {
 		nodeContainer->setViewMode(QListWidget::IconMode);
-
 	});
 
 	connect(toggleListView, &QPushButton::pressed, [this]() {
 		nodeContainer->setViewMode(QListWidget::ListMode);
-
 	});
 
 
@@ -373,7 +373,7 @@ void MainWindow::configureUI()
 	nodeContainer->setAlternatingRowColors(false);
 	nodeContainer->setSpacing(10);
 	nodeContainer->setContentsMargins(10, 3, 10, 10);
-	nodeContainer->setViewMode(QListWidget::ListMode);
+	nodeContainer->setViewMode(QListWidget::IconMode);
 	nodeContainer->setIconSize(currentSize);
 	nodeContainer->setMouseTracking(true);
 	nodeContainer->setDragDropMode(QAbstractItemView::DragDrop);
@@ -422,7 +422,7 @@ void MainWindow::generateTileNode()
 		item->setSizeHint(currentSize);
 		item->setTextAlignment(Qt::AlignCenter);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
-	//	item->setIcon(QIcon(":/icons/icons8-folder-72.png"));
+		item->setIcon(QIcon(":/icons/icon.png"));
 		item->setBackgroundColor(QColor(60, 60, 60));
 		nodeContainer->addItem(item);
 
@@ -442,7 +442,7 @@ void MainWindow::generateTileNode(QList<NodeLibraryItem*> list)
 		item->setSizeHint(currentSize);
 		item->setTextAlignment(Qt::AlignCenter);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
-	//	item->setIcon(QIcon(":/icons/icons8-folder-72.png"));
+		item->setIcon(QIcon(":/icons/icon.png"));
 		item->setBackgroundColor(QColor(60, 60, 60));
 		nodeContainer->addItem(item);
 

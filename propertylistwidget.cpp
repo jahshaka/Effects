@@ -37,7 +37,7 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 	auto scrollLayout = new QHBoxLayout;
 
 	QPushButton *pushButton = new QPushButton(QIcon(":/icons/add.png"), "  Add Property");
-
+	pushButton->setCursor(Qt::PointingHandCursor);
 	QObject::connect(pushButton, &QPushButton::released, [=]() {
 		QPoint pos = this->mapToGlobal(pushButton->pos());
 		pos += QPoint(pushButton->width()/2.2, pushButton->height());
@@ -50,6 +50,11 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 		menu->exec(pos);
 	});
 
+	auto addLayout = new QHBoxLayout;
+	int space = 65;
+	addLayout->addSpacing(space);
+	addLayout->addWidget(pushButton);
+	addLayout->addSpacing(space);
 
 	scrollLayout->addStretch();
 	scrollLayout->addWidget(scrollArea);
@@ -60,7 +65,7 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 
 	mainLayout->setContentsMargins(3, 0, 3, 0);
 	mainLayout->addSpacing(15);
-	mainLayout->addWidget(pushButton);
+	mainLayout->addLayout(addLayout);
 	mainLayout->addSpacing(5);
 	mainLayout->addLayout(scrollLayout);
 
@@ -83,15 +88,19 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 	connect(action5, &QAction::triggered, this, &PropertyListWidget::addNewTextureProperty);
 
 	scrollArea->setStyleSheet(""
-		"QScrollBar:vertical {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 24px; padding: 4px;}"
-		"QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 8px; width: 14px; }"
+		"QScrollBar:vertical {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 10px; }"
+		"QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 5px;  left: 8px; }"
 		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
 		"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
 		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .0);}"
 	);
 
 	pushButton->setStyleSheet(
-		"PushButton{ background: rgba(0,0,0,1); border: 1px solid black}"
+		"QPushButton{ background: #333; color: #DEDEDE; border : 0; padding: 4px 16px; }"
+		"QPushButton:hover{ background-color: #555; }"
+		"QPushButton:pressed{ background-color: #444; }"
+		"QPushButton:disabled{ color: #444; }"
+		"QPushButton:checked{ background-color: rgba(50,150,255,1); }"
 	);
 
 

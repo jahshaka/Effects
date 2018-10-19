@@ -13,8 +13,7 @@ BasePropertyWidget::BasePropertyWidget(QWidget * parent) : QWidget(parent)
 //	displayName->setAlignment(Qt::AlignHCenter);
 
 	button = new QPushButton;
-	button->setMaximumSize(22, 22
-	);
+	button->setMaximumSize(22, 22);
 	button->setIcon(QIcon(":/images/delete-26.png"));
 	button->setIconSize(button->maximumSize());
 	button->setCursor(Qt::PointingHandCursor);
@@ -25,11 +24,17 @@ BasePropertyWidget::BasePropertyWidget(QWidget * parent) : QWidget(parent)
 	minimize->setIconSize(button->maximumSize());
 	minimize->setCursor(Qt::PointingHandCursor);
 
+
+	auto btn = new QPushButton;
+	btn->setIcon(QIcon(":/icons/up.png"));
+	btn->setIconSize(QSize(14, 14));
+
 	displayWidget = new HeaderObject;
 	displayWidget->setStyleSheet("background: rgba(0,0,0,0);");
 	auto displayLayout = new QHBoxLayout;
 	displayWidget->setLayout(displayLayout);
-	/*displayLayout->addStretch();*/
+	/*displayLayout->addStretch();*/ 
+//	displayLayout->addWidget(btn);
 	displayLayout->addWidget(displayName);
 	displayLayout->addStretch();
 	displayLayout->addWidget(minimize);
@@ -38,6 +43,8 @@ BasePropertyWidget::BasePropertyWidget(QWidget * parent) : QWidget(parent)
 	displayLayout->addSpacing(4);
 	displayLayout->setContentsMargins(5, 7, 2, 7);
 	displayWidget->setCursor(Qt::OpenHandCursor);
+
+
 
 
 	layout = new QVBoxLayout;
@@ -63,6 +70,22 @@ BasePropertyWidget::BasePropertyWidget(QWidget * parent) : QWidget(parent)
 			// minimize
 			emit shouldSetVisible(minimized);
 			minimize->setIcon(QIcon(":/icons/expand.png"));
+
+			minimized = !minimized;
+		}
+	});
+	connect(btn, &QPushButton::clicked, [=]() {
+		if (minimized) {
+			// maximize
+			emit shouldSetVisible(minimized);
+			minimize->setIcon(QIcon(":/icons/up.png"));
+			minimized = !minimized;
+
+		}
+		else {
+			// minimize
+			emit shouldSetVisible(minimized);
+			minimize->setIcon(QIcon(":/icons/down.png"));
 
 			minimized = !minimized;
 		}

@@ -105,8 +105,8 @@ MaterialSettingsWidget::MaterialSettingsWidget(QWidget *parent):
 	comboBox_3->addItems(list);
 
 
-	setStyleSheet("QCheckBox {   spacing: 2px 5px;}"
-		"QCheckBox::indicator {   width: 28px;   height: 28px; }"
+	setStyleSheet("QCheckBox {   spacing: 2px 5px; width: 12px; height :12px;}"
+		"QCheckBox::indicator {   width: 18px;   height: 18px; }"
 		"QCheckBox::indicator::unchecked {	image: url(:/icons/check-unchecked.png);}"
 		"QCheckBox::indicator::checked {		image: url(:/icons/check-checked.png);}"
 		"QLineEdit {	border: 0;	background: #292929;	padding: 6px;	margin: 0;}"

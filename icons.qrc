@@ -11,5 +11,9 @@
         <file>icons/contract.png</file>
         <file>icons/expand.png</file>
         <file>icons/add.png</file>
+        <file>icons/down.png</file>
+        <file>icons/up.png</file>
+        <file>icons/icon.ico</file>
+        <file>icons/icon.png</file>
     </qresource>
 </RCC>
