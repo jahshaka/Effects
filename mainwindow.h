@@ -75,7 +75,7 @@ private:
 	QMenuBar *bar;  
 	QMenu *file;
 	QMenu *window;
-
+	QFont font;
 	void configureStyleSheet();
 };
 #endif // MAINWINDOW_H

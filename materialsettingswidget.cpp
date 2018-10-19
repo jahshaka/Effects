@@ -9,6 +9,9 @@ MaterialSettingsWidget::MaterialSettingsWidget(QWidget *parent):
 	QWidget(parent)
 {
 
+	font.setPointSizeF(font.pointSize() * devicePixelRatioF());
+	setFont(font);
+
 	if (this->objectName().isEmpty())
 		this->setObjectName(QStringLiteral("MaterialSettingsWidget"));
 
@@ -23,12 +26,15 @@ MaterialSettingsWidget::MaterialSettingsWidget(QWidget *parent):
 	formLayout->setContentsMargins(5, 5, 5, 5);
 	label = new QLabel("Name",this);
 	label->setObjectName(QStringLiteral("label"));
+	label->setFont(font);
 	formLayout->setWidget(0, QFormLayout::LabelRole, label);
 	lineEdit = new QLineEdit(this);
 	lineEdit->setObjectName(QStringLiteral("lineEdit"));
+	lineEdit->setFont(font);
 	formLayout->setWidget(0, QFormLayout::FieldRole, lineEdit);
 	label_2 = new QLabel("Z Write",this);
 	label_2->setObjectName(QStringLiteral("label_2"));
+	label_2->setFont(font);
 	formLayout->setWidget(1, QFormLayout::LabelRole, label_2);
 	checkBox = new QCheckBox(this);
 	checkBox->setObjectName(QStringLiteral("checkBox"));
@@ -90,6 +96,20 @@ MaterialSettingsWidget::MaterialSettingsWidget(QWidget *parent):
 	gridLayout->addLayout(formLayout, 0, 0, 1, 1);
 	formLayout->setSpacing(5);
 	setLayout(gridLayout);
+
+	label_3->setFont(font);
+	label_4->setFont(font);
+	label_5->setFont(font);
+	label_6->setFont(font);
+	label_7->setFont(font);
+	label_8->setFont(font);
+	label_9->setFont(font);
+	label_10->setFont(font);
+
+	comboBox->setFont(font);
+	comboBox_2->setFont(font);
+	comboBox_3->setFont(font);
+
 
 
 	QStringList list;

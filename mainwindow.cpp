@@ -69,12 +69,14 @@ MainWindow::MainWindow(QWidget *parent) :
 	file->addAction(actionSave);
 	file->addAction(actionLoad);
 	file->addAction(actionExport);
+	file->setFont(font);
 
 	window->addAction(nodeTray->toggleViewAction());
 	window->addAction(textWidget->toggleViewAction());
 	window->addAction(displayWidget->toggleViewAction());
 	window->addAction(propertyWidget->toggleViewAction());
 	window->addAction(materialSettingsDock->toggleViewAction());
+	window->setFont(font);
 	
 	setMenuBar(bar);
 	
@@ -233,8 +235,9 @@ void MainWindow::configureStyleSheet()
 	);
 
 	nodeContainer->setStyleSheet(
-	"QListView::item{ border-radius: 2px; border: 1px solid rgba(0,0,0,1); background: rgba(80,80,80,1);  }"	
-	"QListView::item:selected{ background: rgba(65,65,65,1); border: 1px solid rgba(50,150,250,1); }"
+		"QListView::item{ border-radius: 2px; border: 1px solid rgba(0,0,0,1); background: rgba(80,80,80,1); margin: 3px;  }"	
+		"QListView::item:selected{ background: rgba(65,65,65,1); border: 1px solid rgba(50,150,250,1); }"
+		"QListView::text{ top : -6; }"
 	
 	);
 
@@ -267,6 +270,11 @@ void MainWindow::configureStyleSheet()
 
 void MainWindow::configureUI()
 {
+
+	font.setPointSizeF(font.pointSize() * devicePixelRatioF());
+	setFont(font);
+
+
 	nodeTray = new QDockWidget("Library",this);
 	centralWidget = new QWidget();
 	textWidget = new QDockWidget("Code View");
@@ -317,6 +325,7 @@ void MainWindow::configureUI()
 
 	searchBar->setPlaceholderText("search");
 	searchBar->setAlignment(Qt::AlignHCenter);
+	searchBar->setFont(font);
 	connect(searchBar, &QLineEdit::textChanged, [=](QString str) {
 		nodeContainer->clear();
 		QList<NodeLibraryItem*> lis;
@@ -336,18 +345,22 @@ void MainWindow::configureUI()
 	toggleIconView->setCheckable(true);
 	toggleIconView->setCursor(Qt::PointingHandCursor);
 	toggleIconView->setChecked(true);
+	toggleIconView->setFont(font);
 
 	auto toggleListView = new QPushButton(tr("List"));
 	toggleListView->setCheckable(true);
-	//toggleListView->setChecked(true);
 	toggleListView->setCursor(Qt::PointingHandCursor);
+	toggleListView->setFont(font);
+
+	auto label = new QLabel("Display:");
+	label->setFont(font);
 
 	assetViewToggleButtonGroup->addButton(toggleIconView);
 	assetViewToggleButtonGroup->addButton(toggleListView);
 
 	QHBoxLayout *toggleLayout = new QHBoxLayout;
 	toggleLayout->setSpacing(0);
-	toggleLayout->addWidget(new QLabel(tr("Display:")));
+	toggleLayout->addWidget(label);
 	toggleLayout->addStretch();
 	toggleLayout->addWidget(toggleIconView);
 	toggleLayout->addWidget(toggleListView);
@@ -371,7 +384,7 @@ void MainWindow::configureUI()
 	containerLayout->addLayout(toggleLayout);
 
 	nodeContainer->setAlternatingRowColors(false);
-	nodeContainer->setSpacing(10);
+	nodeContainer->setSpacing(0);
 	nodeContainer->setContentsMargins(10, 3, 10, 10);
 	nodeContainer->setViewMode(QListWidget::IconMode);
 	nodeContainer->setIconSize(currentSize);
@@ -388,7 +401,7 @@ void MainWindow::configureUI()
 	nodeContainer->installEventFilter(this);
 	nodeContainer->viewport()->installEventFilter(this);
 	nodeContainer->setWordWrap(true);
-	nodeContainer->setGridSize(QSize(70, 100));
+	nodeContainer->setGridSize(QSize(70, 70));
 	nodeContainer->setSortingEnabled(true);
 	nodeContainer->sortItems();
 	nodeContainer->setEditTriggers(QAbstractItemView::NoEditTriggers);

@@ -2,6 +2,7 @@
 #include "ui_propertylistwidget.h"
 #include <QMenu>
 #include <QDebug>
+#include <QFont>
 #include <qgraphicseffect.h>
 #include <QScrollArea>
 #include <QToolButton>
@@ -16,7 +17,13 @@
 PropertyListWidget::PropertyListWidget(QWidget *parent) :
     QWidget(parent)
 {
+
+	font.setPointSizeF(font.pointSize() * devicePixelRatioF());
+	setFont(font);
+
+
     auto menu = new QMenu(this);
+	menu->setFont(font);
 //	menu->setWindowFlag(Qt::NoDropShadowWindowHint );
 	menu->setAttribute(Qt::WA_TranslucentBackground);
     auto action = menu->addAction		("Float ");
@@ -38,6 +45,8 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 
 	QPushButton *pushButton = new QPushButton(QIcon(":/icons/add.png"), "  Add Property");
 	pushButton->setCursor(Qt::PointingHandCursor);
+	pushButton->setMinimumWidth(110);
+	pushButton->setFont(font);
 	QObject::connect(pushButton, &QPushButton::released, [=]() {
 		QPoint pos = this->mapToGlobal(pushButton->pos());
 		pos += QPoint(pushButton->width()/2.2, pushButton->height());
@@ -51,10 +60,9 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 	});
 
 	auto addLayout = new QHBoxLayout;
-	int space = 65;
-	addLayout->addSpacing(space);
+	int space = 165;
+	addLayout->addStretch();
 	addLayout->addWidget(pushButton);
-	addLayout->addSpacing(space);
 
 	scrollLayout->addStretch();
 	scrollLayout->addWidget(scrollArea);

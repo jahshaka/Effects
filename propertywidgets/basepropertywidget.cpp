@@ -6,10 +6,15 @@
 
 BasePropertyWidget::BasePropertyWidget(QWidget * parent) : QWidget(parent)
 {
+	QFont font;
+	font.setPointSizeF(font.pointSize() * devicePixelRatioF());
+	setFont(font);
+
 
 	setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 	displayName = new QLineEdit;
 	displayName->setText("Display");
+	displayName->setFont(font);
 //	displayName->setAlignment(Qt::AlignHCenter);
 
 	button = new QPushButton;

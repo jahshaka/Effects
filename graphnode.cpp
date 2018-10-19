@@ -1,4 +1,5 @@
 #include "graphnode.h"
+#include <QApplication>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include "socket.h"
@@ -7,6 +8,8 @@
 GraphNode::GraphNode(QGraphicsItem* parent) :
 	QGraphicsPathItem(parent)
 {
+
+
 	nodeType = 0;
 	proxyWidget = nullptr;
 
@@ -30,11 +33,11 @@ GraphNode::GraphNode(QGraphicsItem* parent) :
 	text = new QGraphicsTextItem(this);
 	text->setPlainText("Title");
 	text->setPos(5, 2);
-
 	text->setDefaultTextColor(QColor(255, 255, 255));
 
 	QFont font = text->font();
 	font.setWeight(65);
+	//font.setPointSize(font.pointSize * QApplication::focusWidget()->devicePixelRatioF());
 	text->setFont(font);
 
 }

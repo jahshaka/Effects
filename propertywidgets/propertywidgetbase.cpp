@@ -7,6 +7,8 @@ PropertyWidgetBase::PropertyWidgetBase() : QWidget()
 {
 	layout = new QHBoxLayout;
 	setLayout(layout);
+	font.setPointSizeF(font.pointSize() * devicePixelRatioF());
+	setFont(font);
 }
 
 
@@ -21,6 +23,11 @@ Widget2D::Widget2D() : PropertyWidgetBase()
 	ySpinBox = new QDoubleSpinBox;
 	auto xLabel = new QLabel("X");
 	auto yLabel = new QLabel("Y");
+
+	xSpinBox->setFont(font);
+	ySpinBox->setFont(font);
+	xLabel->setFont(font);
+	yLabel->setFont(font);
 
 	xLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
 	yLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
@@ -64,6 +71,13 @@ Widget3D::Widget3D() : PropertyWidgetBase()
 	auto xLabel = new QLabel("X");
 	auto yLabel = new QLabel("Y");
 	auto zLabel = new QLabel("Z");
+
+	xSpinBox->setFont(font);
+	ySpinBox->setFont(font);
+	zSpinBox->setFont(font);
+	xLabel->setFont(font);
+	yLabel->setFont(font);
+	zLabel->setFont(font);
 
 	xLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
 	yLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
@@ -122,6 +136,15 @@ Widget4D::Widget4D() : PropertyWidgetBase()
 	auto yLabel = new QLabel("Y");
 	auto zLabel = new QLabel("Z");
 	auto wLabel = new QLabel("W");
+
+	xSpinBox->setFont(font);
+	ySpinBox->setFont(font);
+	zSpinBox->setFont(font);
+	wSpinBox->setFont(font);
+	xLabel->setFont(font);
+	yLabel->setFont(font);
+	zLabel->setFont(font);
+	wLabel->setFont(font);
 
 	xLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
 	yLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
@@ -191,6 +214,16 @@ WidgetInt::WidgetInt() : PropertyWidgetBase()
 	auto label1 = new QLabel("Min");
 	auto label2 = new QLabel("Max");
 	auto label3 = new QLabel("Step");
+
+	label->setFont(font);
+	label1->setFont(font);
+	label2->setFont(font);
+	label3->setFont(font);
+
+	spinBox->setFont(font);
+	maxSpinBox->setFont(font);
+	minSpinBox->setFont(font);
+	stepSpinBox->setFont(font);
 
 	/*label->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
 	label1->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
@@ -271,6 +304,16 @@ WidgetFloat::WidgetFloat() : PropertyWidgetBase()
 	auto label2 = new QLabel("Max");
 	auto label3 = new QLabel("Step");
 
+	label->setFont(font);
+	label1->setFont(font);
+	label2->setFont(font);
+	label3->setFont(font);
+
+	floatSpinBox->setFont(font);
+	maxSpinBox->setFont(font);
+	minSpinBox->setFont(font);
+	stepSpinBox->setFont(font);
+
 	/*label->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
 	label1->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
 	label2->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
@@ -337,6 +380,9 @@ WidgetTexture::WidgetTexture()
 	texture->setMinimumSize(160, 146);
 	winHolder->addWidget(label);
 	winHolder->addWidget(texture);
+
+	label->setFont(font);
+	texture->setFont(font);
 
 	layout->addWidget(wid);
 
