@@ -62,7 +62,7 @@ void RenderWidget::initializeGL()
 
     auto updateTimer = new QTimer(this);
     connect(updateTimer, SIGNAL(timeout()), this, SLOT(update()));
-    updateTimer->start();
+    updateTimer->start(1000/60);
 
     elapsedTimer->start();
     //qDebug()<<"initializing";

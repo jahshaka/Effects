@@ -2,6 +2,8 @@
 
 #include <irisgl/IrisGL.h>
 
+class QMouseEvent;
+
 class NodeGraph;
 class SceneWidget : public iris::RenderWidget
 {
@@ -24,6 +26,11 @@ class SceneWidget : public iris::RenderWidget
     QList<iris::LightNodePtr> lights;
 
     NodeGraph* graph;
+
+	bool dragging;
+	QPoint lastMousePos;
+	QQuaternion rot;
+	float scale;
 public:
     SceneWidget();
 
@@ -39,4 +46,10 @@ public:
 
     void passNodeGraphUniforms();
     void setNodeGraph(NodeGraph* graph);
+
+
+	// mouse events
+	void mousePressEvent(QMouseEvent* evt);
+	void mouseMoveEvent(QMouseEvent* evt);	
+	void mouseReleaseEvent(QMouseEvent* evt);
 };

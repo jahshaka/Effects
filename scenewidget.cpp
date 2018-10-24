@@ -6,6 +6,7 @@
 #include <QVector2D>
 #include <QVector3D>
 #include <QVector4D>
+#include <QMouseEvent>
 
 #include "graph/nodegraph.h"
 #include "texturemanager.h"
@@ -26,7 +27,7 @@ void SceneWidget::start()
     //vertexBuffer->setData()
 
     cam = iris::CameraNode::create();
-    cam->setLocalPos(QVector3D(2, 2, 3));
+    cam->setLocalPos(QVector3D(2, 0, 3));
     cam->lookAt(QVector3D(0,0,0));
     /*
     shader = iris::Shader::load(
@@ -99,6 +100,9 @@ void SceneWidget::render()
     device->setShaderUniform("u_projMatrix", cam->projMatrix);
     QMatrix4x4 world;
     world.setToIdentity();
+	world.rotate(rot);
+	world.scale(scale);
+
     device->setShaderUniform("u_worldMatrix", world);
     device->setShaderUniform("u_normalMatrix", world.normalMatrix());
     device->setShaderUniform("color", QVector4D(0.0, 0.0, 0.0, 1.0));
@@ -203,7 +207,34 @@ void SceneWidget::setNodeGraph(NodeGraph *graph)
     this->graph = graph;
 }
 
+void SceneWidget::mousePressEvent(QMouseEvent * evt)
+{
+	dragging = true;
+	lastMousePos = evt->pos();
+}
+
+void SceneWidget::mouseMoveEvent(QMouseEvent * evt)
+{
+	if (dragging) {
+		auto curPos = evt->pos();
+		auto diff = lastMousePos - curPos;
+		lastMousePos = curPos;
+		float dragScale = 0.7f;
+
+		auto tx = QQuaternion::fromEulerAngles(-diff.y() * dragScale, -diff.x() * dragScale, 0);
+		rot = tx * rot;
+	}
+}
+
+void SceneWidget::mouseReleaseEvent(QMouseEvent * evt)
+{
+	dragging = false;
+}
+
 SceneWidget::SceneWidget():
     iris::RenderWidget(nullptr)
 {
+	rot = QQuaternion::fromEulerAngles(0, 0, 0);
+	scale = 1;
+	dragging = false;
 }
