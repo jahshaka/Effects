@@ -51,6 +51,8 @@ void GraphNode::setTitleColor(QColor color)
 void GraphNode::setTitle(QString title)
 {
 	text->setPlainText(title);
+	auto textWidth = text->boundingRect().width();
+	text->setPos(nodeWidth / 2 - textWidth / 2, 2);
 }
 
 void GraphNode::addInSocket(QString title)
