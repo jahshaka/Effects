@@ -7,6 +7,8 @@
 #include <QVector3D>
 #include <QVector4D>
 #include <QMouseEvent>
+#include <QWheelEvent>
+#include <qmath.h>
 
 #include "graph/nodegraph.h"
 #include "texturemanager.h"
@@ -229,6 +231,13 @@ void SceneWidget::mouseMoveEvent(QMouseEvent * evt)
 void SceneWidget::mouseReleaseEvent(QMouseEvent * evt)
 {
 	dragging = false;
+}
+
+void SceneWidget::wheelEvent(QWheelEvent* evt)
+{
+	//qDebug() << evt->delta();
+	scale += (evt->delta()/480.0f);
+	//qDebug() << scale;
 }
 
 SceneWidget::SceneWidget():

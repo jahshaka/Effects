@@ -3,6 +3,7 @@
 #include <irisgl/IrisGL.h>
 
 class QMouseEvent;
+class QWheelEvent;
 
 class NodeGraph;
 class SceneWidget : public iris::RenderWidget
@@ -52,4 +53,6 @@ public:
 	void mousePressEvent(QMouseEvent* evt);
 	void mouseMoveEvent(QMouseEvent* evt);	
 	void mouseReleaseEvent(QMouseEvent* evt);
+	void wheelEvent(QWheelEvent* evt);
+
 };
