@@ -16,6 +16,7 @@ private:
 
 	bool dragging = false;
 	QPointF clickPos;
+	QFont font;
 	
 
 protected:

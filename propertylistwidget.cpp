@@ -2,6 +2,8 @@
 #include "ui_propertylistwidget.h"
 #include <QMenu>
 #include <QDebug>
+#include <QFont>
+#include <qgraphicseffect.h>
 #include <QScrollArea>
 #include <QToolButton>
 #include "propertywidgets/floatpropertywidget.h"
@@ -15,16 +17,21 @@
 PropertyListWidget::PropertyListWidget(QWidget *parent) :
     QWidget(parent)
 {
+
+	font.setPointSizeF(font.pointSize() * devicePixelRatioF());
+	setFont(font);
+
+
     auto menu = new QMenu(this);
-    auto action = menu->addAction("Add Float Property");
-    auto actionInt = menu->addAction("Add Int Property");
-	auto action2 = menu->addAction("Add Vector2 Property");
-	auto action3 = menu->addAction("Add Vector3 Property");
-	auto action4 = menu->addAction("Add Vector4 Property");
-    auto action5 = menu->addAction("Add Texture Property");
-
-
-
+	menu->setFont(font);
+//	menu->setWindowFlag(Qt::NoDropShadowWindowHint );
+	menu->setAttribute(Qt::WA_TranslucentBackground);
+    auto action = menu->addAction		("Float ");
+    auto actionInt = menu->addAction	("Int ");
+	auto action2 = menu->addAction		("Vector 2 ");
+	auto action3 = menu->addAction		("Vector 3 ");
+	auto action4 = menu->addAction		("Vector 4 ");
+    auto action5 = menu->addAction		("Texture ");
 
     layout = new QVBoxLayout();
     layout->addStretch();
@@ -36,21 +43,37 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 	auto contentWidget = new QWidget;
 	auto scrollLayout = new QHBoxLayout;
 
+	QPushButton *pushButton = new QPushButton(QIcon(":/icons/add.png"), "  Add Property");
+	pushButton->setCursor(Qt::PointingHandCursor);
+	pushButton->setMinimumWidth(110);
+	pushButton->setFont(font);
+	QObject::connect(pushButton, &QPushButton::released, [=]() {
+		QPoint pos = this->mapToGlobal(pushButton->pos());
+		pos += QPoint(pushButton->width()/2.2, pushButton->height());
+		auto effect = new QGraphicsDropShadowEffect(menu);
+		effect->setBlurRadius(15);
+		effect->setXOffset(10);
+		effect->setYOffset(10);
+		effect->setColor(QColor(110, 0, 0));
+		menu->setGraphicsEffect(effect);
+		menu->exec(pos);
+	});
+
+	auto addLayout = new QHBoxLayout;
+	int space = 165;
+	addLayout->addStretch();
+	addLayout->addWidget(pushButton);
+
 	scrollLayout->addStretch();
 	scrollLayout->addWidget(scrollArea);
 	scrollLayout->addStretch();
 
-	addProp->setText(tr("Add Property"));
-	addProp->setMenu(menu);
-	addProp->setPopupMode(QToolButton::InstantPopup);
-	addProp->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-
 	contentWidget->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Expanding);
 	contentWidget->setMinimumWidth(200);
 
-	mainLayout->setContentsMargins(0, 0, 0, 0);
+	mainLayout->setContentsMargins(3, 0, 3, 0);
 	mainLayout->addSpacing(15);
-	mainLayout->addWidget(addProp);
+	mainLayout->addLayout(addLayout);
 	mainLayout->addSpacing(5);
 	mainLayout->addLayout(scrollLayout);
 
@@ -73,12 +96,22 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 	connect(action5, &QAction::triggered, this, &PropertyListWidget::addNewTextureProperty);
 
 	scrollArea->setStyleSheet(""
-		"QScrollBar:vertical {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 24px; padding: 4px;}"
-		"QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 8px; width: 14px; }"
+		"QScrollBar:vertical {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 10px; }"
+		"QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 5px;  left: 8px; }"
 		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
 		"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
 		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .0);}"
 	);
+
+	pushButton->setStyleSheet(
+		"QPushButton{ background: #333; color: #DEDEDE; border : 0; padding: 4px 16px; }"
+		"QPushButton:hover{ background-color: #555; }"
+		"QPushButton:pressed{ background-color: #444; }"
+		"QPushButton:disabled{ color: #444; }"
+		"QPushButton:checked{ background-color: rgba(50,150,255,1); }"
+	);
+
+
 }
 
 PropertyListWidget::~PropertyListWidget()

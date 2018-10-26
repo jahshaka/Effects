@@ -8,6 +8,7 @@ FloatPropertyWidget::FloatPropertyWidget() : BasePropertyWidget()
 	auto mainLayout = layout;
 	
 	wid = new WidgetFloat;
+	setWidget(wid);
 	floatSpinBox = wid->floatSpinBox;
 	minSpinBox = wid->minSpinBox;
 	maxSpinBox = wid->maxSpinBox;

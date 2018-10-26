@@ -9,10 +9,9 @@
 #include "socketmodel.h"
 
 enum class NodeType {
-	Surface,
-	Number,
-	Modifier,
-	Calculation
+	Input,
+	Properties,
+	Math
 };
 
 class QWidget;

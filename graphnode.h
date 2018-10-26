@@ -25,6 +25,8 @@ class GraphNode : public QGraphicsPathItem
 public:
 	int nodeType;
 	int level = 0;
+	int titleHeight = 25;
+	int titleRadius = 7;
 	bool isHighlighted = false;
 	bool currentSelectedState = false;
 	bool check = false;
@@ -54,7 +56,7 @@ private:
 	QColor connectedColor = QColor(50, 150, 250);
 	QColor disconnectedColor = QColor(90, 90, 90, 0);
 	void highlightNode(bool val, int lvl);
-
+	QFont font;
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *event)override;
 };

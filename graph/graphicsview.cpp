@@ -8,6 +8,8 @@
 qreal GraphicsView::currentScale = 1.0;
 GraphicsView::GraphicsView( QWidget *parent) : QGraphicsView(parent)
 {
+	
+
 	setAcceptDrops(true);
 	setRenderHint(QPainter::Antialiasing);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

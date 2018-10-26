@@ -51,6 +51,7 @@ private:
     QVBoxLayout* layout;
     NodeGraph* graph;
 	int added = -1;
+	QFont font;
 };
 
 #endif // PROPERTYLISTWIDGET_H
