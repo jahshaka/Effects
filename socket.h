@@ -38,14 +38,14 @@ public:
 	QColor getSocketColor();
 	void setSocketColor(QColor color);
 	void updateSocket();
-
+	QColor connectedColor = QColor(50, 150, 250);
+	QPoint getSocketPosition();
 	QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 private:
 	QPointF socketPos;
 	QColor socketColor;
-	QColor connectedColor = QColor(50, 150, 250);
-	QColor disconnectedColor = QColor(90, 90, 90).darker(175);
-	bool connected;
+	QColor disconnectedColor = QColor(60, 60, 64).darker(175);
+	bool connected = false;
 	bool rounded = true;
 
 

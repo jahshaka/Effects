@@ -5,6 +5,7 @@
 #include <QJsonValue>
 #include <QVector>
 #include <QColor>
+#include <QIcon>
 
 #include "socketmodel.h"
 
@@ -32,7 +33,7 @@ public:
 
 	QWidget* widget;
 	QColor titleColor;
-
+	QIcon icon;
 	NodeModel();
 
 	NodeGraph* graph = nullptr;
