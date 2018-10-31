@@ -51,6 +51,8 @@ set(CPP
 	nodes/test.cpp
 	nodes/libraryv1.cpp
 	nodes/math.cpp
+	nodes/utils.cpp
+	nodes/inputs.cpp
 	)
 
 set(HEADERS
@@ -89,6 +91,8 @@ set(HEADERS
 		nodes/test.h
 		nodes/libraryv1.h
 		nodes/math.h
+		nodes/utils.h
+		nodes/inputs.h
 	)
 
 set(FORMS

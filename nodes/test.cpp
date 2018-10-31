@@ -592,4 +592,12 @@ PannerNode::PannerNode()
 
 void PannerNode::process(ModelContext * context)
 {
+	auto ctx = (ShaderContext*)context;
+	auto uv = this->getValueFromInputSocket(0);
+	auto speed = this->getValueFromInputSocket(1);
+	auto time = this->getValueFromInputSocket(2);
+	auto res = this->getOutputSocketVarName(0);
+
+	auto code = res + " = " + uv + " + " + speed + " * "+ time + ";";
+	ctx->addCodeChunk(this, code);
 }

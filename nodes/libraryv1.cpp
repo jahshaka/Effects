@@ -67,6 +67,11 @@ void LibraryV1::initTest()
 	lib->addNode("texture", "Texture", "", []() {
 		return new TextureNode();
 	});
+
+	//texture
+	lib->addNode("panner", "Panner", "", []() {
+		return new PannerNode();
+	});
 }
 
 void LibraryV1::initMath()
