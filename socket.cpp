@@ -3,6 +3,9 @@
 #include "graphnodescene.h"
 #include <QGraphicsItem>
 #include <QFontMetrics>
+#include <QApplication>
+#include <QDesktopWidget>
+#include <QDebug>
 
 Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title) :
 	QGraphicsPathItem(parent), 
@@ -13,6 +16,13 @@ Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title) :
 	text = new QGraphicsTextItem(this);
 	text->setPlainText(title);
 	text->setDefaultTextColor(QColor(200, 200, 200));
+
+	QFont font = text->font();
+	font.setWeight(60);
+	auto ratio = QApplication::desktop()->devicePixelRatio();
+	font.setPointSize(font.pointSize() * ratio);
+	text->setFont(font);
+
 	setSocketColor(disconnectedColor);
 	QFontMetrics fm(parent->scene()->font());
 	QRect textRect = fm.boundingRect(title);
@@ -25,24 +35,26 @@ Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title) :
 	if (socketType == SocketType::Out)
 	{
 		// socket on the right    out socket
-		text->setPos(-textRect.width() - radius * 4, -radius);
-		if (rounded)  path.addRoundedRect(-radius * 2, -radius / 2, dimentions, dimentions, radius, radius);
-		else path.addRect(-radius * 2, -radius / 2, dimentions, dimentions);
+		text->setPos(-textRect.width() - radius * 6, -radius);
+		if (rounded)  path.addRoundedRect(-radius*4 , -radius / 2, dimentions, dimentions, radius, radius);
+		else path.addRect(radius , -radius / 2, dimentions, dimentions);
 		socketPos = path.currentPosition();
 	}
 	else
 	{
 		//socket on the left      in socket
-		text->setPos(radius * 3, -radius);
-		if (rounded) path.addRoundedRect(0, -radius / 2, dimentions, dimentions, radius, radius);
+		text->setPos(radius * 5, -radius);
+		if (rounded) path.addRoundedRect(radius*2, -radius / 2, dimentions, dimentions, radius, radius);
 		else path.addRect(0, -radius / 2, dimentions, dimentions);
 
 		socketPos = path.currentPosition();
 	}
 	setBrush(getSocketColor());
-	QPen pen(QColor(97, 97, 97), 3);
+	QPen pen(QColor(97, 97, 97, 150), 3.0);
 	setPen(pen);
 	setPath(path);
+
+	connectedColor = owner->titleColor;
 }
 
 void Socket::addConnection(SocketConnection* con)
@@ -82,12 +94,28 @@ QPointF Socket::getPos()
 
 float Socket::getSocketOffset()
 {
-	return socketPos.x() / 2;
+	return socketPos.x();
 }
 
 int Socket::type() const
 {
 	return (int)GraphicsItemType::Socket;
+}
+
+QPoint Socket::getSocketPosition()
+{
+	if (socketType == SocketType::Out)
+	{
+		QRect rect(-radius * 4, -radius / 2, dimentions, dimentions);
+		auto center = rect.center();
+		return this->scenePos().toPoint() + center;
+	}
+	else {
+		QRect rect(radius * 2, -radius / 2, dimentions, dimentions);
+		auto center = rect.center();
+		return this->scenePos().toPoint() + center;
+
+	}
 }
 
 QVariant Socket::itemChange(GraphicsItemChange change, const QVariant &value)
@@ -141,12 +169,12 @@ void Socket::updateSocket()
 	// socket positions are at the outer right or outer left of the graph node
 	if (socketType == SocketType::Out)
 	{
-		if (rounded)  path.addRoundedRect(-radius * 2, -radius / 2, dimentions, dimentions, radius, radius);
+		if (rounded)  path.addRoundedRect(-radius * 4, -radius / 2, dimentions, dimentions, radius, radius);
 		else path.addRect(-radius * 2, -radius / 2, dimentions, dimentions);
 	}
 	else
 	{
-		if (rounded) path.addRoundedRect(0, -radius / 2, dimentions, dimentions, radius, radius);
+		if (rounded) path.addRoundedRect(radius * 2, -radius / 2, dimentions, dimentions, radius, radius);
 		else path.addRect(0, -radius / 2, dimentions, dimentions);
 	}
 	setBrush(getSocketColor());
@@ -161,6 +189,72 @@ void Socket::updateSocket()
 
 void Socket::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
-	QGraphicsPathItem::paint(painter, option, widget);
+
+	painter->setRenderHint(QPainter::HighQualityAntialiasing);
+	QPainterPath path;
+	QPainterPath pathShadow;
+
+	qDebug() << "watching";
+
+	// socket positions are at the outer right or outer left of the graph node
+	if (socketType == SocketType::Out)
+	{
+		path.addRoundedRect(-radius * 4, -radius / 2 , dimentions, dimentions, radius, radius);
+		pathShadow.addRoundedRect(-radius * 4, -radius / 2 + 2, dimentions, dimentions, radius, radius);
+
+	}
+	else
+	{
+		path.addRoundedRect(radius * 2, -radius / 2, dimentions, dimentions, radius, radius);
+		pathShadow.addRoundedRect(radius * 2, -radius / 2 + 2 , dimentions, dimentions, radius, radius);
+
+	}
+
+
+	//QGraphicsPathItem::paint(painter, option, widget);
+
+
+
+	//fill shadow
+	painter->fillPath(pathShadow, QColor(20, 20, 20, 30));
+
+	// fill well
+	painter->fillPath(path, QColor(20,20,24,255));
+
+
+	QPen pen;
+	pen.setWidthF(3);
+	pen.setColor(QColor(100, 100, 100));
+	painter->setPen(pen);
+	painter->drawPath(path);
+
+	if (connected) {
+		QPainterPath path1;
+		QPainterPath path;
+		auto pad = 6;
+
+		if (socketType == SocketType::Out)
+		{
+			path.addRoundedRect(-radius * 4, -radius / 2, dimentions, dimentions, radius, radius);
+
+			path1.addRoundedRect(-radius * 4 + pad/2, -radius / 2 + pad/2, dimentions- pad, dimentions- pad, radius, radius);
+		}
+		else
+		{
+			path.addRoundedRect(radius * 2, -radius / 2, dimentions, dimentions, radius, radius);
+
+			path1.addRoundedRect(radius * 2 + pad/2, -radius / 2 + pad/2, dimentions - pad, dimentions - pad, radius, radius);
+		}
+
+
+		QLinearGradient grad;
+		grad.setColorAt(1.0, QColor(47, 47, 53));
+		grad.setColorAt(0.0, QColor(45, 45, 51));
+		grad.setCoordinateMode(QGradient::ObjectBoundingMode);
+		painter->fillPath(path, grad);
+		painter->fillPath(path1, connectedColor);
+	//	painter->drawPath(path);
+
+	}
 
 }

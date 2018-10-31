@@ -41,6 +41,10 @@ void GraphNodeScene::setNodeGraph(NodeGraph *graph)
 void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addToGraph)
 {
 	auto nodeView = this->createNode<GraphNode>();
+	nodeView->setTitle(model->title);
+	nodeView->setTitleColor(model->setNodeTitleColor());
+	nodeView->setIcon(model->icon);
+
 	for (auto sock : model->inSockets)
 		nodeView->addInSocket(sock->name);
 	for (auto sock : model->outSockets)
@@ -48,8 +52,8 @@ void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addTo
 
 	if (model->widget != nullptr)
 		nodeView->setWidget(model->widget);
-	nodeView->setTitle(model->title);
-	nodeView->setTitleColor(model->setNodeTitleColor());
+	/*nodeView->setTitle(model->title);
+	nodeView->setTitleColor(model->setNodeTitleColor());*/
 
 	nodeView->setPos(x, y);
 	nodeView->nodeId = model->id;
@@ -186,6 +190,9 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 void GraphNodeScene::drawBackground(QPainter * painter, const QRectF & rect)
 {
 	//does not draw background
+	//painter->setBackground(QBrush(QColor(00, 200, 200, 50)));
+	painter->fillRect(rect, QBrush(QColor(00, 00, 0, 200)));
+//	QGraphicsScene::drawBackground(painter, rect);
 }
 
 GraphNodeScene::GraphNodeScene(QWidget* parent) :
@@ -277,8 +284,8 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 					con->pos2 = me->scenePos();
 					con->status = SocketConnectionStatus::Started;
 					con->updatePath();
-					conGroup->addToGroup(con);
-					// this->addItem(con);
+					//conGroup->addToGroup(con);
+					this->addItem(con);
 					views().at(0)->setDragMode(QGraphicsView::NoDrag);
 				}
 
