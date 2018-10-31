@@ -1,7 +1,8 @@
 #include "socketconnection.h"
 #include "socket.h"
 #include <QPainter>
-
+#include <QDebug>
+#include <QGraphicsDropShadowEffect>
 
 
 SocketConnection::SocketConnection()
@@ -21,12 +22,19 @@ SocketConnection::SocketConnection()
 	pen.setCapStyle(Qt::RoundCap);
 	pen.setWidth(3);
 	setPen(pen);
+
+	QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
+	effect->setBlurRadius(20);
+	effect->setXOffset(0);
+	effect->setYOffset(0);
+	effect->setColor(QColor(00, 100, 200, 140));
+	setGraphicsEffect(effect);
 }
 
 void SocketConnection::updatePosFromSockets()
 {
-	pos1 = socket1->scenePos() + QPoint(socket1->getSocketOffset(), 5);
-	pos2 = socket2->scenePos() - QPoint(socket1->getSocketOffset() * 2, -5);
+	pos1 = socket1->getSocketPosition();
+	pos2 = socket2->getSocketPosition();
 }
 
 void SocketConnection::updatePath()
@@ -44,22 +52,10 @@ void SocketConnection::updatePath()
 	p->cubicTo(ctr1, ctr2, pos2);
 	p->setFillRule(Qt::OddEvenFill);
 
-	//if (status == SocketConnectionStatus::Started || status == SocketConnectionStatus::Inprogress) {
-	//	QPainterPathStroker str;
-	//	str.setCapStyle(Qt::RoundCap);
-	//	str.setWidth(10.0);
-	//	str.setDashPattern(Qt::CustomDashLine);
-	//	str.setDashOffset(19);
-	//	QPainterPath resultPath = str.createStroke(p).simplified();
-
-
-	//	setPath(resultPath);
-	//}
-	//else {
-
+	
 	setPath(*p);
 
-	//}
+	
 }
 
 int SocketConnection::type() const
@@ -77,8 +73,23 @@ void SocketConnection::paint(QPainter * painter, const QStyleOptionGraphicsItem 
 		painter->setPen(pen);
 		painter->drawPath(*p);
 	}
-	else {
-		QGraphicsPathItem::paint(painter, option, widget);
+	if(status == SocketConnectionStatus::Finished) {
+		//QGraphicsPathItem::paint(painter, option, widget);
+		QLinearGradient grad;
+	//	grad.setFocalPoint(QPoint(0,0));
+	//	grad.setCenter(QPoint(1, 1));
+	//	grad.setRadius(1);
+		grad.setStart(pos1-pos2);
+		grad.setFinalStop( pos2 - pos1);
+	//	grad.setCoordinateMode(QGradient::StretchToDeviceMode);
+		grad.setColorAt(0.0, socket1->connectedColor);
+		grad.setColorAt(1.0, socket2->connectedColor);
+
+		QPen pen(grad,2);
+
+		painter->setPen(pen);
+		painter->drawPath(*p);
+
 	}
 
 

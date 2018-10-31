@@ -2,6 +2,7 @@
 
 #include <QGraphicsPathItem>
 #include <QGraphicsProxyWidget>
+#include <QIcon>
 
 
 enum class GraphicsItemType : int
@@ -26,15 +27,17 @@ public:
 	int nodeType;
 	int level = 0;
 	int titleHeight = 25;
-	int titleRadius = 7;
+	int titleRadius = 3;
 	bool isHighlighted = false;
 	bool currentSelectedState = false;
 	bool check = false;
 	QString nodeId;
 	QColor titleColor;
+	QIcon icon;
 
 	GraphNode(QGraphicsItem* parent);
 
+	void setIcon(QIcon icon);
 	void setTitleColor(QColor color);
 	void setTitle(QString title);
 	void addInSocket(QString title);

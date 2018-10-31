@@ -1,7 +1,9 @@
 #include "graphnode.h"
 #include <QApplication>
+#include <QDesktopWidget>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
+#include <QGraphicsEffect>
 #include "socket.h"
 #include "socketconnection.h"
 
@@ -37,9 +39,22 @@ GraphNode::GraphNode(QGraphicsItem* parent) :
 
 	QFont font = text->font();
 	font.setWeight(65);
-	//font.setPointSize(font.pointSize * QApplication::focusWidget()->devicePixelRatioF());
+	auto ratio = QApplication::desktop()->devicePixelRatio();
+	font.setPointSize(font.pointSize() * ratio);
 	text->setFont(font);
 
+	QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
+	effect->setBlurRadius(12);
+	effect->setXOffset(0);
+	effect->setYOffset(0);
+	effect->setColor(QColor(00, 00, 00, 40));
+	setGraphicsEffect(effect);
+
+}
+
+void GraphNode::setIcon(QIcon icon)
+{
+	this->icon = icon;
 }
 
 void GraphNode::setTitleColor(QColor color)
@@ -111,7 +126,7 @@ void GraphNode::calcPath()
 int GraphNode::calcHeight()
 {
 	int height = 0;
-	height += titleHeight + 12;// title + padding
+	height += titleHeight + 20;// title + padding
 
 	for (auto socket : sockets)
 	{
@@ -158,7 +173,7 @@ void GraphNode::paint(QPainter *painter,
 {
 	painter->setRenderHint(QPainter::HighQualityAntialiasing);
 	painter->setRenderHint(QPainter::Antialiasing);
-
+	painter->setRenderHint(QPainter::TextAntialiasing);
 
 	if (option->state.testFlag(QStyle::State_Selected) != currentSelectedState) {
 		currentSelectedState = option->state.testFlag(QStyle::State_Selected);
@@ -177,23 +192,31 @@ void GraphNode::paint(QPainter *painter,
 	}
 
 	painter->setPen(pen());
-	setBrush(QColor(20, 20, 20));
+	setBrush(QColor(45, 45, 51));
 	painter->fillPath(path(), brush());
 
 	// title tab
 	QPainterPath titlePath;
-
 	titlePath.setFillRule(Qt::WindingFill);
 	//titlePath.addRoundedRect(0, 0, nodeWidth, 35, 7, 7);
 	titlePath.addRect(0, 10, nodeWidth, titleHeight-10);
 	titlePath.addRoundedRect(0, 0, nodeWidth, titleHeight, titleRadius, titleRadius);
-	
 	painter->fillPath(titlePath, QBrush(titleColor));
 
-	QPen pen(QColor(200, 200, 200, 100), 3);
-	painter->setPen(pen);
-	painter->drawRoundedRect(boundingRect(), titleRadius, titleRadius);
+	//draw icon
+	icon.paint(painter, QRect(5,5,15,15));
 
+	//draw text node seperator
+	QPainterPath block;
+	block.setFillRule(Qt::WindingFill);
+	block.addRect(0, titleHeight , nodeWidth, 3);
+	painter->fillPath(block, QBrush(QColor(30, 30, 30, 160)));
+
+	QPen pen(QColor(00, 00, 00, 250), .5);
+	painter->setPen(pen);
+//	painter->drawRoundedRect(boundingRect(), titleRadius, titleRadius);
+
+	
 
 }
 
@@ -225,7 +248,7 @@ void GraphNode::highlightNode(bool val, int lvl)
 				}
 				if (con->socket2->socketType == SocketType::Out) {
 					con->socket2->owner->isHighlighted = val;
-					con->socket1->owner->highlightNode(val, level + 1);
+					con->socket2->owner->highlightNode(val, level + 1);
 					con->socket2->owner->currentSelectedState = false;
 
 				}

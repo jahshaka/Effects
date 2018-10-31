@@ -15,5 +15,8 @@
         <file>icons/up.png</file>
         <file>icons/icon.ico</file>
         <file>icons/icon.png</file>
+        <file>icons/input.png</file>
+        <file>icons/math.png</file>
+        <file>icons/properties.png</file>
     </qresource>
 </RCC>
