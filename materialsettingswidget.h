@@ -64,7 +64,7 @@ private:
 	QCheckBox *checkBox_4;
 	QCheckBox *checkBox_5;
 	QCheckBox *checkBox_6;
-
+	QFont font;
 signals:
 	void settingsChanged(MaterialSettings value);
 };

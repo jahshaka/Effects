@@ -13,6 +13,7 @@ class PropertyWidgetBase : public QWidget
 public:
 	PropertyWidgetBase();
 	~PropertyWidgetBase();
+	QFont font;
 
 	QLayout *layout;
 };

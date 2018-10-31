@@ -8,6 +8,7 @@ IntPropertyWidget::IntPropertyWidget() : BasePropertyWidget()
 	auto mainLayout = layout;
 
 	wid = new WidgetInt;
+	setWidget(wid);
 	intSpinBox = wid->spinBox;
 	minSpinBox = wid->minSpinBox;
 	maxSpinBox = wid->maxSpinBox;

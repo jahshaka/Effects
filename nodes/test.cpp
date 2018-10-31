@@ -140,6 +140,7 @@ SurfaceMasterNode::SurfaceMasterNode()
 {
 	title = "Surface Material";
 	typeName = "Material";
+	setNodeType(NodeType::Input);
 	addInputSocket(new Vector3SocketModel("diffuse","vec3(1.0,1.0,1.0)"));
 	addInputSocket(new Vector3SocketModel("specular"));
 	addInputSocket(new FloatSocketModel("shininess"));
@@ -180,7 +181,7 @@ void SurfaceMasterNode::process(ModelContext* ctx)
 FloatNodeModel::FloatNodeModel() :
 	NodeModel()
 {
-	setNodeType(NodeType::Number);
+	setNodeType(NodeType::Input);
 	lineEdit = new QLineEdit();
 	lineEdit->setValidator(new QDoubleValidator());
 	lineEdit->setStyleSheet("border: 2px solid rgba(220,220,220,1);"
@@ -245,7 +246,7 @@ void FloatNodeModel::deserializeWidgetValue(QJsonValue val, int widgetIndex)
 
 VectorMultiplyNode::VectorMultiplyNode()
 {
-	setNodeType(NodeType::Calculation);
+	setNodeType(NodeType::Input);
 	title = "Vector Multiply";
 	typeName = "vectorMultiply";
 
@@ -270,7 +271,7 @@ void VectorMultiplyNode::process(ModelContext* context)
 
 WorldNormalNode::WorldNormalNode()
 {
-	setNodeType(NodeType::Surface);
+	setNodeType(NodeType::Input);
 
 	title = "World Normal";
 	typeName = "worldNormal";
@@ -290,7 +291,7 @@ void WorldNormalNode::process(ModelContext* context)
 
 TimeNode::TimeNode()
 {
-	setNodeType(NodeType::Modifier);
+	setNodeType(NodeType::Input);
 
 	title = "Time";
 
@@ -304,7 +305,7 @@ void TimeNode::process(ModelContext* context)
 
 SineNode::SineNode()
 {
-	setNodeType(NodeType::Modifier);
+	setNodeType(NodeType::Input);
 
 	title = "Sine";
 
@@ -325,7 +326,7 @@ void SineNode::process(ModelContext* context)
 
 
 MakeColorNode::MakeColorNode() {
-	setNodeType(NodeType::Surface);
+	setNodeType(NodeType::Math);
 
 
 	title = "Color";
@@ -351,7 +352,7 @@ void MakeColorNode::process(ModelContext *context)
 
 TextureCoordinateNode::TextureCoordinateNode()
 {
-	setNodeType(NodeType::Surface);
+	setNodeType(NodeType::Input);
 
 	title = "Texture Coordinate";
 
@@ -414,7 +415,8 @@ void TextureCoordinateNode::comboTextChanged(const QString& text)
 
 TextureSamplerNode::TextureSamplerNode()
 {
-	setNodeType(NodeType::Calculation);
+	setNodeType(NodeType::Input);
+
 
 	title = "Sample Texture";
 
@@ -444,6 +446,7 @@ void TextureSamplerNode::process(ModelContext* context)
 PropertyNode::PropertyNode()
 {
 	this->typeName = "property";
+	setNodeType(NodeType::Input);
 }
 
 // doesnt own property
@@ -504,7 +507,7 @@ void PropertyNode::process(ModelContext* context)
 
 TextureNode::TextureNode()
 {
-	setNodeType(NodeType::Surface);
+	setNodeType(NodeType::Input);
 	title = "Texture";
 	auto widget = new QWidget;
 	auto layout = new QVBoxLayout;
@@ -560,7 +563,7 @@ void TextureNode::process(ModelContext * context)
 
 PulsateNode::PulsateNode()
 {
-	setNodeType(NodeType::Modifier);
+	setNodeType(NodeType::Math);
 
 	title = "Pulsate";
 
@@ -580,7 +583,7 @@ void PulsateNode::process(ModelContext * context)
 
 PannerNode::PannerNode()
 {
-	setNodeType(NodeType::Modifier);
+	setNodeType(NodeType::Input);
 
 	title = "Panner";
 

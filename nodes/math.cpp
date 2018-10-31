@@ -3,7 +3,7 @@
 /*    ADD    */
 AddNode::AddNode()
 {
-	setNodeType(NodeType::Calculation);
+	setNodeType(NodeType::Math);
 	title = "Add";
 	typeName = "add";
 
@@ -26,7 +26,7 @@ void AddNode::process(ModelContext* context)
 /*    SUBTRACT    */
 SubtractNode::SubtractNode()
 {
-	setNodeType(NodeType::Calculation);
+	setNodeType(NodeType::Math);
 	title = "Subtract";
 	typeName = "subtract";
 
@@ -49,7 +49,7 @@ void SubtractNode::process(ModelContext* context)
 /*    MULTIPLY    */
 MultiplyNode::MultiplyNode()
 {
-	setNodeType(NodeType::Calculation);
+	setNodeType(NodeType::Math);
 	title = "Multiply";
 	typeName = "multiply";
 
@@ -72,7 +72,7 @@ void MultiplyNode::process(ModelContext* context)
 /*    DIVIDE    */
 DivideNode::DivideNode()
 {
-	setNodeType(NodeType::Calculation);
+	setNodeType(NodeType::Math);
 	title = "Multiply";
 	typeName = "multiply";
 
@@ -95,7 +95,7 @@ void DivideNode::process(ModelContext* context)
 /*    POWER    */
 PowerNode::PowerNode()
 {
-	setNodeType(NodeType::Calculation);
+	setNodeType(NodeType::Math);
 	title = "Power";
 	typeName = "power";
 
@@ -118,7 +118,7 @@ void PowerNode::process(ModelContext* context)
 /*    SQUARE ROOT    */
 SqrtNode::SqrtNode()
 {
-	setNodeType(NodeType::Calculation);
+	setNodeType(NodeType::Math);
 	title = "Square Root";
 	typeName = "sqrt";
 
@@ -139,7 +139,7 @@ void SqrtNode::process(ModelContext* context)
 /*    MIN    */
 MinNode::MinNode()
 {
-	setNodeType(NodeType::Calculation);
+	setNodeType(NodeType::Math);
 	title = "Min";
 	typeName = "min";
 
@@ -162,7 +162,7 @@ void MinNode::process(ModelContext* context)
 /*    MAX    */
 MaxNode::MaxNode()
 {
-	setNodeType(NodeType::Calculation);
+	setNodeType(NodeType::Input);
 	title = "Max";
 	typeName = "max";
 
@@ -185,7 +185,7 @@ void MaxNode::process(ModelContext* context)
 /*    ABS    */
 AbsNode::AbsNode()
 {
-	setNodeType(NodeType::Calculation);
+	setNodeType(NodeType::Math);
 	title = "Abs";
 	typeName = "abs";
 
@@ -206,7 +206,7 @@ void AbsNode::process(ModelContext* context)
 /*    SIGN    */
 SignNode::SignNode()
 {
-	setNodeType(NodeType::Calculation);
+	setNodeType(NodeType::Input);
 	title = "Sign";
 	typeName = "sign";
 
@@ -227,7 +227,7 @@ void SignNode::process(ModelContext* context)
 /*    CEIL    */
 CeilNode::CeilNode()
 {
-	setNodeType(NodeType::Calculation);
+	setNodeType(NodeType::Math);
 	title = "Ceil";
 	typeName = "ceil";
 
@@ -248,7 +248,7 @@ void CeilNode::process(ModelContext* context)
 /*    FLOOR    */
 FloorNode::FloorNode()
 {
-	setNodeType(NodeType::Calculation);
+	setNodeType(NodeType::Math);
 	title = "Floor";
 	typeName = "floor";
 
@@ -269,7 +269,7 @@ void FloorNode::process(ModelContext* context)
 /*    ROUND    */
 RoundNode::RoundNode()
 {
-	setNodeType(NodeType::Calculation);
+	setNodeType(NodeType::Math);
 	title = "Round";
 	typeName = "round";
 
@@ -291,7 +291,7 @@ void RoundNode::process(ModelContext* context)
 /*    TRUNCATE    */
 TruncNode::TruncNode()
 {
-	setNodeType(NodeType::Calculation);
+	setNodeType(NodeType::Input);
 	title = "Truncate";
 	typeName = "truncate";
 
@@ -313,7 +313,7 @@ void TruncNode::process(ModelContext* context)
 /*    STEP    */
 StepNode::StepNode()
 {
-	setNodeType(NodeType::Calculation);
+	setNodeType(NodeType::Input);
 	title = "Step";
 	typeName = "step";
 
@@ -336,7 +336,7 @@ void StepNode::process(ModelContext* context)
 /*    SMOOTHSTEP    */
 SmoothStepNode::SmoothStepNode()
 {
-	setNodeType(NodeType::Calculation);
+	setNodeType(NodeType::Input);
 	title = "SmoothStep";
 	typeName = "smoothstep";
 
@@ -361,7 +361,7 @@ void SmoothStepNode::process(ModelContext* context)
 /*    FRACTION    */
 FracNode::FracNode()
 {
-	setNodeType(NodeType::Calculation);
+	setNodeType(NodeType::Math);
 	title = "Fraction";
 	typeName = "fraction";
 
@@ -382,7 +382,7 @@ void FracNode::process(ModelContext* context)
 /*    SMOOTHSTEP    */
 ClampNode::ClampNode()
 {
-	setNodeType(NodeType::Calculation);
+	setNodeType(NodeType::Math);
 	title = "Clamp";
 	typeName = "clamp";
 
@@ -407,7 +407,7 @@ void ClampNode::process(ModelContext* context)
 /*    LERP    */
 LerpNode::LerpNode()
 {
-	setNodeType(NodeType::Calculation);
+	setNodeType(NodeType::Input);
 	title = "Lerp";
 	typeName = "lerp";
 
@@ -432,7 +432,7 @@ void LerpNode::process(ModelContext* context)
 /*    ONEMINUS    */
 OneMinusNode::OneMinusNode()
 {
-	setNodeType(NodeType::Calculation);
+	setNodeType(NodeType::Math);
 	title = "One Minus";
 	typeName = "oneminus";
 
@@ -453,7 +453,7 @@ void OneMinusNode::process(ModelContext* context)
 /*    NEGATE    */
 NegateNode::NegateNode()
 {
-	setNodeType(NodeType::Calculation);
+	setNodeType(NodeType::Math);
 	title = "Negate";
 	typeName = "negate";
 

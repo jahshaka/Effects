@@ -69,12 +69,14 @@ MainWindow::MainWindow(QWidget *parent) :
 	file->addAction(actionSave);
 	file->addAction(actionLoad);
 	file->addAction(actionExport);
+	file->setFont(font);
 
 	window->addAction(nodeTray->toggleViewAction());
 	window->addAction(textWidget->toggleViewAction());
 	window->addAction(displayWidget->toggleViewAction());
 	window->addAction(propertyWidget->toggleViewAction());
 	window->addAction(materialSettingsDock->toggleViewAction());
+	window->setFont(font);
 	
 	setMenuBar(bar);
 	
@@ -199,8 +201,8 @@ void MainWindow::configureStyleSheet()
 	setStyleSheet(
 		"QMainWindow::separator {width: 10px;h eight: 0px; margin: -3.5px; padding: 0px; border: 0px solid black; background: rgba(19, 19, 19, 1);}"
 		"QWidget{background:rgba(32,32,32,1); color:rgba(240,240,240,1); border: 0px solid rgba(0,0,0,0);}"
-		"QMenu{	background: rgba(26,26,26,.9); color: rgba(250,250, 250,.9);}"
-		"QMenu::item{padding: 2px 5px 2px 20px;	}"
+		"QMenu{	background: rgba(26,26,26,.9); color: rgba(250,250, 250,.9); border-radius : 2px; }"
+		"QMenu::item{padding: 4px 5px 4px 10px;	}"
 		"QMenu::item:hover{	background: rgba(40,128, 185,.9);}"
 		"QMenu::item:selected{	background: rgba(40,128, 185,.9);}"
 		
@@ -213,7 +215,6 @@ void MainWindow::configureStyleSheet()
 		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
 		"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
 		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .0);}"
-	
 	);
 
 	bar->setStyleSheet(
@@ -234,13 +235,15 @@ void MainWindow::configureStyleSheet()
 	);
 
 	nodeContainer->setStyleSheet(
-	"QListView::item{ border-radius: 2px; border: 1px solid rgba(0,0,0,1); background: rgba(80,80,80,1);  }"	
-	"QListView::item:selected{ background: rgba(65,65,65,1); border: 1px solid rgba(50,150,250,1); }"
+		"QListView::item{ border-radius: 2px; border: 1px solid rgba(0,0,0,1); background: rgba(80,80,80,1); margin: 3px;  }"	
+		"QListView::item:selected{ background: rgba(65,65,65,1); border: 1px solid rgba(50,150,250,1); }"
+		"QListView::text{ top : -6; }"
+	
 	);
 
 	nodeContainer->verticalScrollBar()->setStyleSheet(
-		"QScrollBar:vertical {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 22px; padding: 2px;}"
-		"QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 8px; width: 14px; }"
+		"QScrollBar:vertical {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 10px; }"
+		"QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 5px;  left: 8px; }"
 		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
 		"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
 		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .0);}"
@@ -261,10 +264,17 @@ void MainWindow::configureStyleSheet()
 	displayWidget->setStyleSheet(nodeTray->styleSheet());
 	propertyWidget->setStyleSheet(nodeTray->styleSheet());
 	materialSettingsWidget->setStyleSheet(nodeTray->styleSheet());
+	textEdit->setStyleSheet(nodeTray->styleSheet());
+	materialSettingsDock->setStyleSheet(nodeTray->styleSheet());
 }
 
 void MainWindow::configureUI()
 {
+
+	font.setPointSizeF(font.pointSize() * devicePixelRatioF());
+	setFont(font);
+
+
 	nodeTray = new QDockWidget("Library",this);
 	centralWidget = new QWidget();
 	textWidget = new QDockWidget("Code View");
@@ -307,13 +317,15 @@ void MainWindow::configureUI()
 	auto searchContainer = new QWidget;
 	auto searchLayout = new QHBoxLayout;
 	auto searchBar = new QLineEdit;
-	searchContainer->setContentsMargins(0, 0, 0, 0);
+	//searchContainer->setContentsMargins(0, 0, 0, 0);
 
 	searchContainer->setLayout(searchLayout);
 	searchLayout->addWidget(searchBar);
+	searchLayout->addSpacing(12);
 
 	searchBar->setPlaceholderText("search");
 	searchBar->setAlignment(Qt::AlignHCenter);
+	searchBar->setFont(font);
 	connect(searchBar, &QLineEdit::textChanged, [=](QString str) {
 		nodeContainer->clear();
 		QList<NodeLibraryItem*> lis;
@@ -325,19 +337,56 @@ void MainWindow::configureUI()
 			nodeContainer->clear();
 			generateTileNode();
 		}
-		
+
 	});
+
+	auto assetViewToggleButtonGroup = new QButtonGroup;
+	auto toggleIconView = new QPushButton(tr("Icon"));
+	toggleIconView->setCheckable(true);
+	toggleIconView->setCursor(Qt::PointingHandCursor);
+	toggleIconView->setChecked(true);
+	toggleIconView->setFont(font);
+
+	auto toggleListView = new QPushButton(tr("List"));
+	toggleListView->setCheckable(true);
+	toggleListView->setCursor(Qt::PointingHandCursor);
+	toggleListView->setFont(font);
+
+	auto label = new QLabel("Display:");
+	label->setFont(font);
+
+	assetViewToggleButtonGroup->addButton(toggleIconView);
+	assetViewToggleButtonGroup->addButton(toggleListView);
+
+	QHBoxLayout *toggleLayout = new QHBoxLayout;
+	toggleLayout->setSpacing(0);
+	toggleLayout->addWidget(label);
+	toggleLayout->addStretch();
+	toggleLayout->addWidget(toggleIconView);
+	toggleLayout->addWidget(toggleListView);
+
+	connect(toggleIconView, &QPushButton::pressed, [this]() {
+		nodeContainer->setViewMode(QListWidget::IconMode);
+	});
+
+	connect(toggleListView, &QPushButton::pressed, [this]() {
+		nodeContainer->setViewMode(QListWidget::ListMode);
+	});
+
+
 
 	nodeTray->setWidget(container);
 	materialSettingsDock->setWidget(materialSettingsWidget);
 
 	containerLayout->addWidget(searchContainer);
 	containerLayout->addWidget(nodeContainer);
+	containerLayout->addSpacing(8);
+	containerLayout->addLayout(toggleLayout);
 
-	nodeContainer->setAlternatingRowColors(true);
+	nodeContainer->setAlternatingRowColors(false);
 	nodeContainer->setSpacing(0);
 	nodeContainer->setContentsMargins(10, 3, 10, 10);
-	nodeContainer->setViewMode(QListWidget::ListMode);
+	nodeContainer->setViewMode(QListWidget::IconMode);
 	nodeContainer->setIconSize(currentSize);
 	nodeContainer->setMouseTracking(true);
 	nodeContainer->setDragDropMode(QAbstractItemView::DragDrop);
@@ -352,7 +401,7 @@ void MainWindow::configureUI()
 	nodeContainer->installEventFilter(this);
 	nodeContainer->viewport()->installEventFilter(this);
 	nodeContainer->setWordWrap(true);
-	nodeContainer->setGridSize(QSize(70, 100));
+	nodeContainer->setGridSize(QSize(70, 70));
 	nodeContainer->setSortingEnabled(true);
 	nodeContainer->sortItems();
 	nodeContainer->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -360,6 +409,16 @@ void MainWindow::configureUI()
 
 	searchContainer->setStyleSheet("background:rgba(32,32,32,1);");
 	searchBar->setStyleSheet("QLineEdit{ background:rgba(41,41,41,1); border: 1px solid rgba(150,150,150,.2); border-radius: 2px; }");
+
+	container->setStyleSheet(
+		"QPushButton{ background: #333; color: #DEDEDE; border : 0; padding: 4px 16px; }"
+		"QPushButton:hover{ background-color: #555; }"
+		"QPushButton:pressed{ background-color: #444; }"
+		"QPushButton:disabled{ color: #444; }"
+		"QPushButton:checked{ background-color: rgba(50,150,255,1); }"
+		"QLineEdit{ padding: 6px 10px; border-radius: 2px; }"
+
+	);
 
 }
 
@@ -376,7 +435,7 @@ void MainWindow::generateTileNode()
 		item->setSizeHint(currentSize);
 		item->setTextAlignment(Qt::AlignCenter);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
-		item->setIcon(QIcon(":/icons/icons8-folder-72.png"));
+		item->setIcon(QIcon(":/icons/icon.png"));
 		item->setBackgroundColor(QColor(60, 60, 60));
 		nodeContainer->addItem(item);
 
@@ -396,7 +455,7 @@ void MainWindow::generateTileNode(QList<NodeLibraryItem*> list)
 		item->setSizeHint(currentSize);
 		item->setTextAlignment(Qt::AlignCenter);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
-		item->setIcon(QIcon(":/icons/icons8-folder-72.png"));
+		item->setIcon(QIcon(":/icons/icon.png"));
 		item->setBackgroundColor(QColor(60, 60, 60));
 		nodeContainer->addItem(item);
 
