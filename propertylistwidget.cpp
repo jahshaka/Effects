@@ -47,15 +47,10 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 	pushButton->setCursor(Qt::PointingHandCursor);
 	pushButton->setMinimumWidth(110);
 	pushButton->setFont(font);
+	menu->setFixedWidth(pushButton->width()/5.2);
 	QObject::connect(pushButton, &QPushButton::released, [=]() {
 		QPoint pos = this->mapToGlobal(pushButton->pos());
-		pos += QPoint(pushButton->width()/2.2, pushButton->height());
-		auto effect = new QGraphicsDropShadowEffect(menu);
-		effect->setBlurRadius(15);
-		effect->setXOffset(10);
-		effect->setYOffset(10);
-		effect->setColor(QColor(110, 0, 0));
-		menu->setGraphicsEffect(effect);
+		pos += QPoint(0, pushButton->height());
 		menu->exec(pos);
 	});
 
@@ -63,6 +58,7 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 	int space = 165;
 	addLayout->addStretch();
 	addLayout->addWidget(pushButton);
+	addLayout->addSpacing(8);
 
 	scrollLayout->addStretch();
 	scrollLayout->addWidget(scrollArea);

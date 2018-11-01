@@ -43,13 +43,13 @@ class GraphNodeScene : public QGraphicsScene
 		// only used when dragging
 		SocketConnection* con;
 
-	// model for scene
-	NodeGraph* nodeGraph;
+	
 
 	QGraphicsItemGroup *conGroup;
 public:
 	GraphNodeScene(QWidget* parent);
-
+	// model for scene
+	NodeGraph* nodeGraph;
 	template<class nodeType>
 	GraphNode* createNode()
 	{
@@ -69,9 +69,10 @@ public:
 
 	bool eventFilter(QObject *o, QEvent *e);
 	Socket* getSocketAt(float x, float y);
+	Socket* getConnectionAt(float x, float y);
 	GraphNode* getNodeById(QString id);
 	GraphNode* getNodeByPos(QPointF point);
-
+	QVector<SocketConnection*> socketConnections;
 	NodeGraph *getNodeGraph() const;
 	void setNodeGraph(NodeGraph* value);
 	void addNodeModel(NodeModel* model, float x, float y, bool addToGraph = true);

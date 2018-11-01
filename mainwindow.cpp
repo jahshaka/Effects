@@ -55,6 +55,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	bar = new QMenuBar(this);
 	file = new QMenu("File", bar);
 	window = new QMenu("Window", bar);
+	edit = new QMenu("Edit", bar);
 	auto barLayout = new QVBoxLayout;
 	auto actionSave = new QAction("save shader", bar);
 	auto actionLoad = new QAction("load shader", bar);
@@ -62,6 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	auto actionNew = new QAction("new shader", bar);
 
 	bar->addMenu(file);
+	bar->addMenu(edit);
 	bar->addMenu(window);
 	bar->setLayout(barLayout);
 
@@ -79,12 +81,33 @@ MainWindow::MainWindow(QWidget *parent) :
 	window->setFont(font);
 	
 	setMenuBar(bar);
-	
 
 	connect(actionSave, &QAction::triggered, this, &MainWindow::saveGraph);
 	connect(actionLoad, &QAction::triggered, this, &MainWindow::loadGraph);
 	connect(actionExport, &QAction::triggered, this, &MainWindow::exportGraph);
 	connect(actionNew, &QAction::triggered, this, &MainWindow::newNodeGraph);
+
+	connect(edit, &QMenu::triggered, [=]() {
+	//	for (auto item : scene->nodeGraph->library->getItems()) {
+	//		auto factory = item->factoryFunction;
+	//		connect(menu->addAction(item->displayName), &QAction::triggered, [this, x, y, factory]() {
+
+	//			auto node = factory();
+	//			this->addNodeModel(node, x, y);
+
+	//		});
+	//	}
+
+	//	// create properties
+	//	auto propMenu = menu->addMenu("Properties");
+	//	for (auto prop : nodeGraph->properties) {
+	//		connect(propMenu->addAction(prop->displayName), &QAction::triggered, [this, x, y, prop]() {
+	//			auto propNode = new PropertyNode();
+	//			propNode->setProperty(prop);
+	//			this->addNodeModel(propNode, x, y);
+	//		});
+	//	}
+	});
 
 	newNodeGraph();
 	generateTileNode();
@@ -237,6 +260,7 @@ void MainWindow::configureStyleSheet()
 	nodeContainer->setStyleSheet(
 		"QListView::item{ border-radius: 2px; border: 1px solid rgba(0,0,0,1); background: rgba(80,80,80,1); margin: 3px;  }"	
 		"QListView::item:selected{ background: rgba(65,65,65,1); border: 1px solid rgba(50,150,250,1); }"
+		"QListView::item:hover{ background: rgba(55,55,55,1); border: 1px solid rgba(50,150,250,1); }"
 		"QListView::text{ top : -6; }"
 	
 	);
@@ -401,7 +425,7 @@ void MainWindow::configureUI()
 	nodeContainer->installEventFilter(this);
 	nodeContainer->viewport()->installEventFilter(this);
 	nodeContainer->setWordWrap(true);
-	nodeContainer->setGridSize(QSize(70, 70));
+	nodeContainer->setGridSize(QSize(90, 90));
 	nodeContainer->setSortingEnabled(true);
 	nodeContainer->sortItems();
 	nodeContainer->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -417,14 +441,13 @@ void MainWindow::configureUI()
 		"QPushButton:disabled{ color: #444; }"
 		"QPushButton:checked{ background-color: rgba(50,150,255,1); }"
 		"QLineEdit{ padding: 6px 10px; border-radius: 2px; }"
-
 	);
 
 }
 
 void MainWindow::generateTileNode()
 {
-	QSize currentSize(80, 70);
+	QSize currentSize(90, 90);
 
 	for (NodeLibraryItem *tile : graph->library->items) {
 		if (tile->name == "property") continue;
@@ -444,7 +467,7 @@ void MainWindow::generateTileNode()
 
 void MainWindow::generateTileNode(QList<NodeLibraryItem*> list)
 {
-	QSize currentSize(80, 70);
+	QSize currentSize(90, 90);
 
 	for (auto tile : list) {
 		
@@ -457,6 +480,7 @@ void MainWindow::generateTileNode(QList<NodeLibraryItem*> list)
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
 		item->setIcon(QIcon(":/icons/icon.png"));
 		item->setBackgroundColor(QColor(60, 60, 60));
+		
 		nodeContainer->addItem(item);
 
 	}
@@ -466,6 +490,7 @@ bool MainWindow::eventFilter(QObject * watched, QEvent * event)
 {
 	if (watched == nodeContainer->viewport()) {
 		switch (event->type()) {
+
 			case QEvent::MouseButtonPress: {
 				break;
 			}

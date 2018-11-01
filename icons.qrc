@@ -18,5 +18,6 @@
         <file>icons/input.png</file>
         <file>icons/math.png</file>
         <file>icons/properties.png</file>
+        <file>icons/math.svg</file>
     </qresource>
 </RCC>
