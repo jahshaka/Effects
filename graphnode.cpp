@@ -45,13 +45,14 @@ GraphNode::GraphNode(QGraphicsItem* parent) :
 	font.setPointSize(font.pointSize() * ratio);
 	text->setFont(font);
 
+	/*
 	QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
 	effect->setBlurRadius(12);
 	effect->setXOffset(0);
 	effect->setYOffset(0);
 	effect->setColor(QColor(00, 00, 00, 40));
 	setGraphicsEffect(effect);
-
+	*/
 }
 
 void GraphNode::setIcon(QIcon icon)

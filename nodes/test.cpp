@@ -517,9 +517,9 @@ void TexturePropertyNode::setProperty(Property* property)
 
 }
 
-QJsonValue TexturePropertyNode::serializeWidgetValue(int widgetIndex = 0)
+QJsonValue TexturePropertyNode::serializeWidgetValue(int widgetIndex)
 {
-
+	return QJsonValue();
 }
 
 void TexturePropertyNode::process(ModelContext* context)
