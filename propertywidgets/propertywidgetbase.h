@@ -25,9 +25,6 @@ public:
 	Widget2D();
 	~Widget2D();
 
-	void setXSpinBoxConnection(std::function<void(double val)> func = nullptr);
-	void setYSpinBoxConnection(std::function<void(double val)> func = nullptr);
-
 	QDoubleSpinBox* xSpinBox;
 	QDoubleSpinBox* ySpinBox;
 	double x;
@@ -45,10 +42,6 @@ public:
 	Widget3D();
 	~Widget3D();
 
-	void setXSpinBoxConnection(std::function<void(double val)> func = nullptr);
-	void setYSpinBoxConnection(std::function<void(double val)> func = nullptr);
-	void setZSpinBoxConnection(std::function<void(double val)> func = nullptr);
-
 	QDoubleSpinBox* xSpinBox;
 	QDoubleSpinBox* ySpinBox;
 	QDoubleSpinBox* zSpinBox;
@@ -57,7 +50,6 @@ public:
 	double z;
 signals:
 	void valueChanged(QVector3D val);
-
 };
 
 

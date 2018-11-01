@@ -36,30 +36,21 @@ Widget2D::Widget2D() : PropertyWidgetBase()
 	layout->addWidget(xSpinBox);
 	layout->addWidget(yLabel);
 	layout->addWidget(ySpinBox);
+
+	connect(xSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
+		x = val;
+		emit valueChanged(QVector2D(x, y));
+	});
+
+	connect(ySpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
+		y = val;
+		emit valueChanged(QVector2D(x, y));
+	});
 }
 
 Widget2D::~Widget2D()
 {
 }
-
-void Widget2D::setXSpinBoxConnection(std::function<void(double val)> func)
-{
-	connect(xSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
-		x = val;
-		func(val);
-		emit valueChanged(QVector2D(x, y));
-	});
-}
-
-void Widget2D::setYSpinBoxConnection(std::function<void(double val)> func)
-{
-	connect(ySpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
-		y = val;
-		func(val);
-		emit valueChanged(QVector2D(x, y));
-	});
-}
-
 
 
 
@@ -90,40 +81,27 @@ Widget3D::Widget3D() : PropertyWidgetBase()
 	layout->addWidget(ySpinBox);
 	layout->addWidget(zLabel);
 	layout->addWidget(zSpinBox);
+
+	connect(xSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
+		x = val;
+		emit valueChanged(QVector3D(x, y, z));
+	});
+
+	connect(ySpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
+		y = val;
+		emit valueChanged(QVector3D(x, y, z));
+	});
+
+	connect(zSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
+		z = val;
+		emit valueChanged(QVector3D(x, y, z));
+	});
+
 }
 
 Widget3D::~Widget3D()
 {
 }
-
-void Widget3D::setXSpinBoxConnection(std::function<void(double val)> func)
-{
-	connect(xSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
-		x = val;
-		func(val);
-		emit valueChanged(QVector3D(x, y, z));
-	});
-}
-
-void Widget3D::setYSpinBoxConnection(std::function<void(double val)> func)
-{
-	connect(ySpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
-		y = val;
-		func(val);
-		emit valueChanged(QVector3D(x, y, z));
-	});
-}
-
-void Widget3D::setZSpinBoxConnection(std::function<void(double val)> func)
-{
-	connect(zSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
-		z = val;
-		func(val);
-		emit valueChanged(QVector3D(x, y, z));
-	});
-}
-
-
 
 
 Widget4D::Widget4D() : PropertyWidgetBase()
@@ -159,6 +137,26 @@ Widget4D::Widget4D() : PropertyWidgetBase()
 	layout->addWidget(zSpinBox);
 	layout->addWidget(wLabel);
 	layout->addWidget(wSpinBox);
+
+	connect(xSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
+		x = val;
+		emit valueChanged(QVector4D(x, y, z, w));
+	});
+
+	connect(ySpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
+		y = val;
+		emit valueChanged(QVector4D(x, y, z, w));
+	});
+
+	connect(ySpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
+		y = val;
+		emit valueChanged(QVector4D(x, y, z, w));
+	});
+
+	connect(zSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
+		z = val;
+		emit valueChanged(QVector4D(x, y, z, w));
+	});
 }
 
 Widget4D::~Widget4D()

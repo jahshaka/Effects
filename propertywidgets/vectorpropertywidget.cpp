@@ -25,10 +25,13 @@ Vector2DPropertyWidget::Vector2DPropertyWidget() : BasePropertyWidget()
 	setConnections();
 	mainLayout->addWidget(wid);
 
+	
+
 }
 
 void Vector2DPropertyWidget::setConnections()
 {
+	/*
 	connect(xSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
 		x = val;
 		emit valueChanged(QVector2D(x, y));
@@ -36,6 +39,11 @@ void Vector2DPropertyWidget::setConnections()
 	connect(ySpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
 		y = val;
 		emit valueChanged(QVector2D(x, y));
+	});
+	*/
+
+	connect(wid, &Widget2D::valueChanged, [=](QVector2D vec) {
+		emit valueChanged(vec);
 	});
 
 	connect(this, &Vector2DPropertyWidget::valueChanged, [=](QVector2D val) {
