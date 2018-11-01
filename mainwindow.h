@@ -75,6 +75,7 @@ private:
 	QMenuBar *bar;  
 	QMenu *file;
 	QMenu *window;
+	QMenu *edit;
 	QFont font;
 	void configureStyleSheet();
 };

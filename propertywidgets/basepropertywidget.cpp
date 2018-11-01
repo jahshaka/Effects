@@ -11,14 +11,14 @@ BasePropertyWidget::BasePropertyWidget(QWidget * parent) : QWidget(parent)
 	setFont(font);
 
 
-	setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+	setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
 	displayName = new QLineEdit;
 	displayName->setText("Display");
 	displayName->setFont(font);
 //	displayName->setAlignment(Qt::AlignHCenter);
 
 	button = new QPushButton;
-	button->setMaximumSize(22, 22);
+	button->setMaximumSize(14, 14);
 	button->setIcon(QIcon(":/images/delete-26.png"));
 	button->setIconSize(button->maximumSize());
 	button->setCursor(Qt::PointingHandCursor);
@@ -46,7 +46,7 @@ BasePropertyWidget::BasePropertyWidget(QWidget * parent) : QWidget(parent)
 	displayLayout->addSpacing(2);
 	displayLayout->addWidget(button);
 	displayLayout->addSpacing(4);
-	displayLayout->setContentsMargins(5, 7, 2, 7);
+	displayLayout->setContentsMargins(5, 1, 2, 1);
 	displayWidget->setCursor(Qt::OpenHandCursor);
 
 

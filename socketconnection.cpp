@@ -3,6 +3,7 @@
 #include <QPainter>
 #include <QDebug>
 #include <QGraphicsDropShadowEffect>
+#include <QGraphicsSceneEvent>
 
 
 SocketConnection::SocketConnection()
@@ -29,6 +30,7 @@ SocketConnection::SocketConnection()
 	effect->setYOffset(0);
 	effect->setColor(QColor(00, 100, 200, 140));
 	setGraphicsEffect(effect);
+
 }
 
 void SocketConnection::updatePosFromSockets()
@@ -54,6 +56,7 @@ void SocketConnection::updatePath()
 
 	
 	setPath(*p);
+	//installSceneEventFilter(this);
 
 	
 }
@@ -74,24 +77,60 @@ void SocketConnection::paint(QPainter * painter, const QStyleOptionGraphicsItem 
 		painter->drawPath(*p);
 	}
 	if(status == SocketConnectionStatus::Finished) {
-		//QGraphicsPathItem::paint(painter, option, widget);
+
 		QLinearGradient grad;
-	//	grad.setFocalPoint(QPoint(0,0));
-	//	grad.setCenter(QPoint(1, 1));
-	//	grad.setRadius(1);
 		grad.setStart(pos1-pos2);
 		grad.setFinalStop( pos2 - pos1);
-	//	grad.setCoordinateMode(QGradient::StretchToDeviceMode);
 		grad.setColorAt(0.0, socket1->connectedColor);
 		grad.setColorAt(1.0, socket2->connectedColor);
-
 		QPen pen(grad,2);
-
 		painter->setPen(pen);
 		painter->drawPath(*p);
-
+	}
+	if (status == SocketConnectionStatus::Editing) {
+		QPen pen(QColor(240, 90, 90), 2);
+		pen.setStyle(Qt::DashLine);
+		pen.setDashOffset(6);
+		painter->setPen(pen);
+		painter->drawPath(*p);
 	}
 
 
+}
+
+void SocketConnection::hoverEnterEvent(QGraphicsSceneHoverEvent * event)
+{
+	qDebug() << "help";
+	QGraphicsPathItem::hoverEnterEvent(event);
+
+}
+
+bool SocketConnection::sceneEventFilter(QGraphicsItem * watched, QEvent * event)
+{
+
+	auto ev = static_cast<QGraphicsSceneMouseEvent *>(event);
+
+	switch (event->type()) {
+
+	case QEvent::GraphicsSceneHoverEnter:
+		//if (ev->button() == Qt::LeftButton) {
+			status = SocketConnectionStatus::Editing;
+			qDebug() << "editing";
+		//}
+		return true;
+		break;
+
+	case  QEvent::GraphicsSceneHoverLeave:
+		if (ev->button() == Qt::LeftButton) {
+			status = SocketConnectionStatus::Finished;
+		}
+		return true;
+		break;
+
+
+
+	}
+
+	return sceneEventFilter(watched, event);
 }
 

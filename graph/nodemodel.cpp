@@ -59,15 +59,15 @@ QColor NodeModel::setNodeTitleColor()
 {
 	switch (nodeType) {
 	case NodeType::Input:
-		icon.addFile(":/icons/input.png");
+		icon.addPixmap({":/icons/input.png"	});
 		return titleColor = QColor(0, 121, 107);
 		break;
 	case NodeType::Math:
-		icon.addFile(":/icons/math.png");
+		icon.addPixmap({ ":/icons/math.svg" });
 		return titleColor = QColor(25,118,210);
 		break;
 	case NodeType::Properties:
-		icon.addFile(":/icons/properties.png");
+		icon.addPixmap({ ":/icons/properties.png" });
 		return titleColor = QColor(230, 74, 25);
 		break;
 	/*case NodeType::Surface:
