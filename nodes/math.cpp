@@ -413,7 +413,7 @@ LerpNode::LerpNode()
 
 	addInputSocket(new Vector4SocketModel("A"));
 	addInputSocket(new Vector4SocketModel("B"));
-	addInputSocket(new Vector4SocketModel("T"));
+	addInputSocket(new FloatSocketModel("T"));
 	addOutputSocket(new Vector4SocketModel("Result"));
 }
 
@@ -426,6 +426,7 @@ void LerpNode::process(ModelContext* context)
 	auto res = this->getOutputSocketVarName(0);
 
 	auto code = res + " = mix(" + valA + " , " + valB + " , " + t + ");";
+	//auto code = res + " = mix(vec3(1.0,0.0,0.0).xyzz,vec3(0.0,1.0,1.0).xyzz, " + t + ");";
 	ctx->addCodeChunk(this, code);
 }
 

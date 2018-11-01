@@ -14,6 +14,7 @@ VectorPropertyWidget::~VectorPropertyWidget()
 
 Vector2DPropertyWidget::Vector2DPropertyWidget() : BasePropertyWidget()
 {
+	x = y = 0;
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
 	auto mainLayout = layout;
@@ -80,6 +81,7 @@ void Vector2DPropertyWidget::setPropValues(QVector2D values) {
 
 Vector3DPropertyWidget::Vector3DPropertyWidget() : BasePropertyWidget()
 {
+	x = y = z = 0;
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
 	auto mainLayout = layout;
@@ -155,6 +157,9 @@ void Vector3DPropertyWidget::setPropValues(QVector3D values) {
 
 Vector4DPropertyWidget::Vector4DPropertyWidget() : BasePropertyWidget()
 {
+	x = y = z = 0;
+	w = 1;
+
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
 	auto mainLayout = layout;

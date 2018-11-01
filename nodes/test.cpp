@@ -141,13 +141,13 @@ SurfaceMasterNode::SurfaceMasterNode()
 	title = "Surface Material";
 	typeName = "Material";
 	setNodeType(NodeType::Input);
-	addInputSocket(new Vector3SocketModel("diffuse","vec3(1.0,1.0,1.0)"));
-	addInputSocket(new Vector3SocketModel("specular"));
-	addInputSocket(new FloatSocketModel("shininess"));
-	addInputSocket(new Vector3SocketModel("normal", "v_normal"));
-	addInputSocket(new Vector3SocketModel("ambient"));
-	addInputSocket(new Vector3SocketModel("emission"));
-	addInputSocket(new FloatSocketModel("alpha"));
+	addInputSocket(new Vector3SocketModel("Diffuse","vec3(1.0,1.0,1.0)"));
+	addInputSocket(new Vector3SocketModel("Specular"));
+	addInputSocket(new FloatSocketModel("Shininess"));
+	addInputSocket(new Vector3SocketModel("Normal", "v_normal"));
+	addInputSocket(new Vector3SocketModel("Ambient"));
+	addInputSocket(new Vector3SocketModel("Emission"));
+	addInputSocket(new FloatSocketModel("Alpha"));
 }
 
 void SurfaceMasterNode::process(ModelContext* ctx)

@@ -21,6 +21,7 @@ QString assetPath(QString relPath)
     return QDir::cleanPath(QDir::currentPath() + QDir::separator() + relPath);
 }
 
+// NOTE! Context resets when widget is undocked
 void SceneWidget::start()
 {
     iris::VertexLayout layout;
@@ -47,6 +48,8 @@ void SceneWidget::start()
     updateShader("void surface(inout Material material){}");
 
     renderTime = 0;
+
+	lights.clear();
 
     // setup lights
     auto main = iris::LightNode::create();
