@@ -24,13 +24,14 @@ SocketConnection::SocketConnection()
 	pen.setWidth(3);
 	setPen(pen);
 
+	/*
 	QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
 	effect->setBlurRadius(20);
 	effect->setXOffset(0);
 	effect->setYOffset(0);
 	effect->setColor(QColor(00, 100, 200, 140));
 	setGraphicsEffect(effect);
-
+	*/
 }
 
 void SocketConnection::updatePosFromSockets()

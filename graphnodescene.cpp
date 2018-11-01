@@ -191,7 +191,7 @@ void GraphNodeScene::drawBackground(QPainter * painter, const QRectF & rect)
 {
 	//does not draw background
 	//painter->setBackground(QBrush(QColor(00, 200, 200, 50)));
-	painter->fillRect(rect, QBrush(QColor(00, 00, 0, 200)));
+	//painter->fillRect(rect, QBrush(QColor(00, 00, 0, 200)));
 //	QGraphicsScene::drawBackground(painter, rect);
 }
 

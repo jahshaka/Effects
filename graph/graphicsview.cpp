@@ -1,6 +1,7 @@
 #include "graphicsview.h"
 #include <QApplication>
 #include <QDebug>
+#include <QRect>
 #include <QDragEnterEvent>
 #include <QMimeData>
 #include <QPainter>
@@ -66,19 +67,22 @@ void GraphicsView::drawBackground(QPainter * painter, const QRectF & rect)
 	painter->setRenderHint(QPainter::Antialiasing);
 	QGraphicsView::drawBackground(painter, rect);
 
+	QRect   windowRect = this->rect();
+	QPointF tl = mapToScene(windowRect.topLeft());
+	QPointF br = mapToScene(windowRect.bottomRight());
+	QRectF sceneRect(tl, br);
+	painter->fillRect(sceneRect, QBrush(QColor(20, 20, 20)));
+
 	auto drawGrid =
 		[&](double gridStep)
 	{
-		QRect   windowRect = this->rect();
-		QPointF tl = mapToScene(windowRect.topLeft());
-		QPointF br = mapToScene(windowRect.bottomRight());
 
 		double left = std::floor(tl.x() / gridStep - 0.5);
 		double right = std::floor(br.x() / gridStep + 1.0);
 		double bottom = std::floor(tl.y() / gridStep - 0.5);
 		double top = std::floor(br.y() / gridStep + 1.0);
 
-		QPen pen(QColor(100, 100, 100, 20), 2);
+		QPen pen(QColor(15, 15, 15), 2);
 		painter->setPen(pen);
 
 		// vertical lines

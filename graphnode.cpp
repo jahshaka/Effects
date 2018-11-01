@@ -174,10 +174,10 @@ void GraphNode::paint(QPainter *painter,
 	const QStyleOptionGraphicsItem *option,
 	QWidget *widget)
 {
-	painter->setRenderHint(QPainter::HighQualityAntialiasing);
-	painter->setRenderHint(QPainter::Antialiasing);
-	painter->setRenderHint(QPainter::TextAntialiasing);
-	painter->setRenderHint(QPainter::SmoothPixmapTransform);
+	//painter->setRenderHint(QPainter::HighQualityAntialiasing);
+	//painter->setRenderHint(QPainter::Antialiasing);
+	//painter->setRenderHint(QPainter::TextAntialiasing);
+	//painter->setRenderHint(QPainter::SmoothPixmapTransform);
 
 	if (option->state.testFlag(QStyle::State_Selected) != currentSelectedState) {
 		currentSelectedState = option->state.testFlag(QStyle::State_Selected);

@@ -375,7 +375,7 @@ void FracNode::process(ModelContext* context)
 	auto valA = this->getValueFromInputSocket(0);
 	auto res = this->getOutputSocketVarName(0);
 
-	auto code = res + " = frac(" + valA + ");";
+	auto code = res + " = fract(" + valA + ");";
 	ctx->addCodeChunk(this, code);
 }
 
