@@ -505,6 +505,28 @@ void PropertyNode::process(ModelContext* context)
 		outSockets[0]->setVarName(prop->getUniformName());
 }
 
+
+TexturePropertyNode::TexturePropertyNode()
+{
+
+}
+
+// doesnt own property
+void TexturePropertyNode::setProperty(Property* property)
+{
+
+}
+
+QJsonValue TexturePropertyNode::serializeWidgetValue(int widgetIndex = 0)
+{
+
+}
+
+void TexturePropertyNode::process(ModelContext* context)
+{
+
+}
+
 TextureNode::TextureNode()
 {
 	setNodeType(NodeType::Input);

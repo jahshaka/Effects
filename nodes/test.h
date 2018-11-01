@@ -129,12 +129,25 @@ public:
 
 };
 
-
 class PropertyNode : public NodeModel
 {
 	Property* prop;
 public:
 	PropertyNode();
+
+	// doesnt own property
+	void setProperty(Property* property);
+
+	virtual QJsonValue serializeWidgetValue(int widgetIndex = 0) override;
+
+	virtual void process(ModelContext* context) override;
+};
+
+class TexturePropertyNode : public NodeModel
+{
+	TextureProperty* prop;
+public:
+	TexturePropertyNode();
 
 	// doesnt own property
 	void setProperty(Property* property);
