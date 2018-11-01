@@ -82,7 +82,7 @@ void GraphicsView::drawBackground(QPainter * painter, const QRectF & rect)
 		double bottom = std::floor(tl.y() / gridStep - 0.5);
 		double top = std::floor(br.y() / gridStep + 1.0);
 
-		QPen pen(QColor(15, 15, 15), 2);
+		QPen pen(QColor(35, 35, 35), 2);
 		painter->setPen(pen);
 
 		// vertical lines
