@@ -6,6 +6,8 @@
 #include <QGraphicsEffect>
 #include "socket.h"
 #include "socketconnection.h"
+#include <QPixmap>
+#include <QGraphicsPixmapItem>
 
 GraphNode::GraphNode(QGraphicsItem* parent) :
 	QGraphicsPathItem(parent)
@@ -174,6 +176,7 @@ void GraphNode::paint(QPainter *painter,
 	painter->setRenderHint(QPainter::HighQualityAntialiasing);
 	painter->setRenderHint(QPainter::Antialiasing);
 	painter->setRenderHint(QPainter::TextAntialiasing);
+	painter->setRenderHint(QPainter::SmoothPixmapTransform);
 
 	if (option->state.testFlag(QStyle::State_Selected) != currentSelectedState) {
 		currentSelectedState = option->state.testFlag(QStyle::State_Selected);
@@ -187,7 +190,7 @@ void GraphNode::paint(QPainter *painter,
 	}
 	else if (isHighlighted && level > 0) {
 		auto rect = boundingRect();
-		painter->setPen(QPen(QColor(160, 150, 100), 8));
+		painter->setPen(QPen(QColor(250, 250, 50), 3));
 		painter->drawRoundedRect(rect, titleRadius, titleRadius);
 	}
 
@@ -204,7 +207,9 @@ void GraphNode::paint(QPainter *painter,
 	painter->fillPath(titlePath, QBrush(titleColor));
 
 	//draw icon
-	icon.paint(painter, QRect(5,5,15,15));
+	//painter->drawPixmap(5, 5, 15, 15, icon.pixmap(50, 50));
+	
+	
 
 	//draw text node seperator
 	QPainterPath block;

@@ -43,7 +43,7 @@ void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addTo
 	auto nodeView = this->createNode<GraphNode>();
 	nodeView->setTitle(model->title);
 	nodeView->setTitleColor(model->setNodeTitleColor());
-	nodeView->setIcon(model->icon);
+	//nodeView->setIcon(model->icon);
 
 	for (auto sock : model->inSockets)
 		nodeView->addInSocket(sock->name);
@@ -273,6 +273,7 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 
 					con->pos2 = me->scenePos();
 					con->updatePath();
+					socketConnections.removeOne(con);
 
 					views().at(0)->setDragMode(QGraphicsView::NoDrag);
 
@@ -356,6 +357,7 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 						con->socket2->addConnection(con);
 						con->updatePosFromSockets();
 						con->updatePath();
+						socketConnections.append(con);
 
 						// connect models too
 						if (nodeGraph != nullptr) {
@@ -395,6 +397,9 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 	}
 		break;
 
+
+
+
 	}
 
 	return QObject::eventFilter(o, e);
@@ -406,6 +411,18 @@ Socket* GraphNodeScene::getSocketAt(float x, float y)
 	//auto items = this->items();
 	for (auto item : items) {
 		if (item && item->type() == (int)GraphicsItemType::Socket)
+			return (Socket*)item;
+	}
+
+	return nullptr;
+}
+
+Socket* GraphNodeScene::getConnectionAt(float x, float y)
+{
+	auto items = this->items(QPointF(x, y));
+	//auto items = this->items();
+	for (auto item : items) {
+		if (item && item->type() == (int)GraphicsItemType::Connection)
 			return (Socket*)item;
 	}
 
