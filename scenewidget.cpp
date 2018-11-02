@@ -239,9 +239,7 @@ void SceneWidget::mouseReleaseEvent(QMouseEvent * evt)
 
 void SceneWidget::wheelEvent(QWheelEvent* evt)
 {
-	//qDebug() << evt->delta();
 	scale += (evt->delta()/480.0f);
-	//qDebug() << scale;
 }
 
 SceneWidget::SceneWidget():

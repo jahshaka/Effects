@@ -99,39 +99,7 @@ void SocketConnection::paint(QPainter * painter, const QStyleOptionGraphicsItem 
 
 }
 
-void SocketConnection::hoverEnterEvent(QGraphicsSceneHoverEvent * event)
-{
-	qDebug() << "help";
-	QGraphicsPathItem::hoverEnterEvent(event);
-
-}
-
-bool SocketConnection::sceneEventFilter(QGraphicsItem * watched, QEvent * event)
-{
-
-	auto ev = static_cast<QGraphicsSceneMouseEvent *>(event);
-
-	switch (event->type()) {
-
-	case QEvent::GraphicsSceneHoverEnter:
-		//if (ev->button() == Qt::LeftButton) {
-			status = SocketConnectionStatus::Editing;
-			qDebug() << "editing";
-		//}
-		return true;
-		break;
-
-	case  QEvent::GraphicsSceneHoverLeave:
-		if (ev->button() == Qt::LeftButton) {
-			status = SocketConnectionStatus::Finished;
-		}
-		return true;
-		break;
 
 
 
-	}
-
-	return sceneEventFilter(watched, event);
-}
 

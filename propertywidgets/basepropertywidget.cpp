@@ -2,6 +2,7 @@
 #include <QPushButton>
 #include <QDebug>
 #include <QPainter>
+#include <QMessageBox>
 
 
 BasePropertyWidget::BasePropertyWidget(QWidget * parent) : QWidget(parent)
@@ -65,6 +66,17 @@ BasePropertyWidget::BasePropertyWidget(QWidget * parent) : QWidget(parent)
 	});
 
 	connect(button, &QPushButton::clicked, [=]() {
+		QMessageBox::StandardButton reply;
+		reply = QMessageBox::question(this, "Confirmation", QString("Are you sure you wish to delete %1 ?").arg(displayName->text()),
+			QMessageBox::Yes | QMessageBox::No);
+		if (reply == QMessageBox::Yes) {
+			qDebug() << "Yes was clicked";
+		}
+		else {
+			qDebug() << "Yes was *not* clicked";
+		}
+
+
 		emit buttonPressed();
 	});
 	connect(minimize, &QPushButton::clicked, [=]() {
