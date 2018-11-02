@@ -60,6 +60,10 @@ BasePropertyWidget::BasePropertyWidget(QWidget * parent) : QWidget(parent)
 
 	setLayout(mainLayout);
 
+	connect(displayName, &QLineEdit::textChanged, [=](QString text) {
+		emit TitleChanged(text);
+	});
+
 	connect(button, &QPushButton::clicked, [=]() {
 		emit buttonPressed();
 	});
@@ -95,6 +99,8 @@ BasePropertyWidget::BasePropertyWidget(QWidget * parent) : QWidget(parent)
 			minimized = !minimized;
 		}
 	});
+
+	displayName->setStyleSheet("QLineEdit{ background :  #292929}");
 
 	setStyleSheet("QMenu{	background: rgba(26,26,26,.9); color: rgba(250,250, 250,.9);}"
 		"QMenu::item{padding: 2px 5px 2px 20px;	}"

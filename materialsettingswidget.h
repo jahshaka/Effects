@@ -14,6 +14,7 @@
 namespace Ui {
 class MaterialSettingsWidget;
 }
+
 class MaterialSettingsWidget : public QWidget
 {
 	Q_OBJECT
@@ -66,7 +67,7 @@ private:
 	QCheckBox *checkBox_6;
 	QFont font;
 signals:
-	void settingsChanged(MaterialSettings value);
+	void settingsChanged(MaterialSettings *value);
 };
 
 #endif
