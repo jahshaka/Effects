@@ -11,6 +11,7 @@
 #include "../graph/nodemodel.h"
 #include "../graph/sockets.h"
 #include "../generator/shadercontext.h"
+#include "../propertywidgets/propertywidgetbase.h"
 
 class SurfaceMasterNode : public NodeModel
 {

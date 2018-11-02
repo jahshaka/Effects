@@ -182,26 +182,28 @@ FloatNodeModel::FloatNodeModel() :
 	NodeModel()
 {
 	setNodeType(NodeType::Input);
-	lineEdit = new QLineEdit();
-	lineEdit->setValidator(new QDoubleValidator());
-	lineEdit->setStyleSheet("border: 2px solid rgba(220,220,220,1);"
-		"border-radius: 2px;"
-		"padding: 2px 8px 2px 12px;"
-		"background: rgba(0,0,0,0);"
-		"color: rgba(250,250,250);");
+	//lineEdit = new QLineEdit();
+	//lineEdit->setValidator(new QDoubleValidator());
+	//lineEdit->setStyleSheet("border: 2px solid rgba(220,220,220,1);"
+	//	"border-radius: 2px;"
+	//	"padding: 2px 8px 2px 12px;"
+	//	"background: rgba(0,0,0,0);"
+	//	"color: rgba(250,250,250);");
 
-	// lineEdit->setMaximumSize(lineEdit->sizeHint());
-	// lineEdit->setMaximumSize(QSize(160,20));
+	//// lineEdit->setMaximumSize(lineEdit->sizeHint());
+	//// lineEdit->setMaximumSize(QSize(160,20));
 
-	connect(lineEdit, &QLineEdit::textChanged,
-		this, &FloatNodeModel::editTextChanged);
+	//connect(lineEdit, &QLineEdit::textChanged,
+	//	this, &FloatNodeModel::editTextChanged);
 
+	auto wid = new WidgetFloat;
 	auto containerWidget = new QWidget();
 	auto layout = new QVBoxLayout;
-	containerWidget->setMaximumSize(170, 55);
+	//containerWidget->setMaximumSize(170, 55);
+	containerWidget->setMaximumWidth(170);
 	containerWidget->setLayout(layout);
 	containerWidget->setStyleSheet("background:rgba(0,0,0,0);");
-	layout->addWidget(lineEdit);
+	layout->addWidget(wid);
 	layout->setSpacing(0);
 
 	this->widget = containerWidget;
@@ -213,7 +215,11 @@ FloatNodeModel::FloatNodeModel() :
 	valueSock = new FloatSocketModel("value");
 	addOutputSocket(valueSock);
 
-	lineEdit->setText("0.0");
+	connect(wid, &WidgetFloat::valueChanged, [=](double val) {
+		editTextChanged(QString::number(val,'g',2));
+	});
+
+//	lineEdit->setText("0.0");
 }
 
 void FloatNodeModel::editTextChanged(const QString& text)
@@ -457,8 +463,11 @@ void PropertyNode::setProperty(Property* property)
 
 	// add output based on property type
 	switch (property->type) {
-	case PropertyType::Int:
+	case PropertyType::Int: {
 		this->addOutputSocket(new FloatSocketModel("int"));
+		this->widget = new WidgetInt;
+		updateStyle();
+	}
 		break;
 	case PropertyType::Float:
 		this->addOutputSocket(new FloatSocketModel("float"));
