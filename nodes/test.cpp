@@ -478,6 +478,15 @@ void PropertyNode::setProperty(Property* property)
 
 	case PropertyType::Texture:
 		this->addOutputSocket(new TextureSocketModel("texture"));
+		this->addOutputSocket(new Vector4SocketModel("rgba"));
+		/*
+		this->addOutputSocket(new FloatSocketModel("r"));
+		this->addOutputSocket(new FloatSocketModel("g"));
+		this->addOutputSocket(new FloatSocketModel("b"));
+		this->addOutputSocket(new FloatSocketModel("a"));
+		*/
+		this->addInputSocket(new Vector2SocketModel("uv","v_texCoord"));
+		
 		break;
 
 	default:
@@ -503,6 +512,15 @@ void PropertyNode::process(ModelContext* context)
 
 	if (this->outSockets.count() > 0)
 		outSockets[0]->setVarName(prop->getUniformName());
+
+	if (prop->type == PropertyType::Texture) {
+		auto uv = this->getValueFromInputSocket(0);
+		auto rgba = this->getOutputSocketVarName(1);
+
+		QString code = "";
+		code = rgba + " = texture(" + prop->getUniformName() + "," + uv + ");";
+		ctx->addCodeChunk(this, code);
+	}
 }
 
 

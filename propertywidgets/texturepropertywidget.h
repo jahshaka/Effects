@@ -10,7 +10,7 @@
 #include "basepropertywidget.h"
 #include "propertywidgetbase.h"
 
-
+class GraphTexture;
 class TexturePropertyWidget : public BasePropertyWidget
 {
 	Q_OBJECT
@@ -23,6 +23,7 @@ public:
 
 private:
 	TextureProperty *prop;
+	GraphTexture* graphTexture;
 	WidgetTexture *wid;
 	QString value;
 	QPushButton *texture;

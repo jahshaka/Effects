@@ -1,4 +1,5 @@
 #include "texturepropertywidget.h"
+#include "texturemanager.h"
 
 
 
@@ -24,6 +25,12 @@ void TexturePropertyWidget::setProp(TextureProperty * prop)
 	displayName->setText(prop->displayName);
 	value = prop->value;
 	modelProperty = prop;
+
+	graphTexture = TextureManager::getSingleton()->createTexture();
+	graphTexture->uniformName = prop->getUniformName();
+	if (QFile::exists(value))
+		graphTexture->setImage(value);
+
 	emit nameChanged(displayName->text());
 	emit valueChanged(value);
 }
@@ -37,6 +44,8 @@ void TexturePropertyWidget::setConnections()
 {
 	connect(texture, &QPushButton::clicked, [=]() {
 		auto filename = QFileDialog::getOpenFileName();
+		graphTexture->setImage(filename);
+
 		QIcon icon(filename);
 		texture->setIcon(icon);
 		emit valueChanged(filename);

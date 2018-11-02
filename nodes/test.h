@@ -131,6 +131,7 @@ public:
 
 class PropertyNode : public NodeModel
 {
+	GraphTexture* graphTexture;
 	Property* prop;
 public:
 	PropertyNode();
