@@ -53,6 +53,13 @@ GraphNode::GraphNode(QGraphicsItem* parent) :
 	effect->setColor(QColor(00, 00, 00, 40));
 	setGraphicsEffect(effect);
 	*/
+
+	// preview widget
+	previewWindow = new NodePreviewWidget();
+	previewWindow->setSurfaceType(QSurface::OpenGLSurface);
+	auto previewWidget = QWidget::createWindowContainer(previewWindow);
+	previewWidget->setMaximumSize(200, 200);
+	proxyPreviewWidget->setWidget(previewWidget);
 }
 
 void GraphNode::setIcon(QIcon icon)

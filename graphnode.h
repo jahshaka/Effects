@@ -3,7 +3,13 @@
 #include <QGraphicsPathItem>
 #include <QGraphicsProxyWidget>
 #include <QIcon>
+#include <QWindow>
 
+class NodePreviewWidget : public QWindow
+{
+public:
+
+};
 
 enum class GraphicsItemType : int
 {
@@ -20,6 +26,8 @@ class GraphNode : public QGraphicsPathItem
 	int nodeWidth;
 	QGraphicsTextItem* text;
 	QGraphicsProxyWidget* proxyWidget;
+	QGraphicsProxyWidget* proxyPreviewWidget;
+	NodePreviewWidget* previewWindow;
 
 	int inSocketCount = 0;
 	int outSocketCount = 0;
