@@ -4,11 +4,20 @@
 #include <QGraphicsProxyWidget>
 #include <QIcon>
 #include <QWindow>
+#include <irisgl/IrisGL.h>
+
+class CustomRenderWidget : public iris::RenderWidget
+{
+public:
+	CustomRenderWidget();
+
+	void render();
+};
 
 class NodePreviewWidget : public QWindow
 {
 public:
-
+	NodePreviewWidget();
 };
 
 enum class GraphicsItemType : int
@@ -27,7 +36,7 @@ class GraphNode : public QGraphicsPathItem
 	QGraphicsTextItem* text;
 	QGraphicsProxyWidget* proxyWidget;
 	QGraphicsProxyWidget* proxyPreviewWidget;
-	NodePreviewWidget* previewWindow;
+	
 
 	int inSocketCount = 0;
 	int outSocketCount = 0;
@@ -42,6 +51,7 @@ public:
 	QString nodeId;
 	QColor titleColor;
 	QIcon icon;
+	NodePreviewWidget* previewWindow;
 
 	GraphNode(QGraphicsItem* parent);
 

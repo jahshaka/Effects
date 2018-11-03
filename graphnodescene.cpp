@@ -441,6 +441,18 @@ GraphNode *GraphNodeScene::getNodeById(QString id)
 	return nullptr;
 }
 
+QVector<GraphNode*> GraphNodeScene::getNodes()
+{
+	QVector<GraphNode*> nodes;
+	auto items = this->items();
+	for (auto item : items) {
+		if (item && item->type() == (int)GraphicsItemType::Node)
+				nodes.append((GraphNode*)item);
+	}
+
+	return nodes;
+}
+
 GraphNode *GraphNodeScene::getNodeByPos(QPointF point)
 {
 	auto items = this->items();

@@ -132,7 +132,8 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
 
     //ui->propertyContainerPage1->setNodeGraph(graph);
 	propertyListWidget->setNodeGraph(graph);
-    sceneWidget->setNodeGraph(graph);
+	sceneWidget->setNodeGraph(graph);
+	sceneWidget->graphScene = newScene;
 	displayWidget->setWidget(sceneWidget);
 	sceneWidget->setMinimumSize(100, 100);
 	materialSettingsWidget->setMaterialSettings(&graph->settings);

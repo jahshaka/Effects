@@ -71,6 +71,7 @@ public:
 	Socket* getSocketAt(float x, float y);
 	Socket* getConnectionAt(float x, float y);
 	GraphNode* getNodeById(QString id);
+	QVector<GraphNode*> GraphNodeScene::getNodes();
 	GraphNode* getNodeByPos(QPointF point);
 	QVector<SocketConnection*> socketConnections;
 	NodeGraph *getNodeGraph() const;

@@ -9,6 +9,36 @@
 #include <QPixmap>
 #include <QGraphicsPixmapItem>
 
+#include <irisgl/IrisGL.h>
+
+CustomRenderWidget::CustomRenderWidget() :
+	iris::RenderWidget(nullptr)
+{
+
+}
+
+void CustomRenderWidget::render()
+{
+	device->clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, Qt::red);
+}
+
+NodePreviewWidget::NodePreviewWidget()
+{
+	this->setSurfaceType(QSurface::OpenGLSurface);
+
+	//NOTE!: has to be same as context of scenewidget
+	/*
+	QSurfaceFormat format;
+	format.setDepthBufferSize(32);
+	format.setMajorVersion(3);
+	format.setMinorVersion(2);
+	format.setProfile(QSurfaceFormat::CoreProfile);
+	format.setSamples(1);
+	format.setSwapInterval(0);
+	this->setFormat(format);
+	*/
+}
+
 GraphNode::GraphNode(QGraphicsItem* parent) :
 	QGraphicsPathItem(parent)
 {
@@ -55,11 +85,26 @@ GraphNode::GraphNode(QGraphicsItem* parent) :
 	*/
 
 	// preview widget
+	/*
+	proxyPreviewWidget = new QGraphicsProxyWidget(this);
 	previewWindow = new NodePreviewWidget();
-	previewWindow->setSurfaceType(QSurface::OpenGLSurface);
+	previewWindow->setMaximumSize(QSize(200, 200));
+	previewWindow->setGeometry(0,0,200, 200);
+
 	auto previewWidget = QWidget::createWindowContainer(previewWindow);
 	previewWidget->setMaximumSize(200, 200);
-	proxyPreviewWidget->setWidget(previewWidget);
+	previewWidget->setGeometry(0, 0, 200, 200);
+	//previewWidget->show();
+	//proxyPreviewWidget->setWidget(new CustomRenderWidget());
+	proxyPreviewWidget->setWidget(QWidget::createWindowContainer(previewWindow));
+	proxyPreviewWidget->setPos(0,0);
+	//proxyPreviewWidget->setMaximumSize(200, 200);
+	//proxyPreviewWidget->setGeometry(QRectF(0, 0, 200, 200));
+	//proxyPreviewWidget->show();
+	//previewWindow->show();
+	previewWindow->destroy();
+	previewWindow->create();
+	*/
 }
 
 void GraphNode::setIcon(QIcon icon)

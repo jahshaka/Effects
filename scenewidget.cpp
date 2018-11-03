@@ -9,8 +9,10 @@
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <qmath.h>
+#include <QOpenGLFunctions>
 
 #include "graph/nodegraph.h"
+#include "graphnodescene.h"
 #include "texturemanager.h"
 
 QString assetPath(QString relPath)
@@ -165,7 +167,6 @@ void SceneWidget::render()
     passNodeGraphUniforms();
 
     mesh->draw(device);
-
 }
 
 void SceneWidget::updateShader(QString shaderCode)

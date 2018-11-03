@@ -6,6 +6,7 @@ class QMouseEvent;
 class QWheelEvent;
 
 class NodeGraph;
+class GraphNodeScene;
 class SceneWidget : public iris::RenderWidget
 {
     iris::MeshPtr mesh;
@@ -27,12 +28,14 @@ class SceneWidget : public iris::RenderWidget
     QList<iris::LightNodePtr> lights;
 
     NodeGraph* graph;
+	
 
 	bool dragging;
 	QPoint lastMousePos;
 	QQuaternion rot;
 	float scale;
 public:
+	GraphNodeScene * graphScene;
     SceneWidget();
 
     void start();
