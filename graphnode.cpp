@@ -8,8 +8,13 @@
 #include "socketconnection.h"
 #include <QPixmap>
 #include <QGraphicsPixmapItem>
+#include <QTimer>
 
 #include <irisgl/IrisGL.h>
+#include "graph/nodegraph.h"
+#include "graphnodescene.h"
+#include "texturemanager.h"
+#include "irisgl/src/graphics/graphicshelper.h"
 
 CustomRenderWidget::CustomRenderWidget() :
 	iris::RenderWidget(nullptr)
@@ -17,33 +22,165 @@ CustomRenderWidget::CustomRenderWidget() :
 
 }
 
-void CustomRenderWidget::render()
+QString CustomRenderWidget::assetPath(QString relPath)
 {
-	device->clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, Qt::red);
+	//qDebug()<< QDir::cleanPath(QCoreApplication::applicationFilePath() + QDir::separator() + relPath);
+	//return QDir::cleanPath(QCoreApplication::applicationFilePath() + QDir::separator() + relPath);
+	qDebug() << QDir::cleanPath(QDir::currentPath() + QDir::separator() + relPath);
+	return QDir::cleanPath(QDir::currentPath() + QDir::separator() + relPath);
 }
 
-NodePreviewWidget::NodePreviewWidget()
+void CustomRenderWidget::start()
 {
-	this->setSurfaceType(QSurface::OpenGLSurface);
+	targetFPS = 0;
 
-	//NOTE!: has to be same as context of scenewidget
+	scale = 1.0;
+
+	iris::VertexLayout layout;
+	layout.addAttrib(iris::VertexAttribUsage::Position, GL_FLOAT, 3, sizeof(float) * 3);
+	//vertexBuffer->setData()
+
+	cam = iris::CameraNode::create();
+	cam->setLocalPos(QVector3D(2, 0, 3));
+	cam->lookAt(QVector3D(0, 0, 0));
 	/*
-	QSurfaceFormat format;
-	format.setDepthBufferSize(32);
-	format.setMajorVersion(3);
-	format.setMinorVersion(2);
-	format.setProfile(QSurfaceFormat::CoreProfile);
-	format.setSamples(1);
-	format.setSwapInterval(0);
-	this->setFormat(format);
+	shader = iris::Shader::load(
+	":assets/shaders/color.vert",
+	":assets/shaders/color.frag");
 	*/
+
+	mesh = iris::Mesh::loadMesh(assetPath("assets/lowpoly_sphere.obj"));
+	//mat = iris::DefaultMaterial::create();
+
+	font = iris::Font::create(device);
+
+	vertString = iris::GraphicsHelper::loadAndProcessShader(assetPath("assets/surface.vert"));
+	fragString = iris::GraphicsHelper::loadAndProcessShader(assetPath("assets/surface.frag"));
+	updateShader("void surface(inout Material material){}");
+
+	renderTime = 0;
+
+	lights.clear();
+
+	// setup lights
+	auto main = iris::LightNode::create();
+	main->setLightType(iris::LightType::Point);
+	main->setLocalPos(QVector3D(-3, 0, 3));
+	main->setVisible(true);
+	main->color = QColor(255, 255, 255);
+	main->intensity = 0.8f;
+	lights.append(main);
+}
+
+void CustomRenderWidget::update(float dt)
+{
+	cam->aspectRatio = width() / (float)height();
+	cam->update(dt);
+
+	//qDebug()<<1.0/dt;
+	fps = 1.0 / dt;
+	renderTime += dt;
+}
+
+void CustomRenderWidget::render()
+{
+	cam->aspectRatio = width() / (float)height();
+	cam->update(0.016f);
+
+	//device->clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, QColor(qMin((int)(renderTime*0.1f * 255), 255), 0, 0));
+	device->clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, QColor(255,0,0));
+
+	device->setBlendState(iris::BlendState::createOpaque());
+	device->setDepthState(iris::DepthState());
+
+	auto& graphics = device;
+	auto w = width();
+	auto h = height();
+	device->setViewport(QRect(0, 0, w, h));
+	device->setShader(shader);
+	device->setShaderUniform("u_viewMatrix", cam->viewMatrix);
+	device->setShaderUniform("u_projMatrix", cam->projMatrix);
+	QMatrix4x4 world;
+	world.setToIdentity();
+	world.rotate(rot);
+	world.scale(scale);
+
+	device->setShaderUniform("u_worldMatrix", world);
+	device->setShaderUniform("u_normalMatrix", world.normalMatrix());
+	device->setShaderUniform("color", QVector4D(0.0, 0.0, 0.0, 1.0));
+	device->setShaderUniform("u_textureScale", 1.0f);
+
+	graphics->setShaderUniform("u_eyePos", cam->getLocalPos());
+	graphics->setShaderUniform("u_sceneAmbient", QVector3D(0, 0, 0));
+	graphics->setShaderUniform("u_time", renderTime);
+
+	// pass textures
+	auto texMan = TextureManager::getSingleton();
+	texMan->loadUnloadedTextures();
+	int i = 0;
+	for (auto tex : texMan->textures) {
+		graphics->setTexture(i, tex->texture);
+		graphics->setShaderUniform(tex->uniformName, i);
+		i++;
+	}
+
+	passNodeGraphUniforms();
+
+	graphics->setShaderUniform("u_lightCount", lights.size());
+
+	mesh->draw(device);
+}
+
+void CustomRenderWidget::updateShader(QString shaderCode)
+{
+	shader = iris::Shader::create(
+		vertString,
+		fragString + shaderCode);
+}
+
+void CustomRenderWidget::resetRenderTime()
+{
+	renderTime = 0;
+}
+
+void CustomRenderWidget::passNodeGraphUniforms()
+{
+	if (graph == nullptr)
+		return;
+
+	for (auto prop : graph->properties) {
+		switch (prop->type) {
+		case PropertyType::Bool:
+			device->setShaderUniform(prop->getUniformName(), prop->getValue().toBool());
+			break;
+		case PropertyType::Int:
+			device->setShaderUniform(prop->getUniformName(), prop->getValue().toInt());
+			break;
+		case PropertyType::Float:
+			//qDebug()<<prop->getUniformName()<<" - "<<prop->getValue().toFloat();
+			device->setShaderUniform(prop->getUniformName(), prop->getValue().toFloat());
+			break;
+		case PropertyType::Vec2:
+			device->setShaderUniform(prop->getUniformName(), prop->getValue().value<QVector2D>());
+			break;
+		case PropertyType::Vec3:
+			device->setShaderUniform(prop->getUniformName(), prop->getValue().value<QVector3D>());
+			break;
+		case PropertyType::Vec4:
+			device->setShaderUniform(prop->getUniformName(), prop->getValue().value<QVector4D>());
+			break;
+		}
+	}
+}
+
+void CustomRenderWidget::setNodeGraph(NodeGraph *graph)
+{
+	this->graph = graph;
 }
 
 GraphNode::GraphNode(QGraphicsItem* parent) :
 	QGraphicsPathItem(parent)
 {
-
-
 	nodeType = 0;
 	proxyWidget = nullptr;
 
@@ -85,26 +222,19 @@ GraphNode::GraphNode(QGraphicsItem* parent) :
 	*/
 
 	// preview widget
-	/*
 	proxyPreviewWidget = new QGraphicsProxyWidget(this);
-	previewWindow = new NodePreviewWidget();
-	previewWindow->setMaximumSize(QSize(200, 200));
-	previewWindow->setGeometry(0,0,200, 200);
+	previewWidget = new CustomRenderWidget();
+	proxyPreviewWidget->setWidget(previewWidget);
+	proxyPreviewWidget->setGeometry(QRectF(0, 260, 160, 160));
 
-	auto previewWidget = QWidget::createWindowContainer(previewWindow);
-	previewWidget->setMaximumSize(200, 200);
-	previewWidget->setGeometry(0, 0, 200, 200);
-	//previewWidget->show();
-	//proxyPreviewWidget->setWidget(new CustomRenderWidget());
-	proxyPreviewWidget->setWidget(QWidget::createWindowContainer(previewWindow));
-	proxyPreviewWidget->setPos(0,0);
-	//proxyPreviewWidget->setMaximumSize(200, 200);
-	//proxyPreviewWidget->setGeometry(QRectF(0, 0, 200, 200));
-	//proxyPreviewWidget->show();
-	//previewWindow->show();
-	previewWindow->destroy();
-	previewWindow->create();
-	*/
+	auto updateTimer = new QTimer();
+	QObject::connect(updateTimer, &QTimer::timeout, [this]()
+	{
+		//this->update();
+		proxyPreviewWidget->update();
+	});
+	updateTimer->start(1000 / 30);
+	
 }
 
 void GraphNode::setIcon(QIcon icon)
@@ -166,6 +296,8 @@ void GraphNode::setWidget(QWidget *widget)
 		y);
 
 	calcPath();
+
+	layout();
 }
 
 void GraphNode::calcPath()
@@ -174,8 +306,6 @@ void GraphNode::calcPath()
 	path_content.setFillRule(Qt::WindingFill);
 	path_content.addRoundedRect(QRect(0, 0, nodeWidth, calcHeight()), titleRadius, titleRadius);
 	setPath(path_content);
-
-
 }
 
 int GraphNode::calcHeight()
@@ -220,6 +350,40 @@ Socket *GraphNode::getOutSocket(int index)
 			i++;
 		}
 	}
+}
+
+void GraphNode::layout()
+{
+	int height = 0;
+	height += titleHeight + 20;// title + padding
+
+	for (auto socket : sockets)
+	{
+		height += socket->calcHeight();
+		height += 14; // padding
+	}
+
+	//height += 2; // padding
+	if (proxyWidget != nullptr) {
+		proxyWidget->setPos((nodeWidth - proxyWidget->size().width()) / 2,
+			height);
+		height += proxyWidget->size().height();
+	}
+
+	if (proxyPreviewWidget != nullptr) {
+		height += 5;
+		proxyPreviewWidget->setPos((nodeWidth - proxyPreviewWidget->size().width()) / 2,
+			height);
+		height += proxyPreviewWidget->size().height();
+	}
+
+	height += 5;
+		
+	// calculate path
+	QPainterPath path_content;
+	path_content.setFillRule(Qt::WindingFill);
+	path_content.addRoundedRect(QRect(0, 0, nodeWidth, height), titleRadius, titleRadius);
+	setPath(path_content);
 }
 
 void GraphNode::paint(QPainter *painter,

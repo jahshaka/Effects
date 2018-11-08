@@ -40,7 +40,7 @@ void SceneWidget::start()
                 ":assets/shaders/color.frag");
                 */
 
-    mesh = iris::Mesh::loadMesh(assetPath("assets/sphere.obj"));
+    mesh = iris::Mesh::loadMesh(assetPath("assets/lowpoly_sphere.obj"));
     //mat = iris::DefaultMaterial::create();
 
     font = iris::Font::create(device);

@@ -57,6 +57,7 @@ void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addTo
 
 	nodeView->setPos(x, y);
 	nodeView->nodeId = model->id;
+	nodeView->layout();
 
 	if (addToGraph) {
 		Q_ASSERT_X(nodeGraph != nullptr, "GraphNodeScene::addNodeModel", "Cant add node to null scene");

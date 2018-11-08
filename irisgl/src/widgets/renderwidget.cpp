@@ -41,6 +41,8 @@ RenderWidget::RenderWidget(QWidget *parent)
     setFocusPolicy(Qt::ClickFocus);
 
     elapsedTimer = new QElapsedTimer();
+	targetFPS = 60;
+
 }
 
 void RenderWidget::initializeGL()
@@ -60,11 +62,13 @@ void RenderWidget::initializeGL()
 
     start();
 
-    auto updateTimer = new QTimer(this);
-    connect(updateTimer, SIGNAL(timeout()), this, SLOT(update()));
-    updateTimer->start(1000/60);
+	if (targetFPS != 0) {
+		auto updateTimer = new QTimer(this);
+		connect(updateTimer, SIGNAL(timeout()), this, SLOT(update()));
+		updateTimer->start(1000 / targetFPS);
 
-    elapsedTimer->start();
+		elapsedTimer->start();
+	}
     //qDebug()<<"initializing";
 }
 

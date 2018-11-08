@@ -18,10 +18,13 @@ class RenderWidget : public QOpenGLWidget,
 {
     QElapsedTimer* elapsedTimer;
     QTimer* updateTimer;
+	
 protected:
     GraphicsDevicePtr device;
     ContentManagerPtr content;
     SpriteBatchPtr spriteBatch;
+
+	int targetFPS;
 public:
     explicit RenderWidget(QWidget *parent);
     void initializeGL();
