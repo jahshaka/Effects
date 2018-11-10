@@ -69,7 +69,7 @@ class GraphNode : public QGraphicsPathItem
 	QGraphicsTextItem* text;
 	QGraphicsProxyWidget* proxyWidget;
 	QGraphicsProxyWidget* proxyPreviewWidget;
-	
+	NodeGraph* nodeGraph;
 
 	int inSocketCount = 0;
 	int outSocketCount = 0;
@@ -102,6 +102,8 @@ public:
 	Socket* getOutSocket(int index);
 
 	void layout();
+	void setPreviewShader(QString shader);
+	void setNodeGraph(NodeGraph* graph);
 
 	virtual void paint(QPainter *painter,
 		const QStyleOptionGraphicsItem *option,

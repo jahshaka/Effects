@@ -590,6 +590,13 @@ GraphNodeScene *MainWindow::createNewScene()
         sceneWidget->updateShader(code);
         sceneWidget->resetRenderTime();
 
+		// assign previews
+		auto nodes = scene->getNodes();
+		for (auto node : nodes) {
+			if (shaderGen.shaderPreviews.contains(node->nodeId))
+				node->setPreviewShader(shaderGen.shaderPreviews[node->nodeId]);
+		}
+
     });
 	
 	connect(scene, &GraphNodeScene::connectionRemoved, [this, scene](SocketConnection* connection)
@@ -601,6 +608,12 @@ GraphNodeScene *MainWindow::createNewScene()
         sceneWidget->updateShader(code);
         sceneWidget->resetRenderTime();
 
+		// assign previews
+		auto nodes = scene->getNodes();
+		for (auto node : nodes) {
+			if (shaderGen.shaderPreviews.contains(node->nodeId))
+				node->setPreviewShader(shaderGen.shaderPreviews[node->nodeId]);
+		}
     });
 
     connect(scene, &GraphNodeScene::nodeValueChanged, [this, scene](NodeModel* model, int index)
@@ -611,6 +624,13 @@ GraphNodeScene *MainWindow::createNewScene()
         textEdit->setPlainText(code);
         sceneWidget->updateShader(code);
         sceneWidget->resetRenderTime();
+
+		// assign previews
+		auto nodes = scene->getNodes();
+		for (auto node : nodes) {
+			if (shaderGen.shaderPreviews.contains(node->nodeId))
+				node->setPreviewShader(shaderGen.shaderPreviews[node->nodeId]);
+		}
     });
 
     return scene;

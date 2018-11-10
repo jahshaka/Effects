@@ -41,6 +41,7 @@ void GraphNodeScene::setNodeGraph(NodeGraph *graph)
 void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addToGraph)
 {
 	auto nodeView = this->createNode<GraphNode>();
+	nodeView->setNodeGraph(this->nodeGraph);
 	nodeView->setTitle(model->title);
 	nodeView->setTitleColor(model->setNodeTitleColor());
 	//nodeView->setIcon(model->icon);

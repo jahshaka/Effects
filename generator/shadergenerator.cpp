@@ -48,6 +48,19 @@ void ShaderGenerator::processNode(NodeModel* node, ShaderContext* ctx)
 		}
 	}
 
+	// generate code up until this point
+	auto previewChunk = node->generatePreview(ctx);
+	auto previewCode = ctx->generateCode(true);
+	auto code = ctx->generateUniforms();
+	code += ctx->generateVars();
+	
+	code += "void preview(inout PreviewMaterial preview){\n";
+	code += previewCode;
+	code += previewChunk;
+	code += "}\n";
+
+	this->shaderPreviews[node->id] = code;
+
 	node->process(ctx);
 }
 

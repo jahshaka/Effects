@@ -23,6 +23,16 @@ void AddNode::process(ModelContext* context)
 	ctx->addCodeChunk(this, code);
 }
 
+QString AddNode::generatePreview(ModelContext* context)
+{
+	auto ctx = (ShaderContext*)context;
+	auto valA = this->getValueFromInputSocket(0);
+	auto valB = this->getValueFromInputSocket(1);
+
+	auto output = "preview.color = " + valA + " + " + valB + ";";
+	return output;
+}
+
 /*    SUBTRACT    */
 SubtractNode::SubtractNode()
 {

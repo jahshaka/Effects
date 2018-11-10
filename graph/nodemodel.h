@@ -53,6 +53,10 @@ public:
 	virtual void preProcess(ModelContext* context) {}
 	virtual void process(ModelContext* context) {}
 	virtual void postProcess(ModelContext* context) {}
+	virtual QString generatePreview(ModelContext* context)
+	{
+		return "";
+	}
 
 	NodeGraph *getGraph() const;
 	void setGraph(NodeGraph *value);

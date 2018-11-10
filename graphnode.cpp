@@ -54,9 +54,9 @@ void CustomRenderWidget::start()
 
 	font = iris::Font::create(device);
 
-	vertString = iris::GraphicsHelper::loadAndProcessShader(assetPath("assets/surface.vert"));
-	fragString = iris::GraphicsHelper::loadAndProcessShader(assetPath("assets/surface.frag"));
-	updateShader("void surface(inout Material material){}");
+	vertString = iris::GraphicsHelper::loadAndProcessShader(assetPath("assets/preview.vert"));
+	fragString = iris::GraphicsHelper::loadAndProcessShader(assetPath("assets/preview.frag"));
+	updateShader("void preview(inout PreviewMaterial preview){}");
 
 	renderTime = 0;
 
@@ -136,6 +136,10 @@ void CustomRenderWidget::updateShader(QString shaderCode)
 	shader = iris::Shader::create(
 		vertString,
 		fragString + shaderCode);
+
+	qDebug() << "-------- PREVIEW SHADER --------";
+	qDebug().noquote() << fragString + shaderCode;
+	qDebug() << "-------- PREVIEW SHADER --------";
 }
 
 void CustomRenderWidget::resetRenderTime()
@@ -384,6 +388,22 @@ void GraphNode::layout()
 	path_content.setFillRule(Qt::WindingFill);
 	path_content.addRoundedRect(QRect(0, 0, nodeWidth, height), titleRadius, titleRadius);
 	setPath(path_content);
+}
+
+void GraphNode::setPreviewShader(QString shader)
+{
+	if (this->previewWidget != nullptr) {
+		this->previewWidget->updateShader(shader);
+		this->update();
+	}
+}
+
+void GraphNode::setNodeGraph(NodeGraph* graph)
+{
+	this->nodeGraph = graph;
+	if (this->previewWidget) {
+		this->previewWidget->setNodeGraph(graph);
+	}
 }
 
 void GraphNode::paint(QPainter *painter,

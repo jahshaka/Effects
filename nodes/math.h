@@ -16,6 +16,7 @@ public:
 	AddNode();
 
 	virtual void process(ModelContext* context) override;
+	virtual QString generatePreview(ModelContext* context) override;
 };
 
 class SubtractNode : public NodeModel
