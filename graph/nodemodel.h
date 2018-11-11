@@ -34,6 +34,13 @@ public:
 	QWidget* widget;
 	QColor titleColor;
 	QIcon icon;
+
+	bool enablePreview;
+	bool isPreviewEnabled()
+	{
+		return enablePreview;
+
+	}
 	NodeModel();
 
 	NodeGraph* graph = nullptr;

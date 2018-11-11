@@ -103,6 +103,8 @@ public:
 
 	void layout();
 	void setPreviewShader(QString shader);
+	void enablePreviewWidget();
+
 	void setNodeGraph(NodeGraph* graph);
 
 	virtual void paint(QPainter *painter,

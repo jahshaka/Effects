@@ -12,6 +12,8 @@ NodeModel::NodeModel()
 	connect(this, &NodeModel::titleColorChanged, [=]() {
 		setNodeTitleColor();
 	});
+
+	enablePreview = false;
 }
 
 void NodeModel::addInputSocket(SocketModel *sock)

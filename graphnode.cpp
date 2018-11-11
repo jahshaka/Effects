@@ -88,7 +88,7 @@ void CustomRenderWidget::render()
 	cam->update(0.016f);
 
 	//device->clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, QColor(qMin((int)(renderTime*0.1f * 255), 255), 0, 0));
-	device->clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, QColor(255,0,0));
+	device->clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, QColor(0, 0, 0, 0));
 
 	device->setBlendState(iris::BlendState::createOpaque());
 	device->setDepthState(iris::DepthState());
@@ -226,19 +226,8 @@ GraphNode::GraphNode(QGraphicsItem* parent) :
 	*/
 
 	// preview widget
-	proxyPreviewWidget = new QGraphicsProxyWidget(this);
-	previewWidget = new CustomRenderWidget();
-	proxyPreviewWidget->setWidget(previewWidget);
-	proxyPreviewWidget->setGeometry(QRectF(0, 260, 160, 160));
-
-	auto updateTimer = new QTimer();
-	QObject::connect(updateTimer, &QTimer::timeout, [this]()
-	{
-		//this->update();
-		proxyPreviewWidget->update();
-	});
-	updateTimer->start(1000 / 30);
-	
+	proxyPreviewWidget = nullptr;
+	previewWidget = nullptr;
 }
 
 void GraphNode::setIcon(QIcon icon)
@@ -396,6 +385,27 @@ void GraphNode::setPreviewShader(QString shader)
 		this->previewWidget->updateShader(shader);
 		this->update();
 	}
+}
+
+void GraphNode::enablePreviewWidget()
+{
+	proxyPreviewWidget = new QGraphicsProxyWidget(this);
+	previewWidget = new CustomRenderWidget();
+	proxyPreviewWidget->setWidget(previewWidget);
+	proxyPreviewWidget->setGeometry(QRectF(0, 260, 160, 160));
+
+	if (this->nodeGraph)
+		previewWidget->setNodeGraph(nodeGraph);
+
+	auto updateTimer = new QTimer();
+	QObject::connect(updateTimer, &QTimer::timeout, [this]()
+	{
+		//this->update();
+		proxyPreviewWidget->update();
+	});
+	updateTimer->start(1000 / 30);
+
+	layout();
 }
 
 void GraphNode::setNodeGraph(NodeGraph* graph)

@@ -60,6 +60,10 @@ void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addTo
 	nodeView->nodeId = model->id;
 	nodeView->layout();
 
+	if (model->isPreviewEnabled()) {
+		nodeView->enablePreviewWidget();
+	}
+
 	if (addToGraph) {
 		Q_ASSERT_X(nodeGraph != nullptr, "GraphNodeScene::addNodeModel", "Cant add node to null scene");
 		nodeGraph->addNode(model);

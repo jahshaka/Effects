@@ -6,6 +6,7 @@ AddNode::AddNode()
 	setNodeType(NodeType::Math);
 	title = "Add";
 	typeName = "add";
+	enablePreview = true;
 
 	addInputSocket(new Vector4SocketModel("A"));
 	addInputSocket(new Vector4SocketModel("B"));
