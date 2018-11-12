@@ -40,6 +40,7 @@ SubtractNode::SubtractNode()
 	setNodeType(NodeType::Math);
 	title = "Subtract";
 	typeName = "subtract";
+	enablePreview = true;
 
 	addInputSocket(new Vector4SocketModel("A"));
 	addInputSocket(new Vector4SocketModel("B"));
@@ -55,6 +56,16 @@ void SubtractNode::process(ModelContext* context)
 
 	auto code = res + " = " + valA + " - " + valB + ";";
 	ctx->addCodeChunk(this, code);
+}
+
+QString SubtractNode::generatePreview(ModelContext* context)
+{
+	auto ctx = (ShaderContext*)context;
+	auto valA = this->getValueFromInputSocket(0);
+	auto valB = this->getValueFromInputSocket(1);
+
+	auto output = "preview.color = " + valA + " - " + valB + ";";
+	return output;
 }
 
 /*    MULTIPLY    */
