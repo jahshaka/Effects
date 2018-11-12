@@ -99,7 +99,3 @@ void SocketConnection::paint(QPainter * painter, const QStyleOptionGraphicsItem 
 
 }
 
-
-
-
-

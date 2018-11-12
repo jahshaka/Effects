@@ -36,4 +36,5 @@ public:
 	void updatePath();
 	virtual int type() const override;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR) override;
+
 };
