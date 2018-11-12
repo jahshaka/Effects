@@ -47,6 +47,7 @@ set(CPP
 	# generator
 	generator/shadergenerator.cpp
 	generator/shadercontext.cpp
+	listwidget.cpp
 	# nodes
 	nodes/test.cpp
 	nodes/libraryv1.cpp
@@ -87,6 +88,7 @@ set(HEADERS
 		# generator
 		generator/shadergenerator.h
 		generator/shadercontext.h
+		listwidget.h
 		# nodes
 		nodes/test.h
 		nodes/libraryv1.h

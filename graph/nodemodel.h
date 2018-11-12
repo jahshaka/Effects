@@ -13,7 +13,8 @@
 enum class NodeType {
 	Input,
 	Properties,
-	Math
+	Math,
+	PlaceHolder
 };
 
 class QWidget;
@@ -82,6 +83,8 @@ public:
 	{
 
 	}
+
+	static QString getEnumString(NodeType type);
 
 signals:
 	void valueChanged(NodeModel*, int sockedIndex);
