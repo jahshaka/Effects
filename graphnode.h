@@ -76,7 +76,7 @@ class GraphNode : public QGraphicsPathItem
 public:
 	int nodeType;
 	int level = 0;
-	int titleHeight = 25;
+	int titleHeight = 30;
 	int titleRadius = 2;
 	bool isHighlighted = false;
 	bool currentSelectedState = false;

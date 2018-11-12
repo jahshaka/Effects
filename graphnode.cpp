@@ -207,7 +207,9 @@ GraphNode::GraphNode(QGraphicsItem* parent) :
 
 	text = new QGraphicsTextItem(this);
 	text->setPlainText("Title");
-	text->setPos(5, 2);
+
+	
+	text->setPos(5, 16);
 	text->setDefaultTextColor(QColor(255, 255, 255));
 
 	QFont font = text->font();
@@ -245,7 +247,9 @@ void GraphNode::setTitle(QString title)
 {
 	text->setPlainText(title);
 	auto textWidth = text->boundingRect().width();
-	text->setPos(nodeWidth / 2 - textWidth / 2, 2);
+	auto textRect = text->boundingRect();
+	auto textHeight = textRect.height();
+	text->setPos(nodeWidth / 2 - textWidth / 2, titleHeight / 2 - textHeight / 2);
 }
 
 void GraphNode::addInSocket(QString title)
@@ -304,12 +308,12 @@ void GraphNode::calcPath()
 int GraphNode::calcHeight()
 {
 	int height = 0;
-	height += titleHeight + 40;// title + padding
+	height += titleHeight + 20;// title + padding
 
 	for (auto socket : sockets)
 	{
 		height += socket->calcHeight();
-		height += 14; // padding
+		height += 15; // padding
 	}
 
 	//height += 2; // padding
