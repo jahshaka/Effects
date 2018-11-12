@@ -18,7 +18,8 @@ IntPropertyWidget::IntPropertyWidget() : BasePropertyWidget()
 	mainLayout->addWidget(wid);
 }
 
-IntPropertyWidget::~IntPropertyWidget()
+IntPropertyWidget
+::~IntPropertyWidget()
 {
 }
 

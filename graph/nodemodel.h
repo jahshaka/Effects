@@ -6,6 +6,7 @@
 #include <QVector>
 #include <QColor>
 #include <QIcon>
+#include <QWidget>
 
 #include "socketmodel.h"
 
@@ -45,6 +46,7 @@ public:
 
 	NodeGraph* graph = nullptr;
 
+	void updateStyle();
 	void addInputSocket(SocketModel* sock);
 	void addOutputSocket(SocketModel* sock);
 

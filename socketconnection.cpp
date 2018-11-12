@@ -21,7 +21,7 @@ SocketConnection::SocketConnection()
 	auto pen = QPen(QColor(200, 200, 200));
 	pen.setBrush(QColor(50, 150, 250));
 	pen.setCapStyle(Qt::RoundCap);
-	pen.setWidth(3);
+	pen.setWidth(lineThickness);
 	setPen(pen);
 
 	/*
@@ -71,7 +71,7 @@ void SocketConnection::paint(QPainter * painter, const QStyleOptionGraphicsItem 
 {
 	painter->setRenderHint(QPainter::Antialiasing);
 	if (status == SocketConnectionStatus::Started || status == SocketConnectionStatus::Inprogress) {
-		QPen pen(QColor(90, 90, 90), 2);
+		QPen pen(QColor(90, 90, 90), lineThickness);
 		pen.setStyle(Qt::DashLine);
 		pen.setDashOffset(6);
 		painter->setPen(pen);
@@ -84,12 +84,12 @@ void SocketConnection::paint(QPainter * painter, const QStyleOptionGraphicsItem 
 		grad.setFinalStop( pos2 - pos1);
 		grad.setColorAt(0.0, socket1->connectedColor);
 		grad.setColorAt(1.0, socket2->connectedColor);
-		QPen pen(grad,2);
+		QPen pen(grad, lineThickness);
 		painter->setPen(pen);
 		painter->drawPath(*p);
 	}
 	if (status == SocketConnectionStatus::Editing) {
-		QPen pen(QColor(240, 90, 90), 2);
+		QPen pen(QColor(240, 90, 90), lineThickness);
 		pen.setStyle(Qt::DashLine);
 		pen.setDashOffset(6);
 		painter->setPen(pen);
@@ -97,41 +97,5 @@ void SocketConnection::paint(QPainter * painter, const QStyleOptionGraphicsItem 
 	}
 
 
-}
-
-void SocketConnection::hoverEnterEvent(QGraphicsSceneHoverEvent * event)
-{
-	qDebug() << "help";
-	QGraphicsPathItem::hoverEnterEvent(event);
-
-}
-
-bool SocketConnection::sceneEventFilter(QGraphicsItem * watched, QEvent * event)
-{
-
-	auto ev = static_cast<QGraphicsSceneMouseEvent *>(event);
-
-	switch (event->type()) {
-
-	case QEvent::GraphicsSceneHoverEnter:
-		//if (ev->button() == Qt::LeftButton) {
-			status = SocketConnectionStatus::Editing;
-			qDebug() << "editing";
-		//}
-		return true;
-		break;
-
-	case  QEvent::GraphicsSceneHoverLeave:
-		if (ev->button() == Qt::LeftButton) {
-			status = SocketConnectionStatus::Finished;
-		}
-		return true;
-		break;
-
-
-
-	}
-
-	return sceneEventFilter(watched, event);
 }
 

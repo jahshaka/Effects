@@ -304,7 +304,7 @@ void GraphNode::calcPath()
 int GraphNode::calcHeight()
 {
 	int height = 0;
-	height += titleHeight + 20;// title + padding
+	height += titleHeight + 40;// title + padding
 
 	for (auto socket : sockets)
 	{

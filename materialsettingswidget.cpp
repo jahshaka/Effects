@@ -279,17 +279,17 @@ void MaterialSettingsWidget::setRenderLayer(RenderLayer index)
 
 void MaterialSettingsWidget::setConnections()
 {
-	connect(checkBox,   &QCheckBox::stateChanged,   [=](int state) { settings->zwrite = checkBox->isChecked(); }); // Z Write
-	connect(checkBox_2, &QCheckBox::stateChanged, [=](int state) { settings->depthTest = checkBox_2->isChecked(); }); // Depth Test
-	connect(checkBox_3, &QCheckBox::stateChanged, [=](int state) { settings->fog = checkBox_3->isChecked(); }); // Fog
-	connect(checkBox_4, &QCheckBox::stateChanged, [=](int state) { settings->castShadow = checkBox_4->isChecked(); }); // Cast Shadow
-	connect(checkBox_5, &QCheckBox::stateChanged, [=](int state) { settings->receiveShadow = checkBox_5->isChecked(); }); // Recieve shadows
-	connect(checkBox_6, &QCheckBox::stateChanged, [=](int state) { settings->acceptLighting = checkBox_6->isChecked(); }); // Accept light
+	connect(checkBox, &QCheckBox::stateChanged, [=](int state) { settings->zwrite = checkBox->isChecked(); settingsChanged(settings); }); // Z Write
+	connect(checkBox_2, &QCheckBox::stateChanged, [=](int state) { settings->depthTest = checkBox_2->isChecked(); settingsChanged(settings); }); // Depth Test
+	connect(checkBox_3, &QCheckBox::stateChanged, [=](int state) { settings->fog = checkBox_3->isChecked(); settingsChanged(settings); }); // Fog
+	connect(checkBox_4, &QCheckBox::stateChanged, [=](int state) { settings->castShadow = checkBox_4->isChecked(); settingsChanged(settings); }); // Cast Shadow
+	connect(checkBox_5, &QCheckBox::stateChanged, [=](int state) { settings->receiveShadow = checkBox_5->isChecked(); settingsChanged(settings); }); // Recieve shadows
+	connect(checkBox_6, &QCheckBox::stateChanged, [=](int state) { settings->acceptLighting = checkBox_6->isChecked(); settingsChanged(settings); }); // Accept light
 
-	connect(lineEdit, &QLineEdit::textChanged, [=](QString string) {settings->name = string;   }); // Name
-	connect(comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {settings->blendMode = static_cast<BlendMode>(index); }); //blendmode
-	connect(comboBox_2, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {settings->cullMode = static_cast<CullMode>(index);   }); // cull mode
-	connect(comboBox_3, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) { settings->renderLayer = static_cast<RenderLayer>(index);   }); // render layer
+	connect(lineEdit, &QLineEdit::textChanged, [=](QString string) {settings->name = string;  settingsChanged(settings); }); // Name
+	connect(comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {settings->blendMode = static_cast<BlendMode>(index); settingsChanged(settings); }); //blendmode
+	connect(comboBox_2, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {settings->cullMode = static_cast<CullMode>(index);   settingsChanged(settings); }); // cull mode
+	connect(comboBox_3, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) { settings->renderLayer = static_cast<RenderLayer>(index);  settingsChanged(settings); }); // render layer
 }
 
 

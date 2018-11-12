@@ -194,7 +194,6 @@ void Socket::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, 
 	QPainterPath path;
 	QPainterPath pathShadow;
 
-	//qDebug() << "watching";
 
 	// socket positions are at the outer right or outer left of the graph node
 	if (socketType == SocketType::Out)

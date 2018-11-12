@@ -349,7 +349,7 @@ void MainWindow::configureUI()
 	searchLayout->addSpacing(12);
 
 	searchBar->setPlaceholderText("search");
-	searchBar->setAlignment(Qt::AlignHCenter);
+	searchBar->setAlignment(Qt::AlignLeft);
 	searchBar->setFont(font);
 	connect(searchBar, &QLineEdit::textChanged, [=](QString str) {
 		nodeContainer->clear();
