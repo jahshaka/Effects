@@ -292,7 +292,10 @@ void MainWindow::configureStyleSheet()
 	materialSettingsWidget->setStyleSheet(nodeTray->styleSheet());
 	textEdit->setStyleSheet(nodeTray->styleSheet());
 	materialSettingsDock->setStyleSheet(nodeTray->styleSheet());
-	tabbedWidget->setStyleSheet(nodeTray->styleSheet());
+	tabbedWidget->setStyleSheet(nodeTray->styleSheet() + 
+	"QTabWidget::pane{	border: 1px solid rgba(0, 0, 0, .5); border - top: 0px solid rgba(0, 0, 0, 0);}"
+	"QTabBar::tab{	background: rgba(21, 21, 21, .7); color: rgba(255, 255, 255, .9); font - weight: 400; font - size: 13em; padding: 5px 22px 5px 22px; }"
+	);
 	for (int i = 0; i < tabbedWidget->count(); i++) {
 		tabbedWidget->widget(i)->setStyleSheet(nodeContainer->styleSheet());
 	}
@@ -335,8 +338,8 @@ void MainWindow::configureUI()
 	splitView->addWidget(tabbedWidget);
 
 
-	addDockWidget(Qt::LeftDockWidgetArea, nodeTray, Qt::Vertical);
-	addDockWidget(Qt::RightDockWidgetArea, textWidget, Qt::Vertical);
+	//addDockWidget(Qt::LeftDockWidgetArea, nodeTray, Qt::Vertical);
+	addDockWidget(Qt::LeftDockWidgetArea, textWidget, Qt::Vertical);
 	addDockWidget(Qt::RightDockWidgetArea, displayWidget, Qt::Vertical);
 	addDockWidget(Qt::RightDockWidgetArea, materialSettingsDock, Qt::Vertical);
 	addDockWidget(Qt::LeftDockWidgetArea, propertyWidget, Qt::Vertical);
