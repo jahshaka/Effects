@@ -14,6 +14,7 @@
 #include "graph/nodegraph.h"
 #include "graphnodescene.h"
 #include "texturemanager.h"
+#include "materialsettingswidget.h"
 
 QString assetPath(QString relPath)
 {
@@ -248,4 +249,16 @@ SceneWidget::SceneWidget():
 	rot = QQuaternion::fromEulerAngles(0, 0, 0);
 	scale = 1;
 	dragging = false;
+}
+
+void SceneWidget::setMaterialSettings(MaterialSettings settings)
+{
+	this->materialSettings = settings;
+
+	if (settings->blendMode == BlendMode::Additive)
+		blendState = iris::BlendState::createAdditive();
+	if (settings->blendMode == BlendMode::Blend)
+		blendState = iris::BlendState::createAlphaBlend();
+	if (settings->blendMode == BlendMode::Opaque)
+		blendState = iris::BlendState::createOpaque();
 }

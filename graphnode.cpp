@@ -194,6 +194,8 @@ GraphNode::GraphNode(QGraphicsItem* parent) :
 	this->setFlag(QGraphicsItem::ItemSendsGeometryChanges);
 	this->setFlag(QGraphicsItem::ItemSendsScenePositionChanges);
 
+	this->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
+
 	nodeWidth = 170;
 	QPainterPath path_content;
 	// path_content.setFillRule(Qt::WindingFill);

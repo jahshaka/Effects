@@ -7,6 +7,7 @@ class QWheelEvent;
 
 class NodeGraph;
 class GraphNodeScene;
+class MaterialSettings;
 class SceneWidget : public iris::RenderWidget
 {
     iris::MeshPtr mesh;
@@ -34,6 +35,11 @@ class SceneWidget : public iris::RenderWidget
 	QPoint lastMousePos;
 	QQuaternion rot;
 	float scale;
+
+	MaterialSettings materialSettings;
+	iris::BlendState blendState;
+	iris::DepthState depthState;
+	iris::RasterizerState rasterState;
 public:
 	GraphNodeScene * graphScene;
     SceneWidget();
@@ -58,4 +64,7 @@ public:
 	void mouseReleaseEvent(QMouseEvent* evt);
 	void wheelEvent(QWheelEvent* evt);
 
+
+public slots:
+	void setMaterialSettings(MaterialSettings settings);
 };

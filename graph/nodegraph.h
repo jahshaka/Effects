@@ -35,16 +35,16 @@ enum class RenderLayer {
 };
 
 struct MaterialSettings {
-	QString name;
-	bool zwrite;
-	bool depthTest;
-	bool fog;
-	bool castShadow;
-	bool receiveShadow;
-	bool acceptLighting;
-	BlendMode blendMode;
-	CullMode cullMode;
-	RenderLayer renderLayer;
+	QString name = "";
+	bool zwrite = true;
+	bool depthTest = true;
+	bool fog = true;
+	bool castShadow = true;
+	bool receiveShadow = true;
+	bool acceptLighting = true;
+	BlendMode blendMode = BlendMode::Opaque;
+	CullMode cullMode = CullMode::Back;
+	RenderLayer renderLayer = RenderLayer::Opaque;
 };
 
 class ModelContext
