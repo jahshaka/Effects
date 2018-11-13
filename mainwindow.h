@@ -7,6 +7,7 @@
 #include <QGraphicsView>
 #include <QTextEdit>
 #include <QDockWidget>
+#include <QSplitter>
 #include "propertylistwidget.h"
 //#include "nodemodel.h"
 #include "graph/graphicsview.h"
@@ -48,6 +49,8 @@ private:
 	void configureUI();
 	void generateTileNode();
 	void generateTileNode(QList<NodeLibraryItem*> list);
+	void addTabs();
+	void setNodeLibraryItem(QListWidgetItem *item, NodeLibraryItem *tile);
 
 	bool eventFilter(QObject *watched, QEvent *event);
 
@@ -58,6 +61,8 @@ private:
     GraphNodeScene* scene;
     SceneWidget* sceneWidget;
 	NodeGraph *graph;
+	QSplitter *splitView;
+	
 
 	QDockWidget* nodeTray;
 	QWidget *centralWidget;

@@ -116,6 +116,20 @@ QColor NodeModel::setNodeTitleColor()
 
 }
 
+QString NodeModel::getEnumString(NodeType type) {
+
+	switch (type) {
+	case NodeType::Input:
+		return "Input";
+	case NodeType::Math:
+		return "Math";
+	case NodeType::Properties:
+		return "properties";
+	default:
+		return "";
+	}
+}
+
 void NodeModel::setNodeType(NodeType type)
 {
 	nodeType = type;
