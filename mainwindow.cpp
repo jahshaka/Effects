@@ -28,6 +28,7 @@
 #include <QPointer>
 #include "graphnodescene.h"
 #include "propertywidgets/basepropertywidget.h"
+#include "listwidget.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -229,7 +230,7 @@ void MainWindow::configureStyleSheet()
 		"QMenu::item{padding: 4px 5px 4px 10px;	}"
 		"QMenu::item:hover{	background: rgba(40,128, 185,.9);}"
 		"QMenu::item:selected{	background: rgba(40,128, 185,.9);}"
-		
+
 		"QTabWidget::pane{border: 1px solid rgba(0,0,0,.5);	border - top: 0px solid rgba(0,0,0,0);	}"
 		"QTabWidget::tab - bar{	left: 1px;	}"
 		"QDockWidget::tab{	background:rgba(32,32,32,1);}"
@@ -259,11 +260,11 @@ void MainWindow::configureStyleSheet()
 	);
 
 	nodeContainer->setStyleSheet(
-		"QListView::item{ border-radius: 2px; border: 1px solid rgba(0,0,0,1); background: rgba(80,80,80,1); margin: 3px;  }"	
+		"QListView::item{ border-radius: 2px; border: 1px solid rgba(0,0,0,1); background: rgba(80,80,80,1); margin: 3px;  }"
 		"QListView::item:selected{ background: rgba(65,65,65,1); border: 1px solid rgba(50,150,250,1); }"
 		"QListView::item:hover{ background: rgba(55,55,55,1); border: 1px solid rgba(50,150,250,1); }"
 		"QListView::text{ top : -6; }"
-	
+
 	);
 
 	nodeContainer->verticalScrollBar()->setStyleSheet(
@@ -291,6 +292,10 @@ void MainWindow::configureStyleSheet()
 	materialSettingsWidget->setStyleSheet(nodeTray->styleSheet());
 	textEdit->setStyleSheet(nodeTray->styleSheet());
 	materialSettingsDock->setStyleSheet(nodeTray->styleSheet());
+	tabbedWidget->setStyleSheet(nodeTray->styleSheet());
+	for (int i = 0; i < tabbedWidget->count(); i++) {
+		tabbedWidget->widget(i)->setStyleSheet(nodeContainer->styleSheet());
+	}
 }
 
 void MainWindow::configureUI()
@@ -313,6 +318,7 @@ void MainWindow::configureUI()
 	textEdit = new QTextEdit;
 	propertyListWidget = new PropertyListWidget;
 	nodeContainer = new QListWidget;
+	splitView = new QSplitter;
 
 	nodeTray->setAllowedAreas(Qt::AllDockWidgetAreas);
 	textWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
@@ -320,8 +326,15 @@ void MainWindow::configureUI()
 	propertyWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	materialSettingsDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 
+
+
 	setDockNestingEnabled(true);
-	this->setCentralWidget(graphicsView);
+	this->setCentralWidget(splitView);
+	splitView->setOrientation(Qt::Vertical);
+	splitView->addWidget(graphicsView);
+	splitView->addWidget(tabbedWidget);
+
+
 	addDockWidget(Qt::LeftDockWidgetArea, nodeTray, Qt::Vertical);
 	addDockWidget(Qt::RightDockWidgetArea, textWidget, Qt::Vertical);
 	addDockWidget(Qt::RightDockWidgetArea, displayWidget, Qt::Vertical);
@@ -444,6 +457,7 @@ void MainWindow::configureUI()
 		"QLineEdit{ padding: 6px 10px; border-radius: 2px; }"
 	);
 
+	addTabs();
 }
 
 void MainWindow::generateTileNode()
@@ -461,7 +475,8 @@ void MainWindow::generateTileNode()
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
 		item->setIcon(QIcon(":/icons/icon.png"));
 		item->setBackgroundColor(QColor(60, 60, 60));
-		nodeContainer->addItem(item);
+		//nodeContainer->addItem(item);
+		setNodeLibraryItem(item, tile);
 
 	}
 }
@@ -482,51 +497,31 @@ void MainWindow::generateTileNode(QList<NodeLibraryItem*> list)
 		item->setIcon(QIcon(":/icons/icon.png"));
 		item->setBackgroundColor(QColor(60, 60, 60));
 		
-		nodeContainer->addItem(item);
+		//nodeContainer->addItem(item);
+		setNodeLibraryItem(item, tile);
+
 
 	}
 }
 
+void MainWindow::addTabs()
+{
+	for (int i = 0; i < (int)NodeType::PlaceHolder; i++) {
+
+		auto wid = new ListWidget;
+		tabbedWidget->addTab(wid, NodeModel::getEnumString(static_cast<NodeType>(i)));
+	}
+}
+
+void MainWindow::setNodeLibraryItem(QListWidgetItem *item, NodeLibraryItem *tile)
+{
+	auto wid = static_cast<QListWidget*>(tabbedWidget->widget(static_cast<int>(tile->factoryFunction()->nodeType)));
+	wid->addItem(item);
+	
+}
+
 bool MainWindow::eventFilter(QObject * watched, QEvent * event)
 {
-	if (watched == nodeContainer->viewport()) {
-		switch (event->type()) {
-
-			case QEvent::MouseButtonPress: {
-				break;
-			}
-
-			case QEvent::MouseButtonRelease: {
-				break;
-			}
-
-			case QEvent::MouseMove: {
-				auto evt = static_cast<QMouseEvent*>(event);
-				QPoint dragStartPosition(300, 0);
-				if ((evt->pos() - dragStartPosition).manhattanLength()
-					< QApplication::startDragDistance())
-					return true;
-
-				if (evt->buttons() & Qt::LeftButton) {
-					
-					auto item = nodeContainer->currentItem();
-					if (!item) return true;
-					if (!item->isSelected()) return true;
-
-					auto drag = new QDrag(this);
-					auto mimeData = new QMimeData;
-					drag->setMimeData(mimeData);
-
-					mimeData->setText(item->data(Qt::UserRole).toString());
-					Qt::DropAction dropev = drag->exec(Qt::CopyAction);
-				}
-
-				break;
-			}
-			
-			default: break;
-		}
-	}
 
 	if (watched == propertyListWidget) {
 		
