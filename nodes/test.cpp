@@ -182,31 +182,94 @@ FloatNodeModel::FloatNodeModel() :
 	NodeModel()
 {
 	setNodeType(NodeType::Input);
-	//lineEdit = new QLineEdit();
-	//lineEdit->setValidator(new QDoubleValidator());
-	//lineEdit->setStyleSheet("border: 2px solid rgba(220,220,220,1);"
-	//	"border-radius: 2px;"
-	//	"padding: 2px 8px 2px 12px;"
-	//	"background: rgba(0,0,0,0);"
-	//	"color: rgba(250,250,250);");
 
-	//// lineEdit->setMaximumSize(lineEdit->sizeHint());
-	//// lineEdit->setMaximumSize(QSize(160,20));
 
-	//connect(lineEdit, &QLineEdit::textChanged,
-	//	this, &FloatNodeModel::editTextChanged);
-
-	auto wid = new WidgetFloat;
-	auto containerWidget = new QWidget();
+	auto wid = new QWidget;
+	auto label = new QLabel(" ");
 	auto layout = new QVBoxLayout;
-	//containerWidget->setMaximumSize(170, 55);
-	containerWidget->setMaximumWidth(170);
-	containerWidget->setLayout(layout);
-	containerWidget->setStyleSheet("background:rgba(0,0,0,0);");
-	layout->addWidget(wid);
-	layout->setSpacing(0);
+	auto layoutH = new QHBoxLayout;
+	auto layoutH1 = new QHBoxLayout;
+	auto layoutH2 = new QHBoxLayout;
+	auto layoutH3 = new QHBoxLayout;
+	auto min = new QDoubleSpinBox;
+	auto max = new QDoubleSpinBox;
+	auto stepBox = new QDoubleSpinBox;
+	auto valueBox = new QDoubleSpinBox;
 
-	this->widget = containerWidget;
+	min->setValue(0.0);
+	max->setValue(1.0);
+	stepBox->setValue(0.1);
+
+	double step = 0.1;
+	double upModifier = (step * 1000);
+
+	auto slider = new QSlider(Qt::Horizontal);
+	slider->setMinimum(min->value());
+	slider->setMaximum(max->value()*upModifier);
+	slider->setSingleStep(stepBox->value());
+
+	//min->setMaximumWidth(50);
+	//max->setMaximumWidth(50);
+	//valueBox->setMaximumWidth(50);
+	min->setAlignment(Qt::AlignCenter);
+	max->setAlignment(Qt::AlignCenter);
+	valueBox->setAlignment(Qt::AlignCenter);
+	slider->setMaximumWidth(150);
+	
+	
+
+	layout->setSpacing(0);
+	layoutH->setSpacing(0);
+	wid->setLayout(layout);
+
+//	wid->setMaximumWidth(200);
+
+	//layoutH->addWidget(new QLabel("Min"));
+	layoutH->addWidget(min);
+
+//	layoutH1->addWidget(new QLabel("Max"));
+	layoutH->addWidget(max);
+//	layoutH2->addWidget(new QLabel("Step"));
+//	layoutH2->addWidget(stepBox);
+//	layoutH3->addWidget(new QLabel("Value"));
+	layoutH->addWidget(valueBox);
+
+	auto holdem = new QWidget;
+	holdem->setLayout(layoutH);
+
+
+	auto sliderHolder = new QWidget;
+	auto sliderLayout = new QHBoxLayout;
+	sliderHolder->setLayout(sliderLayout);
+	sliderLayout->addWidget(slider);
+	auto minl = new QLabel("min");
+	auto maxl = new QLabel(" max");
+	auto vall = new QLabel("value");
+
+	minl->setAlignment(Qt::AlignCenter);
+	maxl->setAlignment(Qt::AlignCenter);
+	vall->setAlignment(Qt::AlignCenter);
+
+	auto textHolder = new QWidget;
+	//textHolder->setMaximumWidth(150);
+	textHolder->setLayout(layoutH1);
+	layoutH1->setContentsMargins(10, 0, 10, 0);
+
+
+	layoutH1->addWidget(minl);
+		layoutH1->addWidget(maxl);
+		layoutH1->addWidget(vall);
+
+	layout->addWidget(textHolder);
+
+	//layout->addLayout(layoutH);
+	layout->addWidget(holdem);
+	/*layout->addLayout(layoutH1);
+	layout->addLayout(layoutH2);
+	layout->addLayout(layoutH3);*/
+	layout->addWidget(sliderHolder);
+	
+	this->widget = wid;
 
 	typeName = "float";
 	title = "Float";
@@ -215,9 +278,47 @@ FloatNodeModel::FloatNodeModel() :
 	valueSock = new FloatSocketModel("value");
 	addOutputSocket(valueSock);
 
-	connect(wid, &WidgetFloat::valueChanged, [=](double val) {
-		editTextChanged(QString::number(val,'g',2));
+	
+
+	connect(min, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
+		slider->setMinimum(val);
 	});
+	connect(max, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
+		slider->setMaximum(val*upModifier);
+	}); 
+	connect(valueBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
+		slider->blockSignals(true);
+		slider->setValue(val*step);
+		slider->blockSignals(false);
+	});
+	connect(stepBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [&step, &upModifier](double val) {
+		step = val;
+		upModifier = (step * 100);
+	});
+	connect(slider, &QSlider::valueChanged, [=](int value) {
+		editTextChanged(QString::number(value/upModifier, 'g', 2));
+		valueBox->blockSignals(true);
+		valueBox->setValue(qreal(value/upModifier));
+		qDebug() << qreal(value / upModifier);
+		valueBox->blockSignals(false);
+
+	});
+
+
+	wid->setStyleSheet(""
+		"QWidget{ background: rgba(0,0,0,0); color: rgba(250,250,250,1); }"
+
+		"");
+	min->setStyleSheet("QDoubleSpinBox{border: 2px solid rgba(0, 0, 0, .4); "
+		"border-radius: 0px;"
+		"padding: 2px 2px 2px 2px;"
+		"background: rgba(0,0,0,0.2);"
+		"color: rgba(250,250,250);}"
+		"QDoubleSpinBox::up-arrow, QDoubleSpinBox::down-arrow { width: 0; height:0;}"
+		"QDoubleSpinBox::up-button, QDoubleSpinBox::down-button { width: 0; height:0;}");
+	max->setStyleSheet(min->styleSheet());
+	stepBox->setStyleSheet(min->styleSheet());
+	valueBox->setStyleSheet(min->styleSheet());
 
 //	lineEdit->setText("0.0");
 }
