@@ -152,6 +152,22 @@ void MainWindow::newNodeGraph()
     graph->setMasterNode(masterNode);
 
     setNodeGraph(graph);
+
+	for (int i = 0; i < 10; i++) {
+		nodeGraphPreset will;
+		will.name = "willroy"+i;
+		will.title = "will"+i;
+		list.append(will);
+
+	}
+
+
+	auto node = new CreateNewDialog(list);
+	node->exec();
+	
+
+
+
 }
 
 MainWindow::~MainWindow()

@@ -12,6 +12,7 @@
 //#include "nodemodel.h"
 #include "graph/graphicsview.h"
 #include "materialsettingswidget.h"
+#include "dialogs/createnewdialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -24,6 +25,8 @@ struct nodeListModel {
 	int outSockets;
 
 };
+
+
 
 class SceneWidget;
 class GraphNodeScene;
@@ -40,6 +43,7 @@ public:
 
     ~MainWindow();
 
+	QList<nodeGraphPreset> list;
 private:
     void saveGraph();
     void loadGraph();
