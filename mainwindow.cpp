@@ -136,7 +136,7 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
 	sceneWidget->setNodeGraph(graph);
 	sceneWidget->graphScene = newScene;
 	displayWidget->setWidget(sceneWidget);
-	sceneWidget->setMinimumSize(100, 100);
+	displayWidget->setMinimumSize(300, 230);
 	materialSettingsWidget->setMaterialSettings(&graph->settings);
 	this->graph = graph;
 }
@@ -294,7 +294,9 @@ void MainWindow::configureStyleSheet()
 	materialSettingsDock->setStyleSheet(nodeTray->styleSheet());
 	tabbedWidget->setStyleSheet(nodeTray->styleSheet() + 
 	"QTabWidget::pane{	border: 1px solid rgba(0, 0, 0, .5); border - top: 0px solid rgba(0, 0, 0, 0);}"
-	"QTabBar::tab{	background: rgba(21, 21, 21, .7); color: rgba(255, 255, 255, .9); font - weight: 400; font - size: 13em; padding: 5px 22px 5px 22px; }"
+	"QTabBar::tab{	background: rgba(21, 21, 21, .7); color: rgba(250, 250, 250, .9); font - weight: 400; font - size: 13em; padding: 5px 22px 5px 22px; }"
+		"QTabBar::tab:selected{ color: rgba(255, 255, 255, .99); border-top: 2px solid rgba(50,150,250,.8); }"
+		"QTabBar::tab:!selected{ background: rgba(55, 55, 55, .99); border : 1px solid rgba(21,21,21,.4); color: rgba(200,200,200,.5); }"
 	);
 	for (int i = 0; i < tabbedWidget->count(); i++) {
 		tabbedWidget->widget(i)->setStyleSheet(nodeContainer->styleSheet());
@@ -336,6 +338,7 @@ void MainWindow::configureUI()
 	splitView->setOrientation(Qt::Vertical);
 	splitView->addWidget(graphicsView);
 	splitView->addWidget(tabbedWidget);
+	splitView->setStretchFactor(0, 90);
 
 
 	//addDockWidget(Qt::LeftDockWidgetArea, nodeTray, Qt::Vertical);
@@ -345,8 +348,12 @@ void MainWindow::configureUI()
 	addDockWidget(Qt::LeftDockWidgetArea, propertyWidget, Qt::Vertical);
 	//QMainWindow::tabifyDockWidget(propertyWidget, materialSettingsWidget);
 
+
+
 	textWidget->setWidget(textEdit);
 	propertyWidget->setWidget(propertyListWidget);
+	propertyListWidget->setMinimumHeight(400);
+	
 	QSize currentSize(100, 100);
 	
 	// main left dock widget
