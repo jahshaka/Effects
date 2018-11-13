@@ -80,7 +80,7 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 	scrollArea->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
 	scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	scrollArea->setMaximumWidth(450);
-	scrollArea->setMinimumWidth(400);
+	scrollArea->setMinimumWidth(280);
 
 	setLayout(mainLayout);
 
