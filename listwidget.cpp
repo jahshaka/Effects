@@ -17,7 +17,7 @@ ListWidget::ListWidget() : QListWidget()
 	setDragDropMode(QAbstractItemView::DragDrop);
 	setMovement(QListView::Static);
 	setResizeMode(QListWidget::Adjust);
-	setDefaultDropAction(Qt::MoveAction);
+	setDefaultDropAction(Qt::CopyAction);
 	setSelectionMode(QAbstractItemView::SingleSelection);
 	setSelectionRectVisible(false);
 	setDragEnabled(true);

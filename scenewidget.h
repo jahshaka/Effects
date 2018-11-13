@@ -1,6 +1,7 @@
 #pragma once
 
 #include <irisgl/IrisGL.h>
+#include "materialsettingswidget.h"
 
 class QMouseEvent;
 class QWheelEvent;
