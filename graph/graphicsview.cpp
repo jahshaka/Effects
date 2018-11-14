@@ -5,6 +5,7 @@
 #include <QDragEnterEvent>
 #include <QMimeData>
 #include <QPainter>
+#include <QtMath>
 
 qreal GraphicsView::currentScale = 1.0;
 GraphicsView::GraphicsView( QWidget *parent) : QGraphicsView(parent)
@@ -28,7 +29,7 @@ GraphicsView::GraphicsView( QWidget *parent) : QGraphicsView(parent)
 void GraphicsView::increaseScale()
 {
 	double const step = 1.2;
-	double const factor = std::pow(step, 1.0);
+    double const factor = pow(step, 1.0);
 
 	QTransform t = transform();
 
@@ -117,7 +118,7 @@ void GraphicsView::wheelEvent(QWheelEvent * event)
 		return;
 	}
 
-	double const d = delta.y() / std::abs(delta.y());
+    double const d = delta.y() / abs(delta.y());
 
 	if (d > 0.0)
 		increaseScale();

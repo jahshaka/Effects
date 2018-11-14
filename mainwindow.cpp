@@ -155,8 +155,8 @@ void MainWindow::newNodeGraph()
 
 	for (int i = 0; i < 10; i++) {
 		nodeGraphPreset will;
-		will.name = "willroy"+i;
-		will.title = "will"+i;
+        will.name = "willroy"+ QString::number(i);
+        will.title = "will"+ QString::number(i);
 		list.append(will);
 
 	}

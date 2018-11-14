@@ -19,5 +19,7 @@
         <file>icons/math.png</file>
         <file>icons/properties.png</file>
         <file>icons/math.svg</file>
+        <file>icons/checked.png</file>
+        <file>icons/checked.svg</file>
     </qresource>
 </RCC>

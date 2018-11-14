@@ -19,6 +19,8 @@ public:
 	OptionSelection(nodeGraphPreset node);
 
 	nodeGraphPreset info;
+protected:
+    void paintEvent(QPaintEvent *event) override;
 };
 
 class CreateNewDialog : public QDialog
@@ -28,20 +30,23 @@ public:
 	~CreateNewDialog();
 
 	void configureStylesheet();
-	void configureListViews();
 private:
 	QPushButton * cancel;
 	QPushButton * confirm;
 	QLineEdit * nameEdit;
 	QWidget* options;
 	QWidget* presets;
-	QListWidget *optionWidget;
-	QListWidget *presetWidget;
+//	QListWidget *optionWidget;
+//	QListWidget *presetWidget;
 	QWidget *holder;
 	QTabWidget *tabbedWidget;
 	QScrollArea *optionsScroll;
 	QScrollArea *presetsScroll;
-	QWidget *optionsWidget;
+    QWidget *optionsWidget;
+    QWidget *presetsWidget;
+    int num_of_widgets_per_row = 3;
+
+
 
 };
 
