@@ -29,7 +29,11 @@
 #include "graphnodescene.h"
 #include "propertywidgets/basepropertywidget.h"
 #include "listwidget.h"
+#include "scenewidget.h"
+#include <QMainWindow>
 
+namespace shadergraph
+{
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -640,4 +644,6 @@ GraphNodeScene *MainWindow::createNewScene()
     });
 
     return scene;
+}
+
 }
