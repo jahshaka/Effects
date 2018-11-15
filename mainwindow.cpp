@@ -114,6 +114,8 @@ MainWindow::MainWindow(QWidget *parent) :
 	newNodeGraph();
 	generateTileNode();
 	configureStyleSheet();
+	configureProjectDock();
+	configureAssetsDock();
 	setMinimumSize(300, 400);
 
 	QShortcut *shortcut = new QShortcut(QKeySequence("f"), this);
@@ -319,6 +321,7 @@ void MainWindow::configureProjectDock()
 	widget->setLayout(layout);
 
 	projectDock->setWidget(widget);
+	projectDock->setStyleSheet(nodeTray->styleSheet());
 
 	auto searchContainer = new QWidget;
 	auto searchLayout = new QHBoxLayout;
@@ -332,6 +335,7 @@ void MainWindow::configureProjectDock()
 	searchBar->setAlignment(Qt::AlignLeft);
 	searchBar->setFont(font);
 	searchBar->setTextMargins(8, 0, 0, 0);
+	searchBar->setStyleSheet("QLineEdit{ background:rgba(41,41,41,1); border: 1px solid rgba(150,150,150,.2); border-radius: 1px; color: rgba(250,250,250,.95); }");
 
 	layout->addWidget(searchContainer);
 	layout->addStretch();
@@ -341,13 +345,60 @@ void MainWindow::configureProjectDock()
 void MainWindow::configureAssetsDock()
 {
 
+	auto holder = new QWidget;
+	auto layout = new QVBoxLayout;
+	holder->setLayout(layout);
+	layout->setContentsMargins(0, 0, 0, 0);
+
 	auto tabWidget = new QTabWidget;
 	presets = new ListWidget;
 	effects = new ListWidget;
 
 	tabWidget->addTab(presets, "Presets");
 	tabWidget->addTab(effects, "My Fx");
-	assetsDock->setWidget(tabWidget);
+	tabWidget->setStyleSheet(tabbedWidget->styleSheet());
+
+	
+	auto buttonBar = new QWidget;
+	auto buttonLayout = new QHBoxLayout;
+	auto exportBtn = new QPushButton("help");
+	auto importBtn = new QPushButton("help");
+	auto addBtn = new QPushButton("+");
+	{
+		buttonBar->setLayout(buttonLayout);
+		buttonLayout->addStretch();
+		buttonLayout->addWidget(exportBtn);
+		buttonLayout->addStretch();
+		buttonLayout->addWidget(importBtn);
+		buttonLayout->addStretch();
+		buttonLayout->addWidget(addBtn);
+		buttonLayout->addStretch();
+
+		exportBtn->setCursor(Qt::PointingHandCursor);
+		importBtn->setCursor(Qt::PointingHandCursor);
+		addBtn->setCursor(Qt::PointingHandCursor);
+
+		buttonBar->setStyleSheet(
+			"QPushButton{background: rgba(15,15,15,1); color:rgba(230,230,230,1); border: 1px solid rgba(50,50,50,.4); padding: 10px 15px; }"
+			"QPushButton:hover{background: rgba(30,130,230,1);}"
+		);
+
+		connect(exportBtn, &QPushButton::clicked, [=]() {
+
+		});
+		connect(importBtn, &QPushButton::clicked, [=]() {
+
+		});
+		connect(addBtn, &QPushButton::clicked, [=]() {
+
+		});
+	}
+
+
+	layout->addWidget(tabWidget);
+	layout->addWidget(buttonBar);
+	assetsDock->setWidget(holder);
+	assetsDock->setStyleSheet(nodeTray->styleSheet());
 }
 
 void MainWindow::configureUI()
@@ -474,8 +525,7 @@ void MainWindow::configureUI()
 	propertyListWidget->installEventFilter(this);
 
 	addTabs();
-	configureProjectDock(); 
-	configureAssetsDock();
+	
 }
 
 void MainWindow::generateTileNode()
