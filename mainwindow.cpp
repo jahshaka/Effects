@@ -359,9 +359,9 @@ void MainWindow::configureUI()
 	QSize currentSize(100, 100);
 	
 	// main left dock widget
-	auto container = new QWidget;
-	auto containerLayout = new QVBoxLayout;
-	container->setLayout(containerLayout);
+	//auto container = new QWidget;
+	//auto containerLayout = new QVBoxLayout;
+	//container->setLayout(containerLayout);
 
 	//search box
 	auto searchContainer = new QWidget;
@@ -376,6 +376,7 @@ void MainWindow::configureUI()
 	searchBar->setPlaceholderText("search");
 	searchBar->setAlignment(Qt::AlignLeft);
 	searchBar->setFont(font);
+
 	connect(searchBar, &QLineEdit::textChanged, [=](QString str) {
 		nodeContainer->clear();
 		QList<NodeLibraryItem*> lis;
@@ -425,13 +426,13 @@ void MainWindow::configureUI()
 
 
 
-	nodeTray->setWidget(container);
+	//nodeTray->setWidget(container);
 	materialSettingsDock->setWidget(materialSettingsWidget);
 
-	containerLayout->addWidget(searchContainer);
-	containerLayout->addWidget(nodeContainer);
-	containerLayout->addSpacing(8);
-	containerLayout->addLayout(toggleLayout);
+	//containerLayout->addWidget(searchContainer);
+	//containerLayout->addWidget(nodeContainer);
+	//containerLayout->addSpacing(8);
+	//containerLayout->addLayout(toggleLayout);
 
 	nodeContainer->setAlternatingRowColors(false);
 	nodeContainer->setSpacing(0);
@@ -460,14 +461,14 @@ void MainWindow::configureUI()
 	searchContainer->setStyleSheet("background:rgba(32,32,32,1);");
 	searchBar->setStyleSheet("QLineEdit{ background:rgba(41,41,41,1); border: 1px solid rgba(150,150,150,.2); border-radius: 2px; }");
 
-	container->setStyleSheet(
-		"QPushButton{ background: #333; color: #DEDEDE; border : 0; padding: 4px 16px; }"
-		"QPushButton:hover{ background-color: #555; }"
-		"QPushButton:pressed{ background-color: #444; }"
-		"QPushButton:disabled{ color: #444; }"
-		"QPushButton:checked{ background-color: rgba(50,150,255,1); }"
-		"QLineEdit{ padding: 6px 10px; border-radius: 2px; }"
-	);
+	//container->setStyleSheet(
+	//	"QPushButton{ background: #333; color: #DEDEDE; border : 0; padding: 4px 16px; }"
+	//	"QPushButton:hover{ background-color: #555; }"
+	//	"QPushButton:pressed{ background-color: #444; }"
+	//	"QPushButton:disabled{ color: #444; }"
+	//	"QPushButton:checked{ background-color: rgba(50,150,255,1); }"
+	//	"QLineEdit{ padding: 6px 10px; border-radius: 2px; }"
+	//);
 
 	addTabs();
 }
