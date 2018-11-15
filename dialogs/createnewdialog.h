@@ -3,6 +3,7 @@
 #include <QLineEdit>
 #include <QGroupBox>
 #include <QListWidget>
+#include <QLabel>
 #include <QPushButton>
 #include "../listwidget.h"
 #include <QWidget>
@@ -15,12 +16,18 @@ struct nodeGraphPreset {
 
 class OptionSelection : public QPushButton
 {
+	Q_OBJECT
 public:
 	OptionSelection(nodeGraphPreset node);
 
 	nodeGraphPreset info;
+	QPixmap checkedIconIcon;
 protected:
     void paintEvent(QPaintEvent *event) override;
+
+signals:
+	void buttonSelected(OptionSelection* button);
+	void OptionSelected(nodeGraphPreset info);
 };
 
 class CreateNewDialog : public QDialog
@@ -36,14 +43,14 @@ private:
 	QLineEdit * nameEdit;
 	QWidget* options;
 	QWidget* presets;
-//	QListWidget *optionWidget;
-//	QListWidget *presetWidget;
 	QWidget *holder;
 	QTabWidget *tabbedWidget;
 	QScrollArea *optionsScroll;
 	QScrollArea *presetsScroll;
     QWidget *optionsWidget;
     QWidget *presetsWidget;
+	nodeGraphPreset currentInfoSelected;
+	QLabel *infoLabel;
     int num_of_widgets_per_row = 3;
 
 

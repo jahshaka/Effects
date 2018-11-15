@@ -86,7 +86,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(actionSave, &QAction::triggered, this, &MainWindow::saveGraph);
 	connect(actionLoad, &QAction::triggered, this, &MainWindow::loadGraph);
 	connect(actionExport, &QAction::triggered, this, &MainWindow::exportGraph);
-	connect(actionNew, &QAction::triggered, this, &MainWindow::newNodeGraph);
+	connect(actionNew, &QAction::triggered, this, &MainWindow::createNewGraph);
 
 	connect(edit, &QMenu::triggered, [=]() {
 	//	for (auto item : scene->nodeGraph->library->getItems()) {
@@ -152,21 +152,6 @@ void MainWindow::newNodeGraph()
     graph->setMasterNode(masterNode);
 
     setNodeGraph(graph);
-
-	for (int i = 0; i < 10; i++) {
-		nodeGraphPreset will;
-        will.name = "willroy"+ QString::number(i);
-        will.title = "will"+ QString::number(i);
-		list.append(will);
-
-	}
-
-
-	auto node = new CreateNewDialog(list);
-	node->exec();
-	
-
-
 
 }
 
@@ -545,6 +530,24 @@ void MainWindow::setNodeLibraryItem(QListWidgetItem *item, NodeLibraryItem *tile
 	auto wid = static_cast<QListWidget*>(tabbedWidget->widget(static_cast<int>(tile->factoryFunction()->nodeType)));
 	wid->addItem(item);
 	
+}
+
+void MainWindow::createNewGraph()
+{
+	for (int i = 0; i < 3; i++) {
+		nodeGraphPreset will;
+		will.name = "willroy" + QString::number(i);
+		will.title = "will" + QString::number(i);
+		list.append(will);
+
+	}
+
+	auto node = new CreateNewDialog(list);
+	node->exec();
+
+	connect(node, &QDialog::accepted, [=]() {
+		newNodeGraph();
+	});
 }
 
 bool MainWindow::eventFilter(QObject * watched, QEvent * event)

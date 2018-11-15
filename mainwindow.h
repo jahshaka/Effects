@@ -55,6 +55,7 @@ private:
 	void generateTileNode(QList<NodeLibraryItem*> list);
 	void addTabs();
 	void setNodeLibraryItem(QListWidgetItem *item, NodeLibraryItem *tile);
+	void createNewGraph();
 
 	bool eventFilter(QObject *watched, QEvent *event);
 
