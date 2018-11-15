@@ -55,6 +55,7 @@ set(CPP
 	nodes/utils.cpp
 	nodes/inputs.cpp
 	dialogs/createnewdialog.cpp
+	dialogs/searchdialog.cpp
 	)
 
 set(HEADERS
@@ -97,6 +98,7 @@ set(HEADERS
 		nodes/utils.h
 		nodes/inputs.h
 		dialogs/createnewdialog.h
+		dialogs/searchdialog.h
 
 	)
 

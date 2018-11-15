@@ -18,6 +18,7 @@
 #include <QFile>
 #include <QByteArray>
 #include <QScrollBar>
+#include <QShortcut>
 //#include "graphtest.h"
 #include "generator/shadergenerator.h"
 #include "nodes/test.h"
@@ -28,7 +29,7 @@
 #include <QPointer>
 #include "graphnodescene.h"
 #include "propertywidgets/basepropertywidget.h"
-#include "listwidget.h"
+#include "dialogs/searchdialog.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -114,6 +115,12 @@ MainWindow::MainWindow(QWidget *parent) :
 	generateTileNode();
 	configureStyleSheet();
 	setMinimumSize(300, 400);
+
+	QShortcut *shortcut = new QShortcut(QKeySequence("f"), this);
+	connect(shortcut,&QShortcut::activated, [=]() {
+		auto dialog = new SearchDialog(this->graph);
+		dialog->show ();
+	});
 }
 
 void MainWindow::setNodeGraph(NodeGraph *graph)
@@ -305,17 +312,56 @@ void MainWindow::configureStyleSheet()
 	}
 }
 
+void MainWindow::configureProjectDock()
+{
+	auto widget = new QWidget;
+	auto layout = new QVBoxLayout;
+	widget->setLayout(layout);
+
+	projectDock->setWidget(widget);
+
+	auto searchContainer = new QWidget;
+	auto searchLayout = new QHBoxLayout;
+	auto searchBar = new QLineEdit;
+
+	searchContainer->setLayout(searchLayout);
+	searchLayout->addWidget(searchBar);
+	searchLayout->addSpacing(12);
+
+	searchBar->setPlaceholderText("search");
+	searchBar->setAlignment(Qt::AlignLeft);
+	searchBar->setFont(font);
+	searchBar->setTextMargins(8, 0, 0, 0);
+
+	layout->addWidget(searchContainer);
+	layout->addStretch();
+
+}
+
+void MainWindow::configureAssetsDock()
+{
+
+	auto tabWidget = new QTabWidget;
+	presets = new ListWidget;
+	effects = new ListWidget;
+
+	tabWidget->addTab(presets, "Presets");
+	tabWidget->addTab(effects, "My Fx");
+	assetsDock->setWidget(tabWidget);
+}
+
 void MainWindow::configureUI()
 {
 
 	font.setPointSizeF(font.pointSize() * devicePixelRatioF());
 	setFont(font);
 
-
 	nodeTray = new QDockWidget("Library",this);
 	centralWidget = new QWidget();
 	textWidget = new QDockWidget("Code View");
 	displayWidget = new QDockWidget("Display");
+	assetsDock = new QDockWidget("Assets");
+	projectDock = new QDockWidget("Project Assets");
 
 	propertyWidget = new QDockWidget("Properties");
 	materialSettingsDock = new QDockWidget("Material Settings");
@@ -332,8 +378,8 @@ void MainWindow::configureUI()
 	displayWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	propertyWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	materialSettingsDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-
-
+	projectDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	assetsDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 
 	setDockNestingEnabled(true);
 	this->setCentralWidget(splitView);
@@ -344,10 +390,13 @@ void MainWindow::configureUI()
 
 
 	//addDockWidget(Qt::LeftDockWidgetArea, nodeTray, Qt::Vertical);
-	addDockWidget(Qt::LeftDockWidgetArea, textWidget, Qt::Vertical);
+	addDockWidget(Qt::LeftDockWidgetArea, projectDock, Qt::Vertical);
+	addDockWidget(Qt::LeftDockWidgetArea, assetsDock, Qt::Vertical);
+	addDockWidget(Qt::RightDockWidgetArea, textWidget, Qt::Vertical);
 	addDockWidget(Qt::RightDockWidgetArea, displayWidget, Qt::Vertical);
 	addDockWidget(Qt::RightDockWidgetArea, materialSettingsDock, Qt::Vertical);
 	addDockWidget(Qt::LeftDockWidgetArea, propertyWidget, Qt::Vertical);
+
 	//QMainWindow::tabifyDockWidget(propertyWidget, materialSettingsWidget);
 
 
@@ -363,33 +412,7 @@ void MainWindow::configureUI()
 	//auto containerLayout = new QVBoxLayout;
 	//container->setLayout(containerLayout);
 
-	//search box
-	auto searchContainer = new QWidget;
-	auto searchLayout = new QHBoxLayout;
-	auto searchBar = new QLineEdit;
-	//searchContainer->setContentsMargins(0, 0, 0, 0);
-
-	searchContainer->setLayout(searchLayout);
-	searchLayout->addWidget(searchBar);
-	searchLayout->addSpacing(12);
-
-	searchBar->setPlaceholderText("search");
-	searchBar->setAlignment(Qt::AlignLeft);
-	searchBar->setFont(font);
-
-	connect(searchBar, &QLineEdit::textChanged, [=](QString str) {
-		nodeContainer->clear();
-		QList<NodeLibraryItem*> lis;
-		for (auto item : graph->library->items) {
-			if (item->displayName.contains(str, Qt::CaseInsensitive)) lis.append(item);
-		}
-		generateTileNode(lis);
-		if (str.length() == 0) {
-			nodeContainer->clear();
-			generateTileNode();
-		}
-
-	});
+	
 
 	auto assetViewToggleButtonGroup = new QButtonGroup;
 	auto toggleIconView = new QPushButton(tr("Icon"));
@@ -424,15 +447,7 @@ void MainWindow::configureUI()
 		nodeContainer->setViewMode(QListWidget::ListMode);
 	});
 
-
-
-	//nodeTray->setWidget(container);
 	materialSettingsDock->setWidget(materialSettingsWidget);
-
-	//containerLayout->addWidget(searchContainer);
-	//containerLayout->addWidget(nodeContainer);
-	//containerLayout->addSpacing(8);
-	//containerLayout->addLayout(toggleLayout);
 
 	nodeContainer->setAlternatingRowColors(false);
 	nodeContainer->setSpacing(0);
@@ -458,19 +473,9 @@ void MainWindow::configureUI()
 	nodeContainer->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	propertyListWidget->installEventFilter(this);
 
-	searchContainer->setStyleSheet("background:rgba(32,32,32,1);");
-	searchBar->setStyleSheet("QLineEdit{ background:rgba(41,41,41,1); border: 1px solid rgba(150,150,150,.2); border-radius: 2px; }");
-
-	//container->setStyleSheet(
-	//	"QPushButton{ background: #333; color: #DEDEDE; border : 0; padding: 4px 16px; }"
-	//	"QPushButton:hover{ background-color: #555; }"
-	//	"QPushButton:pressed{ background-color: #444; }"
-	//	"QPushButton:disabled{ color: #444; }"
-	//	"QPushButton:checked{ background-color: rgba(50,150,255,1); }"
-	//	"QLineEdit{ padding: 6px 10px; border-radius: 2px; }"
-	//);
-
 	addTabs();
+	configureProjectDock(); 
+	configureAssetsDock();
 }
 
 void MainWindow::generateTileNode()
@@ -512,15 +517,12 @@ void MainWindow::generateTileNode(QList<NodeLibraryItem*> list)
 		
 		//nodeContainer->addItem(item);
 		setNodeLibraryItem(item, tile);
-
-
 	}
 }
 
 void MainWindow::addTabs()
 {
 	for (int i = 0; i < (int)NodeType::PlaceHolder; i++) {
-
 		auto wid = new ListWidget;
 		tabbedWidget->addTab(wid, NodeModel::getEnumString(static_cast<NodeType>(i)));
 	}
@@ -530,7 +532,6 @@ void MainWindow::setNodeLibraryItem(QListWidgetItem *item, NodeLibraryItem *tile
 {
 	auto wid = static_cast<QListWidget*>(tabbedWidget->widget(static_cast<int>(tile->factoryFunction()->nodeType)));
 	wid->addItem(item);
-	
 }
 
 void MainWindow::createNewGraph()
@@ -540,7 +541,6 @@ void MainWindow::createNewGraph()
 		will.name = "willroy" + QString::number(i);
 		will.title = "will" + QString::number(i);
 		list.append(will);
-
 	}
 
 	auto node = new CreateNewDialog(list);
@@ -555,7 +555,6 @@ bool MainWindow::eventFilter(QObject * watched, QEvent * event)
 {
 
 	if (watched == propertyListWidget) {
-		
 		switch (event->type()) {
 			case QEvent::MouseButtonPress: {
 				break;

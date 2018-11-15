@@ -13,6 +13,7 @@
 #include "graph/graphicsview.h"
 #include "materialsettingswidget.h"
 #include "dialogs/createnewdialog.h"
+#include "listwidget.h"
 
 namespace Ui {
 class MainWindow;
@@ -77,6 +78,8 @@ private:
 
 	QDockWidget *propertyWidget;
 	QDockWidget *materialSettingsDock;
+	QDockWidget *projectDock;
+	QDockWidget *assetsDock;
 	QTabWidget *tabbedWidget;
 	GraphicsView* graphicsView;
 	QTextEdit* textEdit;
@@ -87,6 +90,12 @@ private:
 	QMenu *window;
 	QMenu *edit;
 	QFont font;
+
+	ListWidget *presets;
+	ListWidget *effects;
+
 	void configureStyleSheet();
+	void configureProjectDock();
+	void configureAssetsDock();
 };
 #endif // MAINWINDOW_H

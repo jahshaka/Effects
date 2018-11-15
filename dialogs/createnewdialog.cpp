@@ -200,6 +200,7 @@ OptionSelection::OptionSelection(nodeGraphPreset node) : QPushButton()
 {
 	setFixedSize(120, 120);
 	checkedIconIcon.load(":/icons/checked.svg"); 
+	checkedIconIcon = checkedIconIcon.scaled(24, 24, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 	info = node;
 
 	if (info.iconPath == "") setIcon(QIcon(info.iconPath));
