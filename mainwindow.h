@@ -1,8 +1,8 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
 #include <QListWidget>
 #include <QMainWindow>
+#include <QWidget>
 #include <QGraphicsPathItem>
 #include <QGraphicsView>
 #include <QTextEdit>
@@ -15,6 +15,16 @@
 #include "dialogs/createnewdialog.h"
 #include "listwidget.h"
 
+
+class QMenuBar;
+class SceneWidget;
+class GraphNodeScene;
+class NodeGraph;
+class NodeLibraryItem;
+
+namespace shadergraph
+{
+
 namespace Ui {
 class MainWindow;
 }
@@ -26,13 +36,6 @@ struct nodeListModel {
 	int outSockets;
 
 };
-
-
-
-class SceneWidget;
-class GraphNodeScene;
-class NodeGraph;
-class NodeLibraryItem;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -98,4 +101,5 @@ private:
 	void configureProjectDock();
 	void configureAssetsDock();
 };
-#endif // MAINWINDOW_H
+
+}
