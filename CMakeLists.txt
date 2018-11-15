@@ -54,6 +54,8 @@ set(CPP
 	nodes/math.cpp
 	nodes/utils.cpp
 	nodes/inputs.cpp
+	dialogs/createnewdialog.cpp
+	dialogs/searchdialog.cpp
 	)
 
 set(HEADERS
@@ -95,6 +97,9 @@ set(HEADERS
 		nodes/math.h
 		nodes/utils.h
 		nodes/inputs.h
+		dialogs/createnewdialog.h
+		dialogs/searchdialog.h
+
 	)
 
 set(FORMS

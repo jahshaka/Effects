@@ -12,6 +12,8 @@
 //#include "nodemodel.h"
 #include "graph/graphicsview.h"
 #include "materialsettingswidget.h"
+#include "dialogs/createnewdialog.h"
+#include "listwidget.h"
 
 
 class QMenuBar;
@@ -34,7 +36,6 @@ struct nodeListModel {
 	int outSockets;
 
 };
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -46,6 +47,7 @@ public:
 
     ~MainWindow();
 
+	QList<nodeGraphPreset> list;
 private:
     void saveGraph();
     void loadGraph();
@@ -57,6 +59,7 @@ private:
 	void generateTileNode(QList<NodeLibraryItem*> list);
 	void addTabs();
 	void setNodeLibraryItem(QListWidgetItem *item, NodeLibraryItem *tile);
+	void createNewGraph();
 
 	bool eventFilter(QObject *watched, QEvent *event);
 
@@ -78,6 +81,8 @@ private:
 
 	QDockWidget *propertyWidget;
 	QDockWidget *materialSettingsDock;
+	QDockWidget *projectDock;
+	QDockWidget *assetsDock;
 	QTabWidget *tabbedWidget;
 	GraphicsView* graphicsView;
 	QTextEdit* textEdit;
@@ -88,7 +93,13 @@ private:
 	QMenu *window;
 	QMenu *edit;
 	QFont font;
+
+	ListWidget *presets;
+	ListWidget *effects;
+
 	void configureStyleSheet();
+	void configureProjectDock();
+	void configureAssetsDock();
 };
 
 }
