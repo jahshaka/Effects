@@ -11,10 +11,11 @@
 #include <QTimer>
 
 #include <irisgl/IrisGL.h>
+#include <irisgl/Graphics.h>
 #include "graph/nodegraph.h"
 #include "graphnodescene.h"
 #include "texturemanager.h"
-#include "irisgl/src/graphics/graphicshelper.h"
+//#include "irisgl/src/graphics/graphicshelper.h"
 
 CustomRenderWidget::CustomRenderWidget() :
 	iris::RenderWidget(nullptr)
@@ -32,7 +33,7 @@ QString CustomRenderWidget::assetPath(QString relPath)
 
 void CustomRenderWidget::start()
 {
-	targetFPS = 0;
+	//targetFPS = 0;
 
 	scale = 1.0;
 

@@ -3,7 +3,7 @@
 #include <QString>
 #include <QMap>
 #include <QVector>
-#include "irisgl/include/irisgl/IrisGL.h"
+#include "irisgl/IrisGL.h"
 
 class GraphTexture
 {

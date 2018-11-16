@@ -1,4 +1,4 @@
-project(MaterialNodeGraph)
+project(ShaderGraph)
 
 set (CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -9,12 +9,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets Core)
 
-add_subdirectory(irisgl)
+#add_subdirectory(irisgl)
 set_target_properties(IrisGL PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set_target_properties(assimp PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 set(CPP
-	main.cpp
+	#main.cpp
 	mainwindow.cpp
 	#nodegraph.cpp
     #nodemodel.cpp
@@ -54,6 +54,8 @@ set(CPP
 	nodes/math.cpp
 	nodes/utils.cpp
 	nodes/inputs.cpp
+	dialogs/createnewdialog.cpp
+	dialogs/searchdialog.cpp
 	)
 
 set(HEADERS
@@ -95,6 +97,9 @@ set(HEADERS
 		nodes/math.h
 		nodes/utils.h
 		nodes/inputs.h
+		dialogs/createnewdialog.h
+		dialogs/searchdialog.h
+
 	)
 
 set(FORMS
@@ -118,11 +123,15 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 #qt5_wrap_cpp(HEADERS_moc ${HEADERS})
 #qt5_wrap_ui(UI_moc ${FORMS})
 
-add_executable(MaterialNodeGraph ${HEADERS} ${CPP} ${FORMS} ${QRCS})
-include_directories(MaterialNodeGraph "irisgl/include")
-target_link_libraries(MaterialNodeGraph ${LIBS})
+add_library(shadergraph STATIC ${HEADERS} ${CPP} ${FORMS} ${QRCS})
+target_link_libraries(shadergraph Qt5::Widgets)
 
 
+#add_executable(MaterialNodeGraph ${HEADERS} ${CPP} ${FORMS} ${QRCS})
+#include_directories(MaterialNodeGraph "irisgl/include")
+#target_link_libraries(MaterialNodeGraph ${LIBS})
+
+#[[
 if (WIN32)
     get_target_property(QT5_QMAKE_EXECUTABLE Qt5::qmake IMPORTED_LOCATION)
     get_filename_component(QT5_WINDEPLOYQT_EXECUTABLE ${QT5_QMAKE_EXECUTABLE} PATH)
@@ -132,3 +141,4 @@ if (WIN32)
     add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
         COMMAND ${QT5_WINDEPLOYQT_EXECUTABLE} $<TARGET_FILE:${CMAKE_PROJECT_NAME}>)
 endif()
+]]

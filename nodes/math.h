@@ -25,7 +25,7 @@ public:
 	SubtractNode();
 
 	virtual void process(ModelContext* context) override;
-	virtual QString SubtractNode::generatePreview(ModelContext* context) override;
+    virtual QString generatePreview(ModelContext* context) override;
 };
 
 class MultiplyNode : public NodeModel

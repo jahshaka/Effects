@@ -1,6 +1,6 @@
 #include "scenewidget.h"
 #include <irisgl/IrisGL.h>
-#include "irisgl/src/graphics/graphicshelper.h"
+//#include "irisgl/src/graphics/graphicshelper.h"
 //#include "nodemodel.h"
 #include "properties.h"
 #include <QVector2D>
