@@ -447,6 +447,14 @@ void GraphNode::paint(QPainter *painter,
 		painter->drawRoundedRect(rect, titleRadius, titleRadius);
 	}
 
+
+
+	
+
+
+
+
+
 	painter->setPen(pen());
 	setBrush(QColor(45, 45, 51));
 	painter->fillPath(path(), brush());
@@ -474,7 +482,9 @@ void GraphNode::paint(QPainter *painter,
 	painter->setPen(pen);
 //	painter->drawRoundedRect(boundingRect(), titleRadius, titleRadius);
 
-	
+	auto rect = boundingRect();
+	painter->setPen(QPen(titleColor, 3));
+	painter->drawRoundedRect(rect, titleRadius, titleRadius);
 
 }
 
