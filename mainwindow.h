@@ -14,7 +14,9 @@
 #include "materialsettingswidget.h"
 #include "dialogs/createnewdialog.h"
 #include "listwidget.h"
-
+#include "misc/QtAwesome.h"
+#include "misc/QtAwesomeAnim.h"
+#include "shaderassetwidget.h"
 
 class QMenuBar;
 class SceneWidget;
@@ -97,10 +99,14 @@ private:
 
 	ListWidget *presets;
 	ListWidget *effects;
+	ShaderAssetWidget * assetWidget;
 
 	void configureStyleSheet();
 	void configureProjectDock();
 	void configureAssetsDock();
+
+	QtAwesome *fontIcons;
+
 };
 
 }

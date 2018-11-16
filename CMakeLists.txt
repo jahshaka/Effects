@@ -10,7 +10,7 @@ set(EFFECT_BUILD_AS_LIB false CACHE BOOL "Builds the lib as a static library to 
 #set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-find_package(Qt5 REQUIRED COMPONENTS Widgets Core)
+find_package(Qt5 REQUIRED COMPONENTS Widgets Core Sql)
 
 if (NOT EFFECT_BUILD_AS_LIB)
 	add_subdirectory(irisgl)
@@ -40,6 +40,7 @@ set(CPP
 	socket.cpp
 	graphnode.cpp
 	graphnodescene.cpp
+	shaderassetwidget.cpp
     #graphtest.cpp
 	# graph
 	graph/nodegraph.cpp
@@ -85,6 +86,7 @@ set(HEADERS
 		socket.h
 		graphnode.h
 		graphnodescene.h
+		shaderassetwidget.h
         #graphtest.h
 		#graph
 		graph/nodegraph.h
@@ -109,7 +111,8 @@ set(HEADERS
 
 		dialogs/createnewdialog.h
 		dialogs/searchdialog.h
-
+		../core/project.h
+		../core/database/database.h
 	)
 
 set(FORMS
@@ -137,6 +140,8 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 
+add_library(shadergraph STATIC ${HEADERS} ${CPP} ${FORMS} ${QRCS})
+target_link_libraries(shadergraph Qt5::Widgets Qt5::Sql)
 
 if (EFFECT_BUILD_AS_LIB)
 

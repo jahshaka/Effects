@@ -34,6 +34,8 @@
 #include "scenewidget.h"
 #include <QMainWindow>
 
+
+
 namespace shadergraph
 {
 
@@ -41,6 +43,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
   //  ui->setupUi(this);
+	fontIcons = new QtAwesome;
+	fontIcons->initFontAwesome();
 	configureUI();
 
     scene = nullptr;
@@ -344,8 +348,9 @@ void MainWindow::configureProjectDock()
 	searchBar->setTextMargins(8, 0, 0, 0);
 	searchBar->setStyleSheet("QLineEdit{ background:rgba(41,41,41,1); border: 1px solid rgba(150,150,150,.2); border-radius: 1px; color: rgba(250,250,250,.95); }");
 
-	layout->addWidget(searchContainer);
-	layout->addStretch();
+	//layout->addWidget(searchContainer);
+	layout->addWidget(assetWidget);
+	//layout->addStretch();
 
 }
 
@@ -372,6 +377,8 @@ void MainWindow::configureAssetsDock()
 	auto importBtn = new QPushButton("help");
 	auto addBtn = new QPushButton("+");
 	{
+		int fontSize = 16;
+
 		buttonBar->setLayout(buttonLayout);
 		buttonLayout->addStretch();
 		buttonLayout->addWidget(exportBtn);
@@ -380,6 +387,13 @@ void MainWindow::configureAssetsDock()
 		buttonLayout->addStretch();
 		buttonLayout->addWidget(addBtn);
 		buttonLayout->addStretch();
+
+		exportBtn->setText(QChar(fa::upload));
+		exportBtn->setFont(fontIcons->font(fontSize));
+		importBtn->setText(QChar(fa::download));
+		importBtn->setFont(fontIcons->font(fontSize));
+		addBtn->setText(QChar(fa::plus));
+		addBtn->setFont(fontIcons->font(fontSize));
 
 		exportBtn->setCursor(Qt::PointingHandCursor);
 		importBtn->setCursor(Qt::PointingHandCursor);
@@ -430,6 +444,7 @@ void MainWindow::configureUI()
 	propertyListWidget = new PropertyListWidget;
 	nodeContainer = new QListWidget;
 	splitView = new QSplitter;
+	assetWidget = new ShaderAssetWidget;
 
 	nodeTray->setAllowedAreas(Qt::AllDockWidgetAreas);
 	textWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
