@@ -95,8 +95,8 @@ void MultiplyNode::process(ModelContext* context)
 DivideNode::DivideNode()
 {
 	setNodeType(NodeType::Math);
-	title = "Multiply";
-	typeName = "multiply";
+	title = "Divide";
+	typeName = "divide";
 
 	addInputSocket(new Vector4SocketModel("A"));
 	addInputSocket(new Vector4SocketModel("B"));

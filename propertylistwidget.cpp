@@ -128,8 +128,24 @@ void PropertyListWidget::setNodeGraph(NodeGraph *graph)
     // build properties
 	for (auto prop : graph->properties) {
 		switch (prop->type) {
+		case PropertyType::Int:
+			addIntProperty((IntProperty*)prop);
+			break;
 		case PropertyType::Float:
 			addFloatProperty((FloatProperty*)prop);
+			break;
+		case PropertyType::Vec2:
+			addVec2Property((Vec2Property*)prop);
+			break;
+		case PropertyType::Vec3:
+			addVec3Property((Vec3Property*)prop);
+			break;
+		case PropertyType::Vec4:
+			addVec4Property((Vec4Property*)prop);
+			break;
+		case PropertyType::Texture:
+			addTextureProperty((TextureProperty*)prop);
+			break;
 		default:
 			break;
 		}

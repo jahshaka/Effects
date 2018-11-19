@@ -64,6 +64,7 @@ private:
 	bool eventFilter(QObject *watched, QEvent *event);
 
     GraphNodeScene* createNewScene();
+	void regenerateShader();
 
 private:
     Ui::MainWindow *ui;

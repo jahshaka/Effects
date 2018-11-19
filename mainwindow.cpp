@@ -201,6 +201,8 @@ void MainWindow::loadGraph()
     auto graph = NodeGraph::deserialize(d.object(), new LibraryV1());
     this->setNodeGraph(graph);
     this->restoreGraphPositions(d.object());
+
+	regenerateShader();
 }
 
 void MainWindow::exportGraph()
@@ -714,6 +716,22 @@ GraphNodeScene *MainWindow::createNewScene()
     });
 
     return scene;
+}
+
+void MainWindow::regenerateShader()
+{
+	ShaderGenerator shaderGen;
+	auto code = shaderGen.generateShader(graph);
+	textEdit->setPlainText(code);
+	sceneWidget->updateShader(code);
+	sceneWidget->resetRenderTime();
+
+	// assign previews
+	auto nodes = scene->getNodes();
+	for (auto node : nodes) {
+		if (shaderGen.shaderPreviews.contains(node->nodeId))
+			node->setPreviewShader(shaderGen.shaderPreviews[node->nodeId]);
+	}
 }
 
 }

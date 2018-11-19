@@ -183,7 +183,6 @@ FloatNodeModel::FloatNodeModel() :
 {
 	setNodeType(NodeType::Input);
 
-
 	auto wid = new QWidget;
 	auto label = new QLabel(" ");
 	auto layout = new QVBoxLayout;
@@ -401,6 +400,7 @@ TimeNode::TimeNode()
 	setNodeType(NodeType::Input);
 
 	title = "Time";
+	typeName = "time";
 
 	addOutputSocket(new FloatSocketModel("Seconds", "u_time"));
 }
@@ -415,6 +415,7 @@ SineNode::SineNode()
 	setNodeType(NodeType::Input);
 
 	title = "Sine";
+	typeName = "sine";
 
 	addInputSocket(new Vector3SocketModel("Value"));
 	addOutputSocket(new Vector3SocketModel("Result"));
@@ -437,6 +438,8 @@ MakeColorNode::MakeColorNode() {
 
 
 	title = "Color";
+	typeName = "makeColor";
+
 	addInputSocket(new FloatSocketModel("Value R"));
 	addInputSocket(new FloatSocketModel("Value G"));
 	addInputSocket(new FloatSocketModel("Value B"));
@@ -462,6 +465,7 @@ TextureCoordinateNode::TextureCoordinateNode()
 	setNodeType(NodeType::Input);
 
 	title = "Texture Coordinate";
+	typeName = "texCoords";
 
 	combo = new QComboBox();
 	combo->addItem("TexCoord0");
@@ -526,6 +530,7 @@ TextureSamplerNode::TextureSamplerNode()
 
 
 	title = "Sample Texture";
+	typeName = "textureSampler";
 
 	addInputSocket(new TextureSocketModel("Texture"));
 	addInputSocket(new Vector2SocketModel("UV","v_texCoord"));
@@ -659,6 +664,8 @@ TextureNode::TextureNode()
 {
 	setNodeType(NodeType::Input);
 	title = "Texture";
+	typeName = "texture";
+
 	auto widget = new QWidget;
 	auto layout = new QVBoxLayout;
 	widget->setLayout(layout);
@@ -716,6 +723,7 @@ PulsateNode::PulsateNode()
 	setNodeType(NodeType::Math);
 
 	title = "Pulsate";
+	typeName = "pulsate";
 
 	addInputSocket(new FloatSocketModel("Speed", "1.0"));
 	addOutputSocket(new FloatSocketModel("Result"));
@@ -736,6 +744,7 @@ PannerNode::PannerNode()
 	setNodeType(NodeType::Input);
 
 	title = "Panner";
+	typeName = "panner";
 
 	addInputSocket(new Vector2SocketModel("UV", "v_texCoord"));
 	addInputSocket(new Vector2SocketModel("Speed", "vec2(1.0,1.0)"));

@@ -6,6 +6,13 @@ void LibraryV1::initTest()
 {
 	auto lib = this;
 
+	// property
+	lib->addNode("property", "Property", "", []()
+	{
+		auto node = new PropertyNode();
+		return node;
+	});
+
 	// mult
 	lib->addNode("vectorMultiply", "Vector Multiply", "", []()
 	{

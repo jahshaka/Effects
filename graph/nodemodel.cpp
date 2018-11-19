@@ -124,7 +124,7 @@ QString NodeModel::getEnumString(NodeType type) {
 	case NodeType::Math:
 		return "Math";
 	case NodeType::Properties:
-		return "properties";
+		return "Properties";
 	default:
 		return "";
 	}
