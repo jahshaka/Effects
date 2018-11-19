@@ -30,10 +30,12 @@ void GraphNodeScene::setNodeGraph(NodeGraph *graph)
 	for (auto con : graph->connections.values()) {
 		auto leftNode = con->leftSocket->node;
 		auto rightNode = con->rightSocket->node;
-		this->addConnection(leftNode->id,
+		auto conn = this->addConnection(leftNode->id,
 			leftNode->outSockets.indexOf(con->leftSocket),
 			rightNode->id,
 			rightNode->inSockets.indexOf(con->rightSocket));
+
+		conn->connectionId = con->id;// very important!
 	}
 }
 

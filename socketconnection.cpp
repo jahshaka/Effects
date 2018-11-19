@@ -24,6 +24,8 @@ SocketConnection::SocketConnection()
 	pen.setWidth(lineThickness);
 	setPen(pen);
 
+	status = SocketConnectionStatus::Finished;
+
 	/*
 	QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
 	effect->setBlurRadius(20);
