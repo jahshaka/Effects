@@ -13,8 +13,6 @@ CreateNewDialog::CreateNewDialog(QList<nodeGraphPreset> list) : QDialog()
 
 	QSize currentSize(90, 90);
 
-
-
 	nameEdit = new QLineEdit;
 
 	optionsScroll = new QScrollArea;
@@ -117,9 +115,6 @@ CreateNewDialog::CreateNewDialog(QList<nodeGraphPreset> list) : QDialog()
 		});
     }
 
-
-
-	
 
 	connect(cancel, &QPushButton::clicked, [=]() {
 		this->reject();

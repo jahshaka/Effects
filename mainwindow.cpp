@@ -365,11 +365,57 @@ void MainWindow::configureAssetsDock()
 	auto tabWidget = new QTabWidget;
 	presets = new ListWidget;
 	effects = new ListWidget;
+	presets->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+	effects->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+	presets->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-	tabWidget->addTab(presets, "Presets");
-	tabWidget->addTab(effects, "My Fx");
-	tabWidget->setStyleSheet(tabbedWidget->styleSheet());
+	//tabWidget->addTab(presets, "Presets");
+	//tabWidget->addTab(effects, "My Fx");
+	//tabWidget->setStyleSheet(tabbedWidget->styleSheet());
 
+	auto scrollView = new QScrollArea;
+	auto contentHolder = new QWidget;
+	auto contentLayout = new QVBoxLayout;
+	contentHolder->setLayout(contentLayout);
+	scrollView->setWidget(contentHolder);
+	scrollView->setWidgetResizable(true);
+
+	contentLayout->addWidget(presets);
+	contentLayout->addWidget(effects);
+
+	presets->setStyleSheet(presets->styleSheet() +
+		"border: 1px solid black;"
+	);
+
+	for (int i = 0; i < 5; i++) {
+		auto item = new QListWidgetItem;
+		item->setText("preset" + QString::number(i));
+		item->setSizeHint({ 90,90 });
+		item->setTextAlignment(Qt::AlignCenter);
+		item->setFlags(item->flags() | Qt::ItemIsEditable);
+		presets->addItem(item);
+	}
+
+	//presets->setResizeMode(QListView::Fixed);
+	for (int i = 0; i < 13; i++) {
+		auto item = new QListWidgetItem;
+		item->setText("assets" + QString::number(i));
+		item->setSizeHint({ 90,90 });
+		item->setTextAlignment(Qt::AlignCenter);
+		item->setFlags(item->flags() | Qt::ItemIsEditable);
+		effects->addItem(item);
+	}
+//	presets->addSeperator({90,90});
+
+
+	
+	//presets->displayAllContents();
+	//effects->displayAllContents();
+
+	presets->isResizable = true;
+	effects->isResizable = true;
+
+	scrollView->adjustSize();
 	
 	auto buttonBar = new QWidget;
 	auto buttonLayout = new QHBoxLayout;
@@ -416,7 +462,7 @@ void MainWindow::configureAssetsDock()
 	}
 
 
-	layout->addWidget(tabWidget);
+	layout->addWidget(scrollView);
 	layout->addWidget(buttonBar);
 	assetsDock->setWidget(holder);
 	assetsDock->setStyleSheet(nodeTray->styleSheet());

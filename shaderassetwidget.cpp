@@ -6,6 +6,10 @@
 #include <QFileInfo>
 
 #include "../core/database/database.h"
+//#include "../core/guidmanager.h"
+//#include "../../irisgl/src/core/irisutils.h"
+//#include "../io/assetmanager.h"
+
 
 
 
@@ -52,7 +56,7 @@ ShaderAssetWidget::ShaderAssetWidget(Database *handle) : QWidget()
 
 ShaderAssetWidget::~ShaderAssetWidget()
 {
-
+	
 }
 
 void ShaderAssetWidget::createCustomContextMenu(const QPoint pos)
@@ -88,104 +92,204 @@ void ShaderAssetWidget::createCustomContextMenu(const QPoint pos)
 	menu.exec(assetViewWidget->mapToGlobal(pos));
 }
 
-void ShaderAssetWidget::updateAssetView(const QString & path, int filter, bool showDependencies)
-{
-	assetViewWidget->clear();
-
-	if (filter > 0) {
-		for (const auto &asset : db->fetchChildAssets(path, filter, showDependencies)) addItem(asset);
-	}
-	else {
-		for (const auto &folder : db->fetchChildFolders(path)) addItem(folder);
-		for (const auto &asset : db->fetchChildAssets(path, filter, showDependencies)) addItem(asset);  /* TODO : irk this out */
-		//addCrumbs(db->fetchCrumbTrail(path));
-	}
-
-	//goUpOneControl->setEnabled(false);
-
-}
-
-void ShaderAssetWidget::addItem(const FolderRecord & folderData)
-{
-	if (!folderData.visible) return;
-
-	QListWidgetItem *item = new QListWidgetItem;
-	item->setData(Qt::DisplayRole, folderData.name);
-	item->setData(MODEL_ITEM_TYPE, MODEL_FOLDER);
-	item->setData(MODEL_GUID_ROLE, folderData.guid);
-	item->setData(MODEL_PARENT_ROLE, folderData.parent);
-
-	item->setSizeHint(currentSize);
-	item->setTextAlignment(Qt::AlignCenter);
-	item->setFlags(item->flags() | Qt::ItemIsEditable);
-	item->setIcon(QIcon(":/icons/icons8-folder-72.png"));
-
-	assetViewWidget->addItem(item);
-}
-
-void ShaderAssetWidget::addItem(const AssetRecord & assetData)
-{
-	auto prop = QJsonDocument::fromBinaryData(assetData.properties).object();
-	if (!prop["type"].toString().isEmpty()) {
-		// No need to check further, this is a builtin asset
-		return;
-	}
-
-	QListWidgetItem *item = new QListWidgetItem;
-	item->setData(Qt::DisplayRole, QFileInfo(assetData.name).baseName());
-	item->setData(Qt::UserRole, assetData.name);
-	item->setData(MODEL_TYPE_ROLE, assetData.type);
-	item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
-	item->setData(MODEL_GUID_ROLE, assetData.guid);
-	item->setData(MODEL_PARENT_ROLE, assetData.parent);
-
-	QPixmap thumbnail;
-	if (thumbnail.loadFromData(assetData.thumbnail, "PNG")) {
-		item->setIcon(QIcon(thumbnail));
-	}
-	else {
-		item->setIcon(QIcon(":/icons/empty_object.png"));
-	}
-
-	if (assetData.type == static_cast<int>(ModelTypes::Texture)) {
-
-	}
-
-	if (assetData.type == static_cast<int>(ModelTypes::Shader)) {
-		item->setData(MODEL_TYPE_ROLE, assetData.type);
-		item->setIcon(QIcon(":/icons/icons8-file-72.png"));
-	}
-
-	if (assetData.type == static_cast<int>(ModelTypes::ParticleSystem)) {
-		item->setData(MODEL_TYPE_ROLE, assetData.type);
-		item->setIcon(QIcon(":/icons/icons8-file-72-ps.png"));
-	}
-
-	if (assetData.type == static_cast<int>(ModelTypes::File)) {
-		item->setData(MODEL_TYPE_ROLE, assetData.type);
-		// TODO - make this some generic value all assets can use
-		//item->setData(MODEL_MESH_ROLE, shaderAssetName.name);
-		item->setIcon(QIcon(":/icons/icons8-file-72-file.png"));
-	}
-
-	if (assetData.type == static_cast<int>(ModelTypes::Material)) {
-		item->setData(MODEL_TYPE_ROLE, assetData.type);
-	}
-
-	if (assetData.type == static_cast<int>(ModelTypes::Object)) {
-		const QString meshAssetGuid =
-			db->getDependencyByType(static_cast<int>(ModelTypes::Mesh), assetData.guid);
-		item->setData(MODEL_TYPE_ROLE, assetData.type);
-		item->setData(MODEL_MESH_ROLE, db->fetchAsset(meshAssetGuid).name);
-	}
-
-	item->setSizeHint(currentSize);
-	item->setTextAlignment(Qt::AlignCenter);
-	item->setFlags(item->flags() | Qt::ItemIsEditable);
-
-	// Hide meshes for now, we work with objects which are parents for meshes, materials etc
-	assetViewWidget->addItem(item);
-}
+//void ShaderAssetWidget::updateAssetView(const QString & path, int filter, bool showDependencies)
+//{
+//	assetViewWidget->clear();
+//
+//	if (filter > 0) {
+//		for (const auto &asset : db->fetchChildAssets(path, filter, showDependencies)) addItem(asset);
+//	}
+//	else {
+//		for (const auto &folder : db->fetchChildFolders(path)) addItem(folder);
+//		for (const auto &asset : db->fetchChildAssets(path, filter, showDependencies)) addItem(asset);  /* TODO : irk this out */
+//		//addCrumbs(db->fetchCrumbTrail(path));
+//	}
+//
+//	//goUpOneControl->setEnabled(false);
+//
+//}
+//
+//void ShaderAssetWidget::addItem(const FolderRecord & folderData)
+//{
+//	if (!folderData.visible) return;
+//
+//	QListWidgetItem *item = new QListWidgetItem;
+//	item->setData(Qt::DisplayRole, folderData.name);
+//	item->setData(MODEL_ITEM_TYPE, MODEL_FOLDER);
+//	item->setData(MODEL_GUID_ROLE, folderData.guid);
+//	item->setData(MODEL_PARENT_ROLE, folderData.parent);
+//
+//	item->setSizeHint(currentSize);
+//	item->setTextAlignment(Qt::AlignCenter);
+//	item->setFlags(item->flags() | Qt::ItemIsEditable);
+//	item->setIcon(QIcon(":/icons/icons8-folder-72.png"));
+//
+//	assetViewWidget->addItem(item);
+//}
+//
+//void ShaderAssetWidget::addItem(const AssetRecord & assetData)
+//{
+//	auto prop = QJsonDocument::fromBinaryData(assetData.properties).object();
+//	if (!prop["type"].toString().isEmpty()) {
+//		// No need to check further, this is a builtin asset
+//		return;
+//	}
+//
+//	QListWidgetItem *item = new QListWidgetItem;
+//	item->setData(Qt::DisplayRole, QFileInfo(assetData.name).baseName());
+//	item->setData(Qt::UserRole, assetData.name);
+//	item->setData(MODEL_TYPE_ROLE, assetData.type);
+//	item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
+//	item->setData(MODEL_GUID_ROLE, assetData.guid);
+//	item->setData(MODEL_PARENT_ROLE, assetData.parent);
+//
+//	QPixmap thumbnail;
+//	if (thumbnail.loadFromData(assetData.thumbnail, "PNG")) {
+//		item->setIcon(QIcon(thumbnail));
+//	}
+//	else {
+//		item->setIcon(QIcon(":/icons/empty_object.png"));
+//	}
+//
+//	if (assetData.type == static_cast<int>(ModelTypes::Texture)) {
+//
+//	}
+//
+//	if (assetData.type == static_cast<int>(ModelTypes::Shader)) {
+//		item->setData(MODEL_TYPE_ROLE, assetData.type);
+//		item->setIcon(QIcon(":/icons/icons8-file-72.png"));
+//	}
+//
+//	if (assetData.type == static_cast<int>(ModelTypes::ParticleSystem)) {
+//		item->setData(MODEL_TYPE_ROLE, assetData.type);
+//		item->setIcon(QIcon(":/icons/icons8-file-72-ps.png"));
+//	}
+//
+//	if (assetData.type == static_cast<int>(ModelTypes::File)) {
+//		item->setData(MODEL_TYPE_ROLE, assetData.type);
+//		// TODO - make this some generic value all assets can use
+//		//item->setData(MODEL_MESH_ROLE, shaderAssetName.name);
+//		item->setIcon(QIcon(":/icons/icons8-file-72-file.png"));
+//	}
+//
+//	if (assetData.type == static_cast<int>(ModelTypes::Material)) {
+//		item->setData(MODEL_TYPE_ROLE, assetData.type);
+//	}
+//
+//	if (assetData.type == static_cast<int>(ModelTypes::Object)) {
+//		const QString meshAssetGuid =
+//			db->getDependencyByType(static_cast<int>(ModelTypes::Mesh), assetData.guid);
+//		item->setData(MODEL_TYPE_ROLE, assetData.type);
+//		item->setData(MODEL_MESH_ROLE, db->fetchAsset(meshAssetGuid).name);
+//	}
+//
+//	item->setSizeHint(currentSize);
+//	item->setTextAlignment(Qt::AlignCenter);
+//	item->setFlags(item->flags() | Qt::ItemIsEditable);
+//
+//	// Hide meshes for now, we work with objects which are parents for meshes, materials etc
+//	assetViewWidget->addItem(item);
+//}
+//
+//void ShaderAssetWidget::setUpDatabse(Database * db)
+//{
+//	//remove noWidget if preset and add assetViewWidget
+//	if (noWidget) {
+//		layout->removeWidget(noWidget);
+//		layout->addWidget(assetViewWidget);
+//	}
+//
+//
+//}
+//
+//void ShaderAssetWidget::createFolder()
+//{
+//	const QString newFolder = "New Folder";
+//	QListWidgetItem *item = new QListWidgetItem;
+//	item->setFlags(item->flags() | Qt::ItemIsEditable);
+//	item->setSizeHint(currentSize);
+//	item->setTextAlignment(Qt::AlignCenter);
+//	item->setIcon(QIcon(":/icons/icons8-folder-72.png"));
+//
+//	item->setData(MODEL_GUID_ROLE, GUIDManager::generateGUID());
+//	item->setData(MODEL_PARENT_ROLE, assetItem.selectedGuid);
+//	item->setData(MODEL_ITEM_TYPE, MODEL_FOLDER);
+//
+//	assetItem.wItem = item;
+//
+//	QString folderName = newFolder;
+//	QStringList foldersInProject = db->fetchFolderNameByParent(assetItem.selectedGuid);
+//
+//	// If we encounter the same file, make a duplicate...
+//	int increment = 1;
+//	while (foldersInProject.contains(folderName)) {
+//		folderName = newFolder + " " + QString::number(increment++);
+//	}
+//
+//	const QString guid = item->data(MODEL_GUID_ROLE).toString();
+//	const QString parent = item->data(MODEL_PARENT_ROLE).toString();
+//
+//	//// Create a new database entry for the new folder
+//	db->createFolder(folderName, parent, guid);
+//
+//	// We could just addItem but this is by choice and also so we can order folders first
+//	updateAssetView(assetItem.selectedGuid);
+//}
+//
+//void ShaderAssetWidget::createShader()
+//{
+//	const QString newShader = "Untitled Shader";
+//	QListWidgetItem *item = new QListWidgetItem;
+//	item->setFlags(item->flags() | Qt::ItemIsEditable);
+//	item->setSizeHint(currentSize);
+//	item->setTextAlignment(Qt::AlignCenter);
+//	item->setIcon(QIcon(":/icons/icons8-file-72.png"));
+//
+//	const QString assetGuid = GUIDManager::generateGUID();
+//
+//	item->setData(MODEL_GUID_ROLE, assetGuid);
+//	item->setData(MODEL_PARENT_ROLE, assetItem.selectedGuid);
+//	item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
+//	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Shader));
+//
+//	assetItem.wItem = item;
+//
+//	QString shaderName = newShader;
+//
+//	QStringList assetsInProject = db->fetchAssetNameByParent(assetItem.selectedGuid);
+//
+//	//// If we encounter the same file, make a duplicate...
+//	int increment = 1;
+//	while (assetsInProject.contains(IrisUtils::buildFileName(shaderName, "shader"))) {
+//		shaderName = QString(newShader + " %1").arg(QString::number(increment++));
+//	}
+//
+//	db->createAssetEntry(assetGuid,
+//		IrisUtils::buildFileName(shaderName, "shader"),
+//		static_cast<int>(ModelTypes::Shader),
+//		assetItem.selectedGuid,
+//		QByteArray());
+//
+//	item->setText(shaderName);
+//	assetViewWidget->addItem(item);
+//
+//	QFile *templateShaderFile = new QFile(IrisUtils::getAbsoluteAssetPath("app/templates/ShaderTemplate.shader"));
+//	templateShaderFile->open(QIODevice::ReadOnly | QIODevice::Text);
+//	QJsonObject shaderDefinition = QJsonDocument::fromJson(templateShaderFile->readAll()).object();
+//	templateShaderFile->close();
+//	shaderDefinition["name"] = shaderName;
+//	shaderDefinition.insert("guid", assetGuid);
+//
+//	auto assetShader = new AssetShader;
+//	assetShader->fileName = IrisUtils::buildFileName(shaderName, "shader");
+//	assetShader->assetGuid = assetGuid;
+//	//assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(shaderName, "shader"));
+//	assetShader->setValue(QVariant::fromValue(shaderDefinition));
+//
+//	db->updateAssetAsset(assetGuid, QJsonDocument(shaderDefinition).toBinaryData());
+//
+//	AssetManager::addAsset(assetShader);
+//}
 
 bool ShaderAssetWidget::eventFilter(QObject * watched, QEvent * event)
 {

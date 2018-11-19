@@ -6,7 +6,15 @@
 #include <QJsonObject>
 
 #include "listwidget.h"
-#include "../core/project.h"
+//#include "../core/project.h"
+//#include "../widgets/assetwidget.h"
+
+//struct AssetItem {
+//	QString selectedPath;
+//	QListWidgetItem *wItem;
+//	QString selectedGuid;
+//	// add one for assetView maybe...
+//};
 
 class Database;
 class ShaderAssetWidget : public QWidget
@@ -19,12 +27,15 @@ public:
 	QVBoxLayout *layout;
 	QHBoxLayout *breadCrumbs;
 	QListWidget *assetViewWidget;
-
+//	AssetItem assetItem;
 private:
 	void createCustomContextMenu(const QPoint pos);
-	void updateAssetView(const QString &path, int filter = -1, bool showDependencies = false);
+	/*void updateAssetView(const QString &path, int filter = -1, bool showDependencies = false);
 	void addItem(const FolderRecord &folderData);
 	void addItem(const AssetRecord &assetData);
+	void setUpDatabse(Database *db);
+	void createFolder();
+	void createShader();*/
 	QWidget *noWidget;
 
 	Database *db;

@@ -4,6 +4,8 @@
 #include <QMouseEvent>
 #include <QPixmap>
 #include <QScrollBar>
+#include <QDebug>
+#include <QLayout>
 
 ListWidget::ListWidget() : QListWidget()
 {
@@ -36,6 +38,14 @@ ListWidget::ListWidget() : QListWidget()
 		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
 		"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
 		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .0);}"
+		
+	);
+
+	setStyleSheet(
+		"QListView::item{ border-radius: 2px; border: 1px solid rgba(0,0,0,1); background: rgba(80,80,80,1); margin: 3px;  }"
+		"QListView::item:selected{ background: rgba(65,65,65,1); border: 1px solid rgba(50,150,250,1); }"
+		"QListView::item:hover{ background: rgba(55,55,55,1); border: 1px solid rgba(50,150,250,1); }"
+		"QListView::text{ top : -6; }"
 	);
 	
 }
@@ -45,6 +55,21 @@ ListWidget::~ListWidget()
 {
 }
 
+void ListWidget::displayAllContents()
+{
+
+	int num_of_items_per_row = width() / (gridSize().width()+6);
+	int num_of_models = model()->rowCount();
+	int number_of_rows = num_of_models / num_of_items_per_row;
+	if (num_of_models % num_of_items_per_row != 0) number_of_rows++;
+	int calculated_height = number_of_rows * (gridSize().height() + num_of_items_per_row*2);
+
+	setFixedHeight(calculated_height);
+
+}
+
+
+
 
 QMimeData * ListWidget::mimeData(const QList<QListWidgetItem *> items) const
 {
@@ -52,4 +77,10 @@ QMimeData * ListWidget::mimeData(const QList<QListWidgetItem *> items) const
 
 	data->setText(items[0]->data(Qt::UserRole).toString());
 	return data;
+}
+
+void ListWidget::resizeEvent(QResizeEvent * event)
+{
+	QListWidget::resizeEvent(event);
+	if(isResizable) displayAllContents();
 }
