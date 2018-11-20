@@ -18,11 +18,13 @@
 #include "misc/QtAwesomeAnim.h"
 #include "shaderassetwidget.h"
 
+
 class QMenuBar;
 class SceneWidget;
 class GraphNodeScene;
 class NodeGraph;
 class NodeLibraryItem;
+class Database;
 
 namespace shadergraph
 {
@@ -43,9 +45,11 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow( QWidget *parent = Q_NULLPTR, Database *database = Q_NULLPTR);
     void setNodeGraph(NodeGraph* graph);
     void newNodeGraph();
+	void refreshShaderGraph();
+	void setAssetWidgetDatabase(Database *db);
 
     ~MainWindow();
 
@@ -99,13 +103,14 @@ private:
 
 	ListWidget *presets;
 	ListWidget *effects;
-	ShaderAssetWidget * assetWidget;
+	ShaderAssetWidget *assetWidget;
 
 	void configureStyleSheet();
 	void configureProjectDock();
 	void configureAssetsDock();
 
 	QtAwesome *fontIcons;
+	Database *dataBase;
 
 };
 

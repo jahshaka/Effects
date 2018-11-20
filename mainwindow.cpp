@@ -33,13 +33,13 @@
 #include "listwidget.h"
 #include "scenewidget.h"
 #include <QMainWindow>
-
+#include "../core/database/database.h"
 
 
 namespace shadergraph
 {
 
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow( QWidget *parent, Database *database) :
     QMainWindow(parent)
 {
   //  ui->setupUi(this);
@@ -127,6 +127,8 @@ MainWindow::MainWindow(QWidget *parent) :
 	configureAssetsDock();
 	setMinimumSize(300, 400);
 
+	if (database) setAssetWidgetDatabase(database);
+
 	QShortcut *shortcut = new QShortcut(QKeySequence("f"), this);
 	connect(shortcut,&QShortcut::activated, [=]() {
 		auto dialog = new SearchDialog(this->graph);
@@ -171,6 +173,11 @@ void MainWindow::newNodeGraph()
 
     setNodeGraph(graph);
 
+}
+
+void MainWindow::refreshShaderGraph()
+{
+	assetWidget->refresh();
 }
 
 MainWindow::~MainWindow()
@@ -667,6 +674,11 @@ void MainWindow::createNewGraph()
 	connect(node, &QDialog::accepted, [=]() {
 		newNodeGraph();
 	});
+}
+
+void MainWindow::setAssetWidgetDatabase(Database * db)
+{
+	assetWidget->setUpDatabse(db);
 }
 
 bool MainWindow::eventFilter(QObject * watched, QEvent * event)
