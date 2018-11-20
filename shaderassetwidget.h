@@ -39,7 +39,7 @@ private:
 	void addItem(const FolderRecord &folderData);
 	void addItem(const AssetRecord &assetData);
 	void createFolder();
-	/*void createShader();*/
+	void createShader();
 	QWidget *noWidget;
 
 	Database *db;

@@ -397,7 +397,7 @@ void MainWindow::configureAssetsDock()
 	for (int i = 0; i < 5; i++) {
 		auto item = new QListWidgetItem;
 		item->setText("preset" + QString::number(i));
-		item->setSizeHint({ 90,90 });
+		item->setSizeHint({ 40,40 });
 		item->setTextAlignment(Qt::AlignCenter);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
 		presets->addItem(item);
@@ -407,17 +407,13 @@ void MainWindow::configureAssetsDock()
 	for (int i = 0; i < 13; i++) {
 		auto item = new QListWidgetItem;
 		item->setText("assets" + QString::number(i));
-		item->setSizeHint({ 90,90 });
+		item->setSizeHint({ 40,40 });
 		item->setTextAlignment(Qt::AlignCenter);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
 		effects->addItem(item);
 	}
-//	presets->addSeperator({90,90});
-
-
-	
-	//presets->displayAllContents();
-	//effects->displayAllContents();
+	presets->setGridSize({ 50,50 });
+	effects->setGridSize({ 50,50 });
 
 	presets->isResizable = true;
 	effects->isResizable = true;
@@ -464,7 +460,7 @@ void MainWindow::configureAssetsDock()
 
 		});
 		connect(addBtn, &QPushButton::clicked, [=]() {
-
+			
 		});
 	}
 
