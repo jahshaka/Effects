@@ -33,10 +33,22 @@ Widget2D::Widget2D() : PropertyWidgetBase()
 	xLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
 	yLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
 
-	layout->addWidget(xLabel);
-	layout->addWidget(xSpinBox);
-	layout->addWidget(yLabel);
-	layout->addWidget(ySpinBox);
+	auto box1 = new QWidget;
+	auto layout1 = new QHBoxLayout;
+	box1->setLayout(layout1);
+	auto box2 = new QWidget;
+	auto layout2 = new QHBoxLayout;
+	box2->setLayout(layout2);
+
+	layout1->addWidget(xLabel);
+	layout1->addWidget(xSpinBox);
+	layout2->addWidget(yLabel);
+	layout2->addWidget(ySpinBox);
+
+
+	layout->addWidget(box1);
+	layout->addWidget(box2);
+
 
 	connect(xSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
 		x = val;

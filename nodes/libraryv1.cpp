@@ -188,4 +188,12 @@ void LibraryV1::initMath()
 	addNode("vector2", "Vector2", "", []() {
 		return new Vector2Node();
 	});
+
+	addNode("vector3", "Vector3", "", []() {
+		return new Vector3Node();
+	});
+
+	addNode("vector4", "Vector4", "", []() {
+		return new Vector4Node();
+	});
 }

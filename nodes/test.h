@@ -163,10 +163,27 @@ class Vector2Node : public NodeModel
 {
 public:
 	Vector2Node();
+	int x, y;
 	QVector2D value;
 	virtual void process(ModelContext* context) override;
+};
 
+class Vector3Node : public NodeModel
+{
+public:
+	Vector3Node();
+	int x, y, z;
+	QVector3D value;
+	virtual void process(ModelContext* context) override;
+};
 
+class Vector4Node : public NodeModel
+{
+public:
+	Vector4Node();
+	int x, y, z, w;
+	QVector4D value;
+	virtual void process(ModelContext* context) override;
 };
 
 void registerModels(NodeGraph* graph);
