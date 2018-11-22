@@ -220,7 +220,7 @@ GraphNode::GraphNode(QGraphicsItem* parent) :
 	QFont font = text->font();
 	font.setWeight(65);
 	auto ratio = QApplication::desktop()->devicePixelRatio();
-	font.setPointSize(font.pointSize() * ratio);
+	font.setPointSize(8 * ratio);
 	text->setFont(font);
 
 	/*
@@ -259,6 +259,9 @@ void GraphNode::setTitle(QString title)
 
 void GraphNode::addInSocket(QString title)
 {
+	
+	
+
 	auto sock = new Socket(this, SocketType::In, title);
 	auto y = calcHeight();// + sock->calcHeight();
 	sock->setPos(-sock->getRadius(), y);

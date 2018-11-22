@@ -32,6 +32,12 @@ ListWidget::ListWidget() : QListWidget()
 	setSortingEnabled(true);
 	sortItems();
 	setEditTriggers(QAbstractItemView::NoEditTriggers);
+	
+	QFont font = this->font();
+	font.setWeight(60);
+	font.setPixelSize(12);
+	setFont(font);
+
 	verticalScrollBar()->setStyleSheet(
 		"QScrollBar:vertical {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 10px; }"
 		"QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 5px;  left: 8px; }"

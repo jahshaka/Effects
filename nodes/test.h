@@ -159,4 +159,14 @@ public:
 	virtual void process(ModelContext* context) override;
 };
 
+class Vector2Node : public NodeModel
+{
+public:
+	Vector2Node();
+	QVector2D value;
+	virtual void process(ModelContext* context) override;
+
+
+};
+
 void registerModels(NodeGraph* graph);

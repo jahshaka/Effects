@@ -1,7 +1,7 @@
 #include "test.h"
 #include "../graph/library.h"
 #include "../texturemanager.h"
-
+#include "propertywidgets/vectorpropertywidget.h"
 #include <QFileDialog>
 
 void registerModels(NodeGraph* graph)
@@ -123,6 +123,10 @@ void registerModels(NodeGraph* graph)
 	//texture
 	lib->addNode("texture", "Texture", "", []() {
 		return new TextureNode();
+	});
+
+	lib->addNode("vector2", "Vector2", "", []() {
+		return new Vector2Node();
 	});
 
 	graph->setNodeLibrary(lib);
@@ -762,4 +766,31 @@ void PannerNode::process(ModelContext * context)
 
 	auto code = res + " = " + uv + " + " + speed + " * "+ time + ";";
 	ctx->addCodeChunk(this, code);
+}
+
+Vector2Node::Vector2Node()
+{
+	setNodeType(NodeType::Input);
+	title = "Vector 2 Node";
+	typeName = "vector 2 node";
+
+	auto wid = new Vector2DPropertyWidget;
+	this->widget = wid;
+
+	connect(wid, &Vector2DPropertyWidget::valueChanged, [=](QVector2D vec) {
+		value = vec;
+	});
+
+
+	addOutputSocket(new Vector2SocketModel("Result"));
+
+}
+
+void Vector2Node::process(ModelContext * context)
+{
+	auto ctx = (ShaderContext*)context;
+	auto res = this->getOutputSocketVarName(0);
+	auto code = res + "= vec4(" + value.x() + "," + value.y() + "," + value.y() + "," + value.y() + ");";
+	ctx->addCodeChunk(this, code);
+
 }

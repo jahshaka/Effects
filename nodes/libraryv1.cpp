@@ -184,4 +184,8 @@ void LibraryV1::initMath()
 	addNode("negate", "Negate", "", []() {
 		return new NegateNode();
 	});
+
+	addNode("vector2", "Vector2", "", []() {
+		return new Vector2Node();
+	});
 }

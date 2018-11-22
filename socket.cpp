@@ -20,35 +20,48 @@ Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title) :
 	QFont font = text->font();
 	font.setWeight(60);
 	auto ratio = QApplication::desktop()->devicePixelRatio();
-	font.setPointSize(font.pointSize() * ratio);
+	//font.setPointSize(6.9 * ratio);
+	font.setPixelSize(14);
 	text->setFont(font);
 
 	setSocketColor(disconnectedColor);
 	QFontMetrics fm(parent->scene()->font());
 	QRect textRect = fm.boundingRect(title);
 	owner = (GraphNode*)parent;
-	radius = qCeil(textRect.height() / 2.0f);
+	radius = qCeil(textRect.height() / 2.0f) * ratio;
 	dimentions = textRect.height();
 	QPainterPath path;
+
+	outSocketXOffset = -textRect.width() -20 + getSocketPosition().x();
+	inSocketXOffset = 10 + getSocketPosition().x();
 
 	// socket positions are at the outer right or outer left of the graph node
 	if (socketType == SocketType::Out)
 	{
 		// socket on the right    out socket
-		text->setPos(-textRect.width() - radius * 6, -radius);
-		if (rounded)  path.addRoundedRect(-radius*4 , -radius / 2, dimentions, dimentions, radius, radius);
+		if (rounded)  path.addRoundedRect(-radius*3 , -radius / 2, dimentions, dimentions, radius, radius);
 		else path.addRect(radius , -radius / 2, dimentions, dimentions);
-		socketPos = path.currentPosition();
+		socketPos = QPoint(-radius * 3, -radius / 2);
 	}
 	else
 	{
 		//socket on the left      in socket
-		text->setPos(radius * 5, -radius);
 		if (rounded) path.addRoundedRect(radius*2, -radius / 2, dimentions, dimentions, radius, radius);
 		else path.addRect(0, -radius / 2, dimentions, dimentions);
-
-		socketPos = path.currentPosition();
+		socketPos = QPoint(radius * 2, -radius / 2);
 	}
+
+	if (socketType == SocketType::Out) {
+
+		outSocketXOffset = -textRect.width() - 30 + getSocketPosition().x();
+		text->setPos(outSocketXOffset, -radius);
+
+	}
+	else {
+		inSocketXOffset = 10 + getSocketPosition().x();
+		text->setPos(inSocketXOffset, -radius);
+	}
+
 	setBrush(getSocketColor());
 	QPen pen(QColor(97, 97, 97, 150), 3.0);
 	setPen(pen);
@@ -106,12 +119,12 @@ QPoint Socket::getSocketPosition()
 {
 	if (socketType == SocketType::Out)
 	{
-		QRect rect(-radius * 4, -radius / 2, dimentions, dimentions);
+		QRect rect(socketPos.x(), socketPos.y(), dimentions, dimentions);
 		auto center = rect.center();
 		return this->scenePos().toPoint() + center;
 	}
 	else {
-		QRect rect(radius * 2, -radius / 2, dimentions, dimentions);
+		QRect rect(socketPos.x(), socketPos.y(), dimentions, dimentions);
 		auto center = rect.center();
 		return this->scenePos().toPoint() + center;
 
@@ -146,37 +159,16 @@ void Socket::setConnected(bool value)
 	connected = value;
 }
 
-QPainterPath Socket::addInvisibleCover()
-{
-	QPainterPath path;
-	if (socketType == SocketType::Out)
-	{
-		if (rounded)  path.addRoundedRect(-radius-8 * 2, -radius-4 / 2, dimentions*1.6, dimentions*1.6, radius*2, radius*2);
-		else path.addRect(-radius * 2, -radius / 2, dimentions, dimentions);
-	}
-	else
-	{
-		if (rounded) path.addRoundedRect(-6, -radius-4 / 2, dimentions*1.6, dimentions*1.6, radius*2, radius*2);
-		else path.addRect(0, -radius / 2, dimentions, dimentions);
-	}
-	setBrush(QColor(200, 100, 100));
-	return path;
-}
 
 void Socket::updateSocket()
 {
 	QPainterPath path;
 	// socket positions are at the outer right or outer left of the graph node
-	if (socketType == SocketType::Out)
-	{
-		if (rounded)  path.addRoundedRect(-radius * 4, -radius / 2, dimentions, dimentions, radius, radius);
+
+		if (rounded)  path.addRoundedRect(socketPos.x(), socketPos.y(), dimentions, dimentions, radius, radius);
 		else path.addRect(-radius * 2, -radius / 2, dimentions, dimentions);
-	}
-	else
-	{
-		if (rounded) path.addRoundedRect(radius * 2, -radius / 2, dimentions, dimentions, radius, radius);
-		else path.addRect(0, -radius / 2, dimentions, dimentions);
-	}
+
+
 	setBrush(getSocketColor());
 	QPen pen;
 	pen.setWidth(3);
@@ -196,18 +188,10 @@ void Socket::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, 
 
 
 	// socket positions are at the outer right or outer left of the graph node
-	if (socketType == SocketType::Out)
-	{
-		path.addRoundedRect(-radius * 4, -radius / 2 , dimentions, dimentions, radius, radius);
-		pathShadow.addRoundedRect(-radius * 4, -radius / 2 + 2, dimentions, dimentions, radius, radius);
+	
+		path.addRoundedRect(socketPos.x(), socketPos.y(), dimentions, dimentions, radius, radius);
+		pathShadow.addRoundedRect(socketPos.x(), socketPos.y() + 2, dimentions, dimentions, radius, radius);
 
-	}
-	else
-	{
-		path.addRoundedRect(radius * 2, -radius / 2, dimentions, dimentions, radius, radius);
-		pathShadow.addRoundedRect(radius * 2, -radius / 2 + 2 , dimentions, dimentions, radius, radius);
-
-	}
 
 
 	//QGraphicsPathItem::paint(painter, option, widget);
@@ -232,18 +216,11 @@ void Socket::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, 
 		QPainterPath path;
 		auto pad = 6;
 
-		if (socketType == SocketType::Out)
-		{
-			path.addRoundedRect(-radius * 4, -radius / 2, dimentions, dimentions, radius, radius);
+	
+			path.addRoundedRect(socketPos.x(), socketPos.y(), dimentions, dimentions, radius, radius);
 
-			path1.addRoundedRect(-radius * 4 + pad/2, -radius / 2 + pad/2, dimentions- pad, dimentions- pad, radius, radius);
-		}
-		else
-		{
-			path.addRoundedRect(radius * 2, -radius / 2, dimentions, dimentions, radius, radius);
-
-			path1.addRoundedRect(radius * 2 + pad/2, -radius / 2 + pad/2, dimentions - pad, dimentions - pad, radius, radius);
-		}
+			path1.addRoundedRect(socketPos.x() + pad/2, -radius / 2 + pad/2, dimentions- pad, dimentions- pad, radius, radius);
+	
 
 
 		QLinearGradient grad;
