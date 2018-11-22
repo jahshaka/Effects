@@ -39,15 +39,15 @@ Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title) :
 	if (socketType == SocketType::Out)
 	{
 		// socket on the right    out socket
-		if (rounded)  path.addRoundedRect(-radius*3 , -radius / 2, dimentions, dimentions, radius, radius);
-		else path.addRect(radius , -radius / 2, dimentions, dimentions);
-		socketPos = QPoint(-radius * 3, -radius / 2);
+		int val = ratio > 1 ? 3 : 4;
+		qDebug() << val;
+		path.addRoundedRect(-radius * val , -radius / 2, dimentions, dimentions, radius, radius);
+		socketPos = QPoint(-radius * val, -radius / 2);
 	}
 	else
 	{
 		//socket on the left      in socket
-		if (rounded) path.addRoundedRect(radius*2, -radius / 2, dimentions, dimentions, radius, radius);
-		else path.addRect(0, -radius / 2, dimentions, dimentions);
+		path.addRoundedRect(radius*2, -radius / 2, dimentions, dimentions, radius, radius);
 		socketPos = QPoint(radius * 2, -radius / 2);
 	}
 
@@ -165,9 +165,7 @@ void Socket::updateSocket()
 	QPainterPath path;
 	// socket positions are at the outer right or outer left of the graph node
 
-		if (rounded)  path.addRoundedRect(socketPos.x(), socketPos.y(), dimentions, dimentions, radius, radius);
-		else path.addRect(-radius * 2, -radius / 2, dimentions, dimentions);
-
+	path.addRoundedRect(socketPos.x(), socketPos.y(), dimentions, dimentions, radius, radius);
 
 	setBrush(getSocketColor());
 	QPen pen;
@@ -188,15 +186,10 @@ void Socket::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, 
 
 
 	// socket positions are at the outer right or outer left of the graph node
-	
-		path.addRoundedRect(socketPos.x(), socketPos.y(), dimentions, dimentions, radius, radius);
-		pathShadow.addRoundedRect(socketPos.x(), socketPos.y() + 2, dimentions, dimentions, radius, radius);
+	path.addRoundedRect(socketPos.x(), socketPos.y(), dimentions, dimentions, radius, radius);
+	pathShadow.addRoundedRect(socketPos.x(), socketPos.y() + 2, dimentions, dimentions, radius, radius);
 
-
-
-	//QGraphicsPathItem::paint(painter, option, widget);
-
-
+	QGraphicsPathItem::paint(painter, option, widget);
 
 	//fill shadow
 	painter->fillPath(pathShadow, QColor(20, 20, 20, 30));

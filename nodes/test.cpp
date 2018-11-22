@@ -3,7 +3,7 @@
 #include "../texturemanager.h"
 #include "propertywidgets/vectorpropertywidget.h"
 #include <QFileDialog>
-
+#include <QDebug>
 void registerModels(NodeGraph* graph)
 {
 	/*
@@ -774,11 +774,12 @@ Vector2Node::Vector2Node()
 	title = "Vector 2 Node";
 	typeName = "vector 2 node";
 
-	auto wid = new Vector2DPropertyWidget;
+	auto wid = new Widget2D;
 	this->widget = wid;
 
-	connect(wid, &Vector2DPropertyWidget::valueChanged, [=](QVector2D vec) {
+	connect(wid, &Widget2D::valueChanged, [=](QVector2D vec) {
 		value = vec;
+		emit valueChanged(this, 0);
 	});
 
 
@@ -789,8 +790,10 @@ Vector2Node::Vector2Node()
 void Vector2Node::process(ModelContext * context)
 {
 	auto ctx = (ShaderContext*)context;
-	auto res = this->getOutputSocketVarName(0);
-	auto code = res + "= vec4(" + value.x() + "," + value.y() + "," + value.y() + "," + value.y() + ");";
-	ctx->addCodeChunk(this, code);
+	//auto res = this->getOutputSocketVarName(0);
+	//auto code = res + "= vec4(" + QString::number(value.x()) + "," + QString::number(value.y()) + "," + QString::number(value.y()) + "," + QString::number(value.y())  + ");";
+	
+	//ctx->addCodeChunk(this, code);
+	outSockets[0]->setVarName("vec2(" + QString::number(value.x()) + "," + QString::number(value.y()) + ")");
 
 }

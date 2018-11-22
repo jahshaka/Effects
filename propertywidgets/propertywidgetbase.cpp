@@ -19,6 +19,7 @@ PropertyWidgetBase::~PropertyWidgetBase()
 
 Widget2D::Widget2D() : PropertyWidgetBase()
 {
+	x = y = 0;
 	xSpinBox = new QDoubleSpinBox;
 	ySpinBox = new QDoubleSpinBox;
 	auto xLabel = new QLabel("X");
