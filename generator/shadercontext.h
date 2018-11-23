@@ -23,15 +23,35 @@ struct CodeChunk
 	QString code;
 };
 
+struct ShaderFunction
+{
+	QString name;
+	QString functionBody;
+};
+
+
+struct GeneratedCode
+{
+	// contains list of registered functions
+	QMap<QString, ShaderFunction> functions;
+	QString functionsCode;
+
+	QString vertexCode;
+	QString fragmentCode;
+};
+
 class ShaderContext : public ModelContext
 {
 	QStringList uniforms;
 	// mapped using the socket guid
 	QMap<QString, TempVar> tempVars;
 	QList<CodeChunk> codeChunks;
+	QMap<QString, ShaderFunction> functions;
+
 	//QString code;
 	bool debugCode;
 public:
+	// adds function if it doesnt already exist
 	void addFunction(QString name, QString function);
 
 	// created a temporary variable using the socket
@@ -45,12 +65,12 @@ public:
 
 	// add declaration for uniform here
 	void addUniform(QString uniformDecl);
+
 	QString generateVars();
-
-	// generates uniforms from properties
 	QString generateUniforms();
-
+	QString generateFunctionDefinitions();
 	QString generateCode(bool debug = false);
+	QString generateFragmentCode(bool debug = false);
 };
 
 #endif// SHADER_CONTEXT_H

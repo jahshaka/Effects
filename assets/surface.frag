@@ -170,7 +170,7 @@ void main()
 
     vec3 col = material.diffuse;
 
-    vec3 finalColor = ((material.ambient * u_sceneAmbient) + (
+    vec3 finalColor = material.emission + ((material.ambient * u_sceneAmbient) + (
                       (diffuse + (material.specular * specular)))) * col;
 
     fragColor = vec4(finalColor, 0.65);

@@ -16,9 +16,10 @@ QString ShaderGenerator::generateShader(NodeGraph* graph)
 
 	auto code = ctx->generateUniforms();
 	code += ctx->generateVars();
+	code += ctx->generateFunctionDefinitions();
 
 	code += "void surface(inout Material material){\n";
-	code += ctx->generateCode(true);
+	code += ctx->generateFragmentCode(true);
 	code += "}\n";
 
 	return code;
@@ -50,9 +51,10 @@ void ShaderGenerator::processNode(NodeModel* node, ShaderContext* ctx)
 
 	// generate code up until this point
 	auto previewChunk = node->generatePreview(ctx);
-	auto previewCode = ctx->generateCode(true);
+	auto previewCode = ctx->generateFragmentCode(true);
 	auto code = ctx->generateUniforms();
 	code += ctx->generateVars();
+	code += ctx->generateFunctionDefinitions();
 	
 	code += "void preview(inout PreviewMaterial preview){\n";
 	code += previewCode;

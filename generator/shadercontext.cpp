@@ -5,6 +5,12 @@
 #include "../graph/nodemodel.h"
 #include "../graph/socketmodel.h"
 
+void ShaderContext::addFunction(QString name, QString function)
+{
+	if (!functions.contains(name))
+		functions.insert(name, { name, function });
+}
+
 // created a temporary variable using the socket
 TempVar ShaderContext::createTempVar(SocketModel* sock)
 {
@@ -87,7 +93,40 @@ QString ShaderContext::generateUniforms()
 	return finalCode;
 }
 
+QString ShaderContext::generateFunctionDefinitions()
+{
+	QString finalCode = "";
+
+	// generate temp vars
+	for (auto& function : functions) {
+		finalCode += function.functionBody + ";\n\n";
+	}
+
+	return finalCode;
+}
+
+
 QString ShaderContext::generateCode(bool debug)
+{
+	QString finalCode = "";
+
+	// combine code chunks
+	for (auto chunk : codeChunks) {
+		if (debug)
+			finalCode += "// " + chunk.owner + "\n";
+
+		finalCode += chunk.code;
+		finalCode += "\n";
+
+		// extra space for debug mode
+		if (debug)
+			finalCode += "\n";
+	}
+
+	return finalCode;
+}
+
+QString ShaderContext::generateFragmentCode(bool debug)
 {
 	QString finalCode = "";
 

@@ -14,9 +14,12 @@ public:
 	{
 		this->initTest();
 		initMath();
+		initObject();
 	}
 
 	void initMath();
 
 	void initTest();
+
+	void initObject();
 };

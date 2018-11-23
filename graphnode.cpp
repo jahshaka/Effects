@@ -44,6 +44,8 @@ void CustomRenderWidget::start()
 	cam = iris::CameraNode::create();
 	cam->setLocalPos(QVector3D(2, 0, 3));
 	cam->lookAt(QVector3D(0, 0, 0));
+	cam->nearClip = 1.0;
+	cam->farClip = 5.0f;
 	/*
 	shader = iris::Shader::load(
 	":assets/shaders/color.vert",

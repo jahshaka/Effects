@@ -1,6 +1,7 @@
 #include "libraryv1.h"
 #include "test.h"
 #include "math.h"
+#include "object.h"
 
 void LibraryV1::initTest()
 {
@@ -78,6 +79,17 @@ void LibraryV1::initTest()
 	//texture
 	lib->addNode("panner", "Panner", "", []() {
 		return new PannerNode();
+	});
+}
+
+void LibraryV1::initObject()
+{
+	addNode("fresnel", "Fresnel", "", []() {
+		return new FresnelNode();
+	});
+
+	addNode("depth", "Depth", "", []() {
+		return new DepthNode();
 	});
 }
 
