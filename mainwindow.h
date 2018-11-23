@@ -8,6 +8,8 @@
 #include <QTextEdit>
 #include <QDockWidget>
 #include <QSplitter>
+#include <QToolbar>
+
 #include "propertylistwidget.h"
 //#include "nodemodel.h"
 #include "graph/graphicsview.h"
@@ -61,6 +63,7 @@ private:
     void restoreGraphPositions(const QJsonObject& data);
 
 	void configureUI();
+	void configureToolbar();
 	void generateTileNode();
 	void generateTileNode(QList<NodeLibraryItem*> list);
 	void addTabs();
@@ -71,7 +74,7 @@ private:
 
     GraphNodeScene* createNewScene();
 	void regenerateShader();
-
+	
 private:
     Ui::MainWindow *ui;
     GraphNodeScene* scene;
@@ -96,6 +99,7 @@ private:
 	PropertyListWidget* propertyListWidget;
 	QListWidget *nodeContainer;
 	QMenuBar *bar;  
+	QToolBar *toolBar;
 	QMenu *file;
 	QMenu *window;
 	QMenu *edit;

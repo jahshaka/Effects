@@ -46,6 +46,7 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
 	fontIcons = new QtAwesome;
 	fontIcons->initFontAwesome();
 	configureUI();
+	configureToolbar();
 
     scene = nullptr;
 	sceneWidget = new SceneWidget();
@@ -63,7 +64,7 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
 
     // add menu items to property widget
 
-	bar = new QMenuBar(this);
+	bar = new QMenuBar();
 	file = new QMenu("File", bar);
 	window = new QMenu("Window", bar);
 	edit = new QMenu("Edit", bar);
@@ -91,7 +92,7 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
 	window->addAction(materialSettingsDock->toggleViewAction());
 	window->setFont(font);
 	
-	setMenuBar(bar);
+	//setMenuBar(bar);
 
 	connect(actionSave, &QAction::triggered, this, &MainWindow::saveGraph);
 	connect(actionLoad, &QAction::triggered, this, &MainWindow::loadGraph);
@@ -477,7 +478,7 @@ void MainWindow::configureUI()
 	font.setPointSizeF(font.pointSize() * devicePixelRatioF());
 	setFont(font);
 
-	nodeTray = new QDockWidget("Library",this);
+	nodeTray = new QDockWidget("Library");
 	centralWidget = new QWidget();
 	textWidget = new QDockWidget("Code View");
 	displayWidget = new QDockWidget("Display");
@@ -597,6 +598,64 @@ void MainWindow::configureUI()
 
 	addTabs();
 	
+}
+
+void MainWindow::configureToolbar()
+{
+	QVariantMap options;
+	options.insert("color", QColor(255, 255, 255));
+	options.insert("color-active", QColor(255, 255, 255));
+
+	toolBar = new QToolBar("Tool Bar");
+	toolBar->setMaximumHeight(50);
+	toolBar->setIconSize(QSize(12, 12));
+
+	QAction *actionUndo = new QAction;
+	actionUndo->setToolTip("Undo | Undo last action");
+	actionUndo->setObjectName(QStringLiteral("actionUndo"));
+	actionUndo->setIcon(fontIcons->icon(fa::reply, options));
+	toolBar->addAction(actionUndo);
+
+	QAction *actionRedo = new QAction;
+	actionRedo->setToolTip("Redo | Redo last action");
+	actionRedo->setObjectName(QStringLiteral("actionRedo"));
+	actionRedo->setIcon(fontIcons->icon(fa::share, options));
+	toolBar->addAction(actionRedo);
+
+	toolBar->addSeparator();
+
+	// this acts as a spacer
+	QWidget* empty = new QWidget();
+	empty->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+	toolBar->addWidget(empty);
+
+	QAction *actionSave = new QAction;
+	actionSave->setObjectName(QStringLiteral("actionSave"));
+	actionSave->setCheckable(false);
+	actionSave->setToolTip("Export | Export the current scene");
+	actionSave->setIcon(fontIcons->icon(fa::floppyo, options));
+	toolBar->addAction(actionSave);
+
+	this->addToolBar(toolBar);
+
+	connect(actionSave, &QAction::triggered, this, &MainWindow::saveGraph);
+	//connect(actionExport, &QAction::triggered, this, &MainWindow::exportGraph);
+	//connect(actionNew, &QAction::triggered, this, &MainWindow::createNewGraph);
+
+	toolBar->setStyleSheet(
+		"QToolBar{background: rgba(48,48,48, 1); spacing : 8px; padding: 2px; border: .5px solid rgba(20,20,20, .8); }"
+		"QToolBar::handle:horizontal { image: url(:/icons/thandleh.png); width: 24px; margin-left: -6px; }"
+		"QToolBar::handle:vertical { image: url(:/icons/thandlev.png); height: 24px;}"
+		" QToolBar::separator { background: rgba(0,0,0,.2); width: 1px; height : 30px;}"
+		"QToolBar::separator:horizontal { background: #272727; width: 1px; margin-left: 6px; margin-right: 6px;} "
+		"QToolButton { border-radius: 3px; background: rgba(33,33,33, 1); color: rgba(250,250,250, 1); border : 1px solid rgba(20,20,20, .5); font: 19px; padding: 7px;} "
+		"QToolButton:hover{ background: rgba(48,48,48, 1); } "
+		"QToolButton:checked{ background: rgba(50,150,250,1); }"
+	);
+
+	empty->setStyleSheet(
+		"background : rgba(0,0,0,0);"
+	);
 }
 
 void MainWindow::generateTileNode()
