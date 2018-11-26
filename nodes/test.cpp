@@ -957,3 +957,36 @@ void Vector4Node::process(ModelContext * context)
 	auto ctx = (ShaderContext*)context;
 	outSockets[0]->setVarName("vec4(" + QString::number(value.x()) + "," + QString::number(value.y()) + "," + QString::number(value.z()) + "," + QString::number(value.w()) + ")");
 }
+
+ColorPickerNode::ColorPickerNode()
+{
+	setNodeType(NodeType::Constants);
+	title = "Color Node";
+	typeName = "Color node";
+
+	colorWidget = new ColorPickerWidget();
+	this->widget = colorWidget;
+	colorWidget->setGeometry(0, 0, 70, 120);
+	connect(colorWidget, &ColorPickerWidget::onColorChanged, [=](QColor color) {
+		emit valueChanged(this, 0);
+		
+	});
+
+	addOutputSocket(new Vector4SocketModel("R G B A"));
+	addOutputSocket(new FloatSocketModel("R"));
+	addOutputSocket(new FloatSocketModel("G"));
+	addOutputSocket(new FloatSocketModel("B"));
+	addOutputSocket(new FloatSocketModel("A"));
+	//addOutputSocket(new FloatSocketModel("R"));
+}
+
+void ColorPickerNode::process(ModelContext * context)
+{
+	auto col = colorWidget->getColor();
+	outSockets[0]->setVarName("vec4(" + QString::number(col.redF()) + "," + QString::number(col.greenF()) + "," + QString::number(col.blueF()) + "," + QString::number(col.alphaF()) + ")");
+	outSockets[1]->setVarName(QString::number(col.redF()));
+	outSockets[2]->setVarName(QString::number(col.greenF()));
+	outSockets[3]->setVarName(QString::number(col.blueF()));
+	outSockets[4]->setVarName(QString::number(col.alphaF()));
+
+}

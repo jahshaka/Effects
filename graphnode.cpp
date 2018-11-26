@@ -297,8 +297,7 @@ void GraphNode::setWidget(QWidget *widget)
 	proxyWidget->setWidget(widget);
 	//proxyWidget->setPreferredSize(widget->pr);
 	proxyWidget->setPreferredWidth(5);
-	proxyWidget->setPos((nodeWidth - proxyWidget->size().width()) / 2,
-		y);
+	proxyWidget->setPos((nodeWidth - proxyWidget->size().width()) / 2,	y);
 
 	calcPath();
 
@@ -325,10 +324,20 @@ int GraphNode::calcHeight()
 	}
 
 	//height += 2; // padding
-	if (proxyWidget != nullptr)
+	if (proxyWidget != nullptr && !doNotCheckProxyWidgetHeight)
 		height += proxyWidget->size().height();
 
 	return height;
+}
+
+void GraphNode::resetPositionForColorWidget()
+{
+
+	if (proxyWidget) {
+		proxyWidget->setPos(6, titleHeight+5);
+		//proxyWidget->setPreferredSize(20, 30);
+		doNotCheckProxyWidgetHeight = true;
+	}
 }
 
 Socket *GraphNode::getInSocket(int index)
@@ -369,13 +378,13 @@ void GraphNode::layout()
 	}
 
 	//height += 2; // padding
-	if (proxyWidget != nullptr) {
+	if (proxyWidget != nullptr && !doNotCheckProxyWidgetHeight) {
 		proxyWidget->setPos((nodeWidth - proxyWidget->size().width()) / 2,
 			height);
 		height += proxyWidget->size().height();
 	}
 
-	if (proxyPreviewWidget != nullptr) {
+	if (proxyPreviewWidget != nullptr  ) {
 		height += 5;
 		proxyPreviewWidget->setPos((nodeWidth - proxyPreviewWidget->size().width()) / 2,
 			height);

@@ -196,4 +196,8 @@ void LibraryV1::initMath()
 	addNode("vector4", "Vector4", "", []() {
 		return new Vector4Node();
 	});
+
+	addNode("color", "Color", "", []() {
+		return new ColorPickerNode();
+	});
 }

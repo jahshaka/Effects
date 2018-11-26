@@ -648,7 +648,7 @@ void MainWindow::configureToolbar()
 		"QToolBar::handle:vertical { image: url(:/icons/thandlev.png); height: 24px;}"
 		" QToolBar::separator { background: rgba(0,0,0,.2); width: 1px; height : 30px;}"
 		"QToolBar::separator:horizontal { background: #272727; width: 1px; margin-left: 6px; margin-right: 6px;} "
-		"QToolButton { border-radius: 3px; background: rgba(33,33,33, 1); color: rgba(250,250,250, 1); border : 1px solid rgba(20,20,20, .5); font: 19px; padding: 7px;} "
+		"QToolButton { border-radius: 3px; background: rgba(33,33,33, 1); color: rgba(250,250,250, 1); border : 1px solid rgba(20,20,20, .5); font: 19px; padding: 7px 9px;} "
 		"QToolButton:hover{ background: rgba(48,48,48, 1); } "
 		"QToolButton:checked{ background: rgba(50,150,250,1); }"
 	);

@@ -46,6 +46,8 @@ void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addTo
 	nodeView->setNodeGraph(this->nodeGraph);
 	nodeView->setTitle(model->title);
 	nodeView->setTitleColor(model->setNodeTitleColor());
+	if (model->title == "Color Node") nodeView->doNotCheckProxyWidgetHeight = true;
+
 	//nodeView->setIcon(model->icon);
 
 	for (auto sock : model->inSockets)
@@ -53,14 +55,18 @@ void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addTo
 	for (auto sock : model->outSockets)
 		nodeView->addOutSocket(sock->name);
 
-	if (model->widget != nullptr)
+	if (model->widget != nullptr) {
 		nodeView->setWidget(model->widget);
+	}
+
+	
 	/*nodeView->setTitle(model->title);
 	nodeView->setTitleColor(model->setNodeTitleColor());*/
 
 	nodeView->setPos(x, y);
 	nodeView->nodeId = model->id;
 	nodeView->layout();
+	if (model->title == "Color Node") nodeView->resetPositionForColorWidget();
 
 	if (model->isPreviewEnabled()) {
 		nodeView->enablePreviewWidget();

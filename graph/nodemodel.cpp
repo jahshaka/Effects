@@ -62,6 +62,12 @@ void NodeModel::addOutputSocket(SocketModel *sock)
 	sock->setNode(this);
 }
 
+void NodeModel::setWidget(QWidget * wid)
+{
+	widget = wid;
+	updateStyle();
+}
+
 QString NodeModel::getValueFromInputSocket(int index)
 {
 	auto sock = inSockets[index];

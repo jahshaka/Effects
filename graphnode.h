@@ -97,6 +97,8 @@ public:
 	void setWidget(QWidget* widget);
 	void calcPath();
 	int calcHeight();
+	void resetPositionForColorWidget();
+	bool doNotCheckProxyWidgetHeight = false;
 
 	Socket* getInSocket(int index);
 	Socket* getOutSocket(int index);
