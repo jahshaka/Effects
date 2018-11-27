@@ -55,6 +55,7 @@ set(CPP
 	generator/shadergenerator.cpp
 	generator/shadercontext.cpp
 	listwidget.cpp
+	shaderlistwidget.cpp
 	# nodes
 	nodes/test.cpp
 	nodes/libraryv1.cpp
@@ -101,6 +102,7 @@ set(HEADERS
 		generator/shadergenerator.h
 		generator/shadercontext.h
 		listwidget.h
+		shaderlistwidget.h
 		# nodes
 		nodes/test.h
 		nodes/libraryv1.h
@@ -140,8 +142,8 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 
-add_library(shadergraph STATIC ${HEADERS} ${CPP} ${FORMS} ${QRCS})
-target_link_libraries(shadergraph Qt5::Widgets Qt5::Sql)
+#add_library(shadergraph STATIC ${HEADERS} ${CPP} ${FORMS} ${QRCS})
+#target_link_libraries(shadergraph Qt5::Widgets Qt5::Sql)
 
 if (EFFECT_BUILD_AS_LIB)
 

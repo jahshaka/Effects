@@ -14,6 +14,10 @@ struct nodeGraphPreset {
 	QString iconPath = "";
 };
 
+struct dialogType {
+
+};
+
 class OptionSelection : public QPushButton
 {
 	Q_OBJECT
@@ -32,6 +36,7 @@ signals:
 
 class CreateNewDialog : public QDialog
 {
+	Q_OBJECT
 public:
 	CreateNewDialog(QList<nodeGraphPreset> list);
 	~CreateNewDialog();
@@ -53,6 +58,8 @@ private:
 	QLabel *infoLabel;
     int num_of_widgets_per_row = 3;
 
+signals:
+	void confirmClicked(int option);
 
 
 };

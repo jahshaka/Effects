@@ -112,6 +112,7 @@ private:
 	void configureStyleSheet();
 	void configureProjectDock();
 	void configureAssetsDock();
+	void createShader();
 
 	QtAwesome *fontIcons;
 	Database *dataBase;

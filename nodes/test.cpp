@@ -1,7 +1,7 @@
 #include "test.h"
 #include "../graph/library.h"
 #include "../texturemanager.h"
-#include "propertywidgets/vectorpropertywidget.h"
+#include "../propertywidgets/vectorpropertywidget.h"
 #include <QFileDialog>
 #include <QDebug>
 void registerModels(NodeGraph* graph)
@@ -966,10 +966,9 @@ ColorPickerNode::ColorPickerNode()
 
 	colorWidget = new ColorPickerWidget();
 	this->widget = colorWidget;
-	colorWidget->setGeometry(0, 0, 70, 120);
+	colorWidget->setGeometry(0, 0, 60, 140);
 	connect(colorWidget, &ColorPickerWidget::onColorChanged, [=](QColor color) {
 		emit valueChanged(this, 0);
-		
 	});
 
 	addOutputSocket(new Vector4SocketModel("R G B A"));

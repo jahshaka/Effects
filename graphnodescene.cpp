@@ -217,7 +217,7 @@ GraphNodeScene::GraphNodeScene(QWidget* parent) :
 	this->installEventFilter(this);
 	conGroup = new QGraphicsItemGroup;
 	addItem(conGroup);
-
+	
 }
 
 SocketConnection *GraphNodeScene::addConnection(QString leftNodeId, int leftSockIndex, QString rightNodeId, int rightSockIndex)

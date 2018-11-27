@@ -81,6 +81,7 @@ CreateNewDialog::CreateNewDialog(QList<nodeGraphPreset> list) : QDialog()
 	int i = 0;
 	int j = 0;
 
+
     //set up list options
     for (auto tile : list) {
         auto item = new OptionSelection(tile);
@@ -96,6 +97,7 @@ CreateNewDialog::CreateNewDialog(QList<nodeGraphPreset> list) : QDialog()
 			confirm->setEnabled(true);
 		});
     }
+	
 
     i=0;j=0;
 
@@ -111,7 +113,6 @@ CreateNewDialog::CreateNewDialog(QList<nodeGraphPreset> list) : QDialog()
 		connect(item, &OptionSelection::buttonSelected, [=](OptionSelection* button) {
 			currentInfoSelected = button->info;
 			infoLabel->setText(currentInfoSelected.title + " selected");
-			confirm->setEnabled(true);
 		});
     }
 
@@ -122,6 +123,13 @@ CreateNewDialog::CreateNewDialog(QList<nodeGraphPreset> list) : QDialog()
 	connect(confirm, &QPushButton::clicked, [=]() {
 		auto projectName = nameEdit->text();
 		this->accept();
+		emit confirmClicked(2);
+	});
+
+	connect(nameEdit, &QLineEdit::textChanged, [=](QString text) {
+		if(text.count() > 1) 	confirm->setEnabled(true);
+		else 	confirm->setEnabled(false);
+
 	});
 
     configureStylesheet();

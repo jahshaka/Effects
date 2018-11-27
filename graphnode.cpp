@@ -334,8 +334,7 @@ void GraphNode::resetPositionForColorWidget()
 {
 
 	if (proxyWidget) {
-		proxyWidget->setPos(6, titleHeight+5);
-		//proxyWidget->setPreferredSize(20, 30);
+		proxyWidget->setPos(12, titleHeight+10);
 		doNotCheckProxyWidgetHeight = true;
 	}
 }

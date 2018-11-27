@@ -12,7 +12,7 @@
 #include "../graph/sockets.h"
 #include "../generator/shadercontext.h"
 #include "../propertywidgets/propertywidgetbase.h"
-#include "../widgets/colorpickerwidget.h"
+#include "../../widgets/colorpickerwidget.h"
 
 class SurfaceMasterNode : public NodeModel
 {

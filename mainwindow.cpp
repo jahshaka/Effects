@@ -1,7 +1,9 @@
 ﻿#include "mainwindow.h"
-#include "ui_mainwindow.h"
+//#include "ui_mainwindow.h"
 #include "graphnode.h"
 #include <QMouseEvent>
+#include <QApplication>
+#include <QButtonGroup>
 #include <QDebug>
 #include <QDrag>
 #include "scenewidget.h"
@@ -9,6 +11,8 @@
 #include <QGridLayout>
 #include <QLineEdit>
 #include <QListWidgetItem>
+#include <QMenuBar>
+#include <QMenu>
 #include <QFileDialog>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -35,6 +39,12 @@
 #include <QMainWindow>
 #include "../core/database/database.h"
 
+
+#include "../uimanager.h"
+#include "../globals.h"
+#include "../core/guidmanager.h"
+#include "../../irisgl/src/core/irisutils.h"
+#include "../io/assetmanager.h"
 
 namespace shadergraph
 {
@@ -171,7 +181,6 @@ void MainWindow::newNodeGraph()
     auto masterNode = new SurfaceMasterNode();
     graph->addNode(masterNode);
     graph->setMasterNode(masterNode);
-
     setNodeGraph(graph);
 
 }
@@ -461,7 +470,8 @@ void MainWindow::configureAssetsDock()
 
 		});
 		connect(addBtn, &QPushButton::clicked, [=]() {
-			
+			createNewGraph();
+			createShader();
 		});
 	}
 
@@ -470,6 +480,62 @@ void MainWindow::configureAssetsDock()
 	layout->addWidget(buttonBar);
 	assetsDock->setWidget(holder);
 	assetsDock->setStyleSheet(nodeTray->styleSheet());
+}
+
+void MainWindow::createShader()
+{
+	const QString newShader = "Untitled Shader";
+	QListWidgetItem *item = new QListWidgetItem;
+	item->setFlags(item->flags() | Qt::ItemIsEditable);
+	item->setSizeHint({40,40});
+	item->setTextAlignment(Qt::AlignCenter);
+	item->setIcon(QIcon(":/icons/icons8-file-72.png"));
+
+	const QString assetGuid = GUIDManager::generateGUID();
+
+	item->setData(MODEL_GUID_ROLE, assetGuid);
+	//item->setData(MODEL_PARENT_ROLE, assetItemShader.selectedGuid);
+	item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
+	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Shader));
+	item->setData(Qt::UserRole, "noName");
+
+	//assetItemShader.wItem = item;
+
+	QString shaderName = newShader;
+
+	//QStringList assetsInProject = dataBase->fetchAssetNameByParent(assetItemShader.selectedGuid);
+
+	//// If we encounter the same file, make a duplicate...
+	int increment = 1;
+	//while (assetsInProject.contains(IrisUtils::buildFileName(shaderName, "shader"))) {
+	//	shaderName = QString(newShader + " %1").arg(QString::number(increment++));
+	//}
+
+	dataBase->createAssetEntry(assetGuid,
+		IrisUtils::buildFileName(shaderName, "shader"),
+		static_cast<int>(ModelTypes::Shader),
+		"",
+		QByteArray());
+
+	item->setText(shaderName);
+	effects->addItem(item);
+
+	QFile *templateShaderFile = new QFile(IrisUtils::getAbsoluteAssetPath("app/templates/ShaderTemplate.shader"));
+	templateShaderFile->open(QIODevice::ReadOnly | QIODevice::Text);
+	QJsonObject shaderDefinition = QJsonDocument::fromJson(templateShaderFile->readAll()).object();
+	templateShaderFile->close();
+	shaderDefinition["name"] = shaderName;
+	shaderDefinition.insert("guid", assetGuid);
+
+	auto assetShader = new AssetShader;
+	assetShader->fileName = IrisUtils::buildFileName(shaderName, "shader");
+	assetShader->assetGuid = assetGuid;
+	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(shaderName, "shader"));
+	assetShader->setValue(QVariant::fromValue(shaderDefinition));
+
+	dataBase->updateAssetAsset(assetGuid, QJsonDocument(shaderDefinition).toBinaryData());
+
+	AssetManager::addAsset(assetShader);
 }
 
 void MainWindow::configureUI()
@@ -726,7 +792,7 @@ void MainWindow::createNewGraph()
 	auto node = new CreateNewDialog(list);
 	node->exec();
 
-	connect(node, &QDialog::accepted, [=]() {
+	connect(node, &CreateNewDialog::confirmClicked, [=]( int option) {
 		newNodeGraph();
 	});
 }

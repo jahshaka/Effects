@@ -8,13 +8,11 @@
 
 #include "../uimanager.h"
 #include "../globals.h"
-
 #include "../core/database/database.h"
-//#include "../widgets/assetwidget.h"
-
 #include "../core/guidmanager.h"
 #include "../../irisgl/src/core/irisutils.h"
 #include "../io/assetmanager.h"
+
 
 
 
@@ -31,8 +29,11 @@ ShaderAssetWidget::ShaderAssetWidget(Database *handle) : QWidget()
 	breadCrumbsWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	breadCrumbsWidget->setLayout(breadCrumbs);
 
-	assetViewWidget = new ListWidget;
+	assetViewWidget = new ShaderListWidget;
 	assetViewWidget->viewport()->installEventFilter(this);
+	connect(assetViewWidget, &ShaderListWidget::itemDropped, [=](QListWidgetItem *item) {
+		createShader(item);
+	});
 
 	layout->addWidget(breadCrumbsWidget);
 	
@@ -60,6 +61,30 @@ ShaderAssetWidget::ShaderAssetWidget(Database *handle) : QWidget()
 
 			layout->addWidget(noWidget);
 		}
+
+	/*	assetViewWidget->setAlternatingRowColors(false);
+		assetViewWidget->setSpacing(0);
+		assetViewWidget->setContentsMargins(10, 3, 10, 10);
+		assetViewWidget->setViewMode(QListWidget::IconMode);
+		assetViewWidget->setIconSize(currentSize);
+		assetViewWidget->setMouseTracking(true);
+		assetViewWidget->setDragDropMode(QAbstractItemView::DragDrop);
+		assetViewWidget->setMovement(QListView::Static);
+		assetViewWidget->setResizeMode(QListWidget::Adjust);
+		assetViewWidget->setDefaultDropAction(Qt::CopyAction);
+		assetViewWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+		assetViewWidget->setSelectionRectVisible(false);
+		assetViewWidget->setDragEnabled(true);
+
+		assetViewWidget->setDropIndicatorShown(true);
+		assetViewWidget->installEventFilter(this);
+		assetViewWidget->viewport()->installEventFilter(this);
+		assetViewWidget->setWordWrap(true);
+		assetViewWidget->setGridSize(QSize(90, 90));
+		assetViewWidget->setSortingEnabled(true);
+		assetViewWidget->sortItems();
+		assetViewWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);*/
+		
 	
 }
 
@@ -152,7 +177,7 @@ void ShaderAssetWidget::addItem(const FolderRecord & folderData)
 	item->setTextAlignment(Qt::AlignCenter);
 	item->setFlags(item->flags() | Qt::ItemIsEditable);
 	item->setIcon(QIcon(":/icons/icons8-folder-72.png"));
-
+	 
 	assetViewWidget->addItem(item);
 }
 
@@ -273,6 +298,111 @@ void ShaderAssetWidget::createFolder()
 }
 
 void ShaderAssetWidget::createShader()
+{
+	const QString newShader = "Untitled Shader";
+	QListWidgetItem *item = new QListWidgetItem;
+	item->setFlags(item->flags() | Qt::ItemIsEditable);
+	item->setSizeHint(currentSize);
+	item->setTextAlignment(Qt::AlignCenter);
+	item->setIcon(QIcon(":/icons/icons8-file-72.png"));
+
+	const QString assetGuid = GUIDManager::generateGUID();
+
+	item->setData(MODEL_GUID_ROLE, assetGuid);
+	item->setData(MODEL_PARENT_ROLE, assetItemShader.selectedGuid);
+	item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
+	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Shader));
+
+	assetItemShader.wItem = item;
+
+	QString shaderName = newShader;
+
+	QStringList assetsInProject = db->fetchAssetNameByParent(assetItemShader.selectedGuid);
+
+	//// If we encounter the same file, make a duplicate...
+	int increment = 1;
+	while (assetsInProject.contains(IrisUtils::buildFileName(shaderName, "shader"))) {
+		shaderName = QString(newShader + " %1").arg(QString::number(increment++));
+	}
+
+	db->createAssetEntry(assetGuid,
+		IrisUtils::buildFileName(shaderName, "shader"),
+		static_cast<int>(ModelTypes::Shader),
+		assetItemShader.selectedGuid,
+		QByteArray());
+
+	item->setText(shaderName);
+	assetViewWidget->addItem(item);
+
+	QFile *templateShaderFile = new QFile(IrisUtils::getAbsoluteAssetPath("app/templates/ShaderTemplate.shader"));
+	templateShaderFile->open(QIODevice::ReadOnly | QIODevice::Text);
+	QJsonObject shaderDefinition = QJsonDocument::fromJson(templateShaderFile->readAll()).object();
+	templateShaderFile->close();
+	shaderDefinition["name"] = shaderName;
+	shaderDefinition.insert("guid", assetGuid);
+
+	auto assetShader = new AssetShader;
+	assetShader->fileName = IrisUtils::buildFileName(shaderName, "shader");
+	assetShader->assetGuid = assetGuid;
+	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(shaderName, "shader"));
+	assetShader->setValue(QVariant::fromValue(shaderDefinition));
+
+	db->updateAssetAsset(assetGuid, QJsonDocument(shaderDefinition).toBinaryData());
+
+	AssetManager::addAsset(assetShader);
+}
+
+void ShaderAssetWidget::createShader(QListWidgetItem * item)
+{
+	const QString newShader = "Untitled Shader";
+	
+	item->setSizeHint(currentSize);
+	
+
+	const QString assetGuid = item->data(MODEL_GUID_ROLE).toString();
+
+	item->setData(MODEL_PARENT_ROLE, assetItemShader.selectedGuid);
+
+	assetItemShader.wItem = item;
+
+	QString shaderName = item->text();
+
+	QStringList assetsInProject = db->fetchAssetNameByParent(assetItemShader.selectedGuid);
+
+	//// If we encounter the same file, make a duplicate...
+	int increment = 1;
+	while (assetsInProject.contains(IrisUtils::buildFileName(shaderName, "shader"))) {
+		shaderName = QString(newShader + " %1").arg(QString::number(increment++));
+	}
+
+	db->createAssetEntry(assetGuid,
+		IrisUtils::buildFileName(shaderName, "shader"),
+		static_cast<int>(ModelTypes::Shader),
+		assetItemShader.selectedGuid,
+		QByteArray());
+
+	item->setText(shaderName);
+	assetViewWidget->addItem(item);
+
+	QFile *templateShaderFile = new QFile(IrisUtils::getAbsoluteAssetPath("app/templates/ShaderTemplate.shader"));
+	templateShaderFile->open(QIODevice::ReadOnly | QIODevice::Text);
+	QJsonObject shaderDefinition = QJsonDocument::fromJson(templateShaderFile->readAll()).object();
+	templateShaderFile->close();
+	shaderDefinition["name"] = shaderName;
+	shaderDefinition.insert("guid", assetGuid);
+
+	auto assetShader = new AssetShader;
+	assetShader->fileName = IrisUtils::buildFileName(shaderName, "shader");
+	assetShader->assetGuid = assetGuid;
+	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(shaderName, "shader"));
+	assetShader->setValue(QVariant::fromValue(shaderDefinition));
+
+	db->updateAssetAsset(assetGuid, QJsonDocument(shaderDefinition).toBinaryData());
+
+	AssetManager::addAsset(assetShader);
+}
+
+void ShaderAssetWidget::createLocalShader()
 {
 	const QString newShader = "Untitled Shader";
 	QListWidgetItem *item = new QListWidgetItem;

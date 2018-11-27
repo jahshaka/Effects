@@ -1,5 +1,5 @@
 #include "propertylistwidget.h"
-#include "ui_propertylistwidget.h"
+//#include "ui_propertylistwidget.h"
 #include <QMenu>
 #include <QDebug>
 #include <QFont>
