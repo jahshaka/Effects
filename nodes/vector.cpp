@@ -83,7 +83,7 @@ void ComposeVectorNode::process(ModelContext* context)
 	auto z = this->getValueFromInputSocket(2);
 	auto w = this->getValueFromInputSocket(3);
 
-	this->outSockets[0]->varName = "vec4("+x+","+y+","+z+","+w+")";
+	this->outSockets[0]->varName = "vec4("+x+","+y+","+z+","+w+");";
 }
 
 
@@ -97,7 +97,7 @@ DistanceVectorNode::DistanceVectorNode()
 	//enablePreview = true;
 
 	addInputSocket(new Vector4SocketModel("Vector"));
-	addOutputSocket(new Vector4SocketModel("Result"));
+	addOutputSocket(new FloatSocketModel("Result"));
 }
 
 void DistanceVectorNode::process(ModelContext* context)
@@ -106,7 +106,7 @@ void DistanceVectorNode::process(ModelContext* context)
 	auto vec = this->getValueFromInputSocket(0);
 	auto res = this->getOutputSocketVarName(0);
 
-	auto code = res + " = distance(" + vec + ")";
+	auto code = res + " = distance(" + vec + ");";
 	ctx->addCodeChunk(this, code);
 }
 
@@ -120,7 +120,7 @@ DotVectorNode::DotVectorNode()
 
 	addInputSocket(new Vector4SocketModel("VectorA"));
 	addInputSocket(new Vector4SocketModel("VectorB"));
-	addOutputSocket(new Vector4SocketModel("Result"));
+	addOutputSocket(new FloatSocketModel("Result"));
 }
 
 void DotVectorNode::process(ModelContext* context)
@@ -130,7 +130,7 @@ void DotVectorNode::process(ModelContext* context)
 	auto vec2 = this->getValueFromInputSocket(1);
 	auto res = this->getOutputSocketVarName(0);
 
-	auto code = res + " = dot(" + vec1 + "," + vec2 + ")";
+	auto code = res + " = dot(" + vec1 + "," + vec2 + ");";
 	ctx->addCodeChunk(this, code);
 }
 
@@ -143,7 +143,7 @@ LengthVectorNode::LengthVectorNode()
 	typeName = "length";
 
 	addInputSocket(new Vector4SocketModel("Vector"));
-	addOutputSocket(new Vector4SocketModel("Result"));
+	addOutputSocket(new FloatSocketModel("Result"));
 }
 
 void LengthVectorNode::process(ModelContext* context)
@@ -152,7 +152,7 @@ void LengthVectorNode::process(ModelContext* context)
 	auto vec1 = this->getValueFromInputSocket(0);
 	auto res = this->getOutputSocketVarName(0);
 
-	auto code = res + " = length(" + vec1 + ")";
+	auto code = res + " = length(" + vec1 + ");";
 	ctx->addCodeChunk(this, code);
 }
 
@@ -174,6 +174,6 @@ void NormalizeVectorNode::process(ModelContext* context)
 	auto vec1 = this->getValueFromInputSocket(0);
 	auto res = this->getOutputSocketVarName(0);
 
-	auto code = res + " = normalize(" + vec1 + ")";
+	auto code = res + " = normalize(" + vec1 + ");";
 	ctx->addCodeChunk(this, code);
 }
