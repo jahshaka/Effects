@@ -94,6 +94,8 @@ CreateNewDialog::CreateNewDialog(QList<nodeGraphPreset> list) : QDialog()
 		connect(item, &OptionSelection::buttonSelected, [=](OptionSelection* button) {
 			currentInfoSelected = button->info;
 			infoLabel->setText(currentInfoSelected.title + " selected");
+			templateName = button->info.name;
+			type = 1;
 			confirm->setEnabled(true);
 		});
     }
@@ -112,6 +114,8 @@ CreateNewDialog::CreateNewDialog(QList<nodeGraphPreset> list) : QDialog()
         }
 		connect(item, &OptionSelection::buttonSelected, [=](OptionSelection* button) {
 			currentInfoSelected = button->info;
+			templateName = button->info.name;
+			type = 2;
 			infoLabel->setText(currentInfoSelected.title + " selected");
 		});
     }
@@ -129,6 +133,8 @@ CreateNewDialog::CreateNewDialog(QList<nodeGraphPreset> list) : QDialog()
 	connect(nameEdit, &QLineEdit::textChanged, [=](QString text) {
 		if(text.count() > 1) 	confirm->setEnabled(true);
 		else 	confirm->setEnabled(false);
+
+		name = text;
 
 	});
 

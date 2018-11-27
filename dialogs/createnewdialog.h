@@ -42,7 +42,16 @@ public:
 	~CreateNewDialog();
 
 	void configureStylesheet();
+	QString getName() { return name; }
+	QString getTemplateName() { return templateName; }
+	int getType() { return type; }
+
+
 private:
+	QString name;
+	int type; // presets = 1, assets =2 
+	QString templateName;
+
 	QPushButton * cancel;
 	QPushButton * confirm;
 	QLineEdit * nameEdit;

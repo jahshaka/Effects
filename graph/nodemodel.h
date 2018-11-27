@@ -15,6 +15,7 @@ enum class NodeType {
 	Properties,
 	Math,
 	Constants,
+	Vector,
 	PlaceHolder
 };
 

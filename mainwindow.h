@@ -49,7 +49,8 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow( QWidget *parent = Q_NULLPTR, Database *database = Q_NULLPTR);
     void setNodeGraph(NodeGraph* graph);
-    void newNodeGraph();
+    void newNodeGraph(QString *shaderName = Q_NULLPTR, int *templateType = Q_NULLPTR, QString *templateName = Q_NULLPTR);
+	
 	void refreshShaderGraph();
 	void setAssetWidgetDatabase(Database *db);
 
@@ -69,6 +70,7 @@ private:
 	void addTabs();
 	void setNodeLibraryItem(QListWidgetItem *item, NodeLibraryItem *tile);
 	void createNewGraph();
+	void updateAssetDock();
 
 	bool eventFilter(QObject *watched, QEvent *event);
 
@@ -112,10 +114,12 @@ private:
 	void configureStyleSheet();
 	void configureProjectDock();
 	void configureAssetsDock();
-	void createShader();
+	void createShader(QString *shaderName = Q_NULLPTR, int *templateType = Q_NULLPTR, QString *templateName = Q_NULLPTR);
 
 	QtAwesome *fontIcons;
 	Database *dataBase;
+	QSize defaultGridSize = QSize(100, 100);
+	QSize defaultItemSize = QSize(90, 90);
 
 };
 

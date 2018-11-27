@@ -173,7 +173,7 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
 	this->graph = graph;
 }
 
-void MainWindow::newNodeGraph()
+void MainWindow::newNodeGraph(QString *shaderName, int *templateType, QString *templateName)
 {
     auto graph = new NodeGraph;
 	graph->setNodeLibrary(new LibraryV1());
@@ -414,16 +414,16 @@ void MainWindow::configureAssetsDock()
 	}
 
 	//presets->setResizeMode(QListView::Fixed);
-	for (int i = 0; i < 13; i++) {
-		auto item = new QListWidgetItem;
-		item->setText("assets" + QString::number(i));
-		item->setSizeHint({ 40,40 });
-		item->setTextAlignment(Qt::AlignCenter);
-		item->setFlags(item->flags() | Qt::ItemIsEditable);
-		effects->addItem(item);
-	}
-	presets->setGridSize({ 50,50 });
-	effects->setGridSize({ 50,50 });
+	//for (int i = 0; i < 13; i++) {
+	//	auto item = new QListWidgetItem;
+	//	item->setText("assets" + QString::number(i));
+	//	item->setSizeHint({ 40,40 });
+	//	item->setTextAlignment(Qt::AlignCenter);
+	//	item->setFlags(item->flags() | Qt::ItemIsEditable);
+	//	effects->addItem(item);
+	//}
+	presets->setGridSize(defaultGridSize);
+	effects->setGridSize(defaultGridSize);
 
 	presets->isResizable = true;
 	effects->isResizable = true;
@@ -471,7 +471,6 @@ void MainWindow::configureAssetsDock()
 		});
 		connect(addBtn, &QPushButton::clicked, [=]() {
 			createNewGraph();
-			createShader();
 		});
 	}
 
@@ -480,11 +479,15 @@ void MainWindow::configureAssetsDock()
 	layout->addWidget(buttonBar);
 	assetsDock->setWidget(holder);
 	assetsDock->setStyleSheet(nodeTray->styleSheet());
+
+	updateAssetDock();
 }
 
-void MainWindow::createShader()
+void MainWindow::createShader(QString *shaderName, int *templateType , QString *templateName)
 {
-	const QString newShader = "Untitled Shader";
+	QString newShader;
+	if(shaderName)	 newShader = *shaderName;
+	else   newShader = "Untitled Shader";
 	QListWidgetItem *item = new QListWidgetItem;
 	item->setFlags(item->flags() | Qt::ItemIsEditable);
 	item->setSizeHint({40,40});
@@ -497,11 +500,10 @@ void MainWindow::createShader()
 	//item->setData(MODEL_PARENT_ROLE, assetItemShader.selectedGuid);
 	item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
 	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Shader));
-	item->setData(Qt::UserRole, "noName");
+	item->setData(Qt::UserRole, newShader);
 
 	//assetItemShader.wItem = item;
 
-	QString shaderName = newShader;
 
 	//QStringList assetsInProject = dataBase->fetchAssetNameByParent(assetItemShader.selectedGuid);
 
@@ -512,25 +514,25 @@ void MainWindow::createShader()
 	//}
 
 	dataBase->createAssetEntry(assetGuid,
-		IrisUtils::buildFileName(shaderName, "shader"),
+		IrisUtils::buildFileName(newShader, "shader"),
 		static_cast<int>(ModelTypes::Shader),
 		"",
 		QByteArray());
 
-	item->setText(shaderName);
+	item->setText(newShader);
 	effects->addItem(item);
 
 	QFile *templateShaderFile = new QFile(IrisUtils::getAbsoluteAssetPath("app/templates/ShaderTemplate.shader"));
 	templateShaderFile->open(QIODevice::ReadOnly | QIODevice::Text);
 	QJsonObject shaderDefinition = QJsonDocument::fromJson(templateShaderFile->readAll()).object();
 	templateShaderFile->close();
-	shaderDefinition["name"] = shaderName;
+	shaderDefinition["name"] = newShader;
 	shaderDefinition.insert("guid", assetGuid);
 
 	auto assetShader = new AssetShader;
-	assetShader->fileName = IrisUtils::buildFileName(shaderName, "shader");
+	assetShader->fileName = IrisUtils::buildFileName(newShader, "shader");
 	assetShader->assetGuid = assetGuid;
-	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(shaderName, "shader"));
+	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(newShader, "shader"));
 	assetShader->setValue(QVariant::fromValue(shaderDefinition));
 
 	dataBase->updateAssetAsset(assetGuid, QJsonDocument(shaderDefinition).toBinaryData());
@@ -656,7 +658,7 @@ void MainWindow::configureUI()
 	nodeContainer->installEventFilter(this);
 	nodeContainer->viewport()->installEventFilter(this);
 	nodeContainer->setWordWrap(true);
-	nodeContainer->setGridSize(QSize(90, 90));
+	nodeContainer->setGridSize(defaultGridSize);
 	nodeContainer->setSortingEnabled(true);
 	nodeContainer->sortItems();
 	nodeContainer->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -782,6 +784,8 @@ void MainWindow::setNodeLibraryItem(QListWidgetItem *item, NodeLibraryItem *tile
 
 void MainWindow::createNewGraph()
 {
+	//TODO get presets from database
+	list.clear();
 	for (int i = 0; i < 3; i++) {
 		nodeGraphPreset will;
 		will.name = "willroy" + QString::number(i);
@@ -789,12 +793,56 @@ void MainWindow::createNewGraph()
 		list.append(will);
 	}
 
-	auto node = new CreateNewDialog(list);
-	node->exec();
+	CreateNewDialog node(list);
+	node.exec();
 
-	connect(node, &CreateNewDialog::confirmClicked, [=]( int option) {
-		newNodeGraph();
-	});
+	qDebug() << node.result();
+
+	if (node.result() == QDialog::Accepted) {
+
+		auto shaderName = node.getName();
+		auto shaderType = node.getType();
+		auto shaderTemplateName = node.getTemplateName();
+		createShader(&shaderName,&shaderType,&shaderTemplateName);
+	}
+
+	
+}
+
+void MainWindow::updateAssetDock()
+{
+
+		for (const auto &asset : dataBase->fetchAssets())  //dp something{
+		{
+			if (asset.projectGuid == "") {
+
+				auto item = new QListWidgetItem;
+				item->setText(asset.name);
+				item->setFlags(item->flags() | Qt::ItemIsEditable);
+				item->setSizeHint({90,90});
+				item->setTextAlignment(Qt::AlignCenter);
+				item->setIcon(QIcon(":/icons/icons8-file-72.png"));
+
+				item->setData(MODEL_GUID_ROLE, asset.guid);
+				item->setData(MODEL_PARENT_ROLE, asset.parent);
+				item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
+				item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Shader));
+
+				effects->addItem(item);
+			}
+
+		/*	QJsonObject object;
+			object["icon_url"] = "";
+			object["guid"] = record.guid;
+			object["name"] = record.name;
+			object["type"] = record.type;
+			object["collection"] = record.collection;
+			object["collection_name"] = record.collection;
+			object["author"] = record.author;
+			object["license"] = record.license;*/
+		}
+	
+
 }
 
 void MainWindow::setAssetWidgetDatabase(Database * db)
