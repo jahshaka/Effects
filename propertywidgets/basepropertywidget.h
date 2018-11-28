@@ -4,7 +4,7 @@
 #include <QPushButton>
 #include <QLineEdit>
 #include <QVBoxLayout>
-#include "properties.h"
+#include "../properties.h"
 
 class HeaderObject : public QWidget
 {

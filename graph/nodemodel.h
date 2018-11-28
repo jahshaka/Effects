@@ -14,6 +14,8 @@ enum class NodeType {
 	Input,
 	Properties,
 	Math,
+	Constants,
+	Vector,
 	PlaceHolder
 };
 
@@ -50,6 +52,7 @@ public:
 	void updateStyle();
 	void addInputSocket(SocketModel* sock);
 	void addOutputSocket(SocketModel* sock);
+	void setWidget(QWidget *wid);
 
 	virtual QString getSocketValue(int socketIndex, ModelContext* context)
 	{

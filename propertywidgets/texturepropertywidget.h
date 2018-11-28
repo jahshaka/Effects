@@ -6,7 +6,7 @@
 #include <QLineEdit>
 #include <QPainter>
 #include <QPushButton>
-#include "properties.h"
+#include "../properties.h"
 #include "basepropertywidget.h"
 #include "propertywidgetbase.h"
 

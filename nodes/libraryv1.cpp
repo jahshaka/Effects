@@ -185,6 +185,22 @@ void LibraryV1::initMath()
 	addNode("negate", "Negate", "", []() {
 		return new NegateNode();
 	});
+
+	addNode("vector2", "Vector2", "", []() {
+		return new Vector2Node();
+	});
+
+	addNode("vector3", "Vector3", "", []() {
+		return new Vector3Node();
+	});
+
+	addNode("vector4", "Vector4", "", []() {
+		return new Vector4Node();
+	});
+
+	addNode("color", "Color", "", []() {
+		return new ColorPickerNode();
+
 }
 
 void LibraryV1::initVector()
@@ -215,5 +231,6 @@ void LibraryV1::initVector()
 
 	addNode("normalize", "Normalize", "", []() {
 		return new NormalizeVectorNode();
+
 	});
 }

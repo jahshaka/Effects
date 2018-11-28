@@ -12,6 +12,7 @@
 #include "../graph/sockets.h"
 #include "../generator/shadercontext.h"
 #include "../propertywidgets/propertywidgetbase.h"
+#include "../../widgets/colorpickerwidget.h"
 
 class SurfaceMasterNode : public NodeModel
 {
@@ -157,6 +158,44 @@ public:
 	virtual QJsonValue serializeWidgetValue(int widgetIndex = 0) override;
 
 	virtual void process(ModelContext* context) override;
+};
+
+class Vector2Node : public NodeModel
+{
+public:
+	Vector2Node();
+	int x, y;
+	QVector2D value;
+	virtual void process(ModelContext* context) override;
+};
+
+class Vector3Node : public NodeModel
+{
+public:
+	Vector3Node();
+	int x, y, z;
+	QVector3D value;
+	virtual void process(ModelContext* context) override;
+};
+
+class Vector4Node : public NodeModel
+{
+public:
+	Vector4Node();
+	int x, y, z, w;
+	QVector4D value;
+	virtual void process(ModelContext* context) override;
+};
+
+class ColorPickerNode : public NodeModel
+{
+public:
+	ColorPickerNode();
+
+private:
+	ColorPickerWidget *colorWidget;
+	virtual void process(ModelContext* context) override;
+
 };
 
 void registerModels(NodeGraph* graph);

@@ -47,11 +47,14 @@ private:
 	QColor disconnectedColor = QColor(60, 60, 64).darker(175);
 	bool connected = false;
 	bool rounded = true;
+	int outSocketXOffset;
+	int outSocketYOffset;
+	int inSocketXOffset;
+	int inSocketYOffset;
 
 
 
 	void setConnected(bool value);
-	QPainterPath addInvisibleCover();
 	bool setShouldAddInvisibleCover = false;
 
 protected:

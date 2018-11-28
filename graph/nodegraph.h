@@ -9,7 +9,7 @@
 #include <QJsonValue>
 #include <QJsonObject>
 #include <functional>
-#include "properties.h"
+#include "../properties.h"
 
 class NodeModel;
 class ConnectionModel;

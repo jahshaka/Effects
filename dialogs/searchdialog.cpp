@@ -1,7 +1,7 @@
 #include "searchdialog.h"
 #include <QVBoxLayout>
 #include <QLineEdit>
-#include "nodes/libraryv1.h"
+#include "../nodes/libraryv1.h"
 
 
 

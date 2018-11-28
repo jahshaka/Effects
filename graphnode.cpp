@@ -220,7 +220,7 @@ GraphNode::GraphNode(QGraphicsItem* parent) :
 	QFont font = text->font();
 	font.setWeight(65);
 	auto ratio = QApplication::desktop()->devicePixelRatio();
-	font.setPointSize(font.pointSize() * ratio);
+	font.setPointSize(8 * ratio);
 	text->setFont(font);
 
 	/*
@@ -259,6 +259,9 @@ void GraphNode::setTitle(QString title)
 
 void GraphNode::addInSocket(QString title)
 {
+	
+	
+
 	auto sock = new Socket(this, SocketType::In, title);
 	auto y = calcHeight();// + sock->calcHeight();
 	sock->setPos(-sock->getRadius(), y);
@@ -294,8 +297,7 @@ void GraphNode::setWidget(QWidget *widget)
 	proxyWidget->setWidget(widget);
 	//proxyWidget->setPreferredSize(widget->pr);
 	proxyWidget->setPreferredWidth(5);
-	proxyWidget->setPos((nodeWidth - proxyWidget->size().width()) / 2,
-		y);
+	proxyWidget->setPos((nodeWidth - proxyWidget->size().width()) / 2,	y);
 
 	calcPath();
 
@@ -322,10 +324,19 @@ int GraphNode::calcHeight()
 	}
 
 	//height += 2; // padding
-	if (proxyWidget != nullptr)
+	if (proxyWidget != nullptr && !doNotCheckProxyWidgetHeight)
 		height += proxyWidget->size().height();
 
 	return height;
+}
+
+void GraphNode::resetPositionForColorWidget()
+{
+
+	if (proxyWidget) {
+		proxyWidget->setPos(12, titleHeight+10);
+		doNotCheckProxyWidgetHeight = true;
+	}
 }
 
 Socket *GraphNode::getInSocket(int index)
@@ -366,13 +377,13 @@ void GraphNode::layout()
 	}
 
 	//height += 2; // padding
-	if (proxyWidget != nullptr) {
+	if (proxyWidget != nullptr && !doNotCheckProxyWidgetHeight) {
 		proxyWidget->setPos((nodeWidth - proxyWidget->size().width()) / 2,
 			height);
 		height += proxyWidget->size().height();
 	}
 
-	if (proxyPreviewWidget != nullptr) {
+	if (proxyPreviewWidget != nullptr  ) {
 		height += 5;
 		proxyPreviewWidget->setPos((nodeWidth - proxyPreviewWidget->size().width()) / 2,
 			height);

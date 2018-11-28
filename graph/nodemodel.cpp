@@ -62,6 +62,12 @@ void NodeModel::addOutputSocket(SocketModel *sock)
 	sock->setNode(this);
 }
 
+void NodeModel::setWidget(QWidget * wid)
+{
+	widget = wid;
+	updateStyle();
+}
+
 QString NodeModel::getValueFromInputSocket(int index)
 {
 	auto sock = inSockets[index];
@@ -106,6 +112,14 @@ QColor NodeModel::setNodeTitleColor()
 		icon.addPixmap({ ":/icons/properties.png" });
 		return titleColor = QColor(230, 74, 25);
 		break;
+	case NodeType::Constants:
+		icon.addPixmap({ ":/icons/constants.png" });
+		return titleColor = QColor(150, 24, 35);
+		break;
+	case NodeType::Vector:
+		icon.addPixmap({ ":/icons/constants.png" });
+		return titleColor = QColor(150, 124, 35);
+		break;
 	/*case NodeType::Surface:
 		return titleColor = QColor(69, 90, 100, 150);
 		break;*/
@@ -125,6 +139,10 @@ QString NodeModel::getEnumString(NodeType type) {
 		return "Math";
 	case NodeType::Properties:
 		return "Properties";
+	case NodeType::Constants:
+		return "Constants";
+	case NodeType::Vector:
+		return "Vector";
 	default:
 		return "";
 	}

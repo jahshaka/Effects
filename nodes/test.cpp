@@ -1,9 +1,9 @@
 #include "test.h"
 #include "../graph/library.h"
 #include "../texturemanager.h"
-
+#include "../propertywidgets/vectorpropertywidget.h"
 #include <QFileDialog>
-
+#include <QDebug>
 void registerModels(NodeGraph* graph)
 {
 	/*
@@ -125,6 +125,10 @@ void registerModels(NodeGraph* graph)
 		return new TextureNode();
 	});
 
+	lib->addNode("vector2", "Vector2", "", []() {
+		return new Vector2Node();
+	});
+
 	graph->setNodeLibrary(lib);
 
 	/*
@@ -181,7 +185,7 @@ void SurfaceMasterNode::process(ModelContext* ctx)
 FloatNodeModel::FloatNodeModel() :
 	NodeModel()
 {
-	setNodeType(NodeType::Input);
+	setNodeType(NodeType::Constants);
 
 	auto wid = new QWidget;
 	auto label = new QLabel(" ");
@@ -276,7 +280,7 @@ FloatNodeModel::FloatNodeModel() :
 	// add output socket
 	valueSock = new FloatSocketModel("value");
 	addOutputSocket(valueSock);
-
+	widget->setMaximumWidth(164);
 	
 
 	connect(min, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
@@ -762,4 +766,226 @@ void PannerNode::process(ModelContext * context)
 
 	auto code = res + " = " + uv + " + " + speed + " * "+ time + ";";
 	ctx->addCodeChunk(this, code);
+}
+
+Vector2Node::Vector2Node()
+{
+	setNodeType(NodeType::Constants);
+	title = "Vector 2 Node";
+	typeName = "vector 2 node";
+
+	x = y = 0;
+
+	auto wid = new QWidget;
+	auto layout = new QHBoxLayout;
+	wid->setLayout(layout);
+	wid->setMaximumWidth(164);
+
+	auto xSpinBox = new QDoubleSpinBox;
+	auto ySpinBox = new QDoubleSpinBox;
+	xSpinBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	ySpinBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	ySpinBox->setAlignment(Qt::AlignCenter);
+	ySpinBox->setAlignment(Qt::AlignCenter);
+
+	layout->addWidget(xSpinBox);
+	layout->addWidget(ySpinBox);
+
+	widget = wid;
+
+	connect(xSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
+		x = val;
+		value = QVector2D(x, y);
+		emit valueChanged(this, 0);
+
+	});
+
+	connect(ySpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
+		y = val;
+		value = QVector2D(x, y);
+		emit valueChanged(this, 0);
+	});
+
+	widget->setStyleSheet("QDoubleSpinBox{border: 2px solid rgba(0, 0, 0, .4); padding: 2px; background: rgba(0, 0, 0, 0.2);}" 
+		"QWidget{ background: rgba(0,0,0,0); color: rgba(250,250,250,1); }"
+		"QDoubleSpinBox::up-arrow, QDoubleSpinBox::down-arrow { width: 0; height:0;}"
+		"QDoubleSpinBox::up-button, QDoubleSpinBox::down-button { width: 0; height:0;}");
+
+
+	addOutputSocket(new Vector2SocketModel("Result"));
+
+}
+
+void Vector2Node::process(ModelContext * context)
+{
+	auto ctx = (ShaderContext*)context;
+	outSockets[0]->setVarName("vec2(" + QString::number(value.x()) + "," + QString::number(value.y()) + ")");
+}
+
+Vector3Node::Vector3Node()
+{
+	setNodeType(NodeType::Constants);
+	title = "Vector 3 Node";
+	typeName = "vector 3 node";
+
+	x = y = z = 0;
+
+	auto wid = new QWidget;
+	auto layout = new QHBoxLayout;
+	wid->setLayout(layout);
+	wid->setMaximumWidth(164);
+
+	auto xSpinBox = new QDoubleSpinBox;
+	auto ySpinBox = new QDoubleSpinBox;
+	auto zSpinBox = new QDoubleSpinBox;
+	xSpinBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	ySpinBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	zSpinBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	ySpinBox->setAlignment(Qt::AlignCenter);
+	ySpinBox->setAlignment(Qt::AlignCenter);
+	zSpinBox->setAlignment(Qt::AlignCenter);
+
+	layout->addWidget(xSpinBox);
+	layout->addWidget(ySpinBox);
+	layout->addWidget(zSpinBox);
+
+	widget = wid;
+
+	connect(xSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
+		x = val;
+		value = QVector3D(x, y, z);
+		emit valueChanged(this, 0);
+
+	});
+
+	connect(ySpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
+		y = val;
+		value = QVector3D(x, y, z);
+		emit valueChanged(this, 0);
+	});
+
+	connect(zSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
+		z = val;
+		value = QVector3D(x, y, z);
+		emit valueChanged(this, 0);
+	});
+
+	widget->setStyleSheet("QDoubleSpinBox{border: 2px solid rgba(0, 0, 0, .4); padding: 2px; background: rgba(0, 0, 0, 0.2);}"
+		"QWidget{ background: rgba(0,0,0,0); color: rgba(250,250,250,1); }"
+		"QDoubleSpinBox::up-arrow, QDoubleSpinBox::down-arrow { width: 0; height:0;}"
+		"QDoubleSpinBox::up-button, QDoubleSpinBox::down-button { width: 0; height:0;}");
+
+
+	addOutputSocket(new Vector3SocketModel("Result"));
+}
+
+void Vector3Node::process(ModelContext * context)
+{
+	auto ctx = (ShaderContext*)context;
+	outSockets[0]->setVarName("vec3(" + QString::number(value.x()) + "," + QString::number(value.y()) + "," + QString::number(value.z()) + ")");
+}
+
+Vector4Node::Vector4Node()
+{
+	setNodeType(NodeType::Constants);
+	title = "Vector 4 Node";
+	typeName = "vector 4 node";
+
+	x = y = z = w = 0;
+
+	auto wid = new QWidget;
+	auto layout = new QHBoxLayout;
+	wid->setLayout(layout);
+	wid->setMaximumWidth(164);
+
+	auto xSpinBox = new QDoubleSpinBox;
+	auto ySpinBox = new QDoubleSpinBox;
+	auto zSpinBox = new QDoubleSpinBox;
+	auto wSpinBox = new QDoubleSpinBox;
+	xSpinBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	ySpinBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	zSpinBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	wSpinBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	ySpinBox->setAlignment(Qt::AlignCenter);
+	ySpinBox->setAlignment(Qt::AlignCenter);
+	zSpinBox->setAlignment(Qt::AlignCenter);
+	wSpinBox->setAlignment(Qt::AlignCenter);
+
+	layout->addWidget(xSpinBox);
+	layout->addWidget(ySpinBox);
+	layout->addWidget(zSpinBox);
+	layout->addWidget(wSpinBox);
+
+	widget = wid;
+
+	connect(xSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
+		x = val;
+		value = QVector4D(x, y, z, w);
+		emit valueChanged(this, 0);
+
+	});
+
+	connect(ySpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
+		y = val;
+		value = QVector4D(x, y, z, w);
+		emit valueChanged(this, 0);
+	});
+
+	connect(zSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
+		z = val;
+		value = QVector4D(x, y, z, w);
+		emit valueChanged(this, 0);
+	});
+
+	connect(zSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
+		z = val;
+		value = QVector4D(x, y, z, w);
+		emit valueChanged(this, 0);
+	});
+
+	widget->setStyleSheet("QDoubleSpinBox{border: 2px solid rgba(0, 0, 0, .4); padding: 2px; background: rgba(0, 0, 0, 0.2);}"
+		"QWidget{ background: rgba(0,0,0,0); color: rgba(250,250,250,1); }"
+		"QDoubleSpinBox::up-arrow, QDoubleSpinBox::down-arrow { width: 0; height:0;}"
+		"QDoubleSpinBox::up-button, QDoubleSpinBox::down-button { width: 0; height:0;}");
+
+
+	addOutputSocket(new Vector4SocketModel("Result"));
+}
+
+void Vector4Node::process(ModelContext * context)
+{
+	auto ctx = (ShaderContext*)context;
+	outSockets[0]->setVarName("vec4(" + QString::number(value.x()) + "," + QString::number(value.y()) + "," + QString::number(value.z()) + "," + QString::number(value.w()) + ")");
+}
+
+ColorPickerNode::ColorPickerNode()
+{
+	setNodeType(NodeType::Constants);
+	title = "Color Node";
+	typeName = "Color node";
+
+	colorWidget = new ColorPickerWidget();
+	this->widget = colorWidget;
+	colorWidget->setGeometry(0, 0, 60, 140);
+	connect(colorWidget, &ColorPickerWidget::onColorChanged, [=](QColor color) {
+		emit valueChanged(this, 0);
+	});
+
+	addOutputSocket(new Vector4SocketModel("R G B A"));
+	addOutputSocket(new FloatSocketModel("R"));
+	addOutputSocket(new FloatSocketModel("G"));
+	addOutputSocket(new FloatSocketModel("B"));
+	addOutputSocket(new FloatSocketModel("A"));
+	//addOutputSocket(new FloatSocketModel("R"));
+}
+
+void ColorPickerNode::process(ModelContext * context)
+{
+	auto col = colorWidget->getColor();
+	outSockets[0]->setVarName("vec4(" + QString::number(col.redF()) + "," + QString::number(col.greenF()) + "," + QString::number(col.blueF()) + "," + QString::number(col.alphaF()) + ")");
+	outSockets[1]->setVarName(QString::number(col.redF()));
+	outSockets[2]->setVarName(QString::number(col.greenF()));
+	outSockets[3]->setVarName(QString::number(col.blueF()));
+	outSockets[4]->setVarName(QString::number(col.alphaF()));
+
 }
