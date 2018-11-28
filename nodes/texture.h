@@ -14,10 +14,10 @@
 #include "../propertywidgets/propertywidgetbase.h"
 
 /* Blends two normals */
-class BlendNormalsNode : public NodeModel
+class CombineNormalsNode : public NodeModel
 {
 public:
-	BlendNormalsNode();
+	CombineNormalsNode();
 
 	virtual void process(ModelContext* context) override;
 	virtual QString generatePreview(ModelContext* context) override;
@@ -30,9 +30,9 @@ public:
 	TexelSizeNode();
 
 	virtual void process(ModelContext* context) override;
-	virtual QString generatePreview(ModelContext* context) override;
 };
 
+/*
 // Samples texture
 class SampleTextureNode : public NodeModel
 {
@@ -52,11 +52,12 @@ public:
 	virtual void process(ModelContext* context) override;
 	virtual QString generatePreview(ModelContext* context) override;
 };
-
+*/
 /* Generates UV based on flipbook animation
 	Inputs: UV, rows, columns, startframe
 	Output: UV
 */
+/*
 class FlipbookUVAnimationNode : public NodeModel
 {
 public:
@@ -65,3 +66,4 @@ public:
 	virtual void process(ModelContext* context) override;
 	virtual QString generatePreview(ModelContext* context) override;
 };
+*/

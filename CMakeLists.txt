@@ -62,6 +62,7 @@ set(CPP
 	nodes/inputs.cpp
 	nodes/object.cpp
 	nodes/vector.cpp
+	nodes/texture.cpp
 
 	dialogs/createnewdialog.cpp
 	dialogs/searchdialog.cpp
@@ -108,6 +109,7 @@ set(HEADERS
 		nodes/inputs.h
 		nodes/object.h
 		nodes/vector.h
+		nodes/texture.h
 
 		dialogs/createnewdialog.h
 		dialogs/searchdialog.h
