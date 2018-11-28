@@ -12,9 +12,10 @@ public:
 
 	void init()
 	{
-		this->initTest();
+		initTest();
 		initMath();
 		initObject();
+		initVector();
 	}
 
 	void initMath();
@@ -22,4 +23,6 @@ public:
 	void initTest();
 
 	void initObject();
+
+	void initVector();
 };

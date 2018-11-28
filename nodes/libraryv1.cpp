@@ -2,6 +2,7 @@
 #include "test.h"
 #include "math.h"
 #include "object.h"
+#include "vector.h"
 
 void LibraryV1::initTest()
 {
@@ -199,5 +200,37 @@ void LibraryV1::initMath()
 
 	addNode("color", "Color", "", []() {
 		return new ColorPickerNode();
+
+}
+
+void LibraryV1::initVector()
+{
+	addNode("reflect", "Reflect", "", []() {
+		return new ReflectVectorNode();
+	});
+
+	addNode("splitvector", "Split Vector", "", []() {
+		return new SplitVectorNode();
+	});
+
+	addNode("composevector", "Compose Vector", "", []() {
+		return new ComposeVectorNode();
+	});
+
+	addNode("distance", "Distance", "", []() {
+		return new DistanceVectorNode();
+	});
+
+	addNode("dot", "Dot", "", []() {
+		return new DotVectorNode();
+	});
+
+	addNode("length", "Length", "", []() {
+		return new LengthVectorNode();
+	});
+
+	addNode("normalize", "Normalize", "", []() {
+		return new NormalizeVectorNode();
+
 	});
 }

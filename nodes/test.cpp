@@ -344,7 +344,7 @@ void FloatNodeModel::process(ModelContext* context)
 
 QJsonValue FloatNodeModel::serializeWidgetValue(int widgetIndex)
 {
-	return lineEdit->text().toDouble();
+	return valueSock->getValue().toDouble();
 }
 
 void FloatNodeModel::deserializeWidgetValue(QJsonValue val, int widgetIndex)

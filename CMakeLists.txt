@@ -63,6 +63,7 @@ set(CPP
 	nodes/utils.cpp
 	nodes/inputs.cpp
 	nodes/object.cpp
+	nodes/vector.cpp
 
 	dialogs/createnewdialog.cpp
 	dialogs/searchdialog.cpp
@@ -110,6 +111,7 @@ set(HEADERS
 		nodes/utils.h
 		nodes/inputs.h
 		nodes/object.h
+		nodes/vector.h
 
 		dialogs/createnewdialog.h
 		dialogs/searchdialog.h
