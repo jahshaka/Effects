@@ -7,9 +7,11 @@
 #include <QDebug>
 #include <QLayout>
 
+#include "../core/project.h"
+
 ListWidget::ListWidget() : QListWidget()
 {
-	QSize currentSize(100, 100);
+	QSize currentSize(40, 40);
 	setAlternatingRowColors(false);
 	setSpacing(0);
 	setContentsMargins(10, 3, 10, 10);
@@ -81,8 +83,9 @@ void ListWidget::displayAllContents()
 QMimeData * ListWidget::mimeData(const QList<QListWidgetItem *> items) const
 {
 	QMimeData *data = new QMimeData();
-
+	qDebug() << items[0]->data(23).toInt();
 	data->setText(items[0]->data(Qt::UserRole).toString());
+	data->setData("dropType", items[0]->data(MODEL_TYPE_ROLE).toByteArray());
 	return data;
 }
 

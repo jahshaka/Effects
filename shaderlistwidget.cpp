@@ -26,6 +26,10 @@ void ShaderListWidget::dropEvent(QDropEvent * event)
 {
 	event->accept();
 	qDebug() << "dropeed event";
+	auto mimetype = event->mimeData()->data("dropType");
+	qDebug() << mimetype;
+	qDebug() << MODEL_TYPE_ROLE;
+	return;
 	if(event->mimeData()->text() == "noName")
 	{
 		

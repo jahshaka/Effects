@@ -407,21 +407,12 @@ void MainWindow::configureAssetsDock()
 	for (int i = 0; i < 5; i++) {
 		auto item = new QListWidgetItem;
 		item->setText("preset" + QString::number(i));
-		item->setSizeHint({ 40,40 });
-		item->setTextAlignment(Qt::AlignCenter);
+		item->setSizeHint(defaultPresetsSize);
+		item->setTextAlignment(Qt::AlignBottom);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
 		presets->addItem(item);
 	}
 
-	//presets->setResizeMode(QListView::Fixed);
-	//for (int i = 0; i < 13; i++) {
-	//	auto item = new QListWidgetItem;
-	//	item->setText("assets" + QString::number(i));
-	//	item->setSizeHint({ 40,40 });
-	//	item->setTextAlignment(Qt::AlignCenter);
-	//	item->setFlags(item->flags() | Qt::ItemIsEditable);
-	//	effects->addItem(item);
-	//}
 	presets->setGridSize(defaultGridSize);
 	effects->setGridSize(defaultGridSize);
 
@@ -490,7 +481,7 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 	else   newShader = "Untitled Shader";
 	QListWidgetItem *item = new QListWidgetItem;
 	item->setFlags(item->flags() | Qt::ItemIsEditable);
-	item->setSizeHint({40,40});
+	item->setSizeHint(defaultPresetsSize);
 	item->setTextAlignment(Qt::AlignCenter);
 	item->setIcon(QIcon(":/icons/icons8-file-72.png"));
 
@@ -736,7 +727,7 @@ void MainWindow::generateTileNode()
 		item->setText(tile->displayName);
 		item->setData(Qt::DisplayRole, tile->displayName);
 		item->setData(Qt::UserRole, tile->name);
-		item->setSizeHint(currentSize);
+		item->setSizeHint(defaultItemSize);
 		item->setTextAlignment(Qt::AlignCenter);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
 		item->setIcon(QIcon(":/icons/icon.png"));
@@ -757,7 +748,7 @@ void MainWindow::generateTileNode(QList<NodeLibraryItem*> list)
 		item->setText(tile->displayName);
 		item->setData(Qt::DisplayRole, tile->displayName);
 		item->setData(Qt::UserRole, tile->name);
-		item->setSizeHint(currentSize);
+		item->setSizeHint(defaultItemSize);
 		item->setTextAlignment(Qt::AlignCenter);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
 		item->setIcon(QIcon(":/icons/icon.png"));
@@ -819,14 +810,15 @@ void MainWindow::updateAssetDock()
 				auto item = new QListWidgetItem;
 				item->setText(asset.name);
 				item->setFlags(item->flags() | Qt::ItemIsEditable);
-				item->setSizeHint({90,90});
-				item->setTextAlignment(Qt::AlignCenter);
+				item->setSizeHint(defaultPresetsSize);
 				item->setIcon(QIcon(":/icons/icons8-file-72.png"));
+				item->setTextAlignment( Qt::AlignHCenter | Qt::AlignBottom);
 
 				item->setData(MODEL_GUID_ROLE, asset.guid);
 				item->setData(MODEL_PARENT_ROLE, asset.parent);
 				item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
-				item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Shader));
+				item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Material));
+				item->setData(23, "shader");
 
 				effects->addItem(item);
 			}

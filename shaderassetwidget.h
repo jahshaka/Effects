@@ -40,7 +40,7 @@ public:
 	void addItem(const FolderRecord &folderData);
 	void addItem(const AssetRecord &assetData);
 	void createFolder();
-	void createShader();
+	void createShader(QString *shaderName = Q_NULLPTR);
 	void createShader(QListWidgetItem *item);
 	void createLocalShader();
 

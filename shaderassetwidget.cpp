@@ -297,9 +297,11 @@ void ShaderAssetWidget::createFolder()
 	updateAssetView(assetItemShader.selectedGuid);
 }
 
-void ShaderAssetWidget::createShader()
+void ShaderAssetWidget::createShader(QString *shaderName)
 {
-	const QString newShader = "Untitled Shader";
+	QString newShader;
+	if (shaderName)	 newShader = *shaderName;
+	else   newShader = "Untitled Shader";
 	QListWidgetItem *item = new QListWidgetItem;
 	item->setFlags(item->flags() | Qt::ItemIsEditable);
 	item->setSizeHint(currentSize);
@@ -315,36 +317,35 @@ void ShaderAssetWidget::createShader()
 
 	assetItemShader.wItem = item;
 
-	QString shaderName = newShader;
 
 	QStringList assetsInProject = db->fetchAssetNameByParent(assetItemShader.selectedGuid);
 
 	//// If we encounter the same file, make a duplicate...
 	int increment = 1;
-	while (assetsInProject.contains(IrisUtils::buildFileName(shaderName, "shader"))) {
-		shaderName = QString(newShader + " %1").arg(QString::number(increment++));
+	while (assetsInProject.contains(IrisUtils::buildFileName(newShader, "shader"))) {
+		newShader = QString(newShader + " %1").arg(QString::number(increment++));
 	}
 
 	db->createAssetEntry(assetGuid,
-		IrisUtils::buildFileName(shaderName, "shader"),
+		IrisUtils::buildFileName(newShader, "shader"),
 		static_cast<int>(ModelTypes::Shader),
 		assetItemShader.selectedGuid,
 		QByteArray());
 
-	item->setText(shaderName);
+	item->setText(newShader);
 	assetViewWidget->addItem(item);
 
 	QFile *templateShaderFile = new QFile(IrisUtils::getAbsoluteAssetPath("app/templates/ShaderTemplate.shader"));
 	templateShaderFile->open(QIODevice::ReadOnly | QIODevice::Text);
 	QJsonObject shaderDefinition = QJsonDocument::fromJson(templateShaderFile->readAll()).object();
 	templateShaderFile->close();
-	shaderDefinition["name"] = shaderName;
+	shaderDefinition["name"] = newShader;
 	shaderDefinition.insert("guid", assetGuid);
 
 	auto assetShader = new AssetShader;
-	assetShader->fileName = IrisUtils::buildFileName(shaderName, "shader");
+	assetShader->fileName = IrisUtils::buildFileName(newShader, "shader");
 	assetShader->assetGuid = assetGuid;
-	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(shaderName, "shader"));
+	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(newShader, "shader"));
 	assetShader->setValue(QVariant::fromValue(shaderDefinition));
 
 	db->updateAssetAsset(assetGuid, QJsonDocument(shaderDefinition).toBinaryData());
