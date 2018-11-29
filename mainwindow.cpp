@@ -396,9 +396,20 @@ void MainWindow::configureAssetsDock()
 	contentHolder->setLayout(contentLayout);
 	scrollView->setWidget(contentHolder);
 	scrollView->setWidgetResizable(true);
+	scrollView->setContentsMargins(0, 0, 0, 0);
 
+	auto presetsLabel = new QLabel("Presets");
+	auto effectsLabel = new QLabel("My Fx");
+
+	presetsLabel->setStyleSheet("QLabel{ background: rgba(20,20,20,1); padding: 3px; padding-left: 8px; }");
+	effectsLabel->setStyleSheet(presetsLabel->styleSheet());
+
+
+	contentLayout->addWidget(presetsLabel);
 	contentLayout->addWidget(presets);
+	contentLayout->addWidget(effectsLabel);
 	contentLayout->addWidget(effects);
+	contentLayout->setContentsMargins(0, 0, 0, 0);
 
 	presets->setStyleSheet(presets->styleSheet() +
 		"border: 1px solid black;"
@@ -407,7 +418,7 @@ void MainWindow::configureAssetsDock()
 	for (int i = 0; i < 5; i++) {
 		auto item = new QListWidgetItem;
 		item->setText("preset" + QString::number(i));
-		item->setSizeHint(defaultPresetsSize);
+		item->setSizeHint(defaultItemSize);
 		item->setTextAlignment(Qt::AlignBottom);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
 		presets->addItem(item);
@@ -427,16 +438,19 @@ void MainWindow::configureAssetsDock()
 	auto importBtn = new QPushButton("help");
 	auto addBtn = new QPushButton("+");
 	{
-		int fontSize = 16;
+		int fontSize = 12;
 
 		buttonBar->setLayout(buttonLayout);
-		buttonLayout->addStretch();
+		//buttonLayout->addStretch();
 		buttonLayout->addWidget(exportBtn);
-		buttonLayout->addStretch();
+		//buttonLayout->addStretch();
 		buttonLayout->addWidget(importBtn);
-		buttonLayout->addStretch();
+		//buttonLayout->addStretch();
 		buttonLayout->addWidget(addBtn);
-		buttonLayout->addStretch();
+		//buttonLayout->addStretch();
+		buttonLayout->setContentsMargins(2, 2, 2, 2);
+		buttonLayout->setSpacing(1);
+
 
 		exportBtn->setText(QChar(fa::upload));
 		exportBtn->setFont(fontIcons->font(fontSize));
@@ -449,9 +463,20 @@ void MainWindow::configureAssetsDock()
 		importBtn->setCursor(Qt::PointingHandCursor);
 		addBtn->setCursor(Qt::PointingHandCursor);
 
+		exportBtn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+		importBtn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+		addBtn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+		exportBtn->setStyleSheet(
+			"QPushButton{background: rgba(15,15,15,1); color:rgba(30,130,230,1); border: 1px solid rgba(50,50,50,.1); padding: 5px 10px; }"
+			"QPushButton:hover{background: rgba(30,130,230,1); color:rgba(230,230,230,1);}"
+		);
+		importBtn->setStyleSheet(exportBtn->styleSheet());
+		addBtn->setStyleSheet(exportBtn->styleSheet());
+
 		buttonBar->setStyleSheet(
-			"QPushButton{background: rgba(15,15,15,1); color:rgba(230,230,230,1); border: 1px solid rgba(50,50,50,.4); padding: 10px 15px; }"
-			"QPushButton:hover{background: rgba(30,130,230,1);}"
+			"background: rgba(21,21,21,1); "
+			
 		);
 
 		connect(exportBtn, &QPushButton::clicked, [=]() {
@@ -481,7 +506,7 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 	else   newShader = "Untitled Shader";
 	QListWidgetItem *item = new QListWidgetItem;
 	item->setFlags(item->flags() | Qt::ItemIsEditable);
-	item->setSizeHint(defaultPresetsSize);
+	item->setSizeHint(defaultItemSize);
 	item->setTextAlignment(Qt::AlignCenter);
 	item->setIcon(QIcon(":/icons/icons8-file-72.png"));
 
@@ -490,7 +515,7 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 	item->setData(MODEL_GUID_ROLE, assetGuid);
 	//item->setData(MODEL_PARENT_ROLE, assetItemShader.selectedGuid);
 	item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
-	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Shader));
+	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Material));
 	item->setData(Qt::UserRole, newShader);
 
 	//assetItemShader.wItem = item;
@@ -504,11 +529,10 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 	//	shaderName = QString(newShader + " %1").arg(QString::number(increment++));
 	//}
 
-	dataBase->createAssetEntry(assetGuid,
+
+	dataBase->createAssetEntry(QString::null, assetGuid,
 		IrisUtils::buildFileName(newShader, "shader"),
-		static_cast<int>(ModelTypes::Shader),
-		"",
-		QByteArray());
+		static_cast<int>(ModelTypes::Shader));
 
 	item->setText(newShader);
 	effects->addItem(item);
@@ -805,12 +829,13 @@ void MainWindow::updateAssetDock()
 
 		for (const auto &asset : dataBase->fetchAssets())  //dp something{
 		{
+			qDebug() << asset.projectGuid;
 			if (asset.projectGuid == "") {
 
 				auto item = new QListWidgetItem;
 				item->setText(asset.name);
 				item->setFlags(item->flags() | Qt::ItemIsEditable);
-				item->setSizeHint(defaultPresetsSize);
+				item->setSizeHint(defaultItemSize);
 				item->setIcon(QIcon(":/icons/icons8-file-72.png"));
 				item->setTextAlignment( Qt::AlignHCenter | Qt::AlignBottom);
 
@@ -818,20 +843,9 @@ void MainWindow::updateAssetDock()
 				item->setData(MODEL_PARENT_ROLE, asset.parent);
 				item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
 				item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Material));
-				item->setData(23, "shader");
 
 				effects->addItem(item);
 			}
-
-		/*	QJsonObject object;
-			object["icon_url"] = "";
-			object["guid"] = record.guid;
-			object["name"] = record.name;
-			object["type"] = record.type;
-			object["collection"] = record.collection;
-			object["collection_name"] = record.collection;
-			object["author"] = record.author;
-			object["license"] = record.license;*/
 		}
 	
 

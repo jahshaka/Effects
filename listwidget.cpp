@@ -42,8 +42,8 @@ ListWidget::ListWidget() : QListWidget()
 	setFont(font);
 
 	verticalScrollBar()->setStyleSheet(
-		"QScrollBar:vertical {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 10px; }"
-		"QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 5px;  left: 8px; }"
+		"QScrollBar {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 10px; padding: 0px;  }"
+		"QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 5px;  left: 0px; }"
 		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
 		"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
 		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .0);}"
@@ -51,7 +51,7 @@ ListWidget::ListWidget() : QListWidget()
 	);
 
 	setStyleSheet(
-		"QListView::item{ border-radius: 2px; border: 1px solid rgba(0,0,0,1); background: rgba(80,80,80,1); margin: 3px;  }"
+		"QListView::item{ border-radius: 2px; border: 0px solid rgba(0,0,0,1); background: rgba(80,80,80,0); margin-left: 6px;  }"
 		"QListView::item:selected{ background: rgba(65,65,65,1); border: 1px solid rgba(50,150,250,1); }"
 		"QListView::item:hover{ background: rgba(55,55,55,1); border: 1px solid rgba(50,150,250,1); }"
 		"QListView::text{ top : -6; }"
@@ -83,9 +83,14 @@ void ListWidget::displayAllContents()
 QMimeData * ListWidget::mimeData(const QList<QListWidgetItem *> items) const
 {
 	QMimeData *data = new QMimeData();
-	qDebug() << items[0]->data(23).toInt();
+	auto ata =  items[0]->text();
+	qDebug() << items[0]->data(MODEL_TYPE_ROLE).toInt();
 	data->setText(items[0]->data(Qt::UserRole).toString());
-	data->setData("dropType", items[0]->data(MODEL_TYPE_ROLE).toByteArray());
+	data->setData("MODEL_TYPE_ROLE", items[0]->data(MODEL_TYPE_ROLE).toByteArray());
+	data->setData("MODEL_ITEM_TYPE", items[0]->data(MODEL_ITEM_TYPE).toByteArray());
+	data->setData("MODEL_GUID_ROLE", items[0]->data(MODEL_GUID_ROLE).toByteArray());
+	data->setData("MODEL_PARENT_ROLE", items[0]->data(MODEL_PARENT_ROLE).toByteArray());
+	
 	return data;
 }
 

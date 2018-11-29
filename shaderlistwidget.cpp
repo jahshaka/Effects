@@ -24,16 +24,9 @@ ShaderListWidget::~ShaderListWidget()
 
 void ShaderListWidget::dropEvent(QDropEvent * event)
 {
-	event->accept();
-	qDebug() << "dropeed event";
-	auto mimetype = event->mimeData()->data("dropType");
-	qDebug() << mimetype;
-	qDebug() << MODEL_TYPE_ROLE;
-	return;
-	if(event->mimeData()->text() == "noName")
+
+	if(event->mimeData()->data("MODEL_TYPE_ROLE").toInt() == (int)ModelTypes::Material)
 	{
-		
-	/*if (event->mimeData()->hasFormat("application/x-item"))*/ 
 		event->accept();
 		event->setDropAction(Qt::CopyAction);
 
@@ -42,7 +35,6 @@ void ShaderListWidget::dropEvent(QDropEvent * event)
 		data.name = event->mimeData()->text();
 
 
-		const QString newShader = "Untitled Shader";
 		QListWidgetItem *item = new QListWidgetItem;
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
 		item->setSizeHint({90,90});
@@ -55,7 +47,7 @@ void ShaderListWidget::dropEvent(QDropEvent * event)
 		item->setData(MODEL_GUID_ROLE, assetGuid);
 		item->setData(MODEL_PARENT_ROLE, "");
 		item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
-		item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Shader));
+		item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Material));
 
 		emit itemDropped(item);
 

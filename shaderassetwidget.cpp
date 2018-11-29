@@ -100,7 +100,7 @@ void ShaderAssetWidget::createCustomContextMenu(const QPoint pos)
 	QMenu menu;
 	menu.setStyleSheet(
 		"QMenu { background-color: #1A1A1A; color: #EEE; padding: 0; margin: 0; }"
-		"QMenu::item { background-color: #1A1A1A; padding: 6px 8px; margin: 0; }"
+		"QMenu::item { background-color: #1A1A1A; padding: 6px 8px; margin-left: 5; }"
 		"QMenu::item:selected { background-color: #3498db; color: #EEE; padding: 6px 8px; margin: 0; }"
 		"QMenu::item : disabled { color: #555; }"
 	);
@@ -314,7 +314,6 @@ void ShaderAssetWidget::createShader(QString *shaderName)
 	item->setData(MODEL_PARENT_ROLE, assetItemShader.selectedGuid);
 	item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
 	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Shader));
-
 	assetItemShader.wItem = item;
 
 
@@ -362,7 +361,7 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 
 	const QString assetGuid = item->data(MODEL_GUID_ROLE).toString();
 
-	item->setData(MODEL_PARENT_ROLE, assetItemShader.selectedGuid);
+	//item->setData(MODEL_PARENT_ROLE, assetItemShader.selectedGuid);
 
 	assetItemShader.wItem = item;
 

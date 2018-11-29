@@ -118,9 +118,8 @@ private:
 
 	QtAwesome *fontIcons;
 	Database *dataBase;
-	QSize defaultGridSize = QSize(110, 110);
+	QSize defaultGridSize = QSize(70, 70);
 	QSize defaultItemSize = QSize(90, 90);
-	QSize defaultPresetsSize = QSize(100, 100);
 
 };
 
