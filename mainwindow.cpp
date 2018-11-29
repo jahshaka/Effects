@@ -378,6 +378,7 @@ void MainWindow::configureAssetsDock()
 	auto layout = new QVBoxLayout;
 	holder->setLayout(layout);
 	layout->setContentsMargins(0, 0, 0, 0);
+	layout->setSpacing(0);
 
 	auto tabWidget = new QTabWidget;
 	presets = new ListWidget;
@@ -401,8 +402,13 @@ void MainWindow::configureAssetsDock()
 	auto presetsLabel = new QLabel("Presets");
 	auto effectsLabel = new QLabel("My Fx");
 
-	presetsLabel->setStyleSheet("QLabel{ background: rgba(20,20,20,1); padding: 3px; padding-left: 8px; }");
+	presetsLabel->setStyleSheet("QLabel{ background: rgba(20,20,20,1); padding: 3px; padding-left: 8px; color: rgba(200,200,200,1); }");
 	effectsLabel->setStyleSheet(presetsLabel->styleSheet());
+
+	QFont labelFont = presetsLabel->font();
+	font.setWeight(65);
+	presetsLabel->setFont(font);
+	effectsLabel->setFont(font);
 
 
 	contentLayout->addWidget(presetsLabel);
@@ -441,13 +447,9 @@ void MainWindow::configureAssetsDock()
 		int fontSize = 12;
 
 		buttonBar->setLayout(buttonLayout);
-		//buttonLayout->addStretch();
 		buttonLayout->addWidget(exportBtn);
-		//buttonLayout->addStretch();
 		buttonLayout->addWidget(importBtn);
-		//buttonLayout->addStretch();
 		buttonLayout->addWidget(addBtn);
-		//buttonLayout->addStretch();
 		buttonLayout->setContentsMargins(2, 2, 2, 2);
 		buttonLayout->setSpacing(1);
 
@@ -466,6 +468,9 @@ void MainWindow::configureAssetsDock()
 		exportBtn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 		importBtn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 		addBtn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+		buttonBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+		presetsLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+		effectsLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
 		exportBtn->setStyleSheet(
 			"QPushButton{background: rgba(15,15,15,1); color:rgba(30,130,230,1); border: 1px solid rgba(50,50,50,.1); padding: 5px 10px; }"
@@ -475,9 +480,9 @@ void MainWindow::configureAssetsDock()
 		addBtn->setStyleSheet(exportBtn->styleSheet());
 
 		buttonBar->setStyleSheet(
-			"background: rgba(21,21,21,1); "
-			
+			"background: rgba(21,21,21,1); padding :0px;"
 		);
+		buttonBar->setContentsMargins(0, 0, 0, 0);
 
 		connect(exportBtn, &QPushButton::clicked, [=]() {
 
@@ -578,6 +583,7 @@ void MainWindow::configureUI()
 	nodeContainer = new QListWidget;
 	splitView = new QSplitter;
 	assetWidget = new ShaderAssetWidget;
+	projectName = new QLineEdit;
 
 	nodeTray->setAllowedAreas(Qt::AllDockWidgetAreas);
 	textWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
@@ -693,6 +699,24 @@ void MainWindow::configureToolbar()
 	toolBar->setMaximumHeight(50);
 	toolBar->setIconSize(QSize(12, 12));
 
+	QFont projectNameFont = projectName->font();
+	projectNameFont.setPixelSize(24);
+	projectNameFont.setWeight(65);
+	projectName->setFont(font);
+	
+
+	projectName->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+	projectName->setMinimumWidth(250);
+	projectName->setText("Untitled Shader");
+	projectName->setStyleSheet(
+		"QLineEdit{background: rgba(0,0,0,0); border-radius: 3px; padding-left: 5px; color: rgba(255,255,255,.8); }"
+		"QLineEdit:hover{ background : rgba(21,21,21,1); color: rgba(255,255,255,1);}"
+	);
+
+
+	toolBar->addWidget(projectName);
+	toolBar->addSeparator();
+
 	QAction *actionUndo = new QAction;
 	actionUndo->setToolTip("Undo | Undo last action");
 	actionUndo->setObjectName(QStringLiteral("actionUndo"));
@@ -724,6 +748,8 @@ void MainWindow::configureToolbar()
 	connect(actionSave, &QAction::triggered, this, &MainWindow::saveGraph);
 	//connect(actionExport, &QAction::triggered, this, &MainWindow::exportGraph);
 	//connect(actionNew, &QAction::triggered, this, &MainWindow::createNewGraph);
+
+
 
 	toolBar->setStyleSheet(
 		"QToolBar{background: rgba(48,48,48, 1); spacing : 8px; padding: 2px; border: .5px solid rgba(20,20,20, .8); }"

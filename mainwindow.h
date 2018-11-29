@@ -121,6 +121,8 @@ private:
 	QSize defaultGridSize = QSize(70, 70);
 	QSize defaultItemSize = QSize(90, 90);
 
+	QLineEdit *projectName;
+
 };
 
 }
