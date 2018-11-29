@@ -3,6 +3,17 @@
 #include "math.h"
 #include "object.h"
 #include "vector.h"
+#include "texture.h"
+
+
+void LibraryV1::init()
+{
+	initTest();
+	initMath();
+	initObject();
+	initVector();
+	initTexture();
+}
 
 void LibraryV1::initTest()
 {
@@ -235,5 +246,20 @@ void LibraryV1::initVector()
 	addNode("normalize", "Normalize", "", []() {
 		return new NormalizeVectorNode();
 
+	});
+}
+
+void LibraryV1::initTexture()
+{
+	addNode("combinenormals", "Combine Normals", "", []() {
+		return new CombineNormalsNode();
+	});
+
+	addNode("texelsize", "Texel Size", "", []() {
+		return new TexelSizeNode();
+	});
+
+	addNode("flipbook", "Flipbook Animation", "", []() {
+		return new FlipbookUVAnimationNode();
 	});
 }

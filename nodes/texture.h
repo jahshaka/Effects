@@ -42,7 +42,8 @@ public:
 	virtual void process(ModelContext* context) override;
 	virtual QString generatePreview(ModelContext* context) override;
 };
-
+*/
+/*
 // Samples texture as latlong, requires vec3 UVs
 class SampleEquirectangularTextureNode : public NodeModel
 {
@@ -57,13 +58,11 @@ public:
 	Inputs: UV, rows, columns, startframe
 	Output: UV
 */
-/*
+
 class FlipbookUVAnimationNode : public NodeModel
 {
 public:
 	FlipbookUVAnimationNode();
 
 	virtual void process(ModelContext* context) override;
-	virtual QString generatePreview(ModelContext* context) override;
 };
-*/

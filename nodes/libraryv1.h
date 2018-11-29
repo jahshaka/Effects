@@ -10,13 +10,7 @@ public:
 		init();
 	}
 
-	void init()
-	{
-		initTest();
-		initMath();
-		initObject();
-		initVector();
-	}
+	void init();
 
 	void initMath();
 
@@ -25,4 +19,6 @@ public:
 	void initObject();
 
 	void initVector();
+
+	void initTexture();
 };
