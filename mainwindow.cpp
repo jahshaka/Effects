@@ -39,6 +39,7 @@
 #include "core/project.h"
 #include <QMainWindow>
 #include <QStandardPaths>
+#include <QDirIterator>
 
 #if(EFFECT_BUILD_AS_LIB)
 #include "../core/database/database.h"
@@ -150,6 +151,8 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
 		auto dialog = new SearchDialog(this->graph);
 		dialog->show ();
 	});
+
+	loadShader();
 }
 
 void MainWindow::setNodeGraph(NodeGraph *graph)
@@ -217,7 +220,6 @@ void MainWindow::saveShader(QListWidgetItem * item)
 	doc.setObject(obj);
 
 	auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/");
-	qDebug() << filePath << QDir(filePath).exists();
 
 	if (!QDir(filePath).exists()) QDir().mkpath(filePath);
 	auto shaderFile = new QFile(filePath + obj["name"].toString());
@@ -229,6 +231,33 @@ void MainWindow::saveShader(QListWidgetItem * item)
 
 void MainWindow::loadShader()
 {
+	auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/");
+	QDirIterator it(filePath);
+
+	while (it.hasNext()) {
+
+		QFile file(it.next());
+		file.open(QIODevice::ReadOnly);
+		auto doc = QJsonDocument::fromJson(file.readAll());
+
+		file.close();
+		auto obj = doc.object();
+		if (obj["name"].toString() == "") continue;
+
+		QListWidgetItem *item = new QListWidgetItem;
+		item->setFlags(item->flags() | Qt::ItemIsEditable);
+		item->setSizeHint(defaultItemSize);
+		item->setTextAlignment(Qt::AlignCenter);
+		item->setIcon(QIcon(":/icons/icons8-file-72.png"));
+
+		item->setData(Qt::DisplayRole, obj["name"].toString());
+		item->setData(MODEL_GUID_ROLE, obj["MODEL_GUID_ROLE"].toString());
+		item->setData(MODEL_PARENT_ROLE, obj["MODEL_PARENT_ROLE"].toString());
+		item->setData(MODEL_ITEM_TYPE, obj["MODEL_ITEM_TYPE"].toString());
+		item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Material));
+		
+		effects->addItem(item);
+	}
 }
 
 void MainWindow::saveGraph()
@@ -940,7 +969,6 @@ void MainWindow::updateAssetDock()
 				effects->addItem(item);
 			}
 		}
-
 #endif
 
 }
