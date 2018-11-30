@@ -118,13 +118,13 @@ private:
 	ListWidget *effects;
 
 	QtAwesome *fontIcons;
-	Database *dataBase;
 	QSize defaultGridSize = QSize(70, 70);
 	QSize defaultItemSize = QSize(90, 90);
 
 	QLineEdit *projectName;
 #if(EFFECT_BUILD_AS_LIB)
 	ShaderAssetWidget *assetWidget;
+	Database *dataBase;
 #endif
 };
 

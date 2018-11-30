@@ -12,11 +12,10 @@
 
 enum class NodeType {
 	Input,
-	Properties,
 	Math,
 	Constants,
-	Vector,
-	PlaceHolder
+	PlaceHolder,
+	Properties
 };
 
 class QWidget;

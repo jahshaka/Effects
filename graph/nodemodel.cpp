@@ -116,13 +116,6 @@ QColor NodeModel::setNodeTitleColor()
 		icon.addPixmap({ ":/icons/constants.png" });
 		return titleColor = QColor(150, 24, 35);
 		break;
-	case NodeType::Vector:
-		icon.addPixmap({ ":/icons/constants.png" });
-		return titleColor = QColor(150, 124, 35);
-		break;
-	/*case NodeType::Surface:
-		return titleColor = QColor(69, 90, 100, 150);
-		break;*/
 	default:
 		return titleColor = QColor(0, 0, 0, 0);
 		break;
@@ -141,8 +134,6 @@ QString NodeModel::getEnumString(NodeType type) {
 		return "Properties";
 	case NodeType::Constants:
 		return "Constants";
-	case NodeType::Vector:
-		return "Vector";
 	default:
 		return "";
 	}

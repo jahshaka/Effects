@@ -59,8 +59,8 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
     QMainWindow(parent)
 {
   //  ui->setupUi(this);
-	fontIcons = new QtAwesome;
-	fontIcons->initFontAwesome();
+//	fontIcons = new QtAwesome;
+//	fontIcons->initFontAwesome();
 	configureUI();
 	configureToolbar();
 
@@ -462,11 +462,11 @@ void MainWindow::configureAssetsDock()
 
 
 		exportBtn->setText(QChar(fa::upload));
-		exportBtn->setFont(fontIcons->font(fontSize));
+	//	exportBtn->setFont(fontIcons->font(fontSize));
 		importBtn->setText(QChar(fa::download));
-		importBtn->setFont(fontIcons->font(fontSize));
+	//	importBtn->setFont(fontIcons->font(fontSize));
 		addBtn->setText(QChar(fa::plus));
-		addBtn->setFont(fontIcons->font(fontSize));
+	//	addBtn->setFont(fontIcons->font(fontSize));
 
 		exportBtn->setCursor(Qt::PointingHandCursor);
 		importBtn->setCursor(Qt::PointingHandCursor);
@@ -600,9 +600,7 @@ void MainWindow::configureUI()
 	splitView = new QSplitter;
 	projectName = new QLineEdit;
 
-#if(EFFECT_BUILD_AS_LIB)
-	assetWidget = new ShaderAssetWidget;
-#endif
+
 
 
 	nodeTray->setAllowedAreas(Qt::AllDockWidgetAreas);
@@ -620,9 +618,11 @@ void MainWindow::configureUI()
 	splitView->addWidget(tabbedWidget);
 	splitView->setStretchFactor(0, 90);
 
-
-	//addDockWidget(Qt::LeftDockWidgetArea, nodeTray, Qt::Vertical);
+#if(EFFECT_BUILD_AS_LIB)
+	assetWidget = new ShaderAssetWidget;
 	addDockWidget(Qt::LeftDockWidgetArea, projectDock, Qt::Vertical);
+#endif
+	//addDockWidget(Qt::LeftDockWidgetArea, nodeTray, Qt::Vertical);
 	addDockWidget(Qt::LeftDockWidgetArea, assetsDock, Qt::Vertical);
 	addDockWidget(Qt::RightDockWidgetArea, textWidget, Qt::Vertical);
 	addDockWidget(Qt::RightDockWidgetArea, displayWidget, Qt::Vertical);
@@ -740,13 +740,13 @@ void MainWindow::configureToolbar()
 	QAction *actionUndo = new QAction;
 	actionUndo->setToolTip("Undo | Undo last action");
 	actionUndo->setObjectName(QStringLiteral("actionUndo"));
-	actionUndo->setIcon(fontIcons->icon(fa::reply, options));
+//	actionUndo->setIcon(fontIcons->icon(fa::reply, options));
 	toolBar->addAction(actionUndo);
 
 	QAction *actionRedo = new QAction;
 	actionRedo->setToolTip("Redo | Redo last action");
 	actionRedo->setObjectName(QStringLiteral("actionRedo"));
-	actionRedo->setIcon(fontIcons->icon(fa::share, options));
+//	actionRedo->setIcon(fontIcons->icon(fa::share, options));
 	toolBar->addAction(actionRedo);
 
 	toolBar->addSeparator();
@@ -760,7 +760,7 @@ void MainWindow::configureToolbar()
 	actionSave->setObjectName(QStringLiteral("actionSave"));
 	actionSave->setCheckable(false);
 	actionSave->setToolTip("Export | Export the current scene");
-	actionSave->setIcon(fontIcons->icon(fa::floppyo, options));
+//	actionSave->setIcon(fontIcons->icon(fa::floppyo, options));
 	toolBar->addAction(actionSave);
 
 	this->addToolBar(toolBar);

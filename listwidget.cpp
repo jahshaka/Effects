@@ -8,9 +8,6 @@
 #include <QLayout>
 #include "core/project.h"
 
-#if(EFFECT_BUILD_AS_LIB)
-
-#endif
 
 ListWidget::ListWidget() : QListWidget()
 {
