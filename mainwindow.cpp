@@ -204,8 +204,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::saveShader(QListWidgetItem * item)
 {
-	qDebug() << QStandardPaths::writableLocation(QStandardPaths::DataLocation);
-
 	QJsonDocument doc;
 
 	QJsonObject obj;
@@ -218,11 +216,19 @@ void MainWindow::saveShader(QListWidgetItem * item)
 
 	doc.setObject(obj);
 
-	auto shaderFile = new QFile(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/" + item->data(Qt::UserRole).toString());
-	shaderFile->open(QIODevice::ReadWrite);
+	auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/");
+	qDebug() << filePath << QDir(filePath).exists();
+
+	if (!QDir(filePath).exists()) QDir().mkpath(filePath);
+	auto shaderFile = new QFile(filePath + obj["name"].toString());
+	shaderFile->open(QIODevice::WriteOnly);
 	shaderFile->write(doc.toJson());
 	shaderFile->close();
 
+}
+
+void MainWindow::loadShader()
+{
 }
 
 void MainWindow::saveGraph()
