@@ -36,15 +36,21 @@
 #include "dialogs/searchdialog.h"
 #include "listwidget.h"
 #include "scenewidget.h"
+#include "core/project.h"
+#include "misc/QtAwesome.h"
+#include "misc/QtAwesomeAnim.h"
 #include <QMainWindow>
+
+#if(EFFECT_BUILD_AS_LIB)
 #include "../core/database/database.h"
-
-
 #include "../uimanager.h"
 #include "../globals.h"
 #include "../core/guidmanager.h"
 #include "../../irisgl/src/core/irisutils.h"
 #include "../io/assetmanager.h"
+#else
+#include <QUuid>
+#endif
 
 namespace shadergraph
 {
@@ -187,7 +193,9 @@ void MainWindow::newNodeGraph(QString *shaderName, int *templateType, QString *t
 
 void MainWindow::refreshShaderGraph()
 {
+#if(EFFECT_BUILD_AS_LIB)
 	assetWidget->refresh();
+#endif
 }
 
 MainWindow::~MainWindow()
@@ -342,8 +350,10 @@ void MainWindow::configureStyleSheet()
 	}
 }
 
+
 void MainWindow::configureProjectDock()
 {
+#if(EFFECT_BUILD_AS_LIB)
 	auto widget = new QWidget;
 	auto layout = new QVBoxLayout;
 	widget->setLayout(layout);
@@ -365,11 +375,11 @@ void MainWindow::configureProjectDock()
 	searchBar->setTextMargins(8, 0, 0, 0);
 	searchBar->setStyleSheet("QLineEdit{ background:rgba(41,41,41,1); border: 1px solid rgba(150,150,150,.2); border-radius: 1px; color: rgba(250,250,250,.95); }");
 
-	//layout->addWidget(searchContainer);
-	layout->addWidget(assetWidget);
-	//layout->addStretch();
 
+	layout->addWidget(assetWidget);
+#endif
 }
+
 
 void MainWindow::configureAssetsDock()
 {
@@ -512,7 +522,14 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 	item->setTextAlignment(Qt::AlignCenter);
 	item->setIcon(QIcon(":/icons/icons8-file-72.png"));
 
-	const QString assetGuid = GUIDManager::generateGUID();
+	auto genGuid = []() {
+		auto id = QUuid::createUuid();
+		auto guid = id.toString().remove(0, 1);
+		guid.chop(1);
+		return guid;
+	};
+
+	auto assetGuid = genGuid();
 
 	item->setData(MODEL_GUID_ROLE, assetGuid);
 	//item->setData(MODEL_PARENT_ROLE, assetItemShader.selectedGuid);
@@ -531,20 +548,11 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 	//	shaderName = QString(newShader + " %1").arg(QString::number(increment++));
 	//}
 
-
+#if(EFFECT_BUILD_AS_LIB)
 	dataBase->createAssetEntry(QString::null, assetGuid,
 		IrisUtils::buildFileName(newShader, "shader"),
 		static_cast<int>(ModelTypes::Shader));
 
-	item->setText(newShader);
-	effects->addItem(item);
-
-	QFile *templateShaderFile = new QFile(IrisUtils::getAbsoluteAssetPath("app/templates/ShaderTemplate.shader"));
-	templateShaderFile->open(QIODevice::ReadOnly | QIODevice::Text);
-	QJsonObject shaderDefinition = QJsonDocument::fromJson(templateShaderFile->readAll()).object();
-	templateShaderFile->close();
-	shaderDefinition["name"] = newShader;
-	shaderDefinition.insert("guid", assetGuid);
 
 	auto assetShader = new AssetShader;
 	assetShader->fileName = IrisUtils::buildFileName(newShader, "shader");
@@ -555,6 +563,17 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 	dataBase->updateAssetAsset(assetGuid, QJsonDocument(shaderDefinition).toBinaryData());
 
 	AssetManager::addAsset(assetShader);
+#endif
+	
+	item->setText(newShader);
+	effects->addItem(item);
+
+	QFile *templateShaderFile = new QFile(IrisUtils::getAbsoluteAssetPath("app/templates/ShaderTemplate.shader"));
+	templateShaderFile->open(QIODevice::ReadOnly | QIODevice::Text);
+	QJsonObject shaderDefinition = QJsonDocument::fromJson(templateShaderFile->readAll()).object();
+	templateShaderFile->close();
+	shaderDefinition["name"] = newShader;
+	shaderDefinition.insert("guid", assetGuid);
 }
 
 void MainWindow::configureUI()
@@ -579,8 +598,12 @@ void MainWindow::configureUI()
 	propertyListWidget = new PropertyListWidget;
 	nodeContainer = new QListWidget;
 	splitView = new QSplitter;
-	assetWidget = new ShaderAssetWidget;
 	projectName = new QLineEdit;
+
+#if(EFFECT_BUILD_AS_LIB)
+	assetWidget = new ShaderAssetWidget;
+#endif
+
 
 	nodeTray->setAllowedAreas(Qt::AllDockWidgetAreas);
 	textWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
@@ -847,9 +870,11 @@ void MainWindow::createNewGraph()
 	
 }
 
+
 void MainWindow::updateAssetDock()
 {
 
+#if(EFFECT_BUILD_AS_LIB)
 		for (const auto &asset : dataBase->fetchAssets())  //dp something{
 		{
 			qDebug() << asset.projectGuid;
@@ -870,14 +895,18 @@ void MainWindow::updateAssetDock()
 				effects->addItem(item);
 			}
 		}
-	
+
+#endif
 
 }
 
 void MainWindow::setAssetWidgetDatabase(Database * db)
 {
+#if(EFFECT_BUILD_AS_LIB)
 	assetWidget->setUpDatabse(db);
+#endif
 }
+
 
 bool MainWindow::eventFilter(QObject * watched, QEvent * event)
 {

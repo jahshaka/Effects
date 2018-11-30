@@ -16,10 +16,11 @@
 #include "materialsettingswidget.h"
 #include "dialogs/createnewdialog.h"
 #include "listwidget.h"
-#include "misc/QtAwesome.h"
-#include "misc/QtAwesomeAnim.h"
-#include "shaderassetwidget.h"
 
+
+#if(EFFECT_BUILD_AS_LIB)
+#include "shaderassetwidget.h"
+#endif
 
 class QMenuBar;
 class SceneWidget;
@@ -27,6 +28,7 @@ class GraphNodeScene;
 class NodeGraph;
 class NodeLibraryItem;
 class Database;
+class QtAwesome;
 
 namespace shadergraph
 {
@@ -74,6 +76,11 @@ private:
 
 	bool eventFilter(QObject *watched, QEvent *event);
 
+	void configureStyleSheet();
+	void configureProjectDock();
+	void configureAssetsDock();
+	void createShader(QString *shaderName = Q_NULLPTR, int *templateType = Q_NULLPTR, QString *templateName = Q_NULLPTR);
+
     GraphNodeScene* createNewScene();
 	void regenerateShader();
 	
@@ -109,12 +116,6 @@ private:
 
 	ListWidget *presets;
 	ListWidget *effects;
-	ShaderAssetWidget *assetWidget;
-
-	void configureStyleSheet();
-	void configureProjectDock();
-	void configureAssetsDock();
-	void createShader(QString *shaderName = Q_NULLPTR, int *templateType = Q_NULLPTR, QString *templateName = Q_NULLPTR);
 
 	QtAwesome *fontIcons;
 	Database *dataBase;
@@ -122,7 +123,9 @@ private:
 	QSize defaultItemSize = QSize(90, 90);
 
 	QLineEdit *projectName;
-
+#if(EFFECT_BUILD_AS_LIB)
+	ShaderAssetWidget *assetWidget;
+#endif
 };
 
 }

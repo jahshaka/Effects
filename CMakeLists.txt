@@ -40,7 +40,6 @@ set(CPP
 	socket.cpp
 	graphnode.cpp
 	graphnodescene.cpp
-	shaderassetwidget.cpp
     #graphtest.cpp
 	# graph
 	graph/nodegraph.cpp
@@ -68,6 +67,8 @@ set(CPP
 
 	dialogs/createnewdialog.cpp
 	dialogs/searchdialog.cpp
+	core/project.cpp
+
 	)
 
 set(HEADERS
@@ -89,7 +90,6 @@ set(HEADERS
 		socket.h
 		graphnode.h
 		graphnodescene.h
-		shaderassetwidget.h
         #graphtest.h
 		#graph
 		graph/nodegraph.h
@@ -117,8 +117,8 @@ set(HEADERS
 
 		dialogs/createnewdialog.h
 		dialogs/searchdialog.h
-		../core/project.h
-		../core/database/database.h
+		core/project.h
+
 	)
 
 set(FORMS

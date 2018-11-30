@@ -12,7 +12,12 @@
 #include "../graph/sockets.h"
 #include "../generator/shadercontext.h"
 #include "../propertywidgets/propertywidgetbase.h"
+
+
+
+#if(EFFECT_BUILD_AS_LIB)
 #include "../../widgets/colorpickerwidget.h"
+#endif
 
 class SurfaceMasterNode : public NodeModel
 {
@@ -187,15 +192,17 @@ public:
 	virtual void process(ModelContext* context) override;
 };
 
+#if(EFFECT_BUILD_AS_LIB)
 class ColorPickerNode : public NodeModel
 {
 public:
 	ColorPickerNode();
 
 private:
+
 	ColorPickerWidget *colorWidget;
 	virtual void process(ModelContext* context) override;
 
 };
-
+#endif
 void registerModels(NodeGraph* graph);

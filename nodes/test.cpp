@@ -958,6 +958,7 @@ void Vector4Node::process(ModelContext * context)
 	outSockets[0]->setVarName("vec4(" + QString::number(value.x()) + "," + QString::number(value.y()) + "," + QString::number(value.z()) + "," + QString::number(value.w()) + ")");
 }
 
+#if(EFFECT_BUILD_AS_LIB)
 ColorPickerNode::ColorPickerNode()
 {
 	setNodeType(NodeType::Constants);
@@ -989,3 +990,4 @@ void ColorPickerNode::process(ModelContext * context)
 	outSockets[4]->setVarName(QString::number(col.alphaF()));
 
 }
+#endif

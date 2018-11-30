@@ -198,11 +198,12 @@ void LibraryV1::initMath()
 		return new Vector4Node();
 	});
 
+#if(EFFECT_BUILD_AS_LIB)
 	addNode("color", "Color", "", []() {
 		return new ColorPickerNode();
 
 	});
-
+#endif
 }
 
 void LibraryV1::initVector()

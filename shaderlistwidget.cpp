@@ -2,10 +2,9 @@
 #include <QDropEvent>
 #include <QMimeData>
 #include <QDebug>
+#include <QUuid>
 
-
-#include "../core/project.h"
-#include "../core/guidmanager.h"
+#include "core/project.h"
 
 
 ShaderListWidget::ShaderListWidget() : ListWidget()
@@ -42,7 +41,14 @@ void ShaderListWidget::dropEvent(QDropEvent * event)
 		item->setIcon(QIcon(":/icons/icons8-file-72.png"));
 		item->setText(event->mimeData()->text());
 
-		const QString assetGuid = GUIDManager::generateGUID();
+		auto genGuid = []() {
+			auto id = QUuid::createUuid();
+			auto guid = id.toString().remove(0, 1);
+			guid.chop(1);
+			return guid;
+		};
+
+		const QString assetGuid = genGuid();
 
 		item->setData(MODEL_GUID_ROLE, assetGuid);
 		item->setData(MODEL_PARENT_ROLE, "");

@@ -6,8 +6,9 @@
 #include <QJsonObject>
 
 #include "listwidget.h"
-#include "../core/project.h"
 #include "shaderlistwidget.h"
+#include "../core/project.h"
+
 
 //#include "../widgets/assetwidget.h"
 
@@ -30,13 +31,11 @@ public:
 
 	QVBoxLayout *layout;
 	QHBoxLayout *breadCrumbs;
-	ShaderListWidget *assetViewWidget;
+	
 	AssetItemShader assetItemShader;
-	void setUpDatabse(Database *db);
-	void refresh();
+	
 
 	void createCustomContextMenu(const QPoint pos);
-	void updateAssetView(const QString &path, int filter = -1, bool showDependencies = false);
 	void addItem(const FolderRecord &folderData);
 	void addItem(const AssetRecord &assetData);
 	void createFolder();
@@ -44,6 +43,13 @@ public:
 	void createShader(QListWidgetItem *item);
 	void createLocalShader();
 
+#if(EFFECT_BUILD_AS_LIB)
+	ShaderListWidget *assetViewWidget;
+
+	void updateAssetView(const QString &path, int filter = -1, bool showDependencies = false);
+	void setUpDatabse(Database *db);
+	void refresh();
+#endif
 private:
 
 	QWidget *noWidget;

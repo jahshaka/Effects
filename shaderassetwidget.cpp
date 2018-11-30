@@ -6,16 +6,17 @@
 #include <QFileInfo>
 #include <QDebug>
 
+
+#include "irisgl/src/core/irisutils.h"
+
+
+#if(EFFECT_BUILD_AS_LIB)
+#include "../io/assetmanager.h"
 #include "../uimanager.h"
 #include "../globals.h"
 #include "../core/database/database.h"
 #include "../core/guidmanager.h"
-#include "../../irisgl/src/core/irisutils.h"
-#include "../io/assetmanager.h"
-
-
-
-
+#endif
 
 ShaderAssetWidget::ShaderAssetWidget(Database *handle) : QWidget()
 {
@@ -38,8 +39,7 @@ ShaderAssetWidget::ShaderAssetWidget(Database *handle) : QWidget()
 	layout->addWidget(breadCrumbsWidget);
 	
 
-	qDebug() << UiManager::isSceneOpen;
-
+#if(EFFECT_BUILD_AS_LIB)
 		if (UiManager::isSceneOpen) {
 			qDebug() << "scene is open"; 
 		}
@@ -61,6 +61,7 @@ ShaderAssetWidget::ShaderAssetWidget(Database *handle) : QWidget()
 
 			layout->addWidget(noWidget);
 		}
+#endif
 }
 
 
