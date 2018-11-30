@@ -60,6 +60,7 @@ public:
 
 	QList<nodeGraphPreset> list;
 private:
+	void saveShader(QListWidgetItem *item);
     void saveGraph();
     void loadGraph();
     void exportGraph();

@@ -99,3 +99,5 @@ void ListWidget::resizeEvent(QResizeEvent * event)
 	QListWidget::resizeEvent(event);
 	if(isResizable) displayAllContents();
 }
+
+

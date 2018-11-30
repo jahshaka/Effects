@@ -38,6 +38,7 @@
 #include "scenewidget.h"
 #include "core/project.h"
 #include <QMainWindow>
+#include <QStandardPaths>
 
 #if(EFFECT_BUILD_AS_LIB)
 #include "../core/database/database.h"
@@ -199,6 +200,29 @@ void MainWindow::refreshShaderGraph()
 MainWindow::~MainWindow()
 {
     
+}
+
+void MainWindow::saveShader(QListWidgetItem * item)
+{
+	qDebug() << QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+
+	QJsonDocument doc;
+
+	QJsonObject obj;
+
+	obj["name"]					= item->data(Qt::UserRole).toString();
+	obj["MODEL_ITEM_TYPE"]		= item->data(MODEL_ITEM_TYPE).toString();
+	obj["MODEL_GUID_ROLE"]		= item->data(MODEL_GUID_ROLE).toString();
+	obj["MODEL_PARENT_ROLE"]	= item->data(MODEL_PARENT_ROLE).toString();
+	obj["MODEL_TYPE_ROLE"]		= item->data(MODEL_TYPE_ROLE).toString();
+
+	doc.setObject(obj);
+
+	auto shaderFile = new QFile(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/" + item->data(Qt::UserRole).toString());
+	shaderFile->open(QIODevice::ReadWrite);
+	shaderFile->write(doc.toJson());
+	shaderFile->close();
+
 }
 
 void MainWindow::saveGraph()
@@ -392,7 +416,7 @@ void MainWindow::configureAssetsDock()
 	presets = new ListWidget;
 	effects = new ListWidget;
 //	presets->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
-//	effects->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+	effects->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
 //	presets->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
 	//tabWidget->addTab(presets, "Presets");
@@ -437,6 +461,7 @@ void MainWindow::configureAssetsDock()
 		item->setTextAlignment(Qt::AlignBottom);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
 		presets->addItem(item);
+		effects->addItem(item);
 	}
 
 	presets->isResizable = true;
@@ -539,6 +564,8 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Material));
 	item->setData(Qt::UserRole, newShader);
 
+
+
 	//assetItemShader.wItem = item;
 
 
@@ -550,7 +577,21 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 	//	shaderName = QString(newShader + " %1").arg(QString::number(increment++));
 	//}
 
+	item->setText(newShader);
+	effects->addItem(item);
+	effects->displayAllContents();
+
+	
+
+
 #if(EFFECT_BUILD_AS_LIB)
+	QFile *templateShaderFile = new QFile(IrisUtils::getAbsoluteAssetPath("app/templates/ShaderTemplate.shader"));
+	templateShaderFile->open(QIODevice::ReadOnly | QIODevice::Text);
+	QJsonObject shaderDefinition = QJsonDocument::fromJson(templateShaderFile->readAll()).object();
+	templateShaderFile->close();
+	shaderDefinition["name"] = newShader;
+	shaderDefinition.insert("guid", assetGuid);
+
 	dataBase->createAssetEntry(QString::null, assetGuid,
 		IrisUtils::buildFileName(newShader, "shader"),
 		static_cast<int>(ModelTypes::Shader));
@@ -565,17 +606,13 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 	dataBase->updateAssetAsset(assetGuid, QJsonDocument(shaderDefinition).toBinaryData());
 
 	AssetManager::addAsset(assetShader);
+
+#else
+	saveShader(item);
+
 #endif
 	
-	item->setText(newShader);
-	effects->addItem(item);
-
-	QFile *templateShaderFile = new QFile(IrisUtils::getAbsoluteAssetPath("app/templates/ShaderTemplate.shader"));
-	templateShaderFile->open(QIODevice::ReadOnly | QIODevice::Text);
-	QJsonObject shaderDefinition = QJsonDocument::fromJson(templateShaderFile->readAll()).object();
-	templateShaderFile->close();
-	shaderDefinition["name"] = newShader;
-	shaderDefinition.insert("guid", assetGuid);
+	
 }
 
 void MainWindow::configureUI()
