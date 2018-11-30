@@ -183,6 +183,9 @@ void GraphNodeScene::drawItems(QPainter * painter, int numItems, QGraphicsItem *
 void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 {
 	event->accept();
+
+
+
 	auto node = nodeGraph->library->createNode(event->mimeData()->text());
 
 	//	auto factory = nodeGraph->modelFactories[event->mimeData()->text()];

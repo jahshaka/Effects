@@ -383,9 +383,9 @@ void MainWindow::configureAssetsDock()
 	auto tabWidget = new QTabWidget;
 	presets = new ListWidget;
 	effects = new ListWidget;
-	presets->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
-	effects->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
-	presets->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+//	presets->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+//	effects->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+//	presets->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
 	//tabWidget->addTab(presets, "Presets");
 	//tabWidget->addTab(effects, "My Fx");
@@ -430,9 +430,6 @@ void MainWindow::configureAssetsDock()
 		presets->addItem(item);
 	}
 
-	presets->setGridSize(defaultGridSize);
-	effects->setGridSize(defaultGridSize);
-
 	presets->isResizable = true;
 	effects->isResizable = true;
 
@@ -473,8 +470,8 @@ void MainWindow::configureAssetsDock()
 		effectsLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
 		exportBtn->setStyleSheet(
-			"QPushButton{background: rgba(15,15,15,1); color:rgba(30,130,230,1); border: 1px solid rgba(50,50,50,.1); padding: 5px 10px; }"
-			"QPushButton:hover{background: rgba(30,130,230,1); color:rgba(230,230,230,1);}"
+			"QPushButton{background: rgba(15,15,15,1); color:rgba(230,230,230,1); border: 1px solid rgba(50,50,50,.1); padding: 5px 10px; }"
+			"QPushButton:hover{background: rgba(100,100,100,.3); color:rgba(230,230,230,1);}"
 		);
 		importBtn->setStyleSheet(exportBtn->styleSheet());
 		addBtn->setStyleSheet(exportBtn->styleSheet());
@@ -696,8 +693,8 @@ void MainWindow::configureToolbar()
 	options.insert("color-active", QColor(255, 255, 255));
 
 	toolBar = new QToolBar("Tool Bar");
-	toolBar->setMaximumHeight(50);
-	toolBar->setIconSize(QSize(12, 12));
+	//toolBar->setMaximumHeight(50);
+	toolBar->setIconSize(QSize(16, 16));
 
 	QFont projectNameFont = projectName->font();
 	projectNameFont.setPixelSize(24);

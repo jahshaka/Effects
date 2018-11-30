@@ -61,31 +61,6 @@ ShaderAssetWidget::ShaderAssetWidget(Database *handle) : QWidget()
 
 			layout->addWidget(noWidget);
 		}
-
-	/*	assetViewWidget->setAlternatingRowColors(false);
-		assetViewWidget->setSpacing(0);
-		assetViewWidget->setContentsMargins(10, 3, 10, 10);
-		assetViewWidget->setViewMode(QListWidget::IconMode);
-		assetViewWidget->setIconSize(currentSize);
-		assetViewWidget->setMouseTracking(true);
-		assetViewWidget->setDragDropMode(QAbstractItemView::DragDrop);
-		assetViewWidget->setMovement(QListView::Static);
-		assetViewWidget->setResizeMode(QListWidget::Adjust);
-		assetViewWidget->setDefaultDropAction(Qt::CopyAction);
-		assetViewWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-		assetViewWidget->setSelectionRectVisible(false);
-		assetViewWidget->setDragEnabled(true);
-
-		assetViewWidget->setDropIndicatorShown(true);
-		assetViewWidget->installEventFilter(this);
-		assetViewWidget->viewport()->installEventFilter(this);
-		assetViewWidget->setWordWrap(true);
-		assetViewWidget->setGridSize(QSize(90, 90));
-		assetViewWidget->setSortingEnabled(true);
-		assetViewWidget->sortItems();
-		assetViewWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);*/
-		
-	
 }
 
 

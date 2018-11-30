@@ -11,7 +11,7 @@
 
 ListWidget::ListWidget() : QListWidget()
 {
-	QSize currentSize(40, 40);
+	QSize currentSize(70, 70);
 	setAlternatingRowColors(false);
 	setSpacing(0);
 	setContentsMargins(10, 3, 10, 10);
