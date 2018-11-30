@@ -37,8 +37,6 @@
 #include "listwidget.h"
 #include "scenewidget.h"
 #include "core/project.h"
-#include "misc/QtAwesome.h"
-#include "misc/QtAwesomeAnim.h"
 #include <QMainWindow>
 
 #if(EFFECT_BUILD_AS_LIB)
@@ -59,8 +57,8 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
     QMainWindow(parent)
 {
   //  ui->setupUi(this);
-//	fontIcons = new QtAwesome;
-//	fontIcons->initFontAwesome();
+	fontIcons = new QtAwesome;
+	fontIcons->initFontAwesome();
 	configureUI();
 	configureToolbar();
 
@@ -408,18 +406,19 @@ void MainWindow::configureAssetsDock()
 	scrollView->setWidget(contentHolder);
 	scrollView->setWidgetResizable(true);
 	scrollView->setContentsMargins(0, 0, 0, 0);
+	scrollView->setStyleSheet(
+		"QScrollBar:vertical {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 10px; }"
+		"QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 5px;  left: 8px; }"
+		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
+		"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
+		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .0);}"
+	);
 
 	auto presetsLabel = new QLabel("Presets");
 	auto effectsLabel = new QLabel("My Fx");
 
 	presetsLabel->setStyleSheet("QLabel{ background: rgba(20,20,20,1); padding: 3px; padding-left: 8px; color: rgba(200,200,200,1); }");
 	effectsLabel->setStyleSheet(presetsLabel->styleSheet());
-
-	QFont labelFont = presetsLabel->font();
-	font.setWeight(65);
-	presetsLabel->setFont(font);
-	effectsLabel->setFont(font);
-
 
 	contentLayout->addWidget(presetsLabel);
 	contentLayout->addWidget(presets);
@@ -462,11 +461,14 @@ void MainWindow::configureAssetsDock()
 
 
 		exportBtn->setText(QChar(fa::upload));
-	//	exportBtn->setFont(fontIcons->font(fontSize));
+		exportBtn->setFont(fontIcons->font(fontSize));
+		exportBtn->setToolTip("Export material");
 		importBtn->setText(QChar(fa::download));
-	//	importBtn->setFont(fontIcons->font(fontSize));
+		importBtn->setFont(fontIcons->font(fontSize));
+		importBtn->setToolTip("Import material");
 		addBtn->setText(QChar(fa::plus));
-	//	addBtn->setFont(fontIcons->font(fontSize));
+		addBtn->setFont(fontIcons->font(fontSize));
+		addBtn->setToolTip("Create new material");
 
 		exportBtn->setCursor(Qt::PointingHandCursor);
 		importBtn->setCursor(Qt::PointingHandCursor);
@@ -740,13 +742,13 @@ void MainWindow::configureToolbar()
 	QAction *actionUndo = new QAction;
 	actionUndo->setToolTip("Undo | Undo last action");
 	actionUndo->setObjectName(QStringLiteral("actionUndo"));
-//	actionUndo->setIcon(fontIcons->icon(fa::reply, options));
+	actionUndo->setIcon(fontIcons->icon(fa::reply, options));
 	toolBar->addAction(actionUndo);
 
 	QAction *actionRedo = new QAction;
 	actionRedo->setToolTip("Redo | Redo last action");
 	actionRedo->setObjectName(QStringLiteral("actionRedo"));
-//	actionRedo->setIcon(fontIcons->icon(fa::share, options));
+	actionRedo->setIcon(fontIcons->icon(fa::share, options));
 	toolBar->addAction(actionRedo);
 
 	toolBar->addSeparator();
@@ -760,7 +762,7 @@ void MainWindow::configureToolbar()
 	actionSave->setObjectName(QStringLiteral("actionSave"));
 	actionSave->setCheckable(false);
 	actionSave->setToolTip("Export | Export the current scene");
-//	actionSave->setIcon(fontIcons->icon(fa::floppyo, options));
+	actionSave->setIcon(fontIcons->icon(fa::floppyo, options));
 	toolBar->addAction(actionSave);
 
 	this->addToolBar(toolBar);

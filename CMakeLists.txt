@@ -68,6 +68,8 @@ set(CPP
 	dialogs/createnewdialog.cpp
 	dialogs/searchdialog.cpp
 	core/project.cpp
+	misc/QtAwesome.cpp
+	misc/QtAwesomeAnim.cpp
 
 	)
 
@@ -118,7 +120,8 @@ set(HEADERS
 		dialogs/createnewdialog.h
 		dialogs/searchdialog.h
 		core/project.h
-
+		misc/QtAwesome.h
+		misc/QtAwesomeAnim.h
 	)
 
 set(FORMS
@@ -128,7 +131,8 @@ set(FORMS
 
 Qt5_add_resources(QRCS
 		images.qrc
-		icons.qrc)
+		icons.qrc
+		fonts.qrc)
 
 
 set(LIBS IrisGL Qt5::Widgets)

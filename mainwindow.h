@@ -16,7 +16,8 @@
 #include "materialsettingswidget.h"
 #include "dialogs/createnewdialog.h"
 #include "listwidget.h"
-
+#include "misc/QtAwesome.h"
+#include "misc/QtAwesomeAnim.h"
 
 #if(EFFECT_BUILD_AS_LIB)
 #include "shaderassetwidget.h"
@@ -28,7 +29,6 @@ class GraphNodeScene;
 class NodeGraph;
 class NodeLibraryItem;
 class Database;
-class QtAwesome;
 
 namespace shadergraph
 {
