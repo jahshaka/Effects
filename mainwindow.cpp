@@ -70,72 +70,8 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
 
 	installEventFilter(this);
 
-    // preview widget
- /*   sceneWidget = new SceneWidget();
-    auto grid = new QGridLayout();
-    grid->setSpacing(0);
-    grid->setMargin(0);
-    grid->addWidget(sceneWidget);
-    ui->sceneContainer->setLayout(grid);*/
 
-    // add menu items to property widget
 
-	bar = new QMenuBar();
-	file = new QMenu("File", bar);
-	window = new QMenu("Window", bar);
-	edit = new QMenu("Edit", bar);
-	auto barLayout = new QVBoxLayout;
-	auto actionSave = new QAction("save shader", bar);
-	auto actionLoad = new QAction("load shader", bar);
-	auto actionExport = new QAction("export shader", bar);
-	auto actionNew = new QAction("new shader", bar);
-
-	bar->addMenu(file);
-	bar->addMenu(edit);
-	bar->addMenu(window);
-	bar->setLayout(barLayout);
-
-	file->addAction(actionNew);
-	file->addAction(actionSave);
-	file->addAction(actionLoad);
-	file->addAction(actionExport);
-	file->setFont(font);
-
-	window->addAction(nodeTray->toggleViewAction());
-	window->addAction(textWidget->toggleViewAction());
-	window->addAction(displayWidget->toggleViewAction());
-	window->addAction(propertyWidget->toggleViewAction());
-	window->addAction(materialSettingsDock->toggleViewAction());
-	window->setFont(font);
-	
-	//setMenuBar(bar);
-
-	connect(actionSave, &QAction::triggered, this, &MainWindow::saveGraph);
-	connect(actionLoad, &QAction::triggered, this, &MainWindow::loadGraph);
-	connect(actionExport, &QAction::triggered, this, &MainWindow::exportGraph);
-	connect(actionNew, &QAction::triggered, this, &MainWindow::createNewGraph);
-
-	connect(edit, &QMenu::triggered, [=]() {
-	//	for (auto item : scene->nodeGraph->library->getItems()) {
-	//		auto factory = item->factoryFunction;
-	//		connect(menu->addAction(item->displayName), &QAction::triggered, [this, x, y, factory]() {
-
-	//			auto node = factory();
-	//			this->addNodeModel(node, x, y);
-
-	//		});
-	//	}
-
-	//	// create properties
-	//	auto propMenu = menu->addMenu("Properties");
-	//	for (auto prop : nodeGraph->properties) {
-	//		connect(propMenu->addAction(prop->displayName), &QAction::triggered, [this, x, y, prop]() {
-	//			auto propNode = new PropertyNode();
-	//			propNode->setProperty(prop);
-	//			this->addNodeModel(propNode, x, y);
-	//		});
-	//	}
-	});
 
 	newNodeGraph();
 	generateTileNode();
@@ -147,9 +83,14 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
 	if (database) setAssetWidgetDatabase(database);
 
 	QShortcut *shortcut = new QShortcut(QKeySequence("f"), this);
-	connect(shortcut,&QShortcut::activated, [=]() {
+	connect(shortcut, &QShortcut::activated, [=]() {
 		auto dialog = new SearchDialog(this->graph);
-		dialog->show ();
+		dialog->show();
+	});
+
+	shortcut = new QShortcut(QKeySequence("ctrl+s"), this);
+	connect(shortcut, &QShortcut::activated, [=]() {
+		saveShader(currentProjectShader);
 	});
 
 	loadShader();
@@ -211,12 +152,12 @@ void MainWindow::saveShader(QListWidgetItem * item)
 
 	QJsonObject obj;
 
-	obj["name"]					= item->data(Qt::UserRole).toString();
+	obj["name"]					= item->data(Qt::DisplayRole).toString();
 	obj["MODEL_ITEM_TYPE"]		= item->data(MODEL_ITEM_TYPE).toString();
 	obj["MODEL_GUID_ROLE"]		= item->data(MODEL_GUID_ROLE).toString();
 	obj["MODEL_PARENT_ROLE"]	= item->data(MODEL_PARENT_ROLE).toString();
 	obj["MODEL_TYPE_ROLE"]		= item->data(MODEL_TYPE_ROLE).toString();
-
+	obj["MODEL_GRAPH"]			= scene->serialize();
 	doc.setObject(obj);
 
 	auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/");
@@ -254,6 +195,7 @@ void MainWindow::loadShader()
 		item->setData(MODEL_GUID_ROLE, obj["MODEL_GUID_ROLE"].toString());
 		item->setData(MODEL_PARENT_ROLE, obj["MODEL_PARENT_ROLE"].toString());
 		item->setData(MODEL_ITEM_TYPE, obj["MODEL_ITEM_TYPE"].toString());
+		item->setData(MODEL_GRAPH, obj["MODEL_GRAPH"].toObject());
 		item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Material));
 		
 		effects->addItem(item);
@@ -266,6 +208,7 @@ void MainWindow::saveGraph()
 
     QJsonDocument doc;
     doc.setObject(scene->serialize());
+
 
     QFile file(path);
     file.open(QFile::WriteOnly | QFile::Truncate);
@@ -289,6 +232,17 @@ void MainWindow::loadGraph()
     this->restoreGraphPositions(d.object());
 
 	regenerateShader();
+}
+
+void MainWindow::loadGraph(QListWidgetItem * item)
+{
+	auto obj = item->data(MODEL_GRAPH).toJsonObject();
+	auto graph = NodeGraph::deserialize(obj, new LibraryV1());
+	this->setNodeGraph(graph);
+	this->restoreGraphPositions(obj);
+	projectName->setText(item->data(Qt::DisplayRole).toString());
+	regenerateShader();
+	currentProjectShader = item;
 }
 
 void MainWindow::exportGraph()
@@ -346,14 +300,6 @@ void MainWindow::configureStyleSheet()
 		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .0);}"
 	);
 
-	bar->setStyleSheet(
-		"QMenuBar{spacing : 5px; border: 3px solid rgba(0,0,0,.4); }"
-		"QMenuBar::item:selected{ background: rgba(53,53,53,1);}"
-
-		"QMenu{	background: rgba(26,26,26,.9); color: rgba(250,250, 250,.9);}"
-		"QMenu::item{padding: 2px 5px 2px 20px;	}"
-		"QMenu::item:hover{	background: rgba(40,128, 185,.9);}"
-		"QMenu::item:selected{	background: rgba(40,128, 185,.9);}");
 
 	/*nodeContainer->setStyleSheet("QListWidget::item{background: rgba(70,70,70,1); color: rgba(200,200,200,1);}"
 		"QListView::item:selected:active {background: qlineargradient(x1 : 0, y1 : 0, x2 : 0, y2 : 1,stop : 0 #6a6ea9, stop: 1 #888dd9);}"
@@ -564,6 +510,12 @@ void MainWindow::configureAssetsDock()
 		});
 	}
 
+	connect(effects, &QListWidget::itemDoubleClicked, [=](QListWidgetItem *item) {
+		
+		loadGraph(item);
+
+	});
+
 
 	layout->addWidget(scrollView);
 	layout->addWidget(buttonBar);
@@ -598,7 +550,9 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 	item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
 	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Material));
 	item->setData(Qt::UserRole, newShader);
+	item->setData(MODEL_GRAPH, scene->serialize());
 
+	currentProjectShader = item;
 
 
 	//assetItemShader.wItem = item;

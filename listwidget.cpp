@@ -57,6 +57,7 @@ ListWidget::ListWidget() : QListWidget()
 		"QListView::text{ top : -6; }"
 	);
 	
+	
 }
 
 
