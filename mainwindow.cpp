@@ -70,7 +70,8 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
 
 	installEventFilter(this);
 
-
+	if (database) dataBase = database;
+	if (database) setAssetWidgetDatabase(database);
 
 
 	newNodeGraph();
@@ -80,7 +81,7 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
 	configureAssetsDock();
 	setMinimumSize(300, 400);
 
-	if (database) setAssetWidgetDatabase(database);
+	
 
 	QShortcut *shortcut = new QShortcut(QKeySequence("f"), this);
 	connect(shortcut, &QShortcut::activated, [=]() {
@@ -91,6 +92,10 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
 	shortcut = new QShortcut(QKeySequence("ctrl+s"), this);
 	connect(shortcut, &QShortcut::activated, [=]() {
 		saveShader(currentProjectShader);
+	});
+
+	connect(scene, &GraphNodeScene::loadGraph, [=](QListWidgetItem *item) {
+		loadGraph(item);
 	});
 
 	loadShader();
@@ -149,7 +154,6 @@ MainWindow::~MainWindow()
 void MainWindow::saveShader(QListWidgetItem * item)
 {
 	QJsonDocument doc;
-
 	QJsonObject obj;
 
 	obj["name"]					= item->data(Qt::DisplayRole).toString();
@@ -158,16 +162,21 @@ void MainWindow::saveShader(QListWidgetItem * item)
 	obj["MODEL_PARENT_ROLE"]	= item->data(MODEL_PARENT_ROLE).toString();
 	obj["MODEL_TYPE_ROLE"]		= item->data(MODEL_TYPE_ROLE).toString();
 	obj["MODEL_GRAPH"]			= scene->serialize();
+	item->setData(MODEL_GRAPH, scene->serialize());
 	doc.setObject(obj);
 
-	auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/");
 
+#if(EFFECT_BUILD_AS_LIB)
+	dataBase->updateAssetAsset(obj["MODEL_GUID_ROLE"].toString(), doc.toBinaryData());
+
+#else
+	auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/");
 	if (!QDir(filePath).exists()) QDir().mkpath(filePath);
 	auto shaderFile = new QFile(filePath + obj["name"].toString());
 	shaderFile->open(QIODevice::WriteOnly);
 	shaderFile->write(doc.toJson());
 	shaderFile->close();
-
+#endif
 }
 
 void MainWindow::loadShader()
@@ -546,14 +555,13 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 	auto assetGuid = genGuid();
 
 	item->setData(MODEL_GUID_ROLE, assetGuid);
-	//item->setData(MODEL_PARENT_ROLE, assetItemShader.selectedGuid);
 	item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
-	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Material));
+	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Shader));
 	item->setData(Qt::UserRole, newShader);
 	item->setData(MODEL_GRAPH, scene->serialize());
 
 	currentProjectShader = item;
-
+	qDebug() << item->data(MODEL_TYPE_ROLE).toInt();
 
 	//assetItemShader.wItem = item;
 
@@ -580,10 +588,11 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 	templateShaderFile->close();
 	shaderDefinition["name"] = newShader;
 	shaderDefinition.insert("guid", assetGuid);
+	shaderDefinition["MODEL_GRAPH"] = item->data(MODEL_GRAPH).toJsonObject();
 
 	dataBase->createAssetEntry(QString::null, assetGuid,
 		IrisUtils::buildFileName(newShader, "shader"),
-		static_cast<int>(ModelTypes::Shader));
+		static_cast<int>(ModelTypes::Shader), QJsonDocument(shaderDefinition).toBinaryData());
 
 
 	auto assetShader = new AssetShader;
@@ -830,7 +839,7 @@ void MainWindow::generateTileNode()
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
 		item->setIcon(QIcon(":/icons/icon.png"));
 		item->setBackgroundColor(QColor(60, 60, 60));
-		//nodeContainer->addItem(item);
+		item->setData(MODEL_TYPE_ROLE, QString("node"));
 		setNodeLibraryItem(item, tile);
 
 	}
@@ -906,7 +915,7 @@ void MainWindow::updateAssetDock()
 		for (const auto &asset : dataBase->fetchAssets())  //dp something{
 		{
 			qDebug() << asset.projectGuid;
-			if (asset.projectGuid == "") {
+			if (asset.projectGuid == "" && asset.type == static_cast<int>(ModelTypes::Shader)) {
 
 				auto item = new QListWidgetItem;
 				item->setText(asset.name);
@@ -915,10 +924,17 @@ void MainWindow::updateAssetDock()
 				item->setIcon(QIcon(":/icons/icons8-file-72.png"));
 				item->setTextAlignment( Qt::AlignHCenter | Qt::AlignBottom);
 
+
+				auto doc = QJsonDocument::fromBinaryData(asset.asset);
+				auto obj = doc.object();
+				auto name = obj["name"].toString();
+				qDebug() << name;
+
 				item->setData(MODEL_GUID_ROLE, asset.guid);
 				item->setData(MODEL_PARENT_ROLE, asset.parent);
 				item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
-				item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Material));
+				item->setData(MODEL_TYPE_ROLE, asset.type);
+				item->setData(MODEL_GRAPH, obj["MODEL_GRAPH"].toObject());
 
 				effects->addItem(item);
 			}

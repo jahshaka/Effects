@@ -1,7 +1,9 @@
 #include "graphnodescene.h"
 #include "nodes/test.h"
+#include "core/project.h"
 
 #include <QMimeData>
+#include <QListWidgetItem>
 
 
 
@@ -184,23 +186,38 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 {
 	event->accept();
 
+	if (0 == QString("node").compare(QString(event->mimeData()->data("MODEL_TYPE_ROLE")))) {
 
+		auto node = nodeGraph->library->createNode(event->mimeData()->text());
 
-	auto node = nodeGraph->library->createNode(event->mimeData()->text());
-
-	//	auto factory = nodeGraph->modelFactories[event->mimeData()->text()];
-	if (node) {
-		this->addNodeModel(node, event->scenePos().x(), event->scenePos().y());
-		return;
+			//	auto factory = nodeGraph->modelFactories[event->mimeData()->text()];
+			if (node) {
+				this->addNodeModel(node, event->scenePos().x(), event->scenePos().y());
+					return;
+			}
+		auto prop = nodeGraph->properties.at(event->mimeData()->data("index").toInt());
+			if (prop) {
+				auto propNode = new PropertyNode();
+				propNode->setProperty(prop);
+				this->addNodeModel(propNode, event->scenePos().x(), event->scenePos().y());
+				qDebug() << "no node element";
+			}
 	}
-	qDebug() << event->mimeData()->data("index").toInt();
-	auto prop = nodeGraph->properties.at(event->mimeData()->data("index").toInt());
-	qDebug() << prop << prop->id << prop->displayName << prop->getValue();
-	if (prop) {
-		auto propNode = new PropertyNode();
-		propNode->setProperty(prop);
-		this->addNodeModel(propNode, event->scenePos().x(), event->scenePos().y());
-		qDebug() << "no node element";
+
+	qDebug() << QVariant(event->mimeData()->data("MODEL_TYPE_ROLE")).toInt();
+	qDebug() << static_cast<int>(ModelTypes::Shader);
+
+	if (QVariant(event->mimeData()->data("MODEL_TYPE_ROLE")).toInt() == static_cast<int>(ModelTypes::Shader)) {
+
+		QListWidgetItem *item = new QListWidgetItem;
+		item->setData(Qt::DisplayRole, event->mimeData()->text());
+		item->setData(MODEL_GUID_ROLE, event->mimeData()->data("MODEL_GUID_ROLE"));
+		item->setData(MODEL_PARENT_ROLE, event->mimeData()->data("MODEL_PARENT_ROLE"));
+		item->setData(MODEL_ITEM_TYPE, event->mimeData()->data("MODEL_ITEM_TYPE"));
+		item->setData(MODEL_TYPE_ROLE, event->mimeData()->data("MODEL_TYPE_ROLE"));
+		item->setData(MODEL_GRAPH, event->mimeData()->data("MODEL_GRAPH"));
+		emit loadGraph(item);
+
 	}
 }
 
