@@ -123,5 +123,6 @@ enum class ModelTypes {
 #define MODEL_ASSET			0x0421
 
 #define MODEL_GRAPH			0x0321
+#define MODEL_SHADER_ITEM   0x0322
 
 #endif // PROJECT_H

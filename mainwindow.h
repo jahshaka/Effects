@@ -59,7 +59,7 @@ public:
     ~MainWindow();
 
 	QList<nodeGraphPreset> list;
-	QListWidgetItem *currentProjectShader;
+	QListWidgetItem *currentProjectShader = Q_NULLPTR;
 private:
 	void saveShader(QListWidgetItem *item);
 	void loadShader();
@@ -84,10 +84,12 @@ private:
 	void configureProjectDock();
 	void configureAssetsDock();
 	void createShader(QString *shaderName = Q_NULLPTR, int *templateType = Q_NULLPTR, QString *templateName = Q_NULLPTR);
+	void setCurrentShaderItem();
 
     GraphNodeScene* createNewScene();
 	void regenerateShader();
-	
+	QListWidgetItem* selectCorrectItemFromDrop(QListWidgetItem * item);
+	QList<QString> loadedShadersGUID;
 private:
     Ui::MainWindow *ui;
     GraphNodeScene* scene;

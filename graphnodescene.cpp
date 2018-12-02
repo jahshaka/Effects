@@ -188,10 +188,10 @@ void GraphNodeScene::drawItems(QPainter * painter, int numItems, QGraphicsItem *
 void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 {
 	event->accept();
-
+	qDebug() << event->mimeData()->data("MODEL_TYPE_ROLE");
 	if (0 == QString("node").compare(QString(event->mimeData()->data("MODEL_TYPE_ROLE")))) {
 
-		auto node = nodeGraph->library->createNode(event->mimeData()->text());
+		auto node = nodeGraph->library->createNode(event->mimeData()->html());
 
 			//	auto factory = nodeGraph->modelFactories[event->mimeData()->text()];
 			if (node) {
@@ -199,6 +199,7 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 					return;
 			}
 		auto prop = nodeGraph->properties.at(event->mimeData()->data("index").toInt());
+		qDebug() << prop << prop->id << prop->displayName << prop->getValue();
 			if (prop) {
 				auto propNode = new PropertyNode();
 				propNode->setProperty(prop);
@@ -218,6 +219,11 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 		item->setData(MODEL_ITEM_TYPE, event->mimeData()->data("MODEL_ITEM_TYPE"));
 		item->setData(MODEL_TYPE_ROLE, event->mimeData()->data("MODEL_TYPE_ROLE"));
 		item->setData(MODEL_GRAPH, obj);
+
+		currentlyEditing = item;
+
+		if(!loadedShadersGUID.contains(item->data(MODEL_GUID_ROLE).toString()))  loadedShadersGUID.append(item->data(MODEL_GUID_ROLE).toString());
+
 		emit loadGraph(item);
 
 	}

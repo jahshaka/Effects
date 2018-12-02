@@ -88,15 +88,20 @@ QMimeData * ListWidget::mimeData(const QList<QListWidgetItem *> items) const
 
 	
 	QMimeData *data = new QMimeData();
+	//set text for shader
 	data->setText(items[0]->data(Qt::DisplayRole).toString());
+	//set html for node
+	data->setHtml(items[0]->data(Qt::UserRole).toString());
 	QJsonDocument doc(items[0]->data(MODEL_GRAPH).toJsonObject());
 	data->setData("MODEL_TYPE_ROLE", items[0]->data(MODEL_TYPE_ROLE).toByteArray());
 	data->setData("MODEL_ITEM_TYPE", items[0]->data(MODEL_ITEM_TYPE).toByteArray());
 	data->setData("MODEL_GUID_ROLE", items[0]->data(MODEL_GUID_ROLE).toByteArray());
 	data->setData("MODEL_PARENT_ROLE", items[0]->data(MODEL_PARENT_ROLE).toByteArray());
 	data->setData("MODEL_GRAPH", doc.toBinaryData());
+
 	
-	qDebug() << data->data("MODEL_GRAPH");
+
+
 
 	return data;
 }

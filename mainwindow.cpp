@@ -110,6 +110,8 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
         scene->deleteLater();
     }
     scene = newScene;
+
+	if (!scene->currentlyEditing) scene->currentlyEditing = currentProjectShader;
 	
     //ui->propertyContainerPage1->setNodeGraph(graph);
 	propertyListWidget->setNodeGraph(graph);
@@ -139,6 +141,7 @@ void MainWindow::refreshShaderGraph()
 #if(EFFECT_BUILD_AS_LIB)
 	assetWidget->refresh();
 #endif
+	setCurrentShaderItem();
 }
 
 MainWindow::~MainWindow()
@@ -148,6 +151,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::saveShader(QListWidgetItem * item)
 {
+	if (!item)
+		//ask to set name and save file
+		return;
+
 	QJsonDocument doc;
 	QJsonObject obj;
 
@@ -243,6 +250,7 @@ void MainWindow::loadGraph()
 
 void MainWindow::loadGraph(QListWidgetItem * item)
 {
+	currentProjectShader = item;
 
 	auto obj = item->data(MODEL_GRAPH).toJsonObject();
 	auto graph = NodeGraph::deserialize(obj, new LibraryV1());
@@ -250,7 +258,11 @@ void MainWindow::loadGraph(QListWidgetItem * item)
 	this->restoreGraphPositions(obj);
 	projectName->setText(item->data(Qt::DisplayRole).toString());
 	regenerateShader();
-	currentProjectShader = item;
+
+	if (!loadedShadersGUID.contains(item->data(MODEL_GUID_ROLE).toString()))  loadedShadersGUID.append(item->data(MODEL_GUID_ROLE).toString());
+
+	if(selectCorrectItemFromDrop(item))	currentProjectShader = selectCorrectItemFromDrop(item);
+	
 }
 
 void MainWindow::exportGraph()
@@ -609,6 +621,12 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 #endif
 	
 	
+}
+
+void MainWindow::setCurrentShaderItem()
+{
+ 	if (scene->currentlyEditing)
+		currentProjectShader = selectCorrectItemFromDrop(scene->currentlyEditing);
 }
 
 void MainWindow::configureUI()
@@ -1081,6 +1099,7 @@ GraphNodeScene *MainWindow::createNewScene()
     });
 
 	connect(scene, &GraphNodeScene::loadGraph, [=](QListWidgetItem *item) {
+
 		loadGraph(item);
 	});
 
@@ -1101,6 +1120,41 @@ void MainWindow::regenerateShader()
 		if (shaderGen.shaderPreviews.contains(node->nodeId))
 			node->setPreviewShader(shaderGen.shaderPreviews[node->nodeId]);
 	}
+}
+
+QListWidgetItem * MainWindow::selectCorrectItemFromDrop(QListWidgetItem * item)
+{
+	/*if (effects->currentItem())
+	if (item->data(MODEL_GUID_ROLE) == effects->currentItem()->data(MODEL_GUID_ROLE)) {
+		return effects->currentItem();
+	}
+	if (assetWidget->assetViewWidget->currentItem())
+	if (item->data(MODEL_GUID_ROLE) == assetWidget->assetViewWidget->currentItem()->data(MODEL_GUID_ROLE)) {
+		return assetWidget->assetViewWidget->currentItem();
+	}
+*/
+	// no active shader
+
+	if (!item) return nullptr;
+
+
+	for (int i = 0; i < effects->count(); i++)
+	{
+		if (item->data(MODEL_GUID_ROLE) == effects->item(i)->data(MODEL_GUID_ROLE)) {
+			return effects->item(i);
+		}
+	}
+
+	for (int i = 0; i < assetWidget->assetViewWidget->count(); i++)
+	{
+		if (item->data(MODEL_GUID_ROLE) == assetWidget->assetViewWidget->item(i)->data(MODEL_GUID_ROLE)) {
+			return assetWidget->assetViewWidget->item(i);
+		}
+	}
+
+
+
+	return nullptr;
 }
 
 }
