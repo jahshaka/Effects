@@ -57,6 +57,7 @@ ListWidget::ListWidget() : QListWidget()
 		"QListView::text{ top : -6; }"
 	);
 	
+	
 }
 
 
@@ -83,13 +84,14 @@ void ListWidget::displayAllContents()
 QMimeData * ListWidget::mimeData(const QList<QListWidgetItem *> items) const
 {
 	QMimeData *data = new QMimeData();
-	auto ata =  items[0]->text();
-	qDebug() << items[0]->data(MODEL_TYPE_ROLE).toInt();
 	data->setText(items[0]->data(Qt::UserRole).toString());
+	qDebug() << items[0]->data(MODEL_TYPE_ROLE).toInt();
 	data->setData("MODEL_TYPE_ROLE", items[0]->data(MODEL_TYPE_ROLE).toByteArray());
 	data->setData("MODEL_ITEM_TYPE", items[0]->data(MODEL_ITEM_TYPE).toByteArray());
 	data->setData("MODEL_GUID_ROLE", items[0]->data(MODEL_GUID_ROLE).toByteArray());
 	data->setData("MODEL_PARENT_ROLE", items[0]->data(MODEL_PARENT_ROLE).toByteArray());
+	data->setData("MODEL_GRAPH", items[0]->data(MODEL_GRAPH).toByteArray());
+	
 	
 	return data;
 }

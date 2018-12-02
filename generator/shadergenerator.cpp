@@ -42,6 +42,7 @@ void ShaderGenerator::preprocess()
 
 void ShaderGenerator::processNode(NodeModel* node, ShaderContext* ctx)
 {
+	if (node) 
 	for (auto sock : node->inSockets) {
 		if (sock->hasConnection()) {
 			auto con = sock->getConnection();

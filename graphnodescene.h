@@ -13,6 +13,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QListWidgetItem>
 #include <QMenu>
 #include <QPointf>
 #include <QPropertyAnimation>
@@ -97,6 +98,7 @@ signals:
 	void newConnection(SocketConnection* connection);
 	void connectionRemoved(SocketConnection* connection);
 	void nodeValueChanged(NodeModel* nodeModel, int socketIndex);
+	void loadGraph(QListWidgetItem *item);
 };
 
 

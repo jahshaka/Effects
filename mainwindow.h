@@ -59,11 +59,13 @@ public:
     ~MainWindow();
 
 	QList<nodeGraphPreset> list;
+	QListWidgetItem *currentProjectShader;
 private:
 	void saveShader(QListWidgetItem *item);
 	void loadShader();
     void saveGraph();
     void loadGraph();
+    void loadGraph(QListWidgetItem *item);
     void exportGraph();
     void restoreGraphPositions(const QJsonObject& data);
 
