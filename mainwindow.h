@@ -55,7 +55,7 @@ public:
 	
 	void refreshShaderGraph();
 	void setAssetWidgetDatabase(Database *db);
-
+	void renameShader();
     ~MainWindow();
 
 	QList<nodeGraphPreset> list;
@@ -124,6 +124,8 @@ private:
 	QtAwesome *fontIcons;
 	QSize defaultGridSize = QSize(70, 70);
 	QSize defaultItemSize = QSize(90, 90);
+	QString oldName;
+	QString newName;
 
 	QLineEdit *projectName;
 #if(EFFECT_BUILD_AS_LIB)

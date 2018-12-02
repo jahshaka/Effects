@@ -70,7 +70,6 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
 
 	installEventFilter(this);
 
-//	if (database) dataBase = database;
 	if (database) setAssetWidgetDatabase(database);
 
 
@@ -177,6 +176,7 @@ void MainWindow::saveShader(QListWidgetItem * item)
 
 void MainWindow::loadShader()
 {
+	// create constants for this
 	auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/");
 	QDirIterator it(filePath);
 
@@ -185,8 +185,8 @@ void MainWindow::loadShader()
 		QFile file(it.next());
 		file.open(QIODevice::ReadOnly);
 		auto doc = QJsonDocument::fromJson(file.readAll());
-
 		file.close();
+
 		auto obj = doc.object();
 		if (obj["name"].toString() == "") continue;
 
@@ -202,7 +202,9 @@ void MainWindow::loadShader()
 		item->setData(MODEL_ITEM_TYPE, obj["MODEL_ITEM_TYPE"].toString());
 		item->setData(MODEL_GRAPH, obj["MODEL_GRAPH"].toObject());
 		item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Material));
-		
+
+		oldName = obj["name"].toString();
+
 		effects->addItem(item);
 	}
 }
@@ -558,7 +560,7 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 	item->setData(MODEL_GRAPH, scene->serialize());
 
 	currentProjectShader = item;
-
+	oldName = newShader;
 	//assetItemShader.wItem = item;
 
 
@@ -766,6 +768,19 @@ void MainWindow::configureToolbar()
 		"QLineEdit:hover{ background : rgba(21,21,21,1); color: rgba(255,255,255,1);}"
 	);
 
+	connect(projectName, &QLineEdit::textEdited, [=](const QString text) {
+
+		currentProjectShader->setData(Qt::DisplayRole, text);
+		currentProjectShader->setData(Qt::UserRole, text);
+		newName = text;
+	});
+
+	connect(projectName, &QLineEdit::editingFinished, [=]() {
+		//update finished, update view;
+		saveShader(currentProjectShader);
+		renameShader();
+	});
+
 
 	toolBar->addWidget(projectName);
 	toolBar->addSeparator();
@@ -944,6 +959,19 @@ void MainWindow::setAssetWidgetDatabase(Database * db)
 #endif
 }
 
+void MainWindow::renameShader()
+{
+#if(EFFECT_BUILD_AS_LIB)
+	dataBase->renameAsset(currentProjectShader->data(MODEL_GUID_ROLE).toString(), currentProjectShader->data(Qt::DisplayRole).toString());
+#else
+	auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/");
+	if (!QDir(filePath).exists()) return;
+	auto shaderFileOld = new QFile(filePath + oldName);
+	auto shaderFileNew = new QFile(filePath + newName);
+	QDir().rename(shaderFileOld , shaderFileNew);
+	
+#endif
+}
 
 bool MainWindow::eventFilter(QObject * watched, QEvent * event)
 {

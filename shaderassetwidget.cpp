@@ -43,8 +43,6 @@ ShaderAssetWidget::ShaderAssetWidget(Database *handle) : QWidget()
 		if (UiManager::isSceneOpen) {
 		}
 		else {
-
-
 			noWidget = new QWidget;
 			auto noWidgetLayout = new QVBoxLayout;
 			auto lableIcon = new QLabel;
@@ -163,7 +161,6 @@ void ShaderAssetWidget::addItem(const AssetRecord & assetData)
 		// No need to check further, this is a builtin asset
 		return;
 	}
-
 
 	auto doc = QJsonDocument::fromBinaryData(assetData.asset);
 	auto obj = doc.object();
@@ -354,7 +351,7 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 	}
 
 	db->createAssetEntry(assetGuid,
-		IrisUtils::buildFileName(shaderName, "shader"),
+		item->data(Qt::DisplayRole).toString(),
 		static_cast<int>(ModelTypes::Shader),
 		assetItemShader.selectedGuid,
 		QByteArray());

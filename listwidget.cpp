@@ -88,7 +88,7 @@ QMimeData * ListWidget::mimeData(const QList<QListWidgetItem *> items) const
 
 	
 	QMimeData *data = new QMimeData();
-	data->setText(items[0]->data(Qt::UserRole).toString());
+	data->setText(items[0]->data(Qt::DisplayRole).toString());
 	QJsonDocument doc(items[0]->data(MODEL_GRAPH).toJsonObject());
 	data->setData("MODEL_TYPE_ROLE", items[0]->data(MODEL_TYPE_ROLE).toByteArray());
 	data->setData("MODEL_ITEM_TYPE", items[0]->data(MODEL_ITEM_TYPE).toByteArray());
