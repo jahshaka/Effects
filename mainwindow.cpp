@@ -70,7 +70,7 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
 
 	installEventFilter(this);
 
-	if (database) dataBase = database;
+//	if (database) dataBase = database;
 	if (database) setAssetWidgetDatabase(database);
 
 
@@ -94,10 +94,6 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
 		saveShader(currentProjectShader);
 	});
 
-	connect(scene, &GraphNodeScene::loadGraph, [=](QListWidgetItem *item) {
-		loadGraph(item);
-	});
-
 	loadShader();
 }
 
@@ -115,7 +111,7 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
         scene->deleteLater();
     }
     scene = newScene;
-
+	
     //ui->propertyContainerPage1->setNodeGraph(graph);
 	propertyListWidget->setNodeGraph(graph);
 	sceneWidget->setNodeGraph(graph);
@@ -245,12 +241,15 @@ void MainWindow::loadGraph()
 
 void MainWindow::loadGraph(QListWidgetItem * item)
 {
+
+	qDebug() << item->data(Qt::DisplayRole).toString();
+
 	auto obj = item->data(MODEL_GRAPH).toJsonObject();
 	auto graph = NodeGraph::deserialize(obj, new LibraryV1());
 	this->setNodeGraph(graph);
 	this->restoreGraphPositions(obj);
 	projectName->setText(item->data(Qt::DisplayRole).toString());
-	regenerateShader();
+//	regenerateShader();
 	currentProjectShader = item;
 }
 
@@ -557,7 +556,7 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 	item->setData(MODEL_GUID_ROLE, assetGuid);
 	item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
 	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Shader));
-	item->setData(Qt::UserRole, newShader);
+	item->setData(Qt::DisplayRole, newShader);
 	item->setData(MODEL_GRAPH, scene->serialize());
 
 	currentProjectShader = item;
@@ -930,6 +929,8 @@ void MainWindow::updateAssetDock()
 				auto name = obj["name"].toString();
 				qDebug() << name;
 
+				item->setData(Qt::UserRole, name);
+				item->setData(Qt::DisplayRole, name);
 				item->setData(MODEL_GUID_ROLE, asset.guid);
 				item->setData(MODEL_PARENT_ROLE, asset.parent);
 				item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
@@ -1057,6 +1058,10 @@ GraphNodeScene *MainWindow::createNewScene()
 				node->setPreviewShader(shaderGen.shaderPreviews[node->nodeId]);
 		}
     });
+
+	connect(scene, &GraphNodeScene::loadGraph, [=](QListWidgetItem *item) {
+		loadGraph(item);
+	});
 
     return scene;
 }
