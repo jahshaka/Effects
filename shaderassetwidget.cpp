@@ -41,7 +41,6 @@ ShaderAssetWidget::ShaderAssetWidget(Database *handle) : QWidget()
 
 #if(EFFECT_BUILD_AS_LIB)
 		if (UiManager::isSceneOpen) {
-			qDebug() << "scene is open"; 
 		}
 		else {
 
@@ -165,6 +164,11 @@ void ShaderAssetWidget::addItem(const AssetRecord & assetData)
 		return;
 	}
 
+
+	auto doc = QJsonDocument::fromBinaryData(assetData.asset);
+	auto obj = doc.object();
+	auto name = obj["name"].toString();
+
 	QListWidgetItem *item = new QListWidgetItem;
 	item->setData(Qt::DisplayRole, QFileInfo(assetData.name).baseName());
 	item->setData(Qt::UserRole, assetData.name);
@@ -172,6 +176,8 @@ void ShaderAssetWidget::addItem(const AssetRecord & assetData)
 	item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
 	item->setData(MODEL_GUID_ROLE, assetData.guid);
 	item->setData(MODEL_PARENT_ROLE, assetData.parent);
+	item->setData(MODEL_GRAPH, obj["MODEL_GRAPH"].toObject());
+
 
 	QPixmap thumbnail;
 	if (thumbnail.loadFromData(assetData.thumbnail, "PNG")) {
@@ -229,9 +235,6 @@ void ShaderAssetWidget::setUpDatabse(Database * db)
 		updateAssetView(Globals::project->getProjectGuid());
 		assetItemShader.selectedGuid = Globals::project->getProjectGuid();
 	}
-
-
-	
 }
 
 void ShaderAssetWidget::refresh()
@@ -334,14 +337,13 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 	
 	item->setSizeHint(currentSize);
 	
-
 	const QString assetGuid = item->data(MODEL_GUID_ROLE).toString();
 
 	//item->setData(MODEL_PARENT_ROLE, assetItemShader.selectedGuid);
 
 	assetItemShader.wItem = item;
 
-	QString shaderName = item->text();
+	QString shaderName = item->data(Qt::DisplayRole).toString();
 
 	QStringList assetsInProject = db->fetchAssetNameByParent(assetItemShader.selectedGuid);
 
@@ -357,7 +359,6 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 		assetItemShader.selectedGuid,
 		QByteArray());
 
-	item->setText(shaderName);
 	assetViewWidget->addItem(item);
 
 	QFile *templateShaderFile = new QFile(IrisUtils::getAbsoluteAssetPath("app/templates/ShaderTemplate.shader"));
@@ -366,6 +367,7 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 	templateShaderFile->close();
 	shaderDefinition["name"] = shaderName;
 	shaderDefinition.insert("guid", assetGuid);
+	shaderDefinition["MODEL_GRAPH"] = item->data(MODEL_GRAPH).toJsonObject();
 
 	auto assetShader = new AssetShader;
 	assetShader->fileName = IrisUtils::buildFileName(shaderName, "shader");

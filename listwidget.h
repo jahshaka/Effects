@@ -10,6 +10,7 @@ public:
 
 	void displayAllContents();
 	bool isResizable = false;
+	void dropEvent(QDropEvent *event) override;
 
 protected:
 	QMimeData * mimeData(const QList<QListWidgetItem *> items) const;

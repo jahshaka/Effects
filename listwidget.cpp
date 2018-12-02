@@ -96,6 +96,8 @@ QMimeData * ListWidget::mimeData(const QList<QListWidgetItem *> items) const
 	data->setData("MODEL_PARENT_ROLE", items[0]->data(MODEL_PARENT_ROLE).toByteArray());
 	data->setData("MODEL_GRAPH", doc.toBinaryData());
 	
+	qDebug() << data->data("MODEL_GRAPH");
+
 	return data;
 }
 
@@ -103,6 +105,14 @@ void ListWidget::resizeEvent(QResizeEvent * event)
 {
 	QListWidget::resizeEvent(event);
 	if(isResizable) displayAllContents();
+}
+
+void ListWidget::dropEvent(QDropEvent * event)
+{
+	
+	qDebug() <<sender();
+
+	QListWidget::dropEvent(event);
 }
 
 

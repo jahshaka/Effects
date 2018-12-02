@@ -212,7 +212,6 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 		QListWidgetItem *item = new QListWidgetItem;
 
 		auto obj = QJsonDocument::fromBinaryData(event->mimeData()->data("MODEL_GRAPH")).object();
-		qDebug() << event->mimeData()->text();
 		item->setData(Qt::DisplayRole, event->mimeData()->text());
 		item->setData(MODEL_GUID_ROLE, event->mimeData()->data("MODEL_GUID_ROLE"));
 		item->setData(MODEL_PARENT_ROLE, event->mimeData()->data("MODEL_PARENT_ROLE"));

@@ -302,7 +302,6 @@ FloatNodeModel::FloatNodeModel() :
 		editTextChanged(QString::number(value/upModifier, 'g', 2));
 		valueBox->blockSignals(true);
 		valueBox->setValue(qreal(value/upModifier));
-		qDebug() << qreal(value / upModifier);
 		valueBox->blockSignals(false);
 
 	});

@@ -242,14 +242,12 @@ void MainWindow::loadGraph()
 void MainWindow::loadGraph(QListWidgetItem * item)
 {
 
-	qDebug() << item->data(Qt::DisplayRole).toString();
-
 	auto obj = item->data(MODEL_GRAPH).toJsonObject();
 	auto graph = NodeGraph::deserialize(obj, new LibraryV1());
 	this->setNodeGraph(graph);
 	this->restoreGraphPositions(obj);
 	projectName->setText(item->data(Qt::DisplayRole).toString());
-//	regenerateShader();
+	regenerateShader();
 	currentProjectShader = item;
 }
 
@@ -560,7 +558,6 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 	item->setData(MODEL_GRAPH, scene->serialize());
 
 	currentProjectShader = item;
-	qDebug() << item->data(MODEL_TYPE_ROLE).toInt();
 
 	//assetItemShader.wItem = item;
 
@@ -893,8 +890,6 @@ void MainWindow::createNewGraph()
 	CreateNewDialog node(list);
 	node.exec();
 
-	qDebug() << node.result();
-
 	if (node.result() == QDialog::Accepted) {
 
 		auto shaderName = node.getName();
@@ -913,9 +908,8 @@ void MainWindow::updateAssetDock()
 #if(EFFECT_BUILD_AS_LIB)
 		for (const auto &asset : dataBase->fetchAssets())  //dp something{
 		{
-			qDebug() << asset.projectGuid;
 			if (asset.projectGuid == "" && asset.type == static_cast<int>(ModelTypes::Shader)) {
-
+				 
 				auto item = new QListWidgetItem;
 				item->setText(asset.name);
 				item->setFlags(item->flags() | Qt::ItemIsEditable);
@@ -927,7 +921,6 @@ void MainWindow::updateAssetDock()
 				auto doc = QJsonDocument::fromBinaryData(asset.asset);
 				auto obj = doc.object();
 				auto name = obj["name"].toString();
-				qDebug() << name;
 
 				item->setData(Qt::UserRole, name);
 				item->setData(Qt::DisplayRole, name);
