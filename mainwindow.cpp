@@ -157,15 +157,9 @@ void MainWindow::saveShader(QListWidgetItem * item)
 
 	QJsonDocument doc;
 	QJsonObject obj;
-
-	obj["name"]					= item->data(Qt::DisplayRole).toString();
-	obj["MODEL_ITEM_TYPE"]		= item->data(MODEL_ITEM_TYPE).toString();
 	obj["MODEL_GUID_ROLE"]		= item->data(MODEL_GUID_ROLE).toString();
-	obj["MODEL_PARENT_ROLE"]	= item->data(MODEL_PARENT_ROLE).toString();
-	obj["MODEL_TYPE_ROLE"]		= item->data(MODEL_TYPE_ROLE).toString();
-	obj["MODEL_GRAPH"]			= scene->serialize();
 	item->setData(MODEL_GRAPH, scene->serialize());
-	doc.setObject(obj);
+	doc.setObject(scene->serialize());
 
 
 #if(EFFECT_BUILD_AS_LIB)
@@ -252,14 +246,15 @@ void MainWindow::loadGraph(QListWidgetItem * item)
 {
 	currentProjectShader = item;
 
-	auto obj = item->data(MODEL_GRAPH).toJsonObject();
+	QJsonObject obj = QJsonDocument::fromBinaryData(fetchAsset(currentProjectShader->data(MODEL_GUID_ROLE).toString())).object();
+
 	auto graph = NodeGraph::deserialize(obj, new LibraryV1());
 	this->setNodeGraph(graph);
 	this->restoreGraphPositions(obj);
 	projectName->setText(item->data(Qt::DisplayRole).toString());
 	regenerateShader();
 
-	if (!loadedShadersGUID.contains(item->data(MODEL_GUID_ROLE).toString()))  loadedShadersGUID.append(item->data(MODEL_GUID_ROLE).toString());
+//	if (!loadedShadersGUID.contains(item->data(MODEL_GUID_ROLE).toString()))  loadedShadersGUID.append(item->data(MODEL_GUID_ROLE).toString());
 
 	if(selectCorrectItemFromDrop(item))	currentProjectShader = selectCorrectItemFromDrop(item);
 	
@@ -588,17 +583,29 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 	effects->addItem(item);
 	effects->displayAllContents();
 
-	
+	auto nodeGraph = new NodeGraph();
+	auto masterNode = new SurfaceMasterNode();
+	nodeGraph->setNodeLibrary(new LibraryV1());
+	nodeGraph->addNode(masterNode);
+	nodeGraph->setMasterNode(masterNode);
+	this->setNodeGraph(nodeGraph);
+
+	//MaterialWriter writer;
 
 
 #if(EFFECT_BUILD_AS_LIB)
-	QFile *templateShaderFile = new QFile(IrisUtils::getAbsoluteAssetPath("app/templates/ShaderTemplate.shader"));
-	templateShaderFile->open(QIODevice::ReadOnly | QIODevice::Text);
-	QJsonObject shaderDefinition = QJsonDocument::fromJson(templateShaderFile->readAll()).object();
-	templateShaderFile->close();
-	shaderDefinition["name"] = newShader;
-	shaderDefinition.insert("guid", assetGuid);
-	shaderDefinition["MODEL_GRAPH"] = item->data(MODEL_GRAPH).toJsonObject();
+	//QFile *templateShaderFile = new QFile(IrisUtils::getAbsoluteAssetPath("app/templates/ShaderTemplate.shader"));
+	//templateShaderFile->open(QIODevice::ReadOnly | QIODevice::Text);
+	//QJsonObject shaderDefinition;// = QJsonDocument::fromJson(templateShaderFile->readAll()).object();
+	//templateShaderFile->close();
+	//shaderDefinition["name"] = newShader;
+	//shaderDefinition.insert("guid", assetGuid);
+
+	//shaderDefinition["MODEL_GRAPH"] = item->data(MODEL_GRAPH).toJsonObject();
+
+	
+	//auto shaderDefinition = writer.serializeMaterial(nodeGraph);
+	auto shaderDefinition = scene->serialize();
 
 	dataBase->createAssetEntry(QString::null, assetGuid,
 		IrisUtils::buildFileName(newShader, "shader"),
@@ -620,13 +627,26 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 
 #endif
 	
-	
 }
 
 void MainWindow::setCurrentShaderItem()
 {
  	if (scene->currentlyEditing)
 		currentProjectShader = selectCorrectItemFromDrop(scene->currentlyEditing);
+}
+
+QByteArray MainWindow::fetchAsset(QString string)
+{
+#if(EFFECT_BUILD_AS_LIB)
+	return dataBase->fetchAssetData(string);
+#else
+	// fetch file locally
+
+#endif
+
+
+
+	return QByteArray();
 }
 
 void MainWindow::configureUI()
@@ -950,18 +970,13 @@ void MainWindow::updateAssetDock()
 				item->setIcon(QIcon(":/icons/icons8-file-72.png"));
 				item->setTextAlignment( Qt::AlignHCenter | Qt::AlignBottom);
 
-
-				auto doc = QJsonDocument::fromBinaryData(asset.asset);
-				auto obj = doc.object();
-				auto name = obj["name"].toString();
-
-				item->setData(Qt::UserRole, name);
-				item->setData(Qt::DisplayRole, name);
+				item->setData(Qt::UserRole, asset.name);
+				item->setData(Qt::DisplayRole, asset.name);
 				item->setData(MODEL_GUID_ROLE, asset.guid);
-				item->setData(MODEL_PARENT_ROLE, asset.parent);
-				item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
+				//item->setData(MODEL_PARENT_ROLE, asset.parent);
+				//item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
 				item->setData(MODEL_TYPE_ROLE, asset.type);
-				item->setData(MODEL_GRAPH, obj["MODEL_GRAPH"].toObject());
+				//item->setData(MODEL_GRAPH, obj["MODEL_GRAPH"].toObject());
 
 				effects->addItem(item);
 			}
@@ -1124,16 +1139,7 @@ void MainWindow::regenerateShader()
 
 QListWidgetItem * MainWindow::selectCorrectItemFromDrop(QListWidgetItem * item)
 {
-	/*if (effects->currentItem())
-	if (item->data(MODEL_GUID_ROLE) == effects->currentItem()->data(MODEL_GUID_ROLE)) {
-		return effects->currentItem();
-	}
-	if (assetWidget->assetViewWidget->currentItem())
-	if (item->data(MODEL_GUID_ROLE) == assetWidget->assetViewWidget->currentItem()->data(MODEL_GUID_ROLE)) {
-		return assetWidget->assetViewWidget->currentItem();
-	}
-*/
-	// no active shader
+
 
 	if (!item) return nullptr;
 

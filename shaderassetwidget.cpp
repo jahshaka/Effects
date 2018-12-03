@@ -334,10 +334,16 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 	
 	item->setSizeHint(currentSize);
 	
-	const QString assetGuid = item->data(MODEL_GUID_ROLE).toString();
+	auto genGuid = []() {
+		auto id = QUuid::createUuid();
+		auto guid = id.toString().remove(0, 1);
+		guid.chop(1);
+		return guid;
+	};
 
-	//item->setData(MODEL_PARENT_ROLE, assetItemShader.selectedGuid);
+	const QString assetGuid = genGuid();
 
+	
 	assetItemShader.wItem = item;
 
 	QString shaderName = item->data(Qt::DisplayRole).toString();
@@ -364,7 +370,6 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 	templateShaderFile->close();
 	shaderDefinition["name"] = shaderName;
 	shaderDefinition.insert("guid", assetGuid);
-	shaderDefinition["MODEL_GRAPH"] = item->data(MODEL_GRAPH).toJsonObject();
 
 	auto assetShader = new AssetShader;
 	assetShader->fileName = IrisUtils::buildFileName(shaderName, "shader");
@@ -372,7 +377,7 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(shaderName, "shader"));
 	assetShader->setValue(QVariant::fromValue(shaderDefinition));
 
-	db->updateAssetAsset(assetGuid, QJsonDocument(shaderDefinition).toBinaryData());
+	db->updateAssetAsset(assetGuid, QJsonDocument::fromBinaryData(fetchAsset(item->data(MODEL_GUID_ROLE).toString())).toBinaryData());
 
 	AssetManager::addAsset(assetShader);
 }
@@ -430,6 +435,11 @@ void ShaderAssetWidget::createLocalShader()
 	db->updateAssetAsset(assetGuid, QJsonDocument(shaderDefinition).toBinaryData());
 
 	AssetManager::addAsset(assetShader);
+}
+
+QByteArray ShaderAssetWidget::fetchAsset(QString string)
+{
+	return db->fetchAssetData(string);
 }
 
 bool ShaderAssetWidget::eventFilter(QObject * watched, QEvent * event)

@@ -85,6 +85,7 @@ private:
 	void configureAssetsDock();
 	void createShader(QString *shaderName = Q_NULLPTR, int *templateType = Q_NULLPTR, QString *templateName = Q_NULLPTR);
 	void setCurrentShaderItem();
+	QByteArray fetchAsset(QString string);
 
     GraphNodeScene* createNewScene();
 	void regenerateShader();
