@@ -2,6 +2,11 @@
 #include <QListWidget>
 
 
+struct shaderInfo {
+	QString GUID;
+	QString name;
+};
+
 class ListWidget : public QListWidget
 {
 public:

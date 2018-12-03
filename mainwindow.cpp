@@ -160,7 +160,7 @@ void MainWindow::saveShader(QListWidgetItem * item)
 	obj["MODEL_GUID_ROLE"]		= item->data(MODEL_GUID_ROLE).toString();
 	item->setData(MODEL_GRAPH, scene->serialize());
 	doc.setObject(scene->serialize());
-
+	
 
 #if(EFFECT_BUILD_AS_LIB)
 	dataBase->updateAssetAsset(obj["MODEL_GUID_ROLE"].toString(), doc.toBinaryData());
@@ -242,22 +242,19 @@ void MainWindow::loadGraph()
 	regenerateShader();
 }
 
-void MainWindow::loadGraph(QListWidgetItem * item)
+void MainWindow::loadGraph(shaderInfo info)
 {
-	currentProjectShader = item;
+	//currentProjectShader = item;
 
-	QJsonObject obj = QJsonDocument::fromBinaryData(fetchAsset(currentProjectShader->data(MODEL_GUID_ROLE).toString())).object();
+	QJsonObject obj = QJsonDocument::fromBinaryData(fetchAsset(info.GUID)).object();
 
 	auto graph = NodeGraph::deserialize(obj, new LibraryV1());
 	this->setNodeGraph(graph);
 	this->restoreGraphPositions(obj);
-	projectName->setText(item->data(Qt::DisplayRole).toString());
+	projectName->setText(info.name);
 	regenerateShader();
 
-//	if (!loadedShadersGUID.contains(item->data(MODEL_GUID_ROLE).toString()))  loadedShadersGUID.append(item->data(MODEL_GUID_ROLE).toString());
-
-	if(selectCorrectItemFromDrop(item))	currentProjectShader = selectCorrectItemFromDrop(item);
-	
+	currentProjectShader = selectCorrectItemFromDrop(info.GUID);
 }
 
 void MainWindow::exportGraph()
@@ -526,9 +523,9 @@ void MainWindow::configureAssetsDock()
 	}
 
 	connect(effects, &QListWidget::itemDoubleClicked, [=](QListWidgetItem *item) {
-		
-		loadGraph(item);
-
+		currentShaderInformation.name = item->data(Qt::DisplayRole).toString();
+		currentShaderInformation.GUID = item->data(MODEL_GUID_ROLE).toString();
+		loadGraph(currentShaderInformation);
 	});
 
 
@@ -564,10 +561,14 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 	item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
 	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Shader));
 	item->setData(Qt::DisplayRole, newShader);
-	item->setData(MODEL_GRAPH, scene->serialize());
 
 	currentProjectShader = item;
 	oldName = newShader;
+
+	currentShaderInformation.GUID = assetGuid;
+	currentShaderInformation.name = newShader;
+
+
 	//assetItemShader.wItem = item;
 
 
@@ -632,7 +633,7 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 void MainWindow::setCurrentShaderItem()
 {
  	if (scene->currentlyEditing)
-		currentProjectShader = selectCorrectItemFromDrop(scene->currentlyEditing);
+		currentProjectShader = selectCorrectItemFromDrop(scene->currentlyEditing->data(MODEL_GUID_ROLE).toString());
 }
 
 QByteArray MainWindow::fetchAsset(QString string)
@@ -1114,8 +1115,9 @@ GraphNodeScene *MainWindow::createNewScene()
     });
 
 	connect(scene, &GraphNodeScene::loadGraph, [=](QListWidgetItem *item) {
-
-		loadGraph(item);
+		currentShaderInformation.name = item->data(Qt::DisplayRole).toString();
+		currentShaderInformation.GUID = item->data(MODEL_GUID_ROLE).toString();
+		loadGraph(currentShaderInformation);
 	});
 
     return scene;
@@ -1137,23 +1139,19 @@ void MainWindow::regenerateShader()
 	}
 }
 
-QListWidgetItem * MainWindow::selectCorrectItemFromDrop(QListWidgetItem * item)
+QListWidgetItem * MainWindow::selectCorrectItemFromDrop(QString guid)
 {
-
-
-	if (!item) return nullptr;
-
 
 	for (int i = 0; i < effects->count(); i++)
 	{
-		if (item->data(MODEL_GUID_ROLE) == effects->item(i)->data(MODEL_GUID_ROLE)) {
+		if (guid == effects->item(i)->data(MODEL_GUID_ROLE)) {
 			return effects->item(i);
 		}
 	}
 
 	for (int i = 0; i < assetWidget->assetViewWidget->count(); i++)
 	{
-		if (item->data(MODEL_GUID_ROLE) == assetWidget->assetViewWidget->item(i)->data(MODEL_GUID_ROLE)) {
+		if (guid == assetWidget->assetViewWidget->item(i)->data(MODEL_GUID_ROLE)) {
 			return assetWidget->assetViewWidget->item(i);
 		}
 	}
