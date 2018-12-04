@@ -4,7 +4,7 @@
 
 DepthNode::DepthNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeType::Object);
 	title = "Depth";
 	typeName = "depth";
 	enablePreview = true;
@@ -27,7 +27,7 @@ QString DepthNode::generatePreview(ModelContext* context)
 
 FresnelNode::FresnelNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeType::Object);
 	title = "Fresnel";
 	typeName = "fresnel";
 	enablePreview = true;

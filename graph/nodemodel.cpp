@@ -134,6 +134,14 @@ QString NodeModel::getEnumString(NodeType type) {
 		return "Properties";
 	case NodeType::Constants:
 		return "Constants";
+	case NodeType::Object:
+		return "Object";
+	case NodeType::Texture:
+		return "Texture";
+	case NodeType::Vector:
+		return "Vector";
+	case NodeType::Vertex:
+		return "Vertex";
 	default:
 		return "";
 	}
