@@ -178,7 +178,7 @@ void SurfaceMasterNode::process(ModelContext* ctx)
 	code += "material.ambient = " + ambientVar + ";\n";
 	code += "material.emission = " + emissionVar + ";\n";
 	code += "material.alpha = " + alphaVar + ";\n";
-	//code += "material.alphaCutoff = " + alphaCutoffVar + ";\n";
+	code += "material.alphaCutoff = " + alphaCutoffVar + ";\n";
 	//context->addCodeChunk(this, "material.diffuse = " + diffVar + ";");
 
 	//context->clear();

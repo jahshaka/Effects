@@ -65,6 +65,7 @@ struct Material
     vec3 ambient;
     vec3 emission;
     float alpha;
+	float alphaCutoff;
 };
 
 
@@ -93,8 +94,12 @@ void main()
     material.ambient = vec3(0, 0, 0);
     material.emission = vec3(0, 0, 0);
     material.alpha = 1.0f;
+    material.alphaCutoff = 0.0f;
 
     surface(material);
+
+	if (material.alpha <= material.alphaCutoff)
+		discard;
 
     // ambient is scaled to the scene's ambient
     material.ambient *= u_sceneAmbient;
