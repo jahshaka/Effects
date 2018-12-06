@@ -152,6 +152,8 @@ SurfaceMasterNode::SurfaceMasterNode()
 	addInputSocket(new Vector3SocketModel("Ambient"));
 	addInputSocket(new Vector3SocketModel("Emission"));
 	addInputSocket(new FloatSocketModel("Alpha"));
+	addInputSocket(new FloatSocketModel("Alpha Cutoff"));
+	addInputSocket(new Vector3SocketModel("Vertex Offset"));
 }
 
 void SurfaceMasterNode::process(ModelContext* ctx)
@@ -167,6 +169,7 @@ void SurfaceMasterNode::process(ModelContext* ctx)
 	auto ambientVar = this->getValueFromInputSocket(4);
 	auto emissionVar = this->getValueFromInputSocket(5);
 	auto alphaVar = this->getValueFromInputSocket(6);
+	auto alphaCutoffVar = this->getValueFromInputSocket(7);
 
 	code += "material.diffuse = " + diffVar + ";\n";
 	code += "material.specular = " + specVar + ";\n";
@@ -175,6 +178,7 @@ void SurfaceMasterNode::process(ModelContext* ctx)
 	code += "material.ambient = " + ambientVar + ";\n";
 	code += "material.emission = " + emissionVar + ";\n";
 	code += "material.alpha = " + alphaVar + ";\n";
+	//code += "material.alphaCutoff = " + alphaCutoffVar + ";\n";
 	//context->addCodeChunk(this, "material.diffuse = " + diffVar + ";");
 
 	//context->clear();
@@ -397,6 +401,24 @@ void WorldNormalNode::process(ModelContext* context)
 	auto code = res + " = v_normal;";
 	//ctx->addCodeChunk(this, code);
 	outSockets[0]->setVarName("v_normal");
+}
+
+LocalNormalNode::LocalNormalNode()
+{
+	setNodeType(NodeType::Input);
+
+	title = "Local Normal";
+	typeName = "localNormal";
+
+	addOutputSocket(new Vector3SocketModel("Local Normal", "v_locaNormal"));
+}
+
+void LocalNormalNode::process(ModelContext* context)
+{
+	auto ctx = (ShaderContext*)context;
+	auto res = this->getOutputSocketVarName(0);
+
+	outSockets[0]->setVarName("v_localNormal");
 }
 
 TimeNode::TimeNode()

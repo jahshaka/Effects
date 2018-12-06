@@ -59,6 +59,14 @@ public:
 	virtual void process(ModelContext* context) override;
 };
 
+class LocalNormalNode : public NodeModel
+{
+public:
+	LocalNormalNode();
+
+	virtual void process(ModelContext* context) override;
+};
+
 class TimeNode : public NodeModel
 {
 public:

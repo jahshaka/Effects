@@ -40,6 +40,14 @@ void LibraryV1::initTest()
 		return normalNode;
 	});
 
+	// normal
+	lib->addNode("localNormal", "Local Normal", "", []()
+	{
+		auto normalNode = new LocalNormalNode();
+		return normalNode;
+	});
+
+
 	// float
 	lib->addNode("float", "Float", "", []()
 	{

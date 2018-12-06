@@ -70,7 +70,7 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
 
 	installEventFilter(this);
 
-	if (database) dataBase = database;
+	//if (database) dataBase = database;
 	if (database) setAssetWidgetDatabase(database);
 
 
@@ -269,7 +269,10 @@ void MainWindow::exportGraph()
 	QString sourcePath = QFileInfo(path).absolutePath()+"/shader.frag";
 	QFile sourceFile(sourcePath);
 	sourceFile.open(QFile::WriteOnly | QFile::Truncate);
-	sourceFile.write("#pragma include <surface.frag>\n\n"+(new ShaderGenerator())->generateShader(graph).toUtf8());
+	ShaderGenerator gen;
+	gen.generateShader(graph);
+	sourceFile.write("#pragma include <surface.frag>\n\n" + (gen.getFragmentShader().toUtf8()));
+	//sourceFile.write("#pragma include <surface.frag>\n\n"+(new ShaderGenerator())->generateShader(graph).toUtf8());
 	sourceFile.close();
 }
 
@@ -1010,9 +1013,13 @@ GraphNodeScene *MainWindow::createNewScene()
     {
         auto graph = scene->getNodeGraph();
         ShaderGenerator shaderGen;
-        auto code = shaderGen.generateShader(graph);
+		shaderGen.generateShader(graph);
+		auto code = shaderGen.getFragmentShader();
+
         textEdit->setPlainText(code);
-        sceneWidget->updateShader(code);
+		sceneWidget->setVertexShader(shaderGen.getVertexShader());
+		sceneWidget->setFragmentShader(shaderGen.getFragmentShader());
+		sceneWidget->updateShader();
         sceneWidget->resetRenderTime();
 
 		// assign previews
@@ -1028,9 +1035,13 @@ GraphNodeScene *MainWindow::createNewScene()
     {
         auto graph = scene->getNodeGraph();
         ShaderGenerator shaderGen;
-        auto code = shaderGen.generateShader(graph);
+		shaderGen.generateShader(graph);
+		auto code = shaderGen.getFragmentShader();
+
         textEdit->setPlainText(code);
-        sceneWidget->updateShader(code);
+		sceneWidget->setVertexShader(shaderGen.getVertexShader());
+		sceneWidget->setFragmentShader(shaderGen.getFragmentShader());
+		sceneWidget->updateShader();
         sceneWidget->resetRenderTime();
 
 		// assign previews
@@ -1045,9 +1056,13 @@ GraphNodeScene *MainWindow::createNewScene()
     {
         auto graph = scene->getNodeGraph();
         ShaderGenerator shaderGen;
-        auto code = shaderGen.generateShader(graph);
+		shaderGen.generateShader(graph);
+		auto code = shaderGen.getFragmentShader();
+
         textEdit->setPlainText(code);
-        sceneWidget->updateShader(code);
+		sceneWidget->setVertexShader(shaderGen.getVertexShader());
+		sceneWidget->setFragmentShader(shaderGen.getFragmentShader());
+		sceneWidget->updateShader();
         sceneWidget->resetRenderTime();
 
 		// assign previews
@@ -1064,9 +1079,13 @@ GraphNodeScene *MainWindow::createNewScene()
 void MainWindow::regenerateShader()
 {
 	ShaderGenerator shaderGen;
-	auto code = shaderGen.generateShader(graph);
+	shaderGen.generateShader(graph);
+	auto code = shaderGen.getFragmentShader();
+
 	textEdit->setPlainText(code);
-	sceneWidget->updateShader(code);
+	sceneWidget->setVertexShader(shaderGen.getVertexShader());
+	sceneWidget->setFragmentShader(shaderGen.getFragmentShader());
+	sceneWidget->updateShader();
 	sceneWidget->resetRenderTime();
 
 	// assign previews

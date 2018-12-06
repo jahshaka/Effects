@@ -18,6 +18,7 @@ For more information see the LICENSE file
 #define RECIPROCAL_PI2 0.15915494
 
 in vec2 v_texCoord;
+in vec3 v_localNormal;
 in vec3 v_normal;
 in vec3 v_worldPos;
 in mat3 v_tanToWorld;
