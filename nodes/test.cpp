@@ -148,7 +148,7 @@ SurfaceMasterNode::SurfaceMasterNode()
 	addInputSocket(new Vector3SocketModel("Diffuse","vec3(1.0,1.0,1.0)"));
 	addInputSocket(new Vector3SocketModel("Specular"));
 	addInputSocket(new FloatSocketModel("Shininess"));
-	addInputSocket(new Vector3SocketModel("Normal", "v_normal"));
+	addInputSocket(new Vector3SocketModel("Normal", "vec3(0.0, 0.0, 1.0)"));
 	addInputSocket(new Vector3SocketModel("Ambient"));
 	addInputSocket(new Vector3SocketModel("Emission"));
 	addInputSocket(new FloatSocketModel("Alpha", "1.0f"));
@@ -620,6 +620,7 @@ void PropertyNode::setProperty(Property* property)
 	case PropertyType::Texture:
 		this->addOutputSocket(new TextureSocketModel("texture"));
 		this->addOutputSocket(new Vector4SocketModel("rgba"));
+		this->addOutputSocket(new Vector3SocketModel("normal"));
 		/*
 		this->addOutputSocket(new FloatSocketModel("r"));
 		this->addOutputSocket(new FloatSocketModel("g"));
@@ -657,9 +658,12 @@ void PropertyNode::process(ModelContext* context)
 	if (prop->type == PropertyType::Texture) {
 		auto uv = this->getValueFromInputSocket(0);
 		auto rgba = this->getOutputSocketVarName(1);
+		auto normal = this->getOutputSocketVarName(2);
 
 		QString code = "";
-		code = rgba + " = texture(" + prop->getUniformName() + "," + uv + ");";
+		code += rgba + " = texture(" + prop->getUniformName() + "," + uv + ");\n";
+		if (this->outSockets[2]->hasConnection())
+			code += normal + " = " + rgba + ".xyz * vec3(2) - vec3(1);";
 		ctx->addCodeChunk(this, code);
 	}
 }

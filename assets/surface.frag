@@ -90,7 +90,7 @@ void main()
     material.diffuse = vec3(1, 1, 1);
     material.specular = vec3(0, 0, 0);
     material.shininess = 0.0f;
-    material.normal = v_normal;
+    material.normal = vec3(0.0, 0.0, 1.0);
     material.ambient = vec3(0, 0, 0);
     material.emission = vec3(0, 0, 0);
     material.alpha = 1.0f;
@@ -107,7 +107,7 @@ void main()
     vec3 diffuse = vec3(0);
     vec3 specular = vec3(0);
 
-    vec3 normal = material.normal;
+    vec3 normal =  v_tanToWorld * material.normal;
     //vec3 normal = v_normal;
 
     vec3 v = normalize(u_eyePos-v_worldPos);
