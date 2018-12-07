@@ -151,7 +151,7 @@ SurfaceMasterNode::SurfaceMasterNode()
 	addInputSocket(new Vector3SocketModel("Normal", "v_normal"));
 	addInputSocket(new Vector3SocketModel("Ambient"));
 	addInputSocket(new Vector3SocketModel("Emission"));
-	addInputSocket(new FloatSocketModel("Alpha"));
+	addInputSocket(new FloatSocketModel("Alpha", "1.0f"));
 	addInputSocket(new FloatSocketModel("Alpha Cutoff"));
 	addInputSocket(new Vector3SocketModel("Vertex Offset"));
 }
