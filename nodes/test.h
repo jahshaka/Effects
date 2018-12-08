@@ -99,6 +99,14 @@ public:
 	virtual void process(ModelContext* context) override;
 };
 
+class NormalIntensityNode : public NodeModel
+{
+public:
+	NormalIntensityNode();
+
+	virtual void process(ModelContext* context) override;
+};
+
 
 class MakeColorNode : public NodeModel
 {

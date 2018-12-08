@@ -91,14 +91,19 @@ void LibraryV1::initTest()
 		return new TextureSamplerNode();
 	});
 
-	//texture
+	// texture
 	lib->addNode("texture", "Texture", "", []() {
 		return new TextureNode();
 	});
 
-	//texture
+	// panner
 	lib->addNode("panner", "Panner", "", []() {
 		return new PannerNode();
+	});
+	
+	// normal intensity
+	lib->addNode("normalintensity", "Normal Intensity", "", []() {
+		return new NormalIntensityNode();
 	});
 }
 

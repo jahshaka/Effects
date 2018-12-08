@@ -662,7 +662,7 @@ void PropertyNode::process(ModelContext* context)
 
 		QString code = "";
 		code += rgba + " = texture(" + prop->getUniformName() + "," + uv + ");\n";
-		if (this->outSockets[2]->hasConnection())
+		//if (this->outSockets[2]->hasConnection())
 			code += normal + " = " + rgba + ".xyz * vec3(2) - vec3(1);";
 		ctx->addCodeChunk(this, code);
 	}
@@ -793,6 +793,31 @@ void PannerNode::process(ModelContext * context)
 	auto code = res + " = " + uv + " + " + speed + " * "+ time + ";";
 	ctx->addCodeChunk(this, code);
 }
+
+
+NormalIntensityNode::NormalIntensityNode()
+{
+	setNodeType(NodeType::Input);
+
+	title = "Normal Intensity";
+	typeName = "normalintensity";
+
+	addInputSocket(new Vector3SocketModel("Normal", "vec3(0.0, 0.0, 1.0)"));
+	addInputSocket(new FloatSocketModel("Intensity", "1.0"));
+	addOutputSocket(new Vector3SocketModel("Result"));
+}
+
+void NormalIntensityNode::process(ModelContext* context)
+{
+	auto ctx = (ShaderContext*)context;
+	auto normal = this->getValueFromInputSocket(0);
+	auto intensity = this->getValueFromInputSocket(1);
+	auto res = this->getOutputSocketVarName(0);
+
+	auto code = res + " = normalize(mix(vec3(0,0,1)," + normal + "," + intensity + "));";
+	ctx->addCodeChunk(this, code);
+}
+
 
 Vector2Node::Vector2Node()
 {
