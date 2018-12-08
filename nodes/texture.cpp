@@ -8,8 +8,8 @@ CombineNormalsNode::CombineNormalsNode()
 	typeName = "combinenormals";
 	enablePreview = true;
 
-	addInputSocket(new Vector3SocketModel("NormalA"));
-	addInputSocket(new Vector3SocketModel("NormalB"));
+	addInputSocket(new Vector3SocketModel("NormalA", "vec3(0.0, 0.0, 1.0)"));
+	addInputSocket(new Vector3SocketModel("NormalB", "vec3(0.0, 0.0, 1.0)"));
 	addOutputSocket(new Vector3SocketModel("Result"));
 }
 
@@ -20,7 +20,7 @@ void CombineNormalsNode::process(ModelContext* context)
 	auto normalB = this->getValueFromInputSocket(1);
 	auto res = this->getOutputSocketVarName(0);
 
-	auto code = res + " = normalize((" + normalA + " + " + normalB + ")*2 - 2)";
+	auto code = res + " = normalize((" + normalA + " + " + normalB + "));";
 	ctx->addCodeChunk(this, code);
 }
 
@@ -31,7 +31,7 @@ QString CombineNormalsNode::generatePreview(ModelContext* context)
 	auto normalB = this->getValueFromInputSocket(1);
 	auto res = this->getOutputSocketVarName(0);
 
-	auto output = "preview.color = normalize((" + normalA + " + " + normalB + ")*2 - 2)";
+	auto output = "preview.color.rgb = normalize((" + normalA + " + " + normalB + "));";
 
 	return output;
 }
