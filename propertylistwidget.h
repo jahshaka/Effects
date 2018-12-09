@@ -52,6 +52,9 @@ private:
     NodeGraph* graph;
 	int added = -1;
 	QFont font;
+
+signals:
+	void nameChanged(QString name, QString id);
 };
 
 #endif // PROPERTYLISTWIDGET_H
