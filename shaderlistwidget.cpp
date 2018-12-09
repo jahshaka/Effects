@@ -39,23 +39,14 @@ void ShaderListWidget::dropEvent(QDropEvent * event)
 		item->setIcon(QIcon(":/icons/icons8-file-72.png"));
 		item->setText(event->mimeData()->text());
 
-		auto genGuid = []() {
-			auto id = QUuid::createUuid();
-			auto guid = id.toString().remove(0, 1);
-			guid.chop(1);
-			return guid;
-		};
+		
+		
 
-		const QString assetGuid = genGuid();
-		auto obj = QJsonDocument::fromBinaryData(event->mimeData()->data("MODEL_GRAPH")).object();
-
-		item->setData(MODEL_GUID_ROLE, assetGuid);
+		item->setData(MODEL_GUID_ROLE, event->mimeData()->data("MODEL_GUID_ROLE"));
 		item->setData(Qt::DisplayRole, event->mimeData()->text());
 		item->setData(MODEL_PARENT_ROLE, event->mimeData()->data("MODEL_PARENT_ROLE"));
 		item->setData(MODEL_ITEM_TYPE, event->mimeData()->data("MODEL_ITEM_TYPE"));
 		item->setData(MODEL_TYPE_ROLE, event->mimeData()->data("MODEL_TYPE_ROLE"));
-		item->setData(MODEL_GRAPH, obj);
-
 
 		emit itemDropped(item);
 

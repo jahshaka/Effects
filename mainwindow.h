@@ -60,12 +60,13 @@ public:
 
 	QList<nodeGraphPreset> list;
 	QListWidgetItem *currentProjectShader = Q_NULLPTR;
+	shaderInfo currentShaderInformation;
 private:
 	void saveShader(QListWidgetItem *item);
 	void loadShader();
     void saveGraph();
     void loadGraph();
-    void loadGraph(QListWidgetItem *item);
+    void loadGraph(shaderInfo info);
     void exportGraph();
     void restoreGraphPositions(const QJsonObject& data);
 
@@ -85,10 +86,11 @@ private:
 	void configureAssetsDock();
 	void createShader(QString *shaderName = Q_NULLPTR, int *templateType = Q_NULLPTR, QString *templateName = Q_NULLPTR);
 	void setCurrentShaderItem();
+	QByteArray fetchAsset(QString string);
 
     GraphNodeScene* createNewScene();
 	void regenerateShader();
-	QListWidgetItem* selectCorrectItemFromDrop(QListWidgetItem * item);
+	QListWidgetItem* selectCorrectItemFromDrop(QString guid);
 	QList<QString> loadedShadersGUID;
 private:
     Ui::MainWindow *ui;

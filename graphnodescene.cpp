@@ -223,14 +223,14 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 
 		QListWidgetItem *item = new QListWidgetItem;
 
-		auto obj = QJsonDocument::fromBinaryData(event->mimeData()->data("MODEL_GRAPH")).object();
+	//	auto obj = QJsonDocument::fromBinaryData(event->mimeData()->data("MODEL_GRAPH")).object();
 		item->setData(Qt::DisplayRole, event->mimeData()->text());
 		item->setData(MODEL_GUID_ROLE, event->mimeData()->data("MODEL_GUID_ROLE"));
-		item->setData(MODEL_PARENT_ROLE, event->mimeData()->data("MODEL_PARENT_ROLE"));
+	/*	item->setData(MODEL_PARENT_ROLE, event->mimeData()->data("MODEL_PARENT_ROLE"));
 		item->setData(MODEL_ITEM_TYPE, event->mimeData()->data("MODEL_ITEM_TYPE"));
 		item->setData(MODEL_TYPE_ROLE, event->mimeData()->data("MODEL_TYPE_ROLE"));
 		item->setData(MODEL_GRAPH, obj);
-
+*/
 		currentlyEditing = item;
 
 		if(!loadedShadersGUID.contains(item->data(MODEL_GUID_ROLE).toString()))  loadedShadersGUID.append(item->data(MODEL_GUID_ROLE).toString());
@@ -486,7 +486,7 @@ GraphNode *GraphNodeScene::getNodeById(QString id)
 {
 	auto items = this->items();
 	for (auto item : items) {
-//		if (item && item->type() == (int)GraphicsItemType::Node)
+		if (item && item->type() == (int)GraphicsItemType::Node)
 			if (((GraphNode*)item)->nodeId == id)
 				return (GraphNode*)item;
 	}
