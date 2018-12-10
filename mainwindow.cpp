@@ -753,6 +753,10 @@ void MainWindow::configureUI()
 		nodeContainer->setViewMode(QListWidget::ListMode);
 	});
 
+	connect(propertyListWidget, &PropertyListWidget::nameChanged, [=](QString name, QString id) {
+		scene->updateNodeTitle(name, id);
+	});
+
 	materialSettingsDock->setWidget(materialSettingsWidget);
 
 	nodeContainer->setAlternatingRowColors(false);

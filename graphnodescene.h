@@ -88,6 +88,7 @@ public:
 	QList<QString> loadedShadersGUID;
 
 	void setList(QList<QString> list) { loadedShadersGUID = list; }
+	void updateNodeTitle(QString title, QString id);
 
 protected:
 	void wheelEvent(QGraphicsSceneWheelEvent *event)override;

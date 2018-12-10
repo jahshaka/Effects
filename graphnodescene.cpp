@@ -175,6 +175,12 @@ QJsonObject GraphNodeScene::serialize()
 	return data;
 }
 
+void GraphNodeScene::updateNodeTitle(QString title, QString id)
+{
+	auto node = getNodeById(id);
+	node->setTitle(title);
+}
+
 void GraphNodeScene::wheelEvent(QGraphicsSceneWheelEvent * event)
 {
 	QGraphicsScene::wheelEvent(event);
@@ -187,9 +193,21 @@ void GraphNodeScene::drawItems(QPainter * painter, int numItems, QGraphicsItem *
 
 void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 {
-	event->accept();
-	qDebug() << event->mimeData()->data("MODEL_TYPE_ROLE");
+
+	if (!event->mimeData()->data("index").isNull()) {
+
+		auto prop = nodeGraph->properties.at(event->mimeData()->data("index").toInt());
+		qDebug() << prop << prop->id << prop->displayName << prop->getValue();
+		if (prop) {
+			auto propNode = new PropertyNode();
+			propNode->setProperty(prop);
+			this->addNodeModel(propNode, event->scenePos().x(), event->scenePos().y());
+			
+		}
+	}
+
 	if (0 == QString("node").compare(QString(event->mimeData()->data("MODEL_TYPE_ROLE")))) {
+		event->accept();
 
 		auto node = nodeGraph->library->createNode(event->mimeData()->html());
 
@@ -198,17 +216,10 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 				this->addNodeModel(node, event->scenePos().x(), event->scenePos().y());
 					return;
 			}
-		auto prop = nodeGraph->properties.at(event->mimeData()->data("index").toInt());
-		qDebug() << prop << prop->id << prop->displayName << prop->getValue();
-			if (prop) {
-				auto propNode = new PropertyNode();
-				propNode->setProperty(prop);
-				this->addNodeModel(propNode, event->scenePos().x(), event->scenePos().y());
-				qDebug() << "no node element";
-			}
 	}
 
 	if (QVariant(event->mimeData()->data("MODEL_TYPE_ROLE")).toInt() == static_cast<int>(ModelTypes::Shader)) {
+		event->accept();
 
 		QListWidgetItem *item = new QListWidgetItem;
 
@@ -225,7 +236,7 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 		if(!loadedShadersGUID.contains(item->data(MODEL_GUID_ROLE).toString()))  loadedShadersGUID.append(item->data(MODEL_GUID_ROLE).toString());
 
 		emit loadGraph(item);
-
+		return;
 	}
 }
 
