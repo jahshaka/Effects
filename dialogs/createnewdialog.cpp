@@ -63,12 +63,17 @@ CreateNewDialog::CreateNewDialog(QList<nodeGraphPreset> list) : QDialog()
     optionsScroll->setWidgetResizable(true);
     presetsScroll->setWidgetResizable(true);
 
-
-	layout->addWidget(holder);
-	layout->addSpacing(15);
-	layout->addWidget(infoLabel);
+	if (list.count() != 0) {
+		layout->addWidget(holder);
+		layout->addSpacing(15);
+		layout->addWidget(infoLabel);
+		setMinimumSize(480, 250);
+	}
 	layout->addWidget(nameHolder);
 	layout->addWidget(buttonHolder);
+
+	setMinimumSize(480, 150);
+
 
 	nameEdit->setPlaceholderText("Enter name here...");
 	nameEdit->setTextMargins(3, 0, 0, 0);
@@ -202,8 +207,6 @@ void CreateNewDialog::configureStylesheet()
 	);
 	
 }
-
-
 
 OptionSelection::OptionSelection(nodeGraphPreset node) : QPushButton()
 {

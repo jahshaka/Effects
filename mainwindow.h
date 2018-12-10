@@ -62,7 +62,8 @@ public:
 	QListWidgetItem *currentProjectShader = Q_NULLPTR;
 	shaderInfo currentShaderInformation;
 private:
-	void saveShader(QListWidgetItem *item);
+	void saveShader();
+	void saveDefaultShader();
 	void loadShader();
     void saveGraph();
     void loadGraph();
@@ -76,7 +77,7 @@ private:
 	void generateTileNode(QList<NodeLibraryItem*> list);
 	void addTabs();
 	void setNodeLibraryItem(QListWidgetItem *item, NodeLibraryItem *tile);
-	void createNewGraph();
+	bool createNewGraph(bool loadNewGraph = true);
 	void updateAssetDock();
 
 	bool eventFilter(QObject *watched, QEvent *event);
@@ -84,7 +85,7 @@ private:
 	void configureStyleSheet();
 	void configureProjectDock();
 	void configureAssetsDock();
-	void createShader(QString *shaderName = Q_NULLPTR, int *templateType = Q_NULLPTR, QString *templateName = Q_NULLPTR);
+	void createShader(QString *shaderName = Q_NULLPTR, int *templateType = Q_NULLPTR, QString *templateName = Q_NULLPTR, bool loadNewGraph = true);
 	void setCurrentShaderItem();
 	QByteArray fetchAsset(QString string);
 

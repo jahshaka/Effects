@@ -90,7 +90,7 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
 
 	shortcut = new QShortcut(QKeySequence("ctrl+s"), this);
 	connect(shortcut, &QShortcut::activated, [=]() {
-		saveShader(currentProjectShader);
+		saveShader();
 	});
 
 	loadShader();
@@ -149,16 +149,16 @@ MainWindow::~MainWindow()
     
 }
 
-void MainWindow::saveShader(QListWidgetItem * item)
+void MainWindow::saveShader()
 {
-	if (!item)
-		//ask to set name and save file
+	if (currentShaderInformation.GUID == "") {
+		saveDefaultShader();
 		return;
+	}
 
 	QJsonDocument doc;
 	QJsonObject obj;
-	obj["MODEL_GUID_ROLE"]		= item->data(MODEL_GUID_ROLE).toString();
-	item->setData(MODEL_GRAPH, scene->serialize());
+	obj["MODEL_GUID_ROLE"] = currentShaderInformation.GUID;
 	doc.setObject(scene->serialize());
 	
 
@@ -173,6 +173,12 @@ void MainWindow::saveShader(QListWidgetItem * item)
 	shaderFile->write(doc.toJson());
 	shaderFile->close();
 #endif
+}
+
+void MainWindow::saveDefaultShader()
+{
+	bool shouldSaveGraph = createNewGraph(false);
+	if(shouldSaveGraph) saveShader();
 }
 
 void MainWindow::loadShader()
@@ -537,7 +543,7 @@ void MainWindow::configureAssetsDock()
 	updateAssetDock();
 }
 
-void MainWindow::createShader(QString *shaderName, int *templateType , QString *templateName)
+void MainWindow::createShader(QString *shaderName, int *templateType , QString *templateName, bool loadNewGraph)
 {
 	QString newShader;
 	if(shaderName)	 newShader = *shaderName;
@@ -584,14 +590,16 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 	effects->addItem(item);
 	effects->displayAllContents();
 
-	auto nodeGraph = new NodeGraph();
-	auto masterNode = new SurfaceMasterNode();
-	nodeGraph->setNodeLibrary(new LibraryV1());
-	nodeGraph->addNode(masterNode);
-	nodeGraph->setMasterNode(masterNode);
-	this->setNodeGraph(nodeGraph);
+	// sets new scene
 
-	//MaterialWriter writer;
+	if (loadNewGraph) {
+		auto nodeGraph = new NodeGraph();
+		auto masterNode = new SurfaceMasterNode();
+		nodeGraph->setNodeLibrary(new LibraryV1());
+		nodeGraph->addNode(masterNode);
+		nodeGraph->setMasterNode(masterNode);
+		this->setNodeGraph(nodeGraph);
+	}
 
 
 #if(EFFECT_BUILD_AS_LIB)
@@ -820,7 +828,7 @@ void MainWindow::configureToolbar()
 
 	connect(projectName, &QLineEdit::editingFinished, [=]() {
 		//update finished, update view;
-		saveShader(currentProjectShader);
+		saveShader();
 		renameShader();
 	});
 
@@ -934,29 +942,32 @@ void MainWindow::setNodeLibraryItem(QListWidgetItem *item, NodeLibraryItem *tile
 	wid->addItem(item);
 }
 
-void MainWindow::createNewGraph()
+bool MainWindow::createNewGraph(bool loadNewGraph)
 {
 	//TODO get presets from database
 	list.clear();
-	for (int i = 0; i < 3; i++) {
-		nodeGraphPreset will;
-		will.name = "willroy" + QString::number(i);
-		will.title = "will" + QString::number(i);
-		list.append(will);
-	}
 
+	if (loadNewGraph) {
+		for (int i = 0; i < 3; i++) {
+			nodeGraphPreset will;
+			will.name = "willroy" + QString::number(i);
+			will.title = "will" + QString::number(i);
+			list.append(will);
+		}
+	}
 	CreateNewDialog node(list);
 	node.exec();
 
 	if (node.result() == QDialog::Accepted) {
-
 		auto shaderName = node.getName();
 		auto shaderType = node.getType();
 		auto shaderTemplateName = node.getTemplateName();
-		createShader(&shaderName,&shaderType,&shaderTemplateName);
+		createShader(&shaderName,&shaderType,&shaderTemplateName, loadNewGraph);
+		return true;
 	}
 
-	
+	return false;
+
 }
 
 
@@ -1058,8 +1069,6 @@ bool MainWindow::eventFilter(QObject * watched, QEvent * event)
 
 	return QObject::eventFilter(watched, event);
 }
-
-
 
 GraphNodeScene *MainWindow::createNewScene()
 {
