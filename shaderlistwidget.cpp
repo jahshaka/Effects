@@ -1,5 +1,7 @@
 #include "shaderlistwidget.h"
 #include <QDropEvent>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QMimeData>
 #include <QDebug>
 #include <QUuid>
@@ -24,16 +26,12 @@ ShaderListWidget::~ShaderListWidget()
 void ShaderListWidget::dropEvent(QDropEvent * event)
 {
 
-	if(event->mimeData()->data("MODEL_TYPE_ROLE").toInt() == (int)ModelTypes::Material)
+	if(event->mimeData()->data("MODEL_TYPE_ROLE").toInt() == (int)ModelTypes::Shader)
 	{
 		event->accept();
 		event->setDropAction(Qt::CopyAction);
 
-		AssetRecord data;
-
-		data.name = event->mimeData()->text();
-
-
+		
 		QListWidgetItem *item = new QListWidgetItem;
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
 		item->setSizeHint({90,90});
@@ -41,32 +39,22 @@ void ShaderListWidget::dropEvent(QDropEvent * event)
 		item->setIcon(QIcon(":/icons/icons8-file-72.png"));
 		item->setText(event->mimeData()->text());
 
-		auto genGuid = []() {
-			auto id = QUuid::createUuid();
-			auto guid = id.toString().remove(0, 1);
-			guid.chop(1);
-			return guid;
-		};
+		
+		
 
-		const QString assetGuid = genGuid();
-
-		item->setData(MODEL_GUID_ROLE, assetGuid);
-		item->setData(MODEL_PARENT_ROLE, "");
-		item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
-		item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Material));
+		item->setData(MODEL_GUID_ROLE, event->mimeData()->data("MODEL_GUID_ROLE"));
+		item->setData(Qt::DisplayRole, event->mimeData()->text());
+		item->setData(MODEL_PARENT_ROLE, event->mimeData()->data("MODEL_PARENT_ROLE"));
+		item->setData(MODEL_ITEM_TYPE, event->mimeData()->data("MODEL_ITEM_TYPE"));
+		item->setData(MODEL_TYPE_ROLE, event->mimeData()->data("MODEL_TYPE_ROLE"));
 
 		emit itemDropped(item);
-
-
-
-
-
 
 	}
 	else	event->ignore();
 
 
-	ListWidget::dropEvent(event);
+//	ListWidget::dropEvent(event);
 }
 
 void ShaderListWidget::dragMoveEvent(QDragMoveEvent * event)
@@ -77,12 +65,12 @@ void ShaderListWidget::dragMoveEvent(QDragMoveEvent * event)
 
 void ShaderListWidget::dragEnterEvent(QDragEnterEvent * event)
 {
+	if(event->source() != this)
 	event->acceptProposedAction();
 //	ListWidget::dragEnterEvent(event);
 }
 
 void ShaderListWidget::dragLeaveEvent(QDragLeaveEvent * event)
 {
-	qDebug() << "drag leaved";
 //	ListWidget::dragLeaveEvent(event);
 }

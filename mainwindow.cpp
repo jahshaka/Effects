@@ -67,12 +67,9 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
     scene = nullptr;
 	sceneWidget = new SceneWidget();
 
-
 	installEventFilter(this);
 
-	//if (database) dataBase = database;
 	if (database) setAssetWidgetDatabase(database);
-
 
 	newNodeGraph();
 	generateTileNode();
@@ -80,8 +77,6 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
 	configureProjectDock();
 	configureAssetsDock();
 	setMinimumSize(300, 400);
-
-	
 
 	QShortcut *shortcut = new QShortcut(QKeySequence("f"), this);
 	connect(shortcut, &QShortcut::activated, [=]() {
@@ -91,11 +86,7 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
 
 	shortcut = new QShortcut(QKeySequence("ctrl+s"), this);
 	connect(shortcut, &QShortcut::activated, [=]() {
-		saveShader(currentProjectShader);
-	});
-
-	connect(scene, &GraphNodeScene::loadGraph, [=](QListWidgetItem *item) {
-		loadGraph(item);
+		saveShader();
 	});
 
 	loadShader();
@@ -116,6 +107,8 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
     }
     scene = newScene;
 
+	if (!scene->currentlyEditing) scene->currentlyEditing = currentProjectShader;
+	
     //ui->propertyContainerPage1->setNodeGraph(graph);
 	propertyListWidget->setNodeGraph(graph);
 	sceneWidget->setNodeGraph(graph);
@@ -144,6 +137,7 @@ void MainWindow::refreshShaderGraph()
 #if(EFFECT_BUILD_AS_LIB)
 	assetWidget->refresh();
 #endif
+	setCurrentShaderItem();
 }
 
 MainWindow::~MainWindow()
@@ -151,36 +145,48 @@ MainWindow::~MainWindow()
     
 }
 
-void MainWindow::saveShader(QListWidgetItem * item)
+void MainWindow::saveShader()
 {
+	if (currentShaderInformation.GUID == "") {
+		saveDefaultShader();
+		return;
+	}
+
 	QJsonDocument doc;
 	QJsonObject obj;
-
-	obj["name"]					= item->data(Qt::DisplayRole).toString();
-	obj["MODEL_ITEM_TYPE"]		= item->data(MODEL_ITEM_TYPE).toString();
-	obj["MODEL_GUID_ROLE"]		= item->data(MODEL_GUID_ROLE).toString();
-	obj["MODEL_PARENT_ROLE"]	= item->data(MODEL_PARENT_ROLE).toString();
-	obj["MODEL_TYPE_ROLE"]		= item->data(MODEL_TYPE_ROLE).toString();
-	obj["MODEL_GRAPH"]			= scene->serialize();
-	item->setData(MODEL_GRAPH, scene->serialize());
-	doc.setObject(obj);
-
+	obj["guid"] = currentShaderInformation.GUID;
+	obj["name"] = currentShaderInformation.name;
+		
 
 #if(EFFECT_BUILD_AS_LIB)
-	dataBase->updateAssetAsset(obj["MODEL_GUID_ROLE"].toString(), doc.toBinaryData());
-
+	doc.setObject(obj);
+	dataBase->updateAssetAsset(obj["guid"].toString(), doc.toBinaryData());
 #else
+	obj["graph"] = scene->serialize();
+	doc.setObject(obj);
+
 	auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/");
 	if (!QDir(filePath).exists()) QDir().mkpath(filePath);
 	auto shaderFile = new QFile(filePath + obj["name"].toString());
-	shaderFile->open(QIODevice::WriteOnly);
-	shaderFile->write(doc.toJson());
-	shaderFile->close();
+	if (shaderFile->open(QIODevice::ReadWrite)) {
+		shaderFile->write(doc.toJson());
+		shaderFile->close();
+	}
+	else {
+		qDebug() << "device not open";
+	}
 #endif
+}
+
+void MainWindow::saveDefaultShader()
+{
+	bool shouldSaveGraph = createNewGraph(false);
+	if(shouldSaveGraph) saveShader();
 }
 
 void MainWindow::loadShader()
 {
+	// create constants for this
 	auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/");
 	QDirIterator it(filePath);
 
@@ -189,9 +195,10 @@ void MainWindow::loadShader()
 		QFile file(it.next());
 		file.open(QIODevice::ReadOnly);
 		auto doc = QJsonDocument::fromJson(file.readAll());
-
 		file.close();
+
 		auto obj = doc.object();
+		qDebug() << obj["name"].toString();
 		if (obj["name"].toString() == "") continue;
 
 		QListWidgetItem *item = new QListWidgetItem;
@@ -201,12 +208,11 @@ void MainWindow::loadShader()
 		item->setIcon(QIcon(":/icons/icons8-file-72.png"));
 
 		item->setData(Qt::DisplayRole, obj["name"].toString());
-		item->setData(MODEL_GUID_ROLE, obj["MODEL_GUID_ROLE"].toString());
-		item->setData(MODEL_PARENT_ROLE, obj["MODEL_PARENT_ROLE"].toString());
-		item->setData(MODEL_ITEM_TYPE, obj["MODEL_ITEM_TYPE"].toString());
-		item->setData(MODEL_GRAPH, obj["MODEL_GRAPH"].toObject());
+		item->setData(MODEL_GUID_ROLE, obj["guid"].toString());
+	//	item->setData(MODEL_PARENT_ROLE, obj["MODEL_PARENT_ROLE"].toString());
+	//	item->setData(MODEL_ITEM_TYPE, obj["MODEL_ITEM_TYPE"].toString());
+	//	item->setData(MODEL_GRAPH, obj["MODEL_GRAPH"].toObject());
 		item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Material));
-		
 		effects->addItem(item);
 	}
 }
@@ -243,15 +249,44 @@ void MainWindow::loadGraph()
 	regenerateShader();
 }
 
-void MainWindow::loadGraph(QListWidgetItem * item)
+void MainWindow::loadGraph(shaderInfo info)
 {
-	auto obj = item->data(MODEL_GRAPH).toJsonObject();
-	auto graph = NodeGraph::deserialize(obj, new LibraryV1());
+	NodeGraph *graph;
+
+#if(EFFECT_BUILD_AS_LIB)
+	QJsonObject obj = QJsonDocument::fromBinaryData(fetchAsset(info.GUID)).object();
+	graph = NodeGraph::deserialize(obj, new LibraryV1());
 	this->setNodeGraph(graph);
 	this->restoreGraphPositions(obj);
-	projectName->setText(item->data(Qt::DisplayRole).toString());
+#else
+	auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/");
+	QDirIterator it(filePath);
+	QJsonObject obj;
+
+	while (it.hasNext()) {
+
+		QFile file(it.next());
+		file.open(QIODevice::ReadOnly);
+		auto doc = QJsonDocument::fromJson(file.readAll());
+		file.close();
+
+		auto obj1 = doc.object();
+		if (obj1["name"].toString() == info.name) {
+			qDebug() << obj1;
+			obj = obj1;
+			break;
+		}
+	}
+	graph = NodeGraph::deserialize(obj["graph"].toObject(), new LibraryV1());
+	this->setNodeGraph(graph);
+	this->restoreGraphPositions(obj["graph"].toObject());
+#endif
+
+	
+	projectName->setText(info.name);
 	regenerateShader();
-	currentProjectShader = item;
+
+	currentProjectShader = selectCorrectItemFromDrop(info.GUID);
 }
 
 void MainWindow::exportGraph()
@@ -523,9 +558,9 @@ void MainWindow::configureAssetsDock()
 	}
 
 	connect(effects, &QListWidget::itemDoubleClicked, [=](QListWidgetItem *item) {
-		
-		loadGraph(item);
-
+		currentShaderInformation.name = item->data(Qt::DisplayRole).toString();
+		currentShaderInformation.GUID = item->data(MODEL_GUID_ROLE).toString();
+		loadGraph(currentShaderInformation);
 	});
 
 
@@ -537,7 +572,7 @@ void MainWindow::configureAssetsDock()
 	updateAssetDock();
 }
 
-void MainWindow::createShader(QString *shaderName, int *templateType , QString *templateName)
+void MainWindow::createShader(QString *shaderName, int *templateType , QString *templateName, bool loadNewGraph)
 {
 	QString newShader;
 	if(shaderName)	 newShader = *shaderName;
@@ -560,11 +595,14 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 	item->setData(MODEL_GUID_ROLE, assetGuid);
 	item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
 	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Shader));
-	item->setData(Qt::UserRole, newShader);
-	item->setData(MODEL_GRAPH, scene->serialize());
+	item->setData(Qt::DisplayRole, newShader);
 
 	currentProjectShader = item;
-	qDebug() << item->data(MODEL_TYPE_ROLE).toInt();
+	oldName = newShader;
+
+	currentShaderInformation.GUID = assetGuid;
+	currentShaderInformation.name = newShader;
+
 
 	//assetItemShader.wItem = item;
 
@@ -581,17 +619,31 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 	effects->addItem(item);
 	effects->displayAllContents();
 
-	
+	// sets new scene
+
+	if (loadNewGraph) {
+		auto nodeGraph = new NodeGraph();
+		auto masterNode = new SurfaceMasterNode();
+		nodeGraph->setNodeLibrary(new LibraryV1());
+		nodeGraph->addNode(masterNode);
+		nodeGraph->setMasterNode(masterNode);
+		this->setNodeGraph(nodeGraph);
+	}
 
 
 #if(EFFECT_BUILD_AS_LIB)
-	QFile *templateShaderFile = new QFile(IrisUtils::getAbsoluteAssetPath("app/templates/ShaderTemplate.shader"));
-	templateShaderFile->open(QIODevice::ReadOnly | QIODevice::Text);
-	QJsonObject shaderDefinition = QJsonDocument::fromJson(templateShaderFile->readAll()).object();
-	templateShaderFile->close();
-	shaderDefinition["name"] = newShader;
-	shaderDefinition.insert("guid", assetGuid);
-	shaderDefinition["MODEL_GRAPH"] = item->data(MODEL_GRAPH).toJsonObject();
+	//QFile *templateShaderFile = new QFile(IrisUtils::getAbsoluteAssetPath("app/templates/ShaderTemplate.shader"));
+	//templateShaderFile->open(QIODevice::ReadOnly | QIODevice::Text);
+	//QJsonObject shaderDefinition;// = QJsonDocument::fromJson(templateShaderFile->readAll()).object();
+	//templateShaderFile->close();
+	//shaderDefinition["name"] = newShader;
+	//shaderDefinition.insert("guid", assetGuid);
+
+	//shaderDefinition["MODEL_GRAPH"] = item->data(MODEL_GRAPH).toJsonObject();
+
+	
+	//auto shaderDefinition = writer.serializeMaterial(nodeGraph);
+	auto shaderDefinition = scene->serialize();
 
 	dataBase->createAssetEntry(QString::null, assetGuid,
 		IrisUtils::buildFileName(newShader, "shader"),
@@ -609,11 +661,30 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 	AssetManager::addAsset(assetShader);
 
 #else
-	saveShader(item);
+	saveShader();
 
 #endif
 	
-	
+}
+
+void MainWindow::setCurrentShaderItem()
+{
+ 	if (scene->currentlyEditing)
+		currentProjectShader = selectCorrectItemFromDrop(scene->currentlyEditing->data(MODEL_GUID_ROLE).toString());
+}
+
+QByteArray MainWindow::fetchAsset(QString string)
+{
+#if(EFFECT_BUILD_AS_LIB)
+	return dataBase->fetchAssetData(string);
+#else
+	// fetch file locally
+
+#endif
+
+
+
+	return QByteArray();
 }
 
 void MainWindow::configureUI()
@@ -719,6 +790,10 @@ void MainWindow::configureUI()
 		nodeContainer->setViewMode(QListWidget::ListMode);
 	});
 
+	connect(propertyListWidget, &PropertyListWidget::nameChanged, [=](QString name, QString id) {
+		scene->updateNodeTitle(name, id);
+	});
+
 	materialSettingsDock->setWidget(materialSettingsWidget);
 
 	nodeContainer->setAlternatingRowColors(false);
@@ -756,8 +831,8 @@ void MainWindow::configureToolbar()
 	options.insert("color-active", QColor(255, 255, 255));
 
 	toolBar = new QToolBar("Tool Bar");
-	//toolBar->setMaximumHeight(50);
 	toolBar->setIconSize(QSize(16, 16));
+	toolBar->setContentsMargins(0,0,0,0);
 
 	QFont projectNameFont = projectName->font();
 	projectNameFont.setPixelSize(24);
@@ -772,6 +847,19 @@ void MainWindow::configureToolbar()
 		"QLineEdit{background: rgba(0,0,0,0); border-radius: 3px; padding-left: 5px; color: rgba(255,255,255,.8); }"
 		"QLineEdit:hover{ background : rgba(21,21,21,1); color: rgba(255,255,255,1);}"
 	);
+
+	connect(projectName, &QLineEdit::textEdited, [=](const QString text) {
+
+		currentProjectShader->setData(Qt::DisplayRole, text);
+		currentProjectShader->setData(Qt::UserRole, text);
+		newName = text;
+	});
+
+	connect(projectName, &QLineEdit::editingFinished, [=]() {
+		//update finished, update view;
+		saveShader();
+		renameShader();
+	});
 
 
 	toolBar->addWidget(projectName);
@@ -805,21 +893,21 @@ void MainWindow::configureToolbar()
 
 	this->addToolBar(toolBar);
 
-	connect(actionSave, &QAction::triggered, this, &MainWindow::saveGraph);
+	connect(actionSave, &QAction::triggered, this, &MainWindow::saveShader);
 	//connect(actionExport, &QAction::triggered, this, &MainWindow::exportGraph);
 	//connect(actionNew, &QAction::triggered, this, &MainWindow::createNewGraph);
 
 
 
 	toolBar->setStyleSheet(
-		"QToolBar{background: rgba(48,48,48, 1); spacing : 8px; padding: 2px; border: .5px solid rgba(20,20,20, .8); }"
-		"QToolBar::handle:horizontal { image: url(:/icons/thandleh.png); width: 24px; margin-left: -6px; }"
-		"QToolBar::handle:vertical { image: url(:/icons/thandlev.png); height: 24px;}"
-		" QToolBar::separator { background: rgba(0,0,0,.2); width: 1px; height : 30px;}"
-		"QToolBar::separator:horizontal { background: #272727; width: 1px; margin-left: 6px; margin-right: 6px;} "
-		"QToolButton { border-radius: 3px; background: rgba(33,33,33, 1); color: rgba(250,250,250, 1); border : 1px solid rgba(20,20,20, .5); font: 19px; padding: 7px 9px;} "
-		"QToolButton:hover{ background: rgba(48,48,48, 1); } "
-		"QToolButton:checked{ background: rgba(50,150,250,1); }"
+		"QToolBar{background: rgba(48,48,48, 1); border: .5px solid rgba(20,20,20, .8); }"
+	//	"QToolBar::handle:horizontal { image: url(:/icons/thandleh.png); width: 24px; margin-left: -6px; }"
+	//	"QToolBar::handle:vertical { image: url(:/icons/thandlev.png); height: 24px;}"
+	//	"QToolBar::separator { background: rgba(0,0,0,.2); width: 1px; height : 30px;}"
+	//	"QToolBar::separator:horizontal { background: #272727; width: 1px; margin-left: 6px; margin-right: 6px;} "
+	//	"QToolButton { border-radius: 3px; background: rgba(33,33,33, 1); color: rgba(250,250,250, 1); border : 1px solid rgba(20,20,20, .5); font: 19px; padding: 7px 9px;} "
+	//	"QToolButton:hover{ background: rgba(48,48,48, 1); } "
+	//	"QToolButton:checked{ background: rgba(50,150,250,1); }"
 	);
 
 	empty->setStyleSheet(
@@ -883,33 +971,33 @@ void MainWindow::setNodeLibraryItem(QListWidgetItem *item, NodeLibraryItem *tile
 	wid->addItem(item);
 }
 
-void MainWindow::createNewGraph()
+bool MainWindow::createNewGraph(bool loadNewGraph)
 {
 	//TODO get presets from database
 	list.clear();
-	for (int i = 0; i < 3; i++) {
-		nodeGraphPreset will;
-		will.name = "willroy" + QString::number(i);
-		will.title = "will" + QString::number(i);
-		list.append(will);
-	}
 
+	if (loadNewGraph) {
+		for (int i = 0; i < 3; i++) {
+			nodeGraphPreset will;
+			will.name = "willroy" + QString::number(i);
+			will.title = "will" + QString::number(i);
+			list.append(will);
+		}
+	}
 	CreateNewDialog node(list);
 	node.exec();
 
-	qDebug() << node.result();
-
 	if (node.result() == QDialog::Accepted) {
-
 		auto shaderName = node.getName();
 		auto shaderType = node.getType();
 		auto shaderTemplateName = node.getTemplateName();
-		createShader(&shaderName,&shaderType,&shaderTemplateName);
+		createShader(&shaderName, &shaderType, &shaderTemplateName, loadNewGraph);
+		return true;
 	}
 
-	
-}
+	return false;
 
+}
 
 void MainWindow::updateAssetDock()
 {
@@ -917,9 +1005,8 @@ void MainWindow::updateAssetDock()
 #if(EFFECT_BUILD_AS_LIB)
 		for (const auto &asset : dataBase->fetchAssets())  //dp something{
 		{
-			qDebug() << asset.projectGuid;
 			if (asset.projectGuid == "" && asset.type == static_cast<int>(ModelTypes::Shader)) {
-
+				 
 				auto item = new QListWidgetItem;
 				item->setText(asset.name);
 				item->setFlags(item->flags() | Qt::ItemIsEditable);
@@ -927,17 +1014,13 @@ void MainWindow::updateAssetDock()
 				item->setIcon(QIcon(":/icons/icons8-file-72.png"));
 				item->setTextAlignment( Qt::AlignHCenter | Qt::AlignBottom);
 
-
-				auto doc = QJsonDocument::fromBinaryData(asset.asset);
-				auto obj = doc.object();
-				auto name = obj["name"].toString();
-				qDebug() << name;
-
+				item->setData(Qt::UserRole, asset.name);
+				item->setData(Qt::DisplayRole, asset.name);
 				item->setData(MODEL_GUID_ROLE, asset.guid);
-				item->setData(MODEL_PARENT_ROLE, asset.parent);
-				item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
+				//item->setData(MODEL_PARENT_ROLE, asset.parent);
+				//item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
 				item->setData(MODEL_TYPE_ROLE, asset.type);
-				item->setData(MODEL_GRAPH, obj["MODEL_GRAPH"].toObject());
+				//item->setData(MODEL_GRAPH, obj["MODEL_GRAPH"].toObject());
 
 				effects->addItem(item);
 			}
@@ -953,6 +1036,19 @@ void MainWindow::setAssetWidgetDatabase(Database * db)
 #endif
 }
 
+void MainWindow::renameShader()
+{
+#if(EFFECT_BUILD_AS_LIB)
+	dataBase->renameAsset(currentProjectShader->data(MODEL_GUID_ROLE).toString(), currentProjectShader->data(Qt::DisplayRole).toString());
+#else
+	auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/");
+	if (!QDir(filePath).exists()) return;
+	auto shaderFileOld = new QFile(filePath + oldName);
+	auto shaderFileNew = new QFile(filePath + newName);
+	QDir().rename(shaderFileOld->fileName() , shaderFileNew->fileName());
+	
+#endif
+}
 
 bool MainWindow::eventFilter(QObject * watched, QEvent * event)
 {
@@ -1001,8 +1097,6 @@ bool MainWindow::eventFilter(QObject * watched, QEvent * event)
 
 	return QObject::eventFilter(watched, event);
 }
-
-
 
 GraphNodeScene *MainWindow::createNewScene()
 {
@@ -1073,6 +1167,12 @@ GraphNodeScene *MainWindow::createNewScene()
 		}
     });
 
+	connect(scene, &GraphNodeScene::loadGraph, [=](QListWidgetItem *item) {
+		currentShaderInformation.name = item->data(Qt::DisplayRole).toString();
+		currentShaderInformation.GUID = item->data(MODEL_GUID_ROLE).toString();
+		loadGraph(currentShaderInformation);
+	});
+
     return scene;
 }
 
@@ -1094,6 +1194,29 @@ void MainWindow::regenerateShader()
 		if (shaderGen.shaderPreviews.contains(node->nodeId))
 			node->setPreviewShader(shaderGen.shaderPreviews[node->nodeId]);
 	}
+}
+
+QListWidgetItem * MainWindow::selectCorrectItemFromDrop(QString guid)
+{
+
+	for (int i = 0; i < effects->count(); i++)
+	{
+		if (guid == effects->item(i)->data(MODEL_GUID_ROLE)) {
+			return effects->item(i);
+		}
+	}
+
+#if(EFFECT_BUILD_AS_LIB)
+	for (int i = 0; i < assetWidget->assetViewWidget->count(); i++)
+	{
+		if (guid == assetWidget->assetViewWidget->item(i)->data(MODEL_GUID_ROLE)) {
+			return assetWidget->assetViewWidget->item(i);
+		}
+	}
+#endif
+
+
+	return nullptr;
 }
 
 }

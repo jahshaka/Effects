@@ -84,6 +84,11 @@ public:
 	QMenu* removeConnectionContextMenu(float x, float y);
 
 	QJsonObject serialize();
+	QListWidgetItem *currentlyEditing = Q_NULLPTR;
+	QList<QString> loadedShadersGUID;
+
+	void setList(QList<QString> list) { loadedShadersGUID = list; }
+	void updateNodeTitle(QString title, QString id);
 
 protected:
 	void wheelEvent(QGraphicsSceneWheelEvent *event)override;

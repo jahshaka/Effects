@@ -41,11 +41,8 @@ ShaderAssetWidget::ShaderAssetWidget(Database *handle) : QWidget()
 
 #if(EFFECT_BUILD_AS_LIB)
 		if (UiManager::isSceneOpen) {
-			qDebug() << "scene is open"; 
 		}
 		else {
-
-
 			noWidget = new QWidget;
 			auto noWidgetLayout = new QVBoxLayout;
 			auto lableIcon = new QLabel;
@@ -165,6 +162,10 @@ void ShaderAssetWidget::addItem(const AssetRecord & assetData)
 		return;
 	}
 
+	auto doc = QJsonDocument::fromBinaryData(assetData.asset);
+	auto obj = doc.object();
+	auto name = obj["name"].toString();
+
 	QListWidgetItem *item = new QListWidgetItem;
 	item->setData(Qt::DisplayRole, QFileInfo(assetData.name).baseName());
 	item->setData(Qt::UserRole, assetData.name);
@@ -172,6 +173,8 @@ void ShaderAssetWidget::addItem(const AssetRecord & assetData)
 	item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
 	item->setData(MODEL_GUID_ROLE, assetData.guid);
 	item->setData(MODEL_PARENT_ROLE, assetData.parent);
+	item->setData(MODEL_GRAPH, obj["MODEL_GRAPH"].toObject());
+
 
 	QPixmap thumbnail;
 	if (thumbnail.loadFromData(assetData.thumbnail, "PNG")) {
@@ -229,9 +232,6 @@ void ShaderAssetWidget::setUpDatabse(Database * db)
 		updateAssetView(Globals::project->getProjectGuid());
 		assetItemShader.selectedGuid = Globals::project->getProjectGuid();
 	}
-
-
-	
 }
 
 void ShaderAssetWidget::refresh()
@@ -334,14 +334,19 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 	
 	item->setSizeHint(currentSize);
 	
+	auto genGuid = []() {
+		auto id = QUuid::createUuid();
+		auto guid = id.toString().remove(0, 1);
+		guid.chop(1);
+		return guid;
+	};
 
-	const QString assetGuid = item->data(MODEL_GUID_ROLE).toString();
+	const QString assetGuid = genGuid();
 
-	//item->setData(MODEL_PARENT_ROLE, assetItemShader.selectedGuid);
-
+	
 	assetItemShader.wItem = item;
 
-	QString shaderName = item->text();
+	QString shaderName = item->data(Qt::DisplayRole).toString();
 
 	QStringList assetsInProject = db->fetchAssetNameByParent(assetItemShader.selectedGuid);
 
@@ -352,12 +357,11 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 	}
 
 	db->createAssetEntry(assetGuid,
-		IrisUtils::buildFileName(shaderName, "shader"),
+		item->data(Qt::DisplayRole).toString(),
 		static_cast<int>(ModelTypes::Shader),
 		assetItemShader.selectedGuid,
 		QByteArray());
 
-	item->setText(shaderName);
 	assetViewWidget->addItem(item);
 
 	QFile *templateShaderFile = new QFile(IrisUtils::getAbsoluteAssetPath("app/templates/ShaderTemplate.shader"));
@@ -373,7 +377,7 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(shaderName, "shader"));
 	assetShader->setValue(QVariant::fromValue(shaderDefinition));
 
-	db->updateAssetAsset(assetGuid, QJsonDocument(shaderDefinition).toBinaryData());
+	db->updateAssetAsset(assetGuid, QJsonDocument::fromBinaryData(fetchAsset(item->data(MODEL_GUID_ROLE).toString())).toBinaryData());
 
 	AssetManager::addAsset(assetShader);
 }
@@ -431,6 +435,11 @@ void ShaderAssetWidget::createLocalShader()
 	db->updateAssetAsset(assetGuid, QJsonDocument(shaderDefinition).toBinaryData());
 
 	AssetManager::addAsset(assetShader);
+}
+
+QByteArray ShaderAssetWidget::fetchAsset(QString string)
+{
+	return db->fetchAssetData(string);
 }
 
 bool ShaderAssetWidget::eventFilter(QObject * watched, QEvent * event)

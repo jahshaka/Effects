@@ -4,6 +4,9 @@
 
 #include <QMimeData>
 #include <QListWidgetItem>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 
 
@@ -172,6 +175,12 @@ QJsonObject GraphNodeScene::serialize()
 	return data;
 }
 
+void GraphNodeScene::updateNodeTitle(QString title, QString id)
+{
+	auto node = getNodeById(id);
+	node->setTitle(title);
+}
+
 void GraphNodeScene::wheelEvent(QGraphicsSceneWheelEvent * event)
 {
 	QGraphicsScene::wheelEvent(event);
@@ -184,40 +193,50 @@ void GraphNodeScene::drawItems(QPainter * painter, int numItems, QGraphicsItem *
 
 void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 {
-	event->accept();
+
+	if (!event->mimeData()->data("index").isNull()) {
+
+		auto prop = nodeGraph->properties.at(event->mimeData()->data("index").toInt());
+		qDebug() << prop << prop->id << prop->displayName << prop->getValue();
+		if (prop) {
+			auto propNode = new PropertyNode();
+			propNode->setProperty(prop);
+			this->addNodeModel(propNode, event->scenePos().x(), event->scenePos().y());
+			
+		}
+	}
 
 	if (0 == QString("node").compare(QString(event->mimeData()->data("MODEL_TYPE_ROLE")))) {
+		event->accept();
 
-		auto node = nodeGraph->library->createNode(event->mimeData()->text());
+		auto node = nodeGraph->library->createNode(event->mimeData()->html());
 
 			//	auto factory = nodeGraph->modelFactories[event->mimeData()->text()];
 			if (node) {
 				this->addNodeModel(node, event->scenePos().x(), event->scenePos().y());
 					return;
 			}
-		auto prop = nodeGraph->properties.at(event->mimeData()->data("index").toInt());
-			if (prop) {
-				auto propNode = new PropertyNode();
-				propNode->setProperty(prop);
-				this->addNodeModel(propNode, event->scenePos().x(), event->scenePos().y());
-				qDebug() << "no node element";
-			}
 	}
 
-	qDebug() << QVariant(event->mimeData()->data("MODEL_TYPE_ROLE")).toInt();
-	qDebug() << static_cast<int>(ModelTypes::Shader);
-
 	if (QVariant(event->mimeData()->data("MODEL_TYPE_ROLE")).toInt() == static_cast<int>(ModelTypes::Shader)) {
+		event->accept();
 
 		QListWidgetItem *item = new QListWidgetItem;
+
+	//	auto obj = QJsonDocument::fromBinaryData(event->mimeData()->data("MODEL_GRAPH")).object();
 		item->setData(Qt::DisplayRole, event->mimeData()->text());
 		item->setData(MODEL_GUID_ROLE, event->mimeData()->data("MODEL_GUID_ROLE"));
-		item->setData(MODEL_PARENT_ROLE, event->mimeData()->data("MODEL_PARENT_ROLE"));
+	/*	item->setData(MODEL_PARENT_ROLE, event->mimeData()->data("MODEL_PARENT_ROLE"));
 		item->setData(MODEL_ITEM_TYPE, event->mimeData()->data("MODEL_ITEM_TYPE"));
 		item->setData(MODEL_TYPE_ROLE, event->mimeData()->data("MODEL_TYPE_ROLE"));
-		item->setData(MODEL_GRAPH, event->mimeData()->data("MODEL_GRAPH"));
-		emit loadGraph(item);
+		item->setData(MODEL_GRAPH, obj);
+*/
+		currentlyEditing = item;
 
+		if(!loadedShadersGUID.contains(item->data(MODEL_GUID_ROLE).toString()))  loadedShadersGUID.append(item->data(MODEL_GUID_ROLE).toString());
+
+		emit loadGraph(item);
+		return;
 	}
 }
 

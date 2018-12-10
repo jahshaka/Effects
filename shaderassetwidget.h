@@ -42,7 +42,7 @@ public:
 	void createShader(QString *shaderName = Q_NULLPTR);
 	void createShader(QListWidgetItem *item);
 	void createLocalShader();
-
+	QByteArray fetchAsset(QString string);
 #if(EFFECT_BUILD_AS_LIB)
 	ShaderListWidget *assetViewWidget;
 

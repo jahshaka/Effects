@@ -5,6 +5,8 @@
 #include <QPixmap>
 #include <QScrollBar>
 #include <QDebug>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QLayout>
 #include "core/project.h"
 
@@ -83,16 +85,24 @@ void ListWidget::displayAllContents()
 
 QMimeData * ListWidget::mimeData(const QList<QListWidgetItem *> items) const
 {
+
+	
 	QMimeData *data = new QMimeData();
-	data->setText(items[0]->data(Qt::UserRole).toString());
-	qDebug() << items[0]->data(MODEL_TYPE_ROLE).toInt();
+	//set text for shader
+	data->setText(items[0]->data(Qt::DisplayRole).toString());
+	//set html for node
+	data->setHtml(items[0]->data(Qt::UserRole).toString());
+	//QJsonDocument doc(items[0]->data(MODEL_GRAPH).toJsonObject());
 	data->setData("MODEL_TYPE_ROLE", items[0]->data(MODEL_TYPE_ROLE).toByteArray());
-	data->setData("MODEL_ITEM_TYPE", items[0]->data(MODEL_ITEM_TYPE).toByteArray());
-	data->setData("MODEL_GUID_ROLE", items[0]->data(MODEL_GUID_ROLE).toByteArray());
-	data->setData("MODEL_PARENT_ROLE", items[0]->data(MODEL_PARENT_ROLE).toByteArray());
-	data->setData("MODEL_GRAPH", items[0]->data(MODEL_GRAPH).toByteArray());
-	
-	
+	//data->setData("MODEL_ITEM_TYPE", items[0]->data(MODEL_ITEM_TYPE).toByteArray());
+	//data->setData("MODEL_PARENT_ROLE", items[0]->data(MODEL_PARENT_ROLE).toByteArray());
+	//data->setData("MODEL_GRAPH", doc.toBinaryData());
+
+		data->setData("MODEL_GUID_ROLE", items[0]->data(MODEL_GUID_ROLE).toByteArray());
+
+
+
+
 	return data;
 }
 
@@ -100,6 +110,14 @@ void ListWidget::resizeEvent(QResizeEvent * event)
 {
 	QListWidget::resizeEvent(event);
 	if(isResizable) displayAllContents();
+}
+
+void ListWidget::dropEvent(QDropEvent * event)
+{
+	
+	qDebug() <<sender();
+
+	QListWidget::dropEvent(event);
 }
 
 

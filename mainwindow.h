@@ -55,17 +55,19 @@ public:
 	
 	void refreshShaderGraph();
 	void setAssetWidgetDatabase(Database *db);
-
+	void renameShader();
     ~MainWindow();
 
 	QList<nodeGraphPreset> list;
-	QListWidgetItem *currentProjectShader;
+	QListWidgetItem *currentProjectShader = Q_NULLPTR;
+	shaderInfo currentShaderInformation;
 private:
-	void saveShader(QListWidgetItem *item);
+	void saveShader();
+	void saveDefaultShader();
 	void loadShader();
     void saveGraph();
     void loadGraph();
-    void loadGraph(QListWidgetItem *item);
+    void loadGraph(shaderInfo info);
     void exportGraph();
     void restoreGraphPositions(const QJsonObject& data);
 
@@ -75,7 +77,7 @@ private:
 	void generateTileNode(QList<NodeLibraryItem*> list);
 	void addTabs();
 	void setNodeLibraryItem(QListWidgetItem *item, NodeLibraryItem *tile);
-	void createNewGraph();
+	bool createNewGraph(bool loadNewGraph = true);
 	void updateAssetDock();
 
 	bool eventFilter(QObject *watched, QEvent *event);
@@ -83,11 +85,14 @@ private:
 	void configureStyleSheet();
 	void configureProjectDock();
 	void configureAssetsDock();
-	void createShader(QString *shaderName = Q_NULLPTR, int *templateType = Q_NULLPTR, QString *templateName = Q_NULLPTR);
+	void createShader(QString *shaderName = Q_NULLPTR, int *templateType = Q_NULLPTR, QString *templateName = Q_NULLPTR, bool loadNewGraph = true);
+	void setCurrentShaderItem();
+	QByteArray fetchAsset(QString string);
 
     GraphNodeScene* createNewScene();
 	void regenerateShader();
-	
+	QListWidgetItem* selectCorrectItemFromDrop(QString guid);
+	QList<QString> loadedShadersGUID;
 private:
     Ui::MainWindow *ui;
     GraphNodeScene* scene;
@@ -124,6 +129,8 @@ private:
 	QtAwesome *fontIcons;
 	QSize defaultGridSize = QSize(70, 70);
 	QSize defaultItemSize = QSize(90, 90);
+	QString oldName;
+	QString newName;
 
 	QLineEdit *projectName;
 #if(EFFECT_BUILD_AS_LIB)

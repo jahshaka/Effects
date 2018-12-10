@@ -40,7 +40,6 @@ Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title) :
 	{
 		// socket on the right    out socket
 		int val = ratio > 1 ? 3 : 4;
-		qDebug() << val;
 		path.addRoundedRect(-radius * val , -radius / 2, dimentions, dimentions, radius, radius);
 		socketPos = QPoint(-radius * val, -radius / 2);
 	}

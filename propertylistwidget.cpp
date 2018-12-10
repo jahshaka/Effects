@@ -19,11 +19,11 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 {
 
 	font.setPointSizeF(font.pointSize() * devicePixelRatioF());
-	setFont(font);
+	//setFont(font);
 
 
     auto menu = new QMenu(this);
-	menu->setFont(font);
+//	menu->setFont(font);
 //	menu->setWindowFlag(Qt::NoDropShadowWindowHint );
 	menu->setAttribute(Qt::WA_TranslucentBackground);
     auto action = menu->addAction		("Float ");
@@ -172,7 +172,9 @@ void PropertyListWidget::addFloatProperty(FloatProperty* floatProp)
 	connect(propWidget, &BasePropertyWidget::currentWidget, [=](BasePropertyWidget *wid) {
 		currentWidget = wid;
 	});
-
+	connect(propWidget, &BasePropertyWidget::TitleChanged, [=](QString title) {
+		emit nameChanged(title, floatProp->id);
+	});
 }
 
 void PropertyListWidget::addNewVec2Property()
@@ -193,6 +195,9 @@ void PropertyListWidget::addVec2Property(Vec2Property * vec2Prop)
 	propWidget->setProp(vec2Prop);
 	connect(propWidget, &BasePropertyWidget::currentWidget, [=](BasePropertyWidget *wid) {
 		currentWidget = wid;
+	});
+	connect(propWidget, &BasePropertyWidget::TitleChanged, [=](QString title) {
+		emit nameChanged(title, vec2Prop->id);
 	});
 }
 ///////
@@ -215,6 +220,9 @@ void PropertyListWidget::addVec3Property(Vec3Property * vec3Prop)
 	propWidget->setProp(vec3Prop);
 	connect(propWidget, &BasePropertyWidget::currentWidget, [=](BasePropertyWidget *wid) {
 		currentWidget = wid;
+	});
+	connect(propWidget, &BasePropertyWidget::TitleChanged, [=](QString title) {
+		emit nameChanged(title, vec3Prop->id);
 	});
 }
 
@@ -239,6 +247,9 @@ void PropertyListWidget::addVec4Property(Vec4Property * vec4Prop)
 	connect(propWidget, &BasePropertyWidget::currentWidget, [=](BasePropertyWidget *wid) {
 		currentWidget = wid;
 	});
+	connect(propWidget, &BasePropertyWidget::TitleChanged, [=](QString title) {
+		emit nameChanged(title, vec4Prop->id);
+	});
 }
 
 ///////
@@ -262,6 +273,9 @@ void PropertyListWidget::addIntProperty(IntProperty * intProp)
 	connect(propWidget, &BasePropertyWidget::currentWidget, [=](BasePropertyWidget *wid) {
 		currentWidget = wid;
 	});
+	connect(propWidget, &BasePropertyWidget::TitleChanged, [=](QString title) {
+		emit nameChanged(title, intProp->id);
+	});
 }
 
 ////
@@ -284,5 +298,8 @@ void PropertyListWidget::addTextureProperty(TextureProperty * texProp)
 	propWidget->setProp(texProp);
 	connect(propWidget, &BasePropertyWidget::currentWidget, [=](BasePropertyWidget *wid) {
 		currentWidget = wid;
+	});
+	connect(propWidget, &BasePropertyWidget::TitleChanged, [=](QString title) {
+		emit nameChanged(title, texProp->id);
 	});
 }

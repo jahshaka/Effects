@@ -8,6 +8,8 @@
 #include <QJsonArray>
 #include <QJsonValue>
 
+#include <QDebug>
+
 void NodeGraph::addProperty(Property* prop)
 {
 	this->properties.append(prop);
