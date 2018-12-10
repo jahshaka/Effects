@@ -28,7 +28,7 @@ public:
 
 	SocketConnectionStatus status;
 	QPainterPath* p;
-	float lineThickness = 3.0;
+	float lineThickness = 5.0;
 
 	SocketConnection();
 

@@ -14,10 +14,6 @@ SocketConnection::SocketConnection()
 	pos1 = QPointF(0, 0);
 	pos2 = QPointF(0, 0);
 
-	setFlag(QGraphicsItem::ItemAcceptsInputMethod);
-	setFlag(QGraphicsItem::ItemIsSelectable);
-	setFlag(QGraphicsItem::ItemIsMovable);
-
 	auto pen = QPen(QColor(200, 200, 200));
 	pen.setBrush(QColor(50, 150, 250));
 	pen.setCapStyle(Qt::RoundCap);
