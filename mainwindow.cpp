@@ -832,7 +832,8 @@ void MainWindow::configureToolbar()
 
 	toolBar = new QToolBar("Tool Bar");
 	toolBar->setIconSize(QSize(16, 16));
-	toolBar->setContentsMargins(0,0,0,0);
+	toolBar->setContentsMargins(8,2,2,2);
+	
 
 	QFont projectNameFont = projectName->font();
 	projectNameFont.setPixelSize(24);
@@ -900,13 +901,13 @@ void MainWindow::configureToolbar()
 
 
 	toolBar->setStyleSheet(
-		"QToolBar{background: rgba(48,48,48, 1); border: .5px solid rgba(20,20,20, .8); }"
-	//	"QToolBar::handle:horizontal { image: url(:/icons/thandleh.png); width: 24px; margin-left: -6px; }"
-	//	"QToolBar::handle:vertical { image: url(:/icons/thandlev.png); height: 24px;}"
-	//	"QToolBar::separator { background: rgba(0,0,0,.2); width: 1px; height : 30px;}"
-	//	"QToolBar::separator:horizontal { background: #272727; width: 1px; margin-left: 6px; margin-right: 6px;} "
-	//	"QToolButton { border-radius: 3px; background: rgba(33,33,33, 1); color: rgba(250,250,250, 1); border : 1px solid rgba(20,20,20, .5); font: 19px; padding: 7px 9px;} "
-	//	"QToolButton:hover{ background: rgba(48,48,48, 1); } "
+		"QToolBar{background: rgba(48,48,48, 1); border: .5px solid rgba(20,20,20, .8); padding 6px 9px; spacing : 3px; }"
+		"QToolBar::handle:horizontal { image: url(:/icons/thandleh.png); width: 24px; margin-left: -6px; }"
+		"QToolBar::handle:vertical { image: url(:/icons/thandlev.png); height: 24px;}"
+		"QToolBar::separator { background: rgba(0,0,0,.2); width: 1px; height : 30px;}"
+		"QToolBar::separator:horizontal { background: #272727; width: 1px; margin-left: 6px; margin-right: 6px;} "
+		"QToolButton { border-radius: 3px; background: rgba(33,33,33, 1); color: rgba(250,250,250, 1); border : 1px solid rgba(20,20,20, .5); font: 19px; padding: 7px 9px; margin-top: 4px; } "
+		"QToolButton:hover{ background: rgba(48,48,48, 1); } "
 	//	"QToolButton:checked{ background: rgba(50,150,250,1); }"
 	);
 

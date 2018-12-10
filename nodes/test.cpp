@@ -596,8 +596,8 @@ void PropertyNode::setProperty(Property* property)
 	switch (property->type) {
 	case PropertyType::Int: {
 		this->addOutputSocket(new FloatSocketModel("int"));
-		this->widget = new WidgetInt;
-		updateStyle();
+		//this->widget = new WidgetInt;
+		//updateStyle();
 	}
 		break;
 	case PropertyType::Float:

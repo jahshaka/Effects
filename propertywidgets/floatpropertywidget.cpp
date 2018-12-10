@@ -13,6 +13,7 @@ FloatPropertyWidget::FloatPropertyWidget() : BasePropertyWidget()
 	minSpinBox = wid->minSpinBox;
 	maxSpinBox = wid->maxSpinBox;
 	stepSpinBox = wid->stepSpinBox;
+	minSpinBox->setValue(-100);
 
 
 	setConnections();
