@@ -23,8 +23,13 @@ class SceneWidget : public iris::RenderWidget
 
     iris::CameraNodePtr cam;
 
+	// template files
     QString vertString;
     QString fragString;
+
+	// generated source
+	QString generatedVertString;
+	QString generatedFragString;
 
     float renderTime;
     QList<iris::LightNodePtr> lights;
@@ -51,7 +56,10 @@ public:
 
     void render();
 
-    void updateShader(QString shaderCode);
+	void setVertexShader(QString vertShader);
+	void setFragmentShader(QString fragShader);
+	//void updateShader(QString shaderCode);
+	void updateShader();
 
     void resetRenderTime();
 

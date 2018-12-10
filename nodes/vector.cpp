@@ -3,7 +3,7 @@
 /*    REFLECT    */
 ReflectVectorNode::ReflectVectorNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeType::Vector);
 	title = "Reflect";
 	typeName = "reflect";
 	enablePreview = true;
@@ -38,7 +38,7 @@ QString ReflectVectorNode::generatePreview(ModelContext* context)
 
 SplitVectorNode::SplitVectorNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeType::Vector);
 	title = "Split Vector";
 	typeName = "splitvector";
 
@@ -64,7 +64,7 @@ void SplitVectorNode::process(ModelContext* context)
 
 ComposeVectorNode::ComposeVectorNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeType::Vector);
 	title = "Compose Vector";
 	typeName = "composevector";
 
@@ -91,7 +91,7 @@ void ComposeVectorNode::process(ModelContext* context)
 
 DistanceVectorNode::DistanceVectorNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeType::Vector);
 	title = "Distance";
 	typeName = "distance";
 	//enablePreview = true;
@@ -114,7 +114,7 @@ void DistanceVectorNode::process(ModelContext* context)
 
 DotVectorNode::DotVectorNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeType::Vector);
 	title = "Dot";
 	typeName = "dot";
 
@@ -138,7 +138,7 @@ void DotVectorNode::process(ModelContext* context)
 
 LengthVectorNode::LengthVectorNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeType::Vector);
 	title = "Length";
 	typeName = "length";
 
@@ -160,7 +160,7 @@ void LengthVectorNode::process(ModelContext* context)
 
 NormalizeVectorNode::NormalizeVectorNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeType::Vector);
 	title = "Normalize";
 	typeName = "normalize";
 

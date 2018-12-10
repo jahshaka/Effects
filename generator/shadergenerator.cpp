@@ -5,24 +5,12 @@
 #include "../graph/nodemodel.h"
 #include "../graph/connectionmodel.h"
 
-QString ShaderGenerator::generateShader(NodeGraph* graph)
+void ShaderGenerator::generateShader(NodeGraph* graph)
 {
-	auto ctx = new ShaderContext();
+	//auto masterNode = graph->getMasterNode();
 
-	auto masterNode = graph->getMasterNode();
-
-	generateProperties(graph, ctx);
-	processNode(masterNode, ctx);
-
-	auto code = ctx->generateUniforms();
-	code += ctx->generateVars();
-	code += ctx->generateFunctionDefinitions();
-
-	code += "void surface(inout Material material){\n";
-	code += ctx->generateFragmentCode(true);
-	code += "}\n";
-
-	return code;
+	this->vertexShader = this->processVertexShader(graph);
+	this->fragmentShader = this->processFragmentShader(graph);
 }
 
 void ShaderGenerator::generateProperties(NodeGraph* graph, ShaderContext* ctx)
@@ -33,6 +21,18 @@ void ShaderGenerator::generateProperties(NodeGraph* graph, ShaderContext* ctx)
 			sock->setVarName(tempVar.name);
 		}
 	}
+}
+
+void ShaderGenerator::processMasterNode(NodeModel* node, ShaderContext* ctx)
+{
+	/*
+	for (auto sock : node->inSockets) {
+		if (sock->hasConnection()) {
+			auto con = sock->getConnection();
+			processNode(con->leftSocket->getNode(), ctx);
+		}
+	}
+	*/
 }
 
 void ShaderGenerator::preprocess()
@@ -52,7 +52,8 @@ void ShaderGenerator::processNode(NodeModel* node, ShaderContext* ctx)
 
 	// generate code up until this point
 	auto previewChunk = node->generatePreview(ctx);
-	auto previewCode = ctx->generateFragmentCode(true);
+	//auto previewCode = ctx->generateFragmentCode(true);
+	auto previewCode = ctx->generateCode(true);
 	auto code = ctx->generateUniforms();
 	code += ctx->generateVars();
 	code += ctx->generateFunctionDefinitions();
@@ -70,4 +71,70 @@ void ShaderGenerator::processNode(NodeModel* node, ShaderContext* ctx)
 void ShaderGenerator::postprocess()
 {
 
+}
+
+QString ShaderGenerator::processVertexShader(NodeGraph* graph)
+{
+	auto masterNode = graph->getMasterNode();
+
+	// FRAGMENT SHADER
+	auto ctx = new ShaderContext();
+
+	// assigns temp var to each socket
+	generateProperties(graph, ctx);
+
+	// process fragment section first
+	for (auto sock : masterNode->inSockets) {
+		if (sock->hasConnection() && sock->name == "Vertex Offset") {
+			auto con = sock->getConnection();
+			processNode(con->leftSocket->getNode(), ctx);
+		}
+	}
+
+	auto vertexOffsetVar = masterNode->getValueFromInputSocket(8);
+	ctx->addCodeChunk(masterNode, "vertexOffset = " + vertexOffsetVar + ";\n");
+	
+
+	auto code = ctx->generateUniforms();
+	code += ctx->generateVars();
+	code += ctx->generateFunctionDefinitions();
+
+	code += "void surface(inout vec3 vertexOffset){\n";
+	code += "vertexOffset = " + vertexOffsetVar + ";\n";
+	code += ctx->generateCode(true);;
+	code += "}\n";
+
+	return code;
+}
+
+QString ShaderGenerator::processFragmentShader(NodeGraph* graph)
+{
+	auto masterNode = graph->getMasterNode();
+
+	// FRAGMENT SHADER
+	ShaderContext ctx;
+
+	// assigns temp var to each socket
+	generateProperties(graph, &ctx);
+
+	// process fragment section first
+	//processNode(masterNode, ctx);
+	for (auto sock : masterNode->inSockets) {
+		if (sock->hasConnection() && sock->name != "Vertex Offset") {
+			auto con = sock->getConnection();
+			processNode(con->leftSocket->getNode(), &ctx);
+		}
+	}
+	masterNode->process(&ctx);
+
+	auto code = ctx.generateUniforms();
+	code += ctx.generateVars();
+	code += ctx.generateFunctionDefinitions();
+
+	code += "void surface(inout Material material){\n";
+	code += ctx.generateCode(true);
+	code += "}\n";
+
+
+	return code;
 }

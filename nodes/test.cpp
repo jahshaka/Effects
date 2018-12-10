@@ -148,10 +148,12 @@ SurfaceMasterNode::SurfaceMasterNode()
 	addInputSocket(new Vector3SocketModel("Diffuse","vec3(1.0,1.0,1.0)"));
 	addInputSocket(new Vector3SocketModel("Specular"));
 	addInputSocket(new FloatSocketModel("Shininess"));
-	addInputSocket(new Vector3SocketModel("Normal", "v_normal"));
+	addInputSocket(new Vector3SocketModel("Normal", "vec3(0.0, 0.0, 1.0)"));
 	addInputSocket(new Vector3SocketModel("Ambient"));
 	addInputSocket(new Vector3SocketModel("Emission"));
-	addInputSocket(new FloatSocketModel("Alpha"));
+	addInputSocket(new FloatSocketModel("Alpha", "1.0f"));
+	addInputSocket(new FloatSocketModel("Alpha Cutoff"));
+	addInputSocket(new Vector3SocketModel("Vertex Offset"));
 }
 
 void SurfaceMasterNode::process(ModelContext* ctx)
@@ -167,6 +169,7 @@ void SurfaceMasterNode::process(ModelContext* ctx)
 	auto ambientVar = this->getValueFromInputSocket(4);
 	auto emissionVar = this->getValueFromInputSocket(5);
 	auto alphaVar = this->getValueFromInputSocket(6);
+	auto alphaCutoffVar = this->getValueFromInputSocket(7);
 
 	code += "material.diffuse = " + diffVar + ";\n";
 	code += "material.specular = " + specVar + ";\n";
@@ -175,6 +178,7 @@ void SurfaceMasterNode::process(ModelContext* ctx)
 	code += "material.ambient = " + ambientVar + ";\n";
 	code += "material.emission = " + emissionVar + ";\n";
 	code += "material.alpha = " + alphaVar + ";\n";
+	code += "material.alphaCutoff = " + alphaCutoffVar + ";\n";
 	//context->addCodeChunk(this, "material.diffuse = " + diffVar + ";");
 
 	//context->clear();
@@ -398,6 +402,24 @@ void WorldNormalNode::process(ModelContext* context)
 	outSockets[0]->setVarName("v_normal");
 }
 
+LocalNormalNode::LocalNormalNode()
+{
+	setNodeType(NodeType::Input);
+
+	title = "Local Normal";
+	typeName = "localNormal";
+
+	addOutputSocket(new Vector3SocketModel("Local Normal", "v_locaNormal"));
+}
+
+void LocalNormalNode::process(ModelContext* context)
+{
+	auto ctx = (ShaderContext*)context;
+	auto res = this->getOutputSocketVarName(0);
+
+	outSockets[0]->setVarName("v_localNormal");
+}
+
 TimeNode::TimeNode()
 {
 	setNodeType(NodeType::Input);
@@ -597,6 +619,7 @@ void PropertyNode::setProperty(Property* property)
 	case PropertyType::Texture:
 		this->addOutputSocket(new TextureSocketModel("texture"));
 		this->addOutputSocket(new Vector4SocketModel("rgba"));
+		this->addOutputSocket(new Vector3SocketModel("normal"));
 		/*
 		this->addOutputSocket(new FloatSocketModel("r"));
 		this->addOutputSocket(new FloatSocketModel("g"));
@@ -634,9 +657,12 @@ void PropertyNode::process(ModelContext* context)
 	if (prop->type == PropertyType::Texture) {
 		auto uv = this->getValueFromInputSocket(0);
 		auto rgba = this->getOutputSocketVarName(1);
+		auto normal = this->getOutputSocketVarName(2);
 
 		QString code = "";
-		code = rgba + " = texture(" + prop->getUniformName() + "," + uv + ");";
+		code += rgba + " = texture(" + prop->getUniformName() + "," + uv + ");\n";
+		//if (this->outSockets[2]->hasConnection())
+			code += normal + " = " + rgba + ".xyz * vec3(2) - vec3(1);";
 		ctx->addCodeChunk(this, code);
 	}
 }
@@ -766,6 +792,31 @@ void PannerNode::process(ModelContext * context)
 	auto code = res + " = " + uv + " + " + speed + " * "+ time + ";";
 	ctx->addCodeChunk(this, code);
 }
+
+
+NormalIntensityNode::NormalIntensityNode()
+{
+	setNodeType(NodeType::Input);
+
+	title = "Normal Intensity";
+	typeName = "normalintensity";
+
+	addInputSocket(new Vector3SocketModel("Normal", "vec3(0.0, 0.0, 1.0)"));
+	addInputSocket(new FloatSocketModel("Intensity", "1.0"));
+	addOutputSocket(new Vector3SocketModel("Result"));
+}
+
+void NormalIntensityNode::process(ModelContext* context)
+{
+	auto ctx = (ShaderContext*)context;
+	auto normal = this->getValueFromInputSocket(0);
+	auto intensity = this->getValueFromInputSocket(1);
+	auto res = this->getOutputSocketVarName(0);
+
+	auto code = res + " = normalize(mix(vec3(0,0,1)," + normal + "," + intensity + "));";
+	ctx->addCodeChunk(this, code);
+}
+
 
 Vector2Node::Vector2Node()
 {

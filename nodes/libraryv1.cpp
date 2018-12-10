@@ -40,6 +40,14 @@ void LibraryV1::initTest()
 		return normalNode;
 	});
 
+	// normal
+	lib->addNode("localNormal", "Local Normal", "", []()
+	{
+		auto normalNode = new LocalNormalNode();
+		return normalNode;
+	});
+
+
 	// float
 	lib->addNode("float", "Float", "", []()
 	{
@@ -83,14 +91,19 @@ void LibraryV1::initTest()
 		return new TextureSamplerNode();
 	});
 
-	//texture
+	// texture
 	lib->addNode("texture", "Texture", "", []() {
 		return new TextureNode();
 	});
 
-	//texture
+	// panner
 	lib->addNode("panner", "Panner", "", []() {
 		return new PannerNode();
+	});
+	
+	// normal intensity
+	lib->addNode("normalintensity", "Normal Intensity", "", []() {
+		return new NormalIntensityNode();
 	});
 }
 

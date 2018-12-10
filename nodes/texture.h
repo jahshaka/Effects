@@ -66,3 +66,11 @@ public:
 
 	virtual void process(ModelContext* context) override;
 };
+
+class TileUVNode : public NodeModel
+{
+public:
+	TileUVNode();
+
+	virtual void process(ModelContext* context) override;
+};

@@ -48,7 +48,10 @@ void SceneWidget::start()
 
     vertString = iris::GraphicsHelper::loadAndProcessShader(assetPath("assets/surface.vert"));
     fragString = iris::GraphicsHelper::loadAndProcessShader(assetPath("assets/surface.frag"));
-    updateShader("void surface(inout Material material){}");
+	generatedVertString = "void surface(inout vec3 vertexOffset){}";
+	generatedFragString = "void surface(inout Material material){}";
+	//updateShader("void surface(inout Material material){}");
+	updateShader();
 
     renderTime = 0;
 
@@ -170,11 +173,30 @@ void SceneWidget::render()
     mesh->draw(device);
 }
 
+void SceneWidget::setVertexShader(QString vertShader)
+{
+	generatedVertString = vertShader;
+}
+
+void SceneWidget::setFragmentShader(QString fragShader)
+{
+	generatedFragString = fragShader;
+}
+
+/*
 void SceneWidget::updateShader(QString shaderCode)
 {
     shader = iris::Shader::create(
                 vertString,
                 fragString + shaderCode);
+}
+*/
+
+void SceneWidget::updateShader()
+{
+	shader = iris::Shader::create(
+		vertString + generatedVertString,
+		fragString + generatedFragString);
 }
 
 void SceneWidget::resetRenderTime()
@@ -249,6 +271,9 @@ SceneWidget::SceneWidget():
 	rot = QQuaternion::fromEulerAngles(0, 0, 0);
 	scale = 1;
 	dragging = false;
+
+	generatedVertString = "";
+	generatedFragString = "";
 }
 
 void SceneWidget::setMaterialSettings(MaterialSettings settings)

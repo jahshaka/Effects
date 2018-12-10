@@ -89,7 +89,7 @@ QJsonObject MaterialWriter::serializeMaterial(NodeGraph* graph)
 
 	// save shadergraph
 	matObj["shadergraph"] = graph->serialize();
-	matObj["cached_fragment_shader"] = (new ShaderGenerator())->generateShader(graph);
+	//matObj["cached_fragment_shader"] = (new ShaderGenerator())->generateShader(graph);
 
 	return matObj;
 }

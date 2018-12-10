@@ -3,13 +3,13 @@
 /*    COMBINE NORMAL    */
 CombineNormalsNode::CombineNormalsNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeType::Texture);
 	title = "Combine Normals";
 	typeName = "combinenormals";
 	enablePreview = true;
 
-	addInputSocket(new Vector3SocketModel("NormalA"));
-	addInputSocket(new Vector3SocketModel("NormalB"));
+	addInputSocket(new Vector3SocketModel("NormalA", "vec3(0.0, 0.0, 1.0)"));
+	addInputSocket(new Vector3SocketModel("NormalB", "vec3(0.0, 0.0, 1.0)"));
 	addOutputSocket(new Vector3SocketModel("Result"));
 }
 
@@ -20,7 +20,7 @@ void CombineNormalsNode::process(ModelContext* context)
 	auto normalB = this->getValueFromInputSocket(1);
 	auto res = this->getOutputSocketVarName(0);
 
-	auto code = res + " = normalize((" + normalA + " + " + normalB + ")*2 - 2)";
+	auto code = res + " = normalize((" + normalA + " + " + normalB + "));";
 	ctx->addCodeChunk(this, code);
 }
 
@@ -31,7 +31,7 @@ QString CombineNormalsNode::generatePreview(ModelContext* context)
 	auto normalB = this->getValueFromInputSocket(1);
 	auto res = this->getOutputSocketVarName(0);
 
-	auto output = "preview.color = normalize((" + normalA + " + " + normalB + ")*2 - 2)";
+	auto output = "preview.color.rgb = normalize((" + normalA + " + " + normalB + "));";
 
 	return output;
 }
@@ -39,7 +39,7 @@ QString CombineNormalsNode::generatePreview(ModelContext* context)
 
 TexelSizeNode::TexelSizeNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeType::Texture);
 	title = "Texel Size";
 	typeName = "texelsize";
 	enablePreview = true;
@@ -82,7 +82,7 @@ SampleEquirectangularTextureNode::SampleEquirectangularTextureNode()
 
 FlipbookUVAnimationNode::FlipbookUVAnimationNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeType::Texture);
 	title = "FlipBook";
 	typeName = "flipbook";
 	enablePreview = true;
@@ -128,4 +128,32 @@ void FlipbookUVAnimationNode::process(ModelContext* context)
 
 	auto code = res + " = flipbook("+rows+","+columns+","+animLength+","+uv+","+time+");";
 	ctx->addCodeChunk(this, code);
+}
+
+
+TileUVNode::TileUVNode()
+{
+	setNodeType(NodeType::Texture);
+	title = "Tile UV";
+	typeName = "tileuv";
+
+	addInputSocket(new Vector2SocketModel("UV", "v_texCoord"));
+	addInputSocket(new FloatSocketModel("Rows", "1.0"));
+	addInputSocket(new FloatSocketModel("Columns", "1.0"));
+
+	addOutputSocket(new Vector2SocketModel("UV"));
+}
+
+void TileUVNode::process(ModelContext* context)
+{
+	auto ctx = (ShaderContext*)context;
+
+	auto uv = this->getValueFromInputSocket(0);
+	auto rows = this->getValueFromInputSocket(1);
+	auto columns = this->getValueFromInputSocket(2);
+	auto res = this->getOutputSocketVarName(0);
+
+	auto code = res + " = vec2(" + rows + "," + columns +") * "+uv+";";
+	ctx->addCodeChunk(this, code);
+
 }
