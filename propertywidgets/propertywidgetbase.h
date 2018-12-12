@@ -8,6 +8,8 @@
 #include <QVector4D>
 
 
+class WideRangeSpinBox;
+class WideRangeIntBox;
 class PropertyWidgetBase : public QWidget
 {
 public:
@@ -25,8 +27,8 @@ public:
 	Widget2D();
 	~Widget2D();
 
-	QDoubleSpinBox* xSpinBox;
-	QDoubleSpinBox* ySpinBox;
+	WideRangeSpinBox* xSpinBox;
+	WideRangeSpinBox* ySpinBox;
 	double x;
 	double y;
 signals:
@@ -42,9 +44,9 @@ public:
 	Widget3D();
 	~Widget3D();
 
-	QDoubleSpinBox* xSpinBox;
-	QDoubleSpinBox* ySpinBox;
-	QDoubleSpinBox* zSpinBox;
+	WideRangeSpinBox* xSpinBox;
+	WideRangeSpinBox* ySpinBox;
+	WideRangeSpinBox* zSpinBox;
 	double x;
 	double y;
 	double z;
@@ -65,10 +67,10 @@ public:
 	void setZSpinBoxConnection(std::function<void(double val)> func = nullptr);
 	void setWSpinBoxConnection(std::function<void(double val)> func = nullptr);
 
-	QDoubleSpinBox* xSpinBox;
-	QDoubleSpinBox* ySpinBox;
-	QDoubleSpinBox* zSpinBox;
-	QDoubleSpinBox* wSpinBox;
+	WideRangeSpinBox* xSpinBox;
+	WideRangeSpinBox* ySpinBox;
+	WideRangeSpinBox* zSpinBox;
+	WideRangeSpinBox* wSpinBox;
 	double x;
 	double y;
 	double z;
@@ -94,9 +96,9 @@ public:
 
 	void setIntSpinBoxConnection(std::function<void(int val)> func = nullptr);
 
-	QSpinBox* spinBox;
-	QSpinBox* maxSpinBox;
-	QSpinBox* minSpinBox;
+	WideRangeIntBox* spinBox;
+	WideRangeIntBox* maxSpinBox;
+	WideRangeIntBox* minSpinBox;
 	QSpinBox* stepSpinBox;
 	int value;
 	int min = 0;
@@ -119,9 +121,9 @@ public:
 
 	void setFloatSpinBoxConnection(std::function<void(double val)> func = nullptr);
 
-	QDoubleSpinBox* floatSpinBox;
-	QDoubleSpinBox* maxSpinBox;
-	QDoubleSpinBox* minSpinBox;
+	WideRangeSpinBox* floatSpinBox;
+	WideRangeSpinBox* maxSpinBox;
+	WideRangeSpinBox* minSpinBox;
 	QDoubleSpinBox* stepSpinBox;
 	double value;
 	double min;

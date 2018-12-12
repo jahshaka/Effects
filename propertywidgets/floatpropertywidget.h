@@ -18,9 +18,9 @@ public:
 	float getValue();
 
 private:
-	QDoubleSpinBox* floatSpinBox;
-	QDoubleSpinBox* maxSpinBox;
-	QDoubleSpinBox* minSpinBox;
+	WideRangeSpinBox* floatSpinBox;
+	WideRangeSpinBox* maxSpinBox;
+	WideRangeSpinBox* minSpinBox;
 	QDoubleSpinBox* stepSpinBox;
 	FloatProperty *prop;
 	float x = 0;

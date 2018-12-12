@@ -1,7 +1,7 @@
 #include "propertywidgetbase.h"
 #include <QLabel>
 #include <QFileDialog>
-
+#include "basepropertywidget.h"
 
 PropertyWidgetBase::PropertyWidgetBase() : QWidget()
 {
@@ -20,8 +20,8 @@ PropertyWidgetBase::~PropertyWidgetBase()
 Widget2D::Widget2D() : PropertyWidgetBase()
 {
 	x = y = 0;
-	xSpinBox = new QDoubleSpinBox;
-	ySpinBox = new QDoubleSpinBox;
+	xSpinBox = new WideRangeSpinBox;
+	ySpinBox = new WideRangeSpinBox;
 	auto xLabel = new QLabel("X");
 	auto yLabel = new QLabel("Y");
 
@@ -69,9 +69,9 @@ Widget2D::~Widget2D()
 
 Widget3D::Widget3D() : PropertyWidgetBase()
 {
-	xSpinBox = new QDoubleSpinBox;
-	ySpinBox = new QDoubleSpinBox;
-	zSpinBox = new QDoubleSpinBox;
+	xSpinBox = new WideRangeSpinBox;
+	ySpinBox = new WideRangeSpinBox;
+	zSpinBox = new WideRangeSpinBox;
 	auto xLabel = new QLabel("X");
 	auto yLabel = new QLabel("Y");
 	auto zLabel = new QLabel("Z");
@@ -119,10 +119,10 @@ Widget3D::~Widget3D()
 
 Widget4D::Widget4D() : PropertyWidgetBase()
 { 
-	xSpinBox = new QDoubleSpinBox;
-	ySpinBox = new QDoubleSpinBox;
-	zSpinBox = new QDoubleSpinBox;
-	wSpinBox = new QDoubleSpinBox;
+	xSpinBox = new WideRangeSpinBox;
+	ySpinBox = new WideRangeSpinBox;
+	zSpinBox = new WideRangeSpinBox;
+	wSpinBox = new WideRangeSpinBox;
 	auto xLabel = new QLabel("X");
 	auto yLabel = new QLabel("Y");
 	auto zLabel = new QLabel("Z");
@@ -216,9 +216,9 @@ void Widget4D::setWSpinBoxConnection(std::function<void(double val)> func)
 
 WidgetInt::WidgetInt() : PropertyWidgetBase()
 {
-	spinBox = new QSpinBox; 
-	maxSpinBox = new QSpinBox(this);
-	minSpinBox = new QSpinBox(this);
+	spinBox = new WideRangeIntBox(this); 
+	maxSpinBox = new WideRangeIntBox(this);
+	minSpinBox = new WideRangeIntBox(this);
 	stepSpinBox = new QSpinBox(this);
 
 	auto label = new QLabel("Value");
@@ -321,9 +321,9 @@ void WidgetInt::setIntSpinBoxConnection(std::function<void(int val)> func)
 
 WidgetFloat::WidgetFloat() : PropertyWidgetBase()
 {
-	floatSpinBox = new QDoubleSpinBox;
-	maxSpinBox = new QDoubleSpinBox(this);
-	minSpinBox = new QDoubleSpinBox(this);
+	floatSpinBox = new WideRangeSpinBox;
+	maxSpinBox = new WideRangeSpinBox(this);
+	minSpinBox = new WideRangeSpinBox(this);
 	stepSpinBox = new QDoubleSpinBox(this);
 
 	auto label = new QLabel("Value");

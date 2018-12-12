@@ -271,3 +271,15 @@ void HeaderObject::enterEvent(QEvent * event)
 	QWidget::enterEvent(event);
 	setCursor(Qt::OpenHandCursor);
 }
+
+WideRangeSpinBox::WideRangeSpinBox(QWidget *parent) : QDoubleSpinBox(parent)
+{
+	setRange(-FLT_MAX, FLT_MAX);
+}
+
+WideRangeIntBox::WideRangeIntBox(QWidget *parent) : QSpinBox(parent)
+{
+	setRange(-INT64_MAX, INT64_MAX);
+}
+
+

@@ -2,6 +2,7 @@
 #include <QWidget>
 #include <QPropertyAnimation>
 #include <QPushButton>
+#include <QDoubleSpinBox>
 #include <QLineEdit>
 #include <QVBoxLayout>
 #include "../properties.h"
@@ -17,6 +18,21 @@ protected:
 	void mouseReleaseEvent(QMouseEvent *event);
 	void enterEvent(QEvent *event);
 };
+
+
+class WideRangeSpinBox : public QDoubleSpinBox
+{
+public:
+	WideRangeSpinBox(QWidget *parent = Q_NULLPTR);
+};
+
+
+class WideRangeIntBox : public QSpinBox
+{
+public:
+	WideRangeIntBox(QWidget *parent = Q_NULLPTR);
+};
+
 
 class BasePropertyWidget : public QWidget
 {
