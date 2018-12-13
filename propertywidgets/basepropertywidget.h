@@ -6,6 +6,8 @@
 #include <QLineEdit>
 #include <QVBoxLayout>
 #include "../properties.h"
+#include "../misc/QtAwesome.h"
+#include "../misc/QtAwesomeAnim.h"
 
 class HeaderObject : public QWidget
 {
@@ -64,8 +66,7 @@ protected:
 private:
 	QPushButton *button;
 	QSize currentSize;
-	void animateMinimize();
-	void animateMaximize();  
+	QtAwesome *fontIcons;
 
 signals:
 	void buttonPressed();

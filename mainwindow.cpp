@@ -23,11 +23,9 @@
 #include <QByteArray>
 #include <QScrollBar>
 #include <QShortcut>
-//#include "graphtest.h"
 #include "generator/shadergenerator.h"
 #include "nodes/test.h"
 #include "materialwriter.h"
-//#include "nodelistitem.h"
 #include "graph/library.h"
 #include "nodes/libraryv1.h"
 #include <QPointer>
@@ -96,7 +94,6 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
 {
     // create and set new scene
     auto newScene = createNewScene();
-   // ui->graphicsView->setScene(newScene);
 	graphicsView->setScene(newScene);
 	graphicsView->setAcceptDrops(true);
     newScene->setNodeGraph(graph);
@@ -124,7 +121,6 @@ void MainWindow::newNodeGraph(QString *shaderName, int *templateType, QString *t
 {
     auto graph = new NodeGraph;
 	graph->setNodeLibrary(new LibraryV1());
-    //registerModels(graph);
     auto masterNode = new SurfaceMasterNode();
     graph->addNode(masterNode);
     graph->setMasterNode(masterNode);
@@ -209,9 +205,6 @@ void MainWindow::loadShader()
 
 		item->setData(Qt::DisplayRole, obj["name"].toString());
 		item->setData(MODEL_GUID_ROLE, obj["guid"].toString());
-	//	item->setData(MODEL_PARENT_ROLE, obj["MODEL_PARENT_ROLE"].toString());
-	//	item->setData(MODEL_ITEM_TYPE, obj["MODEL_ITEM_TYPE"].toString());
-	//	item->setData(MODEL_GRAPH, obj["MODEL_GRAPH"].toObject());
 		item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Material));
 		effects->addItem(item);
 	}
@@ -347,11 +340,6 @@ void MainWindow::configureStyleSheet()
 		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .0);}"
 	);
 
-
-	/*nodeContainer->setStyleSheet("QListWidget::item{background: rgba(70,70,70,1); color: rgba(200,200,200,1);}"
-		"QListView::item:selected:active {background: qlineargradient(x1 : 0, y1 : 0, x2 : 0, y2 : 1,stop : 0 #6a6ea9, stop: 1 #888dd9);}"
-		"QWidget{background: rgba(32,32,32,1);}");*/
-
 	propertyListWidget->setStyleSheet(
 		"QWidget{background:rgba(32,32,32,1);}"
 	);
@@ -443,9 +431,7 @@ void MainWindow::configureAssetsDock()
 	auto tabWidget = new QTabWidget;
 	presets = new ListWidget;
 	effects = new ListWidget;
-//	presets->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
 	effects->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
-//	presets->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
 	//tabWidget->addTab(presets, "Presets");
 	//tabWidget->addTab(effects, "My Fx");
@@ -691,7 +677,7 @@ void MainWindow::configureUI()
 {
 
 	font.setPointSizeF(font.pointSize() * devicePixelRatioF());
-	setFont(font);
+//	setFont(font);
 
 	nodeTray = new QDockWidget("Library");
 	centralWidget = new QWidget();

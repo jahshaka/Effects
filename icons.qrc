@@ -21,5 +21,6 @@
         <file>icons/math.svg</file>
         <file>icons/checked.png</file>
         <file>icons/checked.svg</file>
+        <file>icons/close.png</file>
     </qresource>
 </RCC>

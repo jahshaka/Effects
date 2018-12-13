@@ -5,13 +5,9 @@
 
 TexturePropertyWidget::TexturePropertyWidget() : BasePropertyWidget()
 {
-//	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-
-	auto mainLayout = layout;
 	wid = new WidgetTexture;
-	texture = wid->texture;
+	setWidget(wid);
 	setConnections();
-	mainLayout->addWidget(wid);
 }
 
 
@@ -42,21 +38,17 @@ QString TexturePropertyWidget::getValue()
 
 void TexturePropertyWidget::setConnections()
 {
-	connect(texture, &QPushButton::clicked, [=]() {
+	connect(wid->texture, &QPushButton::clicked, [=]() {
 		auto filename = QFileDialog::getOpenFileName();
 		graphTexture->setImage(filename);
 
 		QIcon icon(filename);
-		texture->setIcon(icon);
+		wid->texture->setIcon(icon);
 		emit valueChanged(filename);
 	});
 
 	connect(this, &TexturePropertyWidget::valueChanged, [=](QString val) {
 		setPropValue(val);
-	});
-
-	connect(this, &BasePropertyWidget::shouldSetVisible, [=](bool val) {
-		wid->setVisible(val);
 	});
 }
 

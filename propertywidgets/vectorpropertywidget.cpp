@@ -16,42 +16,19 @@ Vector2DPropertyWidget::Vector2DPropertyWidget() : BasePropertyWidget()
 {
 	x = y = 0;
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-
-	auto mainLayout = layout;
 	wid = new Widget2D(); 
 	setWidget(wid);
-	xSpinBox = wid->xSpinBox;
-	ySpinBox = wid->ySpinBox;
 	setConnections();
-	mainLayout->addWidget(wid);
-
-	
-
 }
 
 void Vector2DPropertyWidget::setConnections()
 {
-	/*
-	connect(xSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
-		x = val;
-		emit valueChanged(QVector2D(x, y));
-	});
-	connect(ySpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
-		y = val;
-		emit valueChanged(QVector2D(x, y));
-	});
-	*/
 
-	connect(wid, &Widget2D::valueChanged, [=](QVector2D vec) {
-		emit valueChanged(vec);
-	});
-
-	connect(this, &Vector2DPropertyWidget::valueChanged, [=](QVector2D val) {
+	connect(wid, &Widget2D::valueChanged, [=](QVector2D val) {
+		x = val.x();
+		y = val.y();
 		setPropValues(val);
-	});
-
-	connect(this, &BasePropertyWidget::shouldSetVisible, [=](bool val) {
-		wid->setVisible(val);
+		emit valueChanged(val);
 	});
 }
 
@@ -63,18 +40,14 @@ void Vector2DPropertyWidget::setProp(Vec2Property *prop)
 {
 	this->prop = prop;
 	displayName->setText(prop->displayName);
-	xSpinBox->setValue(prop->value.x());
-	ySpinBox->setValue(prop->value.y());
+	wid->xSpinBox->setValue(prop->value.x());
+	wid->ySpinBox->setValue(prop->value.y());
 	modelProperty = prop;
 	emit nameChanged(displayName->text());
-
 }
 
 void Vector2DPropertyWidget::setPropValues(QVector2D values) {
-	x = values.x();
-	y = values.y();
 	value = values;
-
 	prop->value.setX(x);
 	prop->value.setY(y);
 }
@@ -90,18 +63,10 @@ void Vector2DPropertyWidget::setPropValues(QVector2D values) {
 Vector3DPropertyWidget::Vector3DPropertyWidget() : BasePropertyWidget()
 {
 	x = y = z = 0;
-	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-
-	auto mainLayout = layout;
-	
+	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);	
 	wid = new Widget3D;
 	setWidget(wid);
-	xSpinBox = wid->xSpinBox;
-	ySpinBox = wid->ySpinBox;
-	zSpinBox = wid->zSpinBox;	
 	setConnections();
-	mainLayout->addWidget(wid);
-
 }
 
 
@@ -113,45 +78,27 @@ void Vector3DPropertyWidget::setProp(Vec3Property *prop)
 {
 	this->prop = prop;
 	displayName->setText(prop->displayName);
-	xSpinBox->setValue(prop->value.x());
-	ySpinBox->setValue(prop->value.y());
-	zSpinBox->setValue(prop->value.z());
+	wid->xSpinBox->setValue(prop->value.x());
+	wid->ySpinBox->setValue(prop->value.y());
+	wid->zSpinBox->setValue(prop->value.z());
 	modelProperty = prop;
 	emit nameChanged(displayName->text());
-
 }
 
 
 void Vector3DPropertyWidget::setConnections()
 {
-	connect(xSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
-		x = val;
-		emit valueChanged(QVector3D(x, y, z));
-	});
-	connect(ySpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
-		y = val;
-		emit valueChanged(QVector3D(x, y, z));
-	});
-	connect(zSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
-		z = val;
-		emit valueChanged(QVector3D(x, y, z));
-	});
-
-	connect(this, &Vector3DPropertyWidget::valueChanged, [=](QVector3D val) {
+	connect(wid, &Widget3D::valueChanged, [=](QVector3D val) {
+		x = val.x();
+		y = val.y();
+		z = val.z();
 		setPropValues(val);
-	});
-
-	connect(this, &BasePropertyWidget::shouldSetVisible, [=](bool val) {
-		wid->setVisible(val);
+		emit valueChanged(val);
 	});
 }
 
 void Vector3DPropertyWidget::setPropValues(QVector3D values) {
-	x = values.x();
-	y = values.y();
-	z = values.z();
 	value = values;
-
 	prop->value.setX(x);
 	prop->value.setY(y);
 	prop->value.setZ(z);
@@ -170,17 +117,9 @@ Vector4DPropertyWidget::Vector4DPropertyWidget() : BasePropertyWidget()
 
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-	auto mainLayout = layout;
-	
 	wid = new Widget4D;
 	setWidget(wid);
-	xSpinBox = wid->xSpinBox;
-	ySpinBox = wid->ySpinBox;
-	zSpinBox = wid->zSpinBox;
-	wSpinBox = wid->wSpinBox;
 	setConnections();
-	mainLayout->addWidget(wid);
-
 }
 
 
@@ -192,49 +131,31 @@ void Vector4DPropertyWidget::setProp(Vec4Property *prop)
 {
 	this->prop = prop;
 	displayName->setText(prop->displayName);
-	xSpinBox->setValue(prop->value.x());
-	ySpinBox->setValue(prop->value.y());
-	zSpinBox->setValue(prop->value.z());
+	wid->xSpinBox->setValue(prop->value.x());
+	wid->ySpinBox->setValue(prop->value.y());
+	wid->zSpinBox->setValue(prop->value.z());
+	wid->wSpinBox->setValue(prop->value.w());
 	modelProperty = prop;
 	emit nameChanged(displayName->text());
 }
 
 void Vector4DPropertyWidget::setConnections()
 {
-	connect(xSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
-		x = val;
-		emit valueChanged(QVector4D(x, y, z, w));
-	});
-	connect(ySpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
-		y = val;
-		emit valueChanged(QVector4D(x, y, z, w));
-	});
-	connect(zSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
-		z = val;
-		emit valueChanged(QVector4D(x, y, z, w));
-	});
-	connect(wSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
-		w = val;
-		emit valueChanged(QVector4D(x, y, z, w));
-	});
-
-	connect(this, &Vector4DPropertyWidget::valueChanged, [=](QVector4D val) {
+	connect(wid, &Widget4D::valueChanged, [=](QVector4D val) {
+		x = val.x();
+		y = val.y();
+		z = val.z();
+		w = val.w();
 		setPropValues(val);
-	});
+		emit valueChanged(val);
 
-	connect(this, &BasePropertyWidget::shouldSetVisible, [=](bool val) {
-		wid->setVisible(val);
 	});
 }
 
 
-void Vector4DPropertyWidget::setPropValues(QVector4D values) {
-	x = values.x();
-	y = values.y();
-	z = values.z();
-	w = values.w();
+void Vector4DPropertyWidget::setPropValues(QVector4D values) 
+{
 	value = values;
-
 	prop->value.setX(x);
 	prop->value.setY(y);
 	prop->value.setZ(z);

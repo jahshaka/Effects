@@ -7,8 +7,8 @@ PropertyWidgetBase::PropertyWidgetBase() : QWidget()
 {
 	layout = new QHBoxLayout;
 	setLayout(layout);
-	font.setPointSizeF(font.pointSize() * devicePixelRatioF());
-	setFont(font);
+	//font.setPointSizeF(font.pointSize() * devicePixelRatioF());
+	//setFont(font);
 }
 
 

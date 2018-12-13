@@ -3,33 +3,29 @@
 #include <QDebug>
 #include <QPainter>
 #include <QMessageBox>
+#include <QGraphicsEffect>
 
 
 BasePropertyWidget::BasePropertyWidget(QWidget * parent) : QWidget(parent)
 {
-	QFont font;
-	font.setPointSizeF(font.pointSize() * devicePixelRatioF());
-	setFont(font);
-
 
 	setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
+
+	fontIcons = new QtAwesome;
+	fontIcons->initFontAwesome();
+	
 	displayName = new QLineEdit;
 	displayName->setText("Display");
-	displayName->setFont(font);
-//	displayName->setAlignment(Qt::AlignHCenter);
 
 	button = new QPushButton;
-	button->setMaximumSize(14, 14);
-	button->setIcon(QIcon(":/images/delete-26.png"));
-	button->setIconSize(button->maximumSize());
+	button->setMaximumSize(12, 12);
+	button->setIcon(QIcon(":/icons/delete-26.png"));
 	button->setCursor(Qt::PointingHandCursor);
 
 	auto minimize = new QPushButton;
 	minimize->setMaximumSize(button->maximumSize());
 	minimize->setIcon(QIcon(":/icons/contract.png"));
-	minimize->setIconSize(button->maximumSize());
 	minimize->setCursor(Qt::PointingHandCursor);
-
 
 	auto btn = new QPushButton;
 	btn->setIcon(QIcon(":/icons/up.png"));
@@ -39,25 +35,21 @@ BasePropertyWidget::BasePropertyWidget(QWidget * parent) : QWidget(parent)
 	displayWidget->setStyleSheet("background: rgba(0,0,0,0);");
 	auto displayLayout = new QHBoxLayout;
 	displayWidget->setLayout(displayLayout);
-	/*displayLayout->addStretch();*/ 
-//	displayLayout->addWidget(btn);
+	displayLayout->setSpacing(0);
 	displayLayout->addWidget(displayName);
 	displayLayout->addStretch();
 	displayLayout->addWidget(minimize);
-	displayLayout->addSpacing(2);
+	displayLayout->addSpacing(8 * devicePixelRatio());
 	displayLayout->addWidget(button);
 	displayLayout->addSpacing(4);
-	displayLayout->setContentsMargins(5, 1, 2, 1);
-	displayWidget->setCursor(Qt::OpenHandCursor);
+	displayLayout->setContentsMargins(0, 1, 2, 1);
 
-
-
-
-	layout = new QVBoxLayout;
+	layout = new QVBoxLayout; 
 	auto mainLayout = new QVBoxLayout;
 	mainLayout->addWidget(displayWidget);
 	mainLayout->addLayout(layout);
 	mainLayout->setContentsMargins(5, 0, 5, 0);
+	
 
 	setLayout(mainLayout);
 
@@ -75,44 +67,28 @@ BasePropertyWidget::BasePropertyWidget(QWidget * parent) : QWidget(parent)
 		else {
 			qDebug() << "Yes was *not* clicked";
 		}
-
-
 		emit buttonPressed();
 	});
+
 	connect(minimize, &QPushButton::clicked, [=]() {
 		if (minimized) {
 			// maximize
-			emit shouldSetVisible(minimized);
 			minimize->setIcon(QIcon(":/icons/contract.png"));
 			minimized = !minimized;
-
+			contentWidget->setVisible(true);
 		}
 		else {
 			// minimize
-			emit shouldSetVisible(minimized);
 			minimize->setIcon(QIcon(":/icons/expand.png"));
-
 			minimized = !minimized;
+			contentWidget->setVisible(false);
 		}
 	});
-	connect(btn, &QPushButton::clicked, [=]() {
-		if (minimized) {
-			// maximize
-			emit shouldSetVisible(minimized);
-			minimize->setIcon(QIcon(":/icons/up.png"));
-			minimized = !minimized;
+	
 
-		}
-		else {
-			// minimize
-			emit shouldSetVisible(minimized);
-			minimize->setIcon(QIcon(":/icons/down.png"));
-
-			minimized = !minimized;
-		}
-	});
-
-	displayName->setStyleSheet("QLineEdit{ background :  #292929}");
+	displayName->setStyleSheet("QLineEdit{ background : rgba(29,29,29,0); border-bottom : 2px solid rgba(18,18,18,1); }"
+								"QLineEdit:hover{ background: rgba(32,32,32,1); border: 1px solid rgba(0,0,0,1);}"
+	);
 
 	setStyleSheet("QMenu{	background: rgba(26,26,26,.9); color: rgba(250,250, 250,.9);}"
 		"QMenu::item{padding: 2px 5px 2px 20px;	}"
@@ -145,35 +121,7 @@ BasePropertyWidget::BasePropertyWidget(QWidget * parent) : QWidget(parent)
 		"QPushButton{padding : 3px; }"
 	);
 
-	auto visibilityBtn = new QPushButton;
-	visibilityBtn->setText(tr("minimize"));
-	visibilityBtn->setCursor(Qt::PointingHandCursor);
-	connect(visibilityBtn, &QPushButton::clicked, [=]() {
-		if (minimized) {
-			// maximize
-		//	emit shouldSetVisible(minimized);
-			visibilityBtn->setText(tr("minimize"));
-			minimized = !minimized;
-			animateMaximize();
-		}
-		else {
-			 // minimize
-		//	emit shouldSetVisible(minimized);
-			visibilityBtn->setText(tr("maximize"));
-			minimized = !minimized;
-	
 
-		}
-	});
-
-//	mainLayout->addWidget(visibilityBtn);
-
-	visibilityBtn->setStyleSheet(""
-		"QPushButton{ background: rgba(23,23,23,1); border: .5px solid rgba(0,0,0,1); }"
-		"QPushButton:hover{  border: .5px solid rgba(50,150,250,.2); }"
-	);
-
-	
 }
 
 
@@ -185,32 +133,10 @@ BasePropertyWidget::~BasePropertyWidget()
 void BasePropertyWidget::setWidget(QWidget * widget)
 {
 	contentWidget = widget;
-	anim = new QPropertyAnimation(contentWidget, "size");
-	currentSize = contentWidget->size();
+	layout->addWidget(contentWidget);
 
-	anim->setDuration(300);
-	anim->setEasingCurve(QEasingCurve::BezierSpline);
-	connect(anim, &QPropertyAnimation::valueChanged, [=]() {
-		update();
-		contentWidget->update();
-	});
 }
 
-
-void BasePropertyWidget::animateMinimize()
-{
-	currentSize = contentWidget->size();
-	anim->setStartValue(currentSize);
-	anim->setEndValue(QSize(currentSize.width(), 0));
-	anim->start();
-}
-
-void BasePropertyWidget::animateMaximize()
-{
-	anim->setEndValue(currentSize);
-	anim->setStartValue(QSize(currentSize.width(), 0));
-	anim->start();
-}
 
 void BasePropertyWidget::paintEvent(QPaintEvent * event)
 {
@@ -222,12 +148,12 @@ void BasePropertyWidget::paintEvent(QPaintEvent * event)
 
 	// draw title border
 	QPainterPath path;
-	path.addRoundedRect(0, 0, width(), displayWidget->height(), 5, 5);
+	path.addRect(0, 0, width(), displayWidget->height());
 	painter.fillPath(path, QColor(22, 22, 22));
 
 	//draw outline
-	painter.setPen(QPen(QColor(70, 70, 70), 2));
-	painter.drawRoundedRect(0, 0, width(), height(),5,5);
+	painter.setPen(QPen(QColor(22,22,22), 4));
+	painter.drawRect(0, 0, width(), height());
 
 }
 
@@ -252,6 +178,7 @@ void BasePropertyWidget::mouseReleaseEvent(QMouseEvent * event)
 HeaderObject::HeaderObject() : QWidget()
 {
 	setCursor(Qt::OpenHandCursor);
+	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 }
 
 void HeaderObject::mousePressEvent(QMouseEvent * event)
@@ -279,7 +206,7 @@ WideRangeSpinBox::WideRangeSpinBox(QWidget *parent) : QDoubleSpinBox(parent)
 
 WideRangeIntBox::WideRangeIntBox(QWidget *parent) : QSpinBox(parent)
 {
-	setRange(-INT64_MAX, INT64_MAX);
+	setRange(-INT32_MAX, INT32_MAX);
 }
 
 
