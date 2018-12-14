@@ -278,7 +278,7 @@ void ShaderAssetWidget::createShader(QString *shaderName)
 {
 	QString newShader;
 	if (shaderName)	 newShader = *shaderName;
-	else   newShader = "Untitled Shader";
+	else   newShader = "Untitled Material";
 	QListWidgetItem *item = new QListWidgetItem;
 	item->setFlags(item->flags() | Qt::ItemIsEditable);
 	item->setSizeHint(currentSize);
@@ -290,7 +290,7 @@ void ShaderAssetWidget::createShader(QString *shaderName)
 	item->setData(MODEL_GUID_ROLE, assetGuid);
 	item->setData(MODEL_PARENT_ROLE, assetItemShader.selectedGuid);
 	item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
-	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Shader));
+	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Material));
 	assetItemShader.wItem = item;
 
 
@@ -304,7 +304,7 @@ void ShaderAssetWidget::createShader(QString *shaderName)
 
 	db->createAssetEntry(assetGuid,
 		IrisUtils::buildFileName(newShader, "shader"),
-		static_cast<int>(ModelTypes::Shader),
+		static_cast<int>(ModelTypes::Material),
 		assetItemShader.selectedGuid,
 		QByteArray());
 
@@ -318,8 +318,8 @@ void ShaderAssetWidget::createShader(QString *shaderName)
 	shaderDefinition["name"] = newShader;
 	shaderDefinition.insert("guid", assetGuid);
 
-	auto assetShader = new AssetShader;
-	assetShader->fileName = IrisUtils::buildFileName(newShader, "shader");
+	auto assetShader = new AssetMaterial;
+	assetShader->fileName = IrisUtils::buildFileName(newShader, "material");
 	assetShader->assetGuid = assetGuid;
 	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(newShader, "shader"));
 	assetShader->setValue(QVariant::fromValue(shaderDefinition));
@@ -353,13 +353,13 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 
 	//// If we encounter the same file, make a duplicate...
 	int increment = 1;
-	while (assetsInProject.contains(IrisUtils::buildFileName(shaderName, "shader"))) {
+	while (assetsInProject.contains(IrisUtils::buildFileName(shaderName, "material"))) {
 		shaderName = QString(newShader + " %1").arg(QString::number(increment++));
 	}
 
 	db->createAssetEntry(assetGuid,
 		item->data(Qt::DisplayRole).toString(),
-		static_cast<int>(ModelTypes::Shader),
+		static_cast<int>(ModelTypes::Material),
 		assetItemShader.selectedGuid,
 		QByteArray());
 
@@ -372,8 +372,8 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 	shaderDefinition["name"] = shaderName;
 	shaderDefinition.insert("guid", assetGuid);
 
-	auto assetShader = new AssetShader;
-	assetShader->fileName = IrisUtils::buildFileName(shaderName, "shader");
+	auto assetShader = new AssetMaterial;
+	assetShader->fileName = IrisUtils::buildFileName(shaderName, "material");
 	assetShader->assetGuid = assetGuid;
 	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(shaderName, "shader"));
 	assetShader->setValue(QVariant::fromValue(shaderDefinition));
@@ -397,7 +397,7 @@ void ShaderAssetWidget::createLocalShader()
 	item->setData(MODEL_GUID_ROLE, assetGuid);
 	item->setData(MODEL_PARENT_ROLE, assetItemShader.selectedGuid);
 	item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
-	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Shader));
+	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Material));
 
 	assetItemShader.wItem = item;
 
@@ -407,13 +407,13 @@ void ShaderAssetWidget::createLocalShader()
 
 	//// If we encounter the same file, make a duplicate...
 	int increment = 1;
-	while (assetsInProject.contains(IrisUtils::buildFileName(shaderName, "shader"))) {
+	while (assetsInProject.contains(IrisUtils::buildFileName(shaderName, "material"))) {
 		shaderName = QString(newShader + " %1").arg(QString::number(increment++));
 	}
 
 	db->createAssetEntry(assetGuid,
-		IrisUtils::buildFileName(shaderName, "shader"),
-		static_cast<int>(ModelTypes::Shader),
+		IrisUtils::buildFileName(shaderName, "material"),
+		static_cast<int>(ModelTypes::Material),
 		assetItemShader.selectedGuid,
 		QByteArray());
 
@@ -428,9 +428,9 @@ void ShaderAssetWidget::createLocalShader()
 	shaderDefinition.insert("guid", assetGuid);
 
 	auto assetShader = new AssetShader;
-	assetShader->fileName = IrisUtils::buildFileName(shaderName, "shader");
+	assetShader->fileName = IrisUtils::buildFileName(shaderName, "material");
 	assetShader->assetGuid = assetGuid;
-	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(shaderName, "shader"));
+	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(shaderName, "material"));
 	assetShader->setValue(QVariant::fromValue(shaderDefinition));
 
 	db->updateAssetAsset(assetGuid, QJsonDocument(shaderDefinition).toBinaryData());

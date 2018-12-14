@@ -26,6 +26,7 @@
 #include "generator/shadergenerator.h"
 #include "nodes/test.h"
 #include "materialwriter.h"
+#include "core/materialhelper.h"
 #include "graph/library.h"
 #include "nodes/libraryv1.h"
 #include <QPointer>
@@ -634,7 +635,7 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 
 	item->setData(MODEL_GUID_ROLE, assetGuid);
 	item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
-	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Shader));
+	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Material));
 	item->setData(Qt::DisplayRole, newShader);
 
 	currentProjectShader = item;
@@ -683,15 +684,16 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 
 	
 	//auto shaderDefinition = writer.serializeMaterial(nodeGraph);
-	auto shaderDefinition = scene->serialize();
+	//auto shaderDefinition = scene->serialize();
+	auto shaderDefinition = MaterialHelper::serialize(scene);
 
 	dataBase->createAssetEntry(QString::null, assetGuid,
-		IrisUtils::buildFileName(newShader, "shader"),
-		static_cast<int>(ModelTypes::Shader), QJsonDocument(shaderDefinition).toBinaryData());
+		IrisUtils::buildFileName(newShader, "material"),
+		static_cast<int>(ModelTypes::Material), QJsonDocument(shaderDefinition).toBinaryData());
 
 
-	auto assetShader = new AssetShader;
-	assetShader->fileName = IrisUtils::buildFileName(newShader, "shader");
+	auto assetShader = new AssetMaterial;
+	assetShader->fileName = IrisUtils::buildFileName(newShader, "material");
 	assetShader->assetGuid = assetGuid;
 	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(newShader, "shader"));
 	assetShader->setValue(QVariant::fromValue(shaderDefinition));
@@ -1032,7 +1034,7 @@ void MainWindow::updateAssetDock()
 #if(EFFECT_BUILD_AS_LIB)
 		for (const auto &asset : dataBase->fetchAssets())  //dp something{
 		{
-			if (asset.projectGuid == "" && asset.type == static_cast<int>(ModelTypes::Shader)) {
+			if (asset.projectGuid == "" && asset.type == static_cast<int>(ModelTypes::Material)) {
 				 
 				auto item = new QListWidgetItem;
 				item->setText(asset.name);
