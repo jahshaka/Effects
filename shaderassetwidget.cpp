@@ -31,6 +31,7 @@ ShaderAssetWidget::ShaderAssetWidget(Database *handle) : QWidget()
 	breadCrumbsWidget->setLayout(breadCrumbs);
 
 	assetViewWidget = new ShaderListWidget;
+    assetViewWidget->shaderContextMenuAllowed = true;
 	assetViewWidget->viewport()->installEventFilter(this);
 	connect(assetViewWidget, &ShaderListWidget::itemDropped, [=](QListWidgetItem *item) {
 		createShader(item);

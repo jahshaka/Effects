@@ -194,8 +194,7 @@ void MainWindow::loadShader()
 		file.close();
 
 		auto obj = doc.object();
-		qDebug() << obj["name"].toString();
-		if (obj["name"].toString() == "") continue;
+        if (obj["guid"].toString() == "") continue;
 
 		QListWidgetItem *item = new QListWidgetItem;
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
@@ -264,8 +263,7 @@ void MainWindow::loadGraph(shaderInfo info)
 		file.close();
 
 		auto obj1 = doc.object();
-		if (obj1["name"].toString() == info.name) {
-			qDebug() << obj1;
+        if (obj1["guid"].toString() == info.GUID) {
 			obj = obj1;
 			break;
 		}
@@ -316,6 +314,36 @@ void MainWindow::restoreGraphPositions(const QJsonObject &data)
         node->setX(nodeObj["x"].toDouble());
         node->setY(nodeObj["y"].toDouble());
     }
+}
+
+bool MainWindow::deleteShader(QString guid)
+{
+
+#if(EFFECT_BUILD_AS_LIB)
+
+    return dataBase->deleteAsset(guid);
+#else
+
+    auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/");
+    QDirIterator it(filePath);
+
+    while (it.hasNext()) {
+
+        QFile file(it.next());
+        file.open(QIODevice::ReadOnly);
+        auto doc = QJsonDocument::fromJson(file.readAll());
+        file.close();
+
+        auto obj = doc.object();
+        if (obj["guid"].toString() == "") continue;
+        if(obj["guid"].toString() == guid){
+           return file.remove();
+        }
+
+    }
+    return false;
+
+#endif
 }
 
 
@@ -432,8 +460,9 @@ void MainWindow::configureAssetsDock()
 	presets = new ListWidget;
 	effects = new ListWidget;
 	effects->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+    effects->shaderContextMenuAllowed = true;
 
-	//tabWidget->addTab(presets, "Presets");
+    //tabWidget->addTab(presets, "Presets");
 	//tabWidget->addTab(effects, "My Fx");
 	//tabWidget->setStyleSheet(tabbedWidget->styleSheet());
 
@@ -549,11 +578,36 @@ void MainWindow::configureAssetsDock()
 		loadGraph(currentShaderInformation);
 	});
 
+    connect(effects, &QListWidget::itemPressed, [=](QListWidgetItem *item){
+        pressedShaderInfo.name = item->data(Qt::DisplayRole).toString();
+        pressedShaderInfo.GUID = item->data(MODEL_GUID_ROLE).toString();
+    });
+
 
 	layout->addWidget(scrollView);
 	layout->addWidget(buttonBar);
 	assetsDock->setWidget(holder);
 	assetsDock->setStyleSheet(nodeTray->styleSheet());
+
+
+    connect(effects, &ListWidget::renameShader, [=](QString guid){
+
+    });
+    connect(effects, &ListWidget::exportShader, [=](QString guid){
+        exportGraph();
+    });
+    connect(effects, &ListWidget::editShader, [=](QString guid){
+        loadGraph({guid, ""});
+    });
+    connect(effects, &ListWidget::deleteShader, [=](QString guid){
+        deleteShader(guid);
+    });
+    connect(effects, &ListWidget::createShader, [=](QString guid){
+        createNewGraph();
+    });
+    connect(effects, &ListWidget::importShader, [=](QString guid){
+
+    });
 
 	updateAssetDock();
 }
@@ -697,9 +751,6 @@ void MainWindow::configureUI()
 	splitView = new QSplitter;
 	projectName = new QLineEdit;
 
-
-
-
 	nodeTray->setAllowedAreas(Qt::AllDockWidgetAreas);
 	textWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	displayWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
@@ -719,15 +770,11 @@ void MainWindow::configureUI()
 	assetWidget = new ShaderAssetWidget;
 	addDockWidget(Qt::LeftDockWidgetArea, projectDock, Qt::Vertical);
 #endif
-	//addDockWidget(Qt::LeftDockWidgetArea, nodeTray, Qt::Vertical);
 	addDockWidget(Qt::LeftDockWidgetArea, assetsDock, Qt::Vertical);
 	addDockWidget(Qt::RightDockWidgetArea, textWidget, Qt::Vertical);
 	addDockWidget(Qt::RightDockWidgetArea, displayWidget, Qt::Vertical);
 	addDockWidget(Qt::RightDockWidgetArea, materialSettingsDock, Qt::Vertical);
 	addDockWidget(Qt::LeftDockWidgetArea, propertyWidget, Qt::Vertical);
-
-	//QMainWindow::tabifyDockWidget(propertyWidget, materialSettingsWidget);
-
 
 
 	textWidget->setWidget(textEdit);
@@ -735,13 +782,6 @@ void MainWindow::configureUI()
 	propertyListWidget->setMinimumHeight(400);
 	
 	QSize currentSize(100, 100);
-	
-	// main left dock widget
-	//auto container = new QWidget;
-	//auto containerLayout = new QVBoxLayout;
-	//container->setLayout(containerLayout);
-
-	
 
 	auto assetViewToggleButtonGroup = new QButtonGroup;
 	auto toggleIconView = new QPushButton(tr("Icon"));
