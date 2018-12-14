@@ -27,8 +27,6 @@ public:
 
 
 private:
-	QDoubleSpinBox* xSpinBox;
-	QDoubleSpinBox* ySpinBox;
 	Vec2Property *prop;
 	double x;
 	double y;
@@ -59,11 +57,7 @@ public:
 
 
 private:
-	QDoubleSpinBox* xSpinBox;
-	QDoubleSpinBox* ySpinBox;
-	QDoubleSpinBox* zSpinBox;
 	Vec3Property *prop;
-	//QLineEdit *displayName;
 	double x;
 	double y;
 	double z;
@@ -92,12 +86,7 @@ public:
 	void setProp(Vec4Property *prop);
 
 private:
-	QDoubleSpinBox* xSpinBox;
-	QDoubleSpinBox* ySpinBox;
-	QDoubleSpinBox* zSpinBox;
-	QDoubleSpinBox* wSpinBox;
 	Vec4Property *prop;
-	//QLineEdit *displayName;
 	double x;
 	double y;
 	double z;

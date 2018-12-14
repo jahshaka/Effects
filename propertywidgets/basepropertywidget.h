@@ -2,9 +2,12 @@
 #include <QWidget>
 #include <QPropertyAnimation>
 #include <QPushButton>
+#include <QDoubleSpinBox>
 #include <QLineEdit>
 #include <QVBoxLayout>
 #include "../properties.h"
+#include "../misc/QtAwesome.h"
+#include "../misc/QtAwesomeAnim.h"
 
 class HeaderObject : public QWidget
 {
@@ -17,6 +20,21 @@ protected:
 	void mouseReleaseEvent(QMouseEvent *event);
 	void enterEvent(QEvent *event);
 };
+
+
+class WideRangeSpinBox : public QDoubleSpinBox
+{
+public:
+	WideRangeSpinBox(QWidget *parent = Q_NULLPTR);
+};
+
+
+class WideRangeIntBox : public QSpinBox
+{
+public:
+	WideRangeIntBox(QWidget *parent = Q_NULLPTR);
+};
+
 
 class BasePropertyWidget : public QWidget
 {
@@ -48,8 +66,7 @@ protected:
 private:
 	QPushButton *button;
 	QSize currentSize;
-	void animateMinimize();
-	void animateMaximize();  
+	QtAwesome *fontIcons;
 
 signals:
 	void buttonPressed();

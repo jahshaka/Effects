@@ -18,15 +18,9 @@ public:
 	int getValue();
 
 private:
-	QSpinBox* intSpinBox;
-	QSpinBox* maxSpinBox;
-	QSpinBox* minSpinBox;
-	QSpinBox* stepSpinBox;
+	
 	IntProperty *prop;
 	int x = 0;
-	int min =0;
-	int max =0;
-	int step =0;
 	WidgetInt *wid;
 	void setConnections();
 

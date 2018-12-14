@@ -18,15 +18,8 @@ public:
 	float getValue();
 
 private:
-	QDoubleSpinBox* floatSpinBox;
-	QDoubleSpinBox* maxSpinBox;
-	QDoubleSpinBox* minSpinBox;
-	QDoubleSpinBox* stepSpinBox;
 	FloatProperty *prop;
 	float x = 0;
-	float min =0;
-	float max =0;
-	float step =0;
 	WidgetFloat *wid;
 	void setConnections();
 protected:

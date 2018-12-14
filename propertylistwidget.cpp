@@ -18,12 +18,9 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
     QWidget(parent)
 {
 
-	font.setPointSizeF(font.pointSize() * devicePixelRatioF());
-	//setFont(font);
 
 
     auto menu = new QMenu(this);
-//	menu->setFont(font);
 //	menu->setWindowFlag(Qt::NoDropShadowWindowHint );
 	menu->setAttribute(Qt::WA_TranslucentBackground);
     auto action = menu->addAction		("Float ");
@@ -43,10 +40,10 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 	auto contentWidget = new QWidget;
 	auto scrollLayout = new QHBoxLayout;
 
-	QPushButton *pushButton = new QPushButton(QIcon(":/icons/add.png"), "  Add Property");
+	QPushButton *pushButton = new QPushButton(QIcon(":/icons/add_object.svg"), "  Add Property");
 	pushButton->setCursor(Qt::PointingHandCursor);
 	pushButton->setMinimumWidth(110);
-	pushButton->setFont(font);
+
 	menu->setFixedWidth(pushButton->width()/5.2);
 	QObject::connect(pushButton, &QPushButton::released, [=]() {
 		QPoint pos = this->mapToGlobal(pushButton->pos());
@@ -100,7 +97,7 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 	);
 
 	pushButton->setStyleSheet(
-		"QPushButton{ background: #333; color: #DEDEDE; border : 0; padding: 4px 16px; }"
+		"QPushButton{ background: #333; color: #fefefe; border : 0; padding: 4px 16px; }"
 		"QPushButton:hover{ background-color: #555; }"
 		"QPushButton:pressed{ background-color: #444; }"
 		"QPushButton:disabled{ color: #444; }"
