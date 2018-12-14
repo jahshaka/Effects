@@ -26,7 +26,7 @@ ShaderListWidget::~ShaderListWidget()
 void ShaderListWidget::dropEvent(QDropEvent * event)
 {
 
-	if(event->mimeData()->data("MODEL_TYPE_ROLE").toInt() == (int)ModelTypes::Shader)
+	if(event->mimeData()->data("MODEL_TYPE_ROLE").toInt() == (int)ModelTypes::Material)
 	{
 		event->accept();
 		event->setDropAction(Qt::CopyAction);
