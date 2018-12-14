@@ -286,10 +286,9 @@ WidgetInt::WidgetInt() : PropertyWidgetBase()
 }
 
 
-WidgetInt::WidgetInt(LabelState state)
+WidgetInt::WidgetInt(LabelState state) : WidgetInt()
 {
 	this->state = state;
-	WidgetInt::WidgetInt();
 }
 
 WidgetInt::~WidgetInt()
@@ -390,10 +389,9 @@ WidgetFloat::WidgetFloat() : PropertyWidgetBase()
 }
 
 
-WidgetFloat::WidgetFloat(LabelState state)
+WidgetFloat::WidgetFloat(LabelState state) : WidgetFloat()
 {
 	this->state = state;
-	WidgetFloat::WidgetFloat();
 }
 
 WidgetFloat::~WidgetFloat()

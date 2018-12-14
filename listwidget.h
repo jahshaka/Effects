@@ -9,6 +9,8 @@ struct shaderInfo {
 
 class ListWidget : public QListWidget
 {
+
+    Q_OBJECT
 public:
 	ListWidget();
 	~ListWidget();
@@ -16,9 +18,24 @@ public:
 	void displayAllContents();
 	bool isResizable = false;
 	void dropEvent(QDropEvent *event) override;
+    bool shaderContextMenuAllowed = false;
+    void createContextMenu();
+
+private slots:
+    void customContextMenu(QPoint pos);
 
 protected:
-	QMimeData * mimeData(const QList<QListWidgetItem *> items) const;
-	void resizeEvent(QResizeEvent * event);
+    QMimeData * mimeData(const QList<QListWidgetItem *> items) const override;
+    void resizeEvent(QResizeEvent * event) override;
+
+signals:
+    void renameShader(QString guid);
+    void exportShader(QString guid);
+    void editShader(QString guid);
+    void deleteShader(QString guid);
+    void createShader(QString guid);
+    void importShader(QString guid);
+
+
 };
 

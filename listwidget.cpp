@@ -8,6 +8,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLayout>
+#include <QMenu>
 #include "core/project.h"
 
 
@@ -36,7 +37,8 @@ ListWidget::ListWidget() : QListWidget()
 	setGridSize(QSize(90, 90));
 	setSortingEnabled(true);
 	sortItems();
-	setEditTriggers(QAbstractItemView::NoEditTriggers);
+    setEditTriggers(QAbstractItemView::EditKeyPressed);
+    setContextMenuPolicy(Qt::CustomContextMenu);
 	
 	QFont font = this->font();
 	font.setWeight(60);
@@ -58,7 +60,8 @@ ListWidget::ListWidget() : QListWidget()
 		"QListView::item:hover{ background: rgba(55,55,55,1); border: 1px solid rgba(50,150,250,1); }"
 		"QListView::text{ top : -6; }"
 	);
-	
+
+    connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),this, SLOT(customContextMenu(const QPoint&)));
 	
 }
 
@@ -114,10 +117,69 @@ void ListWidget::resizeEvent(QResizeEvent * event)
 
 void ListWidget::dropEvent(QDropEvent * event)
 {
-	
-	qDebug() <<sender();
+    QListWidget::dropEvent(event);
+}
 
-	QListWidget::dropEvent(event);
+void ListWidget::createContextMenu()
+{
+
+}
+
+void ListWidget::customContextMenu(QPoint pos)
+{
+    QModelIndex index = indexAt(pos);
+    auto guid = index.data(MODEL_GUID_ROLE).toString();
+
+    QMenu menu;
+    menu.setStyleSheet(
+        "QMenu { background-color: #1A1A1A; color: #EEE; padding: 0; margin: 0; }"
+        "QMenu::item { background-color: #1A1A1A; padding: 6px 8px; margin: 0; }"
+        "QMenu::item:selected { background-color: #3498db; color: #EEE; padding: 6px 8px; margin: 0; }"
+        "QMenu::item : disabled { color: #555; }"
+    );
+
+
+    if(shaderContextMenuAllowed){
+        if(index.isValid()){
+            auto actionRename = new QAction("Rename");
+            auto actionExport = new QAction("Export");
+            auto actionEdit = new QAction("Edit");
+            auto actionDelete = new QAction("Delete");
+
+            connect(actionRename,&QAction::triggered,[guid ,this](){
+                emit renameShader(guid);
+
+            });
+            connect(actionExport,&QAction::triggered,[guid ,this](){
+                emit exportShader(guid);
+            });
+            connect(actionEdit,&QAction::triggered,[guid, index ,this](){
+                this->edit(index);
+                emit editShader(guid);
+            });
+            connect(actionDelete,&QAction::triggered,[guid ,this](){
+                emit deleteShader(guid);
+            });
+
+            menu.addActions({actionRename,actionEdit,actionExport,actionDelete});
+            menu.exec(this->mapToGlobal(pos));
+        }else{
+            auto actionCreate = new QAction("Create Shader");
+            auto actionImport = new QAction("Import Shader");
+
+            connect(actionCreate,&QAction::triggered,[guid ,this](){
+                emit createShader(guid);
+            });
+            connect(actionImport,&QAction::triggered,[guid ,this](){
+                emit importShader(guid);
+            });
+
+            menu.addActions({actionCreate, actionImport});
+            menu.exec(this->mapToGlobal(pos));
+        }
+    }else{
+
+    }
 }
 
 

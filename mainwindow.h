@@ -61,6 +61,7 @@ public:
 	QList<nodeGraphPreset> list;
 	QListWidgetItem *currentProjectShader = Q_NULLPTR;
 	shaderInfo currentShaderInformation;
+    shaderInfo pressedShaderInfo;
 private:
 	void saveShader();
 	void saveDefaultShader();
@@ -70,6 +71,7 @@ private:
     void loadGraph(shaderInfo info);
     void exportGraph();
     void restoreGraphPositions(const QJsonObject& data);
+    bool deleteShader(QString guid);
 
 	void configureUI();
 	void configureToolbar();
