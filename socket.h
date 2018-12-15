@@ -38,7 +38,7 @@ public:
 	QColor getSocketColor();
 	void setSocketColor(QColor color);
 	void updateSocket();
-	QColor connectedColor = QColor(50, 150, 250);
+    QColor connectedColor = QColor(250, 250, 50);
 	QPoint getSocketPosition();
 	QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 private:

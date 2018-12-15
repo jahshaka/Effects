@@ -2,6 +2,7 @@
 #include <QPushButton>
 #include <QDebug>
 #include <QPainter>
+#include <QtMath>
 #include <QMessageBox>
 #include <QGraphicsEffect>
 
@@ -201,7 +202,9 @@ void HeaderObject::enterEvent(QEvent * event)
 
 WideRangeSpinBox::WideRangeSpinBox(QWidget *parent) : QDoubleSpinBox(parent)
 {
-	setRange(-FLT_MAX, FLT_MAX);
+    auto num = std::numeric_limits<float>::max();
+    setRange(-num, num);
+
 }
 
 WideRangeIntBox::WideRangeIntBox(QWidget *parent) : QSpinBox(parent)

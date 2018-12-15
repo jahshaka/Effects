@@ -66,7 +66,8 @@ Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title) :
 	setPen(pen);
 	setPath(path);
 
-	connectedColor = owner->titleColor;
+    //get the socket color from owner
+    //connectedColor = owner->titleColor;
 }
 
 void Socket::addConnection(SocketConnection* con)
@@ -150,7 +151,7 @@ QColor Socket::getSocketColor()
 
 void Socket::setSocketColor(QColor color)
 {
-	socketColor = color;
+    //socketColor = color;
 }
 
 void Socket::setConnected(bool value)

@@ -77,12 +77,13 @@ void SocketConnection::paint(QPainter * painter, const QStyleOptionGraphicsItem 
 	}
 	if(status == SocketConnectionStatus::Finished) {
 
+        // create gradient for line
 		QLinearGradient grad;
 		grad.setStart(pos1-pos2);
 		grad.setFinalStop( pos2 - pos1);
 		grad.setColorAt(0.0, socket1->connectedColor);
 		grad.setColorAt(1.0, socket2->connectedColor);
-		QPen pen(grad, lineThickness);
+        QPen pen(grad, lineThickness);
 		painter->setPen(pen);
 		painter->drawPath(*p);
 	}
@@ -94,6 +95,8 @@ void SocketConnection::paint(QPainter * painter, const QStyleOptionGraphicsItem 
 		painter->drawPath(*p);
 	}
 
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
 
 }
 

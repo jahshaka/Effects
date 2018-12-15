@@ -196,7 +196,6 @@ GraphNode::GraphNode(QGraphicsItem* parent) :
 	this->setFlag(QGraphicsItem::ItemIsSelectable);
 	this->setFlag(QGraphicsItem::ItemSendsGeometryChanges);
 	this->setFlag(QGraphicsItem::ItemSendsScenePositionChanges);
-
 	this->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 
 	nodeWidth = 170;
@@ -217,20 +216,18 @@ GraphNode::GraphNode(QGraphicsItem* parent) :
 	text->setPos(5, 16);
 	text->setDefaultTextColor(QColor(255, 255, 255));
 
-	QFont font = text->font();
-	font.setWeight(65);
-	auto ratio = QApplication::desktop()->devicePixelRatio();
-	font.setPointSize(8 * ratio);
-	text->setFont(font);
+    QFont font = text->font();
+    font.setWeight(65);
+    text->setFont(font);
 
-	/*
+
 	QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
 	effect->setBlurRadius(12);
 	effect->setXOffset(0);
 	effect->setYOffset(0);
 	effect->setColor(QColor(00, 00, 00, 40));
 	setGraphicsEffect(effect);
-	*/
+
 
 	// preview widget
 	proxyPreviewWidget = nullptr;
@@ -263,9 +260,6 @@ void GraphNode::setTitle(QString title)
 
 void GraphNode::addInSocket(QString title)
 {
-	
-	
-
 	auto sock = new Socket(this, SocketType::In, title);
 	auto y = calcHeight();// + sock->calcHeight();
 	sock->setPos(-sock->getRadius(), y);
@@ -444,34 +438,9 @@ void GraphNode::paint(QPainter *painter,
 	const QStyleOptionGraphicsItem *option,
 	QWidget *widget)
 {
-	//painter->setRenderHint(QPainter::HighQualityAntialiasing);
-	//painter->setRenderHint(QPainter::Antialiasing);
-	//painter->setRenderHint(QPainter::TextAntialiasing);
-	//painter->setRenderHint(QPainter::SmoothPixmapTransform);
-
-	if (option->state.testFlag(QStyle::State_Selected) != currentSelectedState) {
-		currentSelectedState = option->state.testFlag(QStyle::State_Selected);
-		highlightNode(currentSelectedState, 0);
-	}
-
-	if (isHighlighted && level == 0) {
-		auto rect = boundingRect();
-		painter->setPen(QPen(connectedColor, 3));
-		painter->drawRoundedRect(rect, titleRadius, titleRadius);
-	}
-	else if (isHighlighted && level > 0) {
-		auto rect = boundingRect();
-		painter->setPen(QPen(QColor(250, 250, 50), 3));
-		painter->drawRoundedRect(rect, titleRadius, titleRadius);
-	}
-
-
-
-	
-
-
-
-
+    painter->setRenderHint(QPainter::HighQualityAntialiasing);
+    painter->setRenderHint(QPainter::Antialiasing);
+    painter->setRenderHint(QPainter::TextAntialiasing);
 
 	painter->setPen(pen());
 	setBrush(QColor(45, 45, 51));
@@ -480,7 +449,6 @@ void GraphNode::paint(QPainter *painter,
 	// title tab
 	QPainterPath titlePath;
 	titlePath.setFillRule(Qt::WindingFill);
-	//titlePath.addRoundedRect(0, 0, nodeWidth, 35, 7, 7);
 	titlePath.addRect(0, 10, nodeWidth, titleHeight-10);
 	titlePath.addRoundedRect(0, 0, nodeWidth, titleHeight, titleRadius, titleRadius);
 	painter->fillPath(titlePath, QBrush(titleColor));
@@ -498,12 +466,31 @@ void GraphNode::paint(QPainter *painter,
 
 	QPen pen(QColor(00, 00, 00, 250), .5);
 	painter->setPen(pen);
-//	painter->drawRoundedRect(boundingRect(), titleRadius, titleRadius);
 
+    // draw border
 	auto rect = boundingRect();
-	painter->setPen(QPen(titleColor, 3));
-	painter->drawRoundedRect(rect, titleRadius, titleRadius);
+    painter->setPen(QPen(titleColor, 4));
+    painter->drawRoundedRect(rect, titleRadius, titleRadius);
 
+    //draw highlight color
+
+    if (option->state.testFlag(QStyle::State_Selected) != currentSelectedState) {
+        currentSelectedState = option->state.testFlag(QStyle::State_Selected);
+        highlightNode(currentSelectedState, 0);
+    }
+
+    if (isHighlighted && level == 0) {
+        // highlight first node with blue color
+        auto rect = boundingRect();
+        painter->setPen(QPen(QColor(55,155,255), 3));
+        painter->drawRoundedRect(rect, titleRadius, titleRadius);
+    }
+    else if (isHighlighted && level > 0) {
+        //highlight secondary nodes with a yellow color
+        auto rect = boundingRect();
+        painter->setPen(QPen(QColor(250, 250, 50), 3));
+        painter->drawRoundedRect(rect, titleRadius, titleRadius);
+    }
 }
 
 int GraphNode::type() const
