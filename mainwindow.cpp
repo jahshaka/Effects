@@ -75,14 +75,8 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
 	configureStyleSheet();
 	configureProjectDock();
 	configureAssetsDock();
+    configureConnections();
 	setMinimumSize(300, 400);
-
-	QShortcut *shortcut = new QShortcut(QKeySequence("f"), this);
-	connect(shortcut, &QShortcut::activated, [=]() {
-		auto dialog = new SearchDialog(this->graph);
-		dialog->show();
-	});
-
     loadShadersFromDisk();
 }
 
@@ -144,13 +138,9 @@ void MainWindow::saveShader()
 	}
 
 	QJsonDocument doc;
-	/*
-	QJsonObject obj;
-	obj["guid"] = currentShaderInformation.GUID;
-	obj["name"] = currentShaderInformation.name;
-	*/
-	auto matObj = MaterialHelper::serialize(scene);
 
+    graph->settings.name = currentShaderInformation.name;
+	auto matObj = MaterialHelper::serialize(scene);
 
 #if(EFFECT_BUILD_AS_LIB)
 	doc.setObject(matObj);
@@ -229,12 +219,12 @@ void MainWindow::importGraph()
 void MainWindow::loadGraph(shaderInfo info)
 {
 	NodeGraph *graph;
-
 #if(EFFECT_BUILD_AS_LIB)
 	QJsonObject obj = QJsonDocument::fromBinaryData(fetchAsset(info.GUID)).object();
 
 	//graph = NodeGraph::deserialize(obj["graph"].toObject(), new LibraryV1());
 	graph = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
+    qDebug() << graph->settings.name;
 	this->setNodeGraph(graph);
 	this->restoreGraphPositions(obj["shadergraph"].toObject());
 #else
@@ -306,9 +296,16 @@ void MainWindow::restoreGraphPositions(const QJsonObject &data)
 bool MainWindow::deleteShader(QString guid)
 {
 
+    auto item = selectCorrectItemFromDrop(guid);
+    auto holder = item->listWidget();
+
 #if(EFFECT_BUILD_AS_LIB)
 
-    return dataBase->deleteAsset(guid);
+    if(dataBase->deleteAsset(guid)){
+        holder->takeItem(holder->row(item));
+        currentShaderInformation = shaderInfo();
+        return true;
+    }
 #else
 
     auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/");
@@ -324,13 +321,18 @@ bool MainWindow::deleteShader(QString guid)
         auto obj = doc.object();
         if (obj["guid"].toString() == "") continue;
         if(obj["guid"].toString() == guid){
-           return file.remove();
+            if(file.remove()){
+                holder->takeItem(holder->row(item));
+                currentShaderInformation = shaderInfo();
+                return true;
+            }
         }
 
     }
-    return false;
 
 #endif
+    return false;
+
 }
 
 
@@ -559,42 +561,10 @@ void MainWindow::configureAssetsDock()
 		});
 	}
 
-	connect(effects, &QListWidget::itemDoubleClicked, [=](QListWidgetItem *item) {
-		currentShaderInformation.name = item->data(Qt::DisplayRole).toString();
-		currentShaderInformation.GUID = item->data(MODEL_GUID_ROLE).toString();
-		loadGraph(currentShaderInformation);
-	});
-
-    connect(effects, &QListWidget::itemPressed, [=](QListWidgetItem *item){
-        pressedShaderInfo.name = item->data(Qt::DisplayRole).toString();
-        pressedShaderInfo.GUID = item->data(MODEL_GUID_ROLE).toString();
-    });
-
-
 	layout->addWidget(scrollView);
 	layout->addWidget(buttonBar);
 	assetsDock->setWidget(holder);
 	assetsDock->setStyleSheet(nodeTray->styleSheet());
-
-
-    connect(effects, &ListWidget::renameShader, [=](QString guid){
-
-    });
-    connect(effects, &ListWidget::exportShader, [=](QString guid){
-        exportGraph();
-    });
-    connect(effects, &ListWidget::editShader, [=](QString guid){
-        loadGraph({guid, ""});
-    });
-    connect(effects, &ListWidget::deleteShader, [=](QString guid){
-        deleteShader(guid);
-    });
-    connect(effects, &ListWidget::createShader, [=](QString guid){
-        createNewGraph();
-    });
-    connect(effects, &ListWidget::importShader, [=](QString guid){
-
-    });
 
 	updateAssetDock();
 }
@@ -878,7 +848,7 @@ void MainWindow::configureToolbar()
 	});
 
 
-	toolBar->addWidget(projectName);
+    //toolBar->addWidget(projectName);
 	toolBar->addSeparator();
 
 	QAction *actionUndo = new QAction;
@@ -1224,7 +1194,110 @@ QListWidgetItem * MainWindow::selectCorrectItemFromDrop(QString guid)
 #endif
 
 
-	return nullptr;
+    return nullptr;
+}
+
+void MainWindow::configureConnections()
+{
+    connect(effects, &QListWidget::itemDoubleClicked, [=](QListWidgetItem *item) {
+        currentShaderInformation.name = item->data(Qt::DisplayRole).toString();
+        currentShaderInformation.GUID = item->data(MODEL_GUID_ROLE).toString();
+        loadGraph(currentShaderInformation);
+    });
+
+    connect(effects, &QListWidget::itemPressed, [=](QListWidgetItem *item){
+        pressedShaderInfo.name = item->data(Qt::DisplayRole).toString();
+        pressedShaderInfo.GUID = item->data(MODEL_GUID_ROLE).toString();
+    });
+
+
+
+    QShortcut *shortcut = new QShortcut(QKeySequence("f"), this);
+    connect(shortcut, &QShortcut::activated, [=]() {
+        auto dialog = new SearchDialog(this->graph);
+        dialog->show();
+    });
+
+    //connections for MyFx sections
+
+    connect(effects, &ListWidget::renameShader, [=](QString guid){
+        auto item = selectCorrectItemFromDrop(guid);
+        effects->editItem(item);
+    });
+    connect(effects, &ListWidget::exportShader, [=](QString guid){
+        exportGraph();
+    });
+    connect(effects, &ListWidget::editShader, [=](QString guid){
+        loadGraph({guid, ""});
+    });
+    connect(effects, &ListWidget::deleteShader, [=](QString guid){
+        deleteShader(guid);
+    });
+    connect(effects, &ListWidget::createShader, [=](QString guid){
+        createNewGraph();
+    });
+    connect(effects, &ListWidget::importShader, [=](QString guid){
+
+    });
+
+
+
+    // change any settings changed
+    connect(materialSettingsWidget, &MaterialSettingsWidget::settingsChanged,[=](MaterialSettings settings){
+        currentProjectShader = selectCorrectItemFromDrop(currentShaderInformation.GUID);
+        currentProjectShader->setData(Qt::DisplayRole, settings.name);
+        currentProjectShader->setData(Qt::UserRole, settings.name);
+        newName = settings.name;
+        saveShader();
+        renameShader();
+    });
+
+    //connection for renaming item
+    connect(effects->itemDelegate(), &QAbstractItemDelegate::commitData,[=](){
+        //item finished editing
+        editingFinishedOnListItem();
+    });
+
+}
+
+void MainWindow::editingFinishedOnListItem()
+{
+    QListWidgetItem item = *selectCorrectItemFromDrop(pressedShaderInfo.GUID);
+    auto oldName = pressedShaderInfo.name;
+    auto newName = item.data(Qt::DisplayRole).toString();
+
+    qDebug() << oldName << newName;
+#if(EFFECT_BUILD_AS_LIB)
+    QJsonDocument doc;
+    QJsonObject obj = QJsonDocument::fromBinaryData(fetchAsset(pressedShaderInfo.GUID)).object();
+    auto graph = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
+    graph->settings.name = newName;
+    auto go = graph->serialize();
+
+    auto shadergraph = obj["shadergraph"].toObject();
+    shadergraph["graph"] = go;
+    obj["shadergraph"] = shadergraph;
+
+    doc.setObject(obj);
+    dataBase->updateAssetAsset(pressedShaderInfo.GUID,doc.toBinaryData());
+    dataBase->renameAsset(pressedShaderInfo.GUID, newName);
+#else
+    // get json obj from file and edit graph like above
+
+    auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/");
+    if (!QDir(filePath).exists()) return;
+    auto shaderFileOld = new QFile(filePath + oldName);
+    auto shaderFileNew = new QFile(filePath + newName);
+    QDir().rename(shaderFileOld->fileName() , shaderFileNew->fileName());
+#endif
+
+    // update current settings if the same
+    if(pressedShaderInfo.GUID == currentShaderInformation.GUID){
+        currentShaderInformation.name = newName;
+        this->graph->settings.name = newName;
+        materialSettingsWidget->setName(newName);
+        saveShader();
+    }
 }
 
 }

@@ -204,7 +204,6 @@ WideRangeSpinBox::WideRangeSpinBox(QWidget *parent) : QDoubleSpinBox(parent)
 {
     auto num = std::numeric_limits<float>::max();
     setRange(-num, num);
-
 }
 
 WideRangeIntBox::WideRangeIntBox(QWidget *parent) : QSpinBox(parent)

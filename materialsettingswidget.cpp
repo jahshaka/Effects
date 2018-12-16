@@ -156,6 +156,8 @@ MaterialSettingsWidget::MaterialSettingsWidget(QWidget *parent):
 	comboBox_3->setStyleSheet(styleSheet());
 	comboBox_2->setStyleSheet(styleSheet());
 	comboBox->setStyleSheet(styleSheet());
+
+    setConnections();
 }
 
 MaterialSettingsWidget::MaterialSettingsWidget(MaterialSettings* settings , QWidget *parent)
@@ -180,7 +182,7 @@ void MaterialSettingsWidget::setMaterialSettings(MaterialSettings* settings)
 	setBlendMode(settings->blendMode);
 	setCullMode(settings->cullMode);
 	setRenderLayer(settings->renderLayer);
-	this->settings = settings;
+    this->settings = *settings;
 	setConnections();
 
 
@@ -279,17 +281,17 @@ void MaterialSettingsWidget::setRenderLayer(RenderLayer index)
 
 void MaterialSettingsWidget::setConnections()
 {
-	connect(checkBox, &QCheckBox::stateChanged, [=](int state) { settings->zwrite = checkBox->isChecked(); settingsChanged(settings); }); // Z Write
-	connect(checkBox_2, &QCheckBox::stateChanged, [=](int state) { settings->depthTest = checkBox_2->isChecked(); settingsChanged(settings); }); // Depth Test
-	connect(checkBox_3, &QCheckBox::stateChanged, [=](int state) { settings->fog = checkBox_3->isChecked(); settingsChanged(settings); }); // Fog
-	connect(checkBox_4, &QCheckBox::stateChanged, [=](int state) { settings->castShadow = checkBox_4->isChecked(); settingsChanged(settings); }); // Cast Shadow
-	connect(checkBox_5, &QCheckBox::stateChanged, [=](int state) { settings->receiveShadow = checkBox_5->isChecked(); settingsChanged(settings); }); // Recieve shadows
-	connect(checkBox_6, &QCheckBox::stateChanged, [=](int state) { settings->acceptLighting = checkBox_6->isChecked(); settingsChanged(settings); }); // Accept light
+    connect(checkBox, &QCheckBox::stateChanged, [=](int state) { settings.zwrite = checkBox->isChecked(); emit settingsChanged(settings); }); // Z Write
+    connect(checkBox_2, &QCheckBox::stateChanged, [=](int state) { settings.depthTest = checkBox_2->isChecked(); emit settingsChanged(settings); }); // Depth Test
+    connect(checkBox_3, &QCheckBox::stateChanged, [=](int state) { settings.fog = checkBox_3->isChecked(); emit settingsChanged(settings); }); // Fog
+    connect(checkBox_4, &QCheckBox::stateChanged, [=](int state) { settings.castShadow = checkBox_4->isChecked(); emit settingsChanged(settings); }); // Cast Shadow
+    connect(checkBox_5, &QCheckBox::stateChanged, [=](int state) { settings.receiveShadow = checkBox_5->isChecked(); emit settingsChanged(settings); }); // Recieve shadows
+    connect(checkBox_6, &QCheckBox::stateChanged, [=](int state) { settings.acceptLighting = checkBox_6->isChecked(); emit settingsChanged(settings); }); // Accept light
 
-	connect(lineEdit, &QLineEdit::textChanged, [=](QString string) {settings->name = string;  settingsChanged(settings); }); // Name
-	connect(comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {settings->blendMode = static_cast<BlendMode>(index); settingsChanged(settings); }); //blendmode
-	connect(comboBox_2, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {settings->cullMode = static_cast<CullMode>(index);   settingsChanged(settings); }); // cull mode
-	connect(comboBox_3, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) { settings->renderLayer = static_cast<RenderLayer>(index);  settingsChanged(settings); }); // render layer
+    connect(lineEdit, &QLineEdit::textChanged, [=](QString string) {settings.name = string;  emit settingsChanged(settings); }); // Name
+    connect(comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {settings.blendMode = static_cast<BlendMode>(index); emit settingsChanged(settings); }); //blendmode
+    connect(comboBox_2, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {settings.cullMode = static_cast<CullMode>(index);   emit settingsChanged(settings); }); // cull mode
+    connect(comboBox_3, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) { settings.renderLayer = static_cast<RenderLayer>(index);  emit settingsChanged(settings); }); // render layer
 }
 
 

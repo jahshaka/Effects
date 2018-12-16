@@ -96,6 +96,9 @@ private:
 	QListWidgetItem* selectCorrectItemFromDrop(QString guid);
 	QList<QString> loadedShadersGUID;
 private:
+    void configureConnections();
+    void editingFinishedOnListItem();
+
     Ui::MainWindow *ui;
     GraphNodeScene* scene;
     SceneWidget* sceneWidget;
