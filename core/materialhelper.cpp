@@ -3,6 +3,9 @@
 #include "../graph/nodegraph.h"
 #include "../generator/shadergenerator.h"
 #include <QjsonObject>
+#include "irisgl/src/materials/custommaterial.h"
+#include "irisgl/src/graphics/shader.h"
+#include "../nodes/libraryv1.h"
 
 bool MaterialHelper::materialHasEffect(QJsonObject matObj)
 {
@@ -37,4 +40,26 @@ QJsonObject MaterialHelper::serialize(GraphNodeScene * scene)
 
 	return matObj;
 	//return QJsonObject();
+}
+
+iris::CustomMaterialPtr MaterialHelper::createMaterialFromShaderGraph(GraphNodeScene* scene)
+{
+	auto matObj = serialize(scene);
+
+	auto shader = iris::Shader::create();
+	shader->setVertexShader(matObj["vertexShaderSource"].toString());
+	shader->setFragmentShader(matObj["fragmentShaderSource"].toString());
+
+	auto mat = iris::CustomMaterial::createFromShader(shader);
+	mat->setMaterialDefinition(matObj);
+
+	return mat;
+}
+
+NodeGraph* MaterialHelper::extractNodeGraphFromMaterialDefinition(QJsonObject matObj)
+{
+	auto graphObj = matObj["shadergraph"].toObject()["graph"].toObject();
+	auto graph = NodeGraph::deserialize(graphObj, new LibraryV1());
+
+	return graph;
 }

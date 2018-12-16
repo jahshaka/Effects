@@ -146,7 +146,7 @@ QJsonObject NodeGraph::serialize()
 	return graph;
 }
 
-NodeGraph* NodeGraph::deserialize(QJsonObject obj, NodeLibrary* library)
+NodeGraph* NodeGraph::deserialize(QJsonObject graphObj, NodeLibrary* library)
 {
 	auto graph = new NodeGraph();
 	graph->setNodeLibrary(library);
@@ -155,7 +155,7 @@ NodeGraph* NodeGraph::deserialize(QJsonObject obj, NodeLibrary* library)
 	// read settings
 
 	// read properties
-	auto graphObj = obj["graph"].toObject();
+	//auto graphObj = obj["graph"].toObject();
 	auto propList = graphObj["properties"].toArray();
 	for (auto propObj : propList) {
 		auto prop = Property::parse(propObj.toObject());
