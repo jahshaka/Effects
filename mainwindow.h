@@ -65,10 +65,10 @@ public:
 private:
 	void saveShader();
 	void saveDefaultShader();
-	void loadShader();
-    void saveGraph();
-    void loadGraph();
+    void loadShadersFromDisk();
+
     void loadGraph(shaderInfo info);
+    void importGraph();
     void exportGraph();
     void restoreGraphPositions(const QJsonObject& data);
     bool deleteShader(QString guid);
