@@ -150,17 +150,19 @@ void MainWindow::saveShader()
 	}
 
 	QJsonDocument doc;
+	/*
 	QJsonObject obj;
 	obj["guid"] = currentShaderInformation.GUID;
 	obj["name"] = currentShaderInformation.name;
-		
+	*/
+	auto matObj = MaterialHelper::serialize(scene);
 
 #if(EFFECT_BUILD_AS_LIB)
-	doc.setObject(obj);
-	dataBase->updateAssetAsset(obj["guid"].toString(), doc.toBinaryData());
+	doc.setObject(matObj);
+	dataBase->updateAssetAsset(currentShaderInformation.GUID, doc.toBinaryData());
 #else
-	obj["graph"] = scene->serialize();
-	doc.setObject(obj);
+	//obj["graph"] = scene->serialize();
+	doc.setObject(matObj);
 
 	auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/");
 	if (!QDir(filePath).exists()) QDir().mkpath(filePath);
@@ -235,9 +237,10 @@ void MainWindow::loadGraph()
     file.close();
     QJsonDocument d = QJsonDocument::fromJson(val);
 
-    auto graph = NodeGraph::deserialize(d.object(), new LibraryV1());
+	auto obj = d.object();
+    auto graph = NodeGraph::deserialize(obj["graph"].toObject(), new LibraryV1());
     this->setNodeGraph(graph);
-    this->restoreGraphPositions(d.object());
+    this->restoreGraphPositions(obj);
 
 	regenerateShader();
 }
@@ -248,9 +251,11 @@ void MainWindow::loadGraph(shaderInfo info)
 
 #if(EFFECT_BUILD_AS_LIB)
 	QJsonObject obj = QJsonDocument::fromBinaryData(fetchAsset(info.GUID)).object();
-	graph = NodeGraph::deserialize(obj, new LibraryV1());
+
+	//graph = NodeGraph::deserialize(obj["graph"].toObject(), new LibraryV1());
+	graph = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
 	this->setNodeGraph(graph);
-	this->restoreGraphPositions(obj);
+	this->restoreGraphPositions(obj["shadergraph"].toObject());
 #else
 	auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/");
 	QDirIterator it(filePath);
@@ -697,6 +702,7 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 	assetShader->assetGuid = assetGuid;
 	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(newShader, "shader"));
 	assetShader->setValue(QVariant::fromValue(shaderDefinition));
+	assetShader->setValue(QVariant::fromValue(MaterialHelper::createMaterialFromShaderGraph(scene)));
 
 	dataBase->updateAssetAsset(assetGuid, QJsonDocument(shaderDefinition).toBinaryData());
 

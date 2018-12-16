@@ -237,6 +237,10 @@ GraphNode::GraphNode(QGraphicsItem* parent) :
 	previewWidget = nullptr;
 }
 
+GraphNode::~GraphNode()
+{
+}
+
 void GraphNode::setIcon(QIcon icon)
 {
 	this->icon = icon;
@@ -417,13 +421,13 @@ void GraphNode::enablePreviewWidget()
 	if (this->nodeGraph)
 		previewWidget->setNodeGraph(nodeGraph);
 
-	auto updateTimer = new QTimer();
-	QObject::connect(updateTimer, &QTimer::timeout, [this]()
+	//updateTimer = new QTimer();
+	QObject::connect(&updateTimer, &QTimer::timeout, [this]()
 	{
 		//this->update();
 		proxyPreviewWidget->update();
 	});
-	updateTimer->start(1000 / 30);
+	updateTimer.start(1000 / 30);
 
 	layout();
 }

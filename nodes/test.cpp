@@ -353,7 +353,8 @@ QJsonValue FloatNodeModel::serializeWidgetValue(int widgetIndex)
 void FloatNodeModel::deserializeWidgetValue(QJsonValue val, int widgetIndex)
 {
 	auto value = val.toDouble();
-	lineEdit->setText(QString("%1").arg(value));
+	//lineEdit->setText(QString("%1").arg(value));
+	valueSock->setValue(QString("%1").arg(value));
 }
 
 

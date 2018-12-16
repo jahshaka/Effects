@@ -8,6 +8,7 @@
 
 
 #include "irisgl/src/core/irisutils.h"
+#include "core/materialhelper.h"
 
 
 #if(EFFECT_BUILD_AS_LIB)
@@ -378,8 +379,12 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(shaderName, "shader"));
 	assetShader->setValue(QVariant::fromValue(shaderDefinition));
 
+
+	//assetShader->setValue(MaterialHelper::createMaterialFromShaderGraph);
+
 	db->updateAssetAsset(assetGuid, QJsonDocument::fromBinaryData(fetchAsset(item->data(MODEL_GUID_ROLE).toString())).toBinaryData());
 
+	// build material from definition
 	AssetManager::addAsset(assetShader);
 }
 

@@ -5,6 +5,7 @@
 #include <QIcon>
 #include <QWindow>
 #include <irisgl/IrisGL.h>
+#include <QTimer>
 
 class NodeGraph;
 
@@ -85,8 +86,10 @@ public:
 	QColor titleColor;
 	QIcon icon;
 	CustomRenderWidget* previewWidget;
+	QTimer updateTimer;
 
 	GraphNode(QGraphicsItem* parent);
+	~GraphNode();
 
 	void setIcon(QIcon icon);
 	void setTitleColor(QColor color);
