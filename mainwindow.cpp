@@ -73,7 +73,7 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
 	newNodeGraph();
 	generateTileNode();
 	configureStyleSheet();
-//	configureProjectDock();
+	configureProjectDock();
 	configureAssetsDock();
     configureConnections();
 	setMinimumSize(300, 400);
@@ -215,11 +215,12 @@ void MainWindow::importGraph()
 	regenerateShader();
 }
 
-void MainWindow::loadGraph(shaderInfo info)
+void MainWindow::loadGraph(QString guid)
 {
 	NodeGraph *graph;
+
 #if(EFFECT_BUILD_AS_LIB)
-	QJsonObject obj = QJsonDocument::fromBinaryData(fetchAsset(info.GUID)).object();
+	QJsonObject obj = QJsonDocument::fromBinaryData(fetchAsset(guid)).object();
 
 	//graph = NodeGraph::deserialize(obj["graph"].toObject(), new LibraryV1());
 	graph = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
@@ -238,7 +239,7 @@ void MainWindow::loadGraph(shaderInfo info)
 		file.close();
 
 		auto obj1 = doc.object();
-        if (obj1["guid"].toString() == info.GUID) {
+        if (obj1["guid"].toString() == guid) {
 			obj = obj1;
 			break;
 		}
@@ -249,11 +250,13 @@ void MainWindow::loadGraph(shaderInfo info)
 #endif
 
 	
-	projectName->setText(info.name);
 	regenerateShader();
     propertyListWidget->clearPropertyList();
 
-	currentProjectShader = selectCorrectItemFromDrop(info.GUID);
+	currentProjectShader = selectCorrectItemFromDrop(guid);
+	currentShaderInformation.GUID = currentProjectShader->data(MODEL_GUID_ROLE).toString();
+	currentShaderInformation.name = currentProjectShader->data(Qt::DisplayRole || Qt::UserRole).toString(); 
+	materialSettingsWidget->setName(currentShaderInformation.name);
 }
 
 void MainWindow::exportGraph()
@@ -1150,7 +1153,7 @@ GraphNodeScene *MainWindow::createNewScene()
 	connect(scene, &GraphNodeScene::loadGraph, [=](QListWidgetItem *item) {
 		currentShaderInformation.name = item->data(Qt::DisplayRole).toString();
 		currentShaderInformation.GUID = item->data(MODEL_GUID_ROLE).toString();
-		loadGraph(currentShaderInformation);
+		loadGraph(currentShaderInformation.GUID);
 	});
 
     return scene;
@@ -1204,7 +1207,7 @@ void MainWindow::configureConnections()
     connect(effects, &QListWidget::itemDoubleClicked, [=](QListWidgetItem *item) {
         currentShaderInformation.name = item->data(Qt::DisplayRole).toString();
         currentShaderInformation.GUID = item->data(MODEL_GUID_ROLE).toString();
-        loadGraph(currentShaderInformation);
+        loadGraph(currentShaderInformation.GUID);
     });
 
     connect(effects, &QListWidget::itemPressed, [=](QListWidgetItem *item){
@@ -1230,7 +1233,7 @@ void MainWindow::configureConnections()
         exportGraph();
     });
     connect(effects, &ListWidget::editShader, [=](QString guid){
-        loadGraph({guid, ""});
+        loadGraph(guid);
     });
     connect(effects, &ListWidget::deleteShader, [=](QString guid){
         deleteShader(guid);
@@ -1244,14 +1247,16 @@ void MainWindow::configureConnections()
 
 
 
-    // change any settings changed
+    // change: any settings changed
     connect(materialSettingsWidget, &MaterialSettingsWidget::settingsChanged,[=](MaterialSettings settings){
         currentProjectShader = selectCorrectItemFromDrop(currentShaderInformation.GUID);
-        currentProjectShader->setData(Qt::DisplayRole, settings.name);
-        currentProjectShader->setData(Qt::UserRole, settings.name);
-        newName = settings.name;
-        saveShader();
-        renameShader();
+		if (currentProjectShader) {
+			currentProjectShader->setData(Qt::DisplayRole, settings.name);
+			currentProjectShader->setData(Qt::UserRole, settings.name);
+			newName = settings.name;
+			saveShader();
+			renameShader();
+		}
     });
 
     //connection for renaming item

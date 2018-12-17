@@ -56,6 +56,9 @@ public:
 	void refreshShaderGraph();
 	void setAssetWidgetDatabase(Database *db);
 	void renameShader();
+
+	void loadGraph(QString guid);
+
     ~MainWindow();
 
 	QList<nodeGraphPreset> list;
@@ -67,7 +70,6 @@ private:
 	void saveDefaultShader();
     void loadShadersFromDisk();
 
-    void loadGraph(shaderInfo info);
     void importGraph();
     void exportGraph();
     void restoreGraphPositions(const QJsonObject& data);
