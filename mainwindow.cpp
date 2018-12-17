@@ -73,7 +73,7 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
 	newNodeGraph();
 	generateTileNode();
 	configureStyleSheet();
-	configureProjectDock();
+//	configureProjectDock();
 	configureAssetsDock();
     configureConnections();
 	setMinimumSize(300, 400);
@@ -94,7 +94,7 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
     }
     scene = newScene;
 
-	if (!scene->currentlyEditing) scene->currentlyEditing = currentProjectShader;
+//	if (!scene->currentlyEditing) scene->currentlyEditing = currentProjectShader;
 	
     //ui->propertyContainerPage1->setNodeGraph(graph);
 	propertyListWidget->setNodeGraph(graph);
@@ -137,17 +137,16 @@ void MainWindow::saveShader()
 		return;
 	}
 
-	QJsonDocument doc;
+    if(graph->settings.name != currentShaderInformation.name) graph->settings.name = currentShaderInformation.name;
 
-    graph->settings.name = currentShaderInformation.name;
+	QJsonDocument doc;
 	auto matObj = MaterialHelper::serialize(scene);
+    doc.setObject(matObj);
+
 
 #if(EFFECT_BUILD_AS_LIB)
-	doc.setObject(matObj);
 	dataBase->updateAssetAsset(currentShaderInformation.GUID, doc.toBinaryData());
 #else
-	//obj["graph"] = scene->serialize();
-	doc.setObject(matObj);
 
 	auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/");
 	if (!QDir(filePath).exists()) QDir().mkpath(filePath);
@@ -224,7 +223,6 @@ void MainWindow::loadGraph(shaderInfo info)
 
 	//graph = NodeGraph::deserialize(obj["graph"].toObject(), new LibraryV1());
 	graph = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
-    qDebug() << graph->settings.name;
 	this->setNodeGraph(graph);
 	this->restoreGraphPositions(obj["shadergraph"].toObject());
 #else
@@ -253,6 +251,7 @@ void MainWindow::loadGraph(shaderInfo info)
 	
 	projectName->setText(info.name);
 	regenerateShader();
+    propertyListWidget->clearPropertyList();
 
 	currentProjectShader = selectCorrectItemFromDrop(info.GUID);
 }
@@ -283,6 +282,7 @@ void MainWindow::restoreGraphPositions(const QJsonObject &data)
 {
     auto scene = data["scene"].toObject();
     auto nodeList = scene["nodes"].toArray();
+    qDebug() << nodeList.toVariantList();
 
     for(auto nodeVal : nodeList) {
         auto nodeObj = nodeVal.toObject();
@@ -624,7 +624,9 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 		nodeGraph->setNodeLibrary(new LibraryV1());
 		nodeGraph->addNode(masterNode);
 		nodeGraph->setMasterNode(masterNode);
+        nodeGraph->settings.name = newShader;
 		this->setNodeGraph(nodeGraph);
+        propertyListWidget->clearPropertyList();
 	}
 
 
@@ -1266,7 +1268,6 @@ void MainWindow::editingFinishedOnListItem()
     auto oldName = pressedShaderInfo.name;
     auto newName = item.data(Qt::DisplayRole).toString();
 
-    qDebug() << oldName << newName;
 #if(EFFECT_BUILD_AS_LIB)
     QJsonDocument doc;
     QJsonObject obj = QJsonDocument::fromBinaryData(fetchAsset(pressedShaderInfo.GUID)).object();
@@ -1275,7 +1276,12 @@ void MainWindow::editingFinishedOnListItem()
     auto go = graph->serialize();
 
     auto shadergraph = obj["shadergraph"].toObject();
-    shadergraph["graph"] = go;
+    auto graphObj = shadergraph["graph"].toObject();
+    auto settings = graphObj["settings"].toObject();
+    settings["name"] = newName;
+
+    graphObj["settings"] = settings;
+    shadergraph["graph"] = graphObj;
     obj["shadergraph"] = shadergraph;
 
     doc.setObject(obj);

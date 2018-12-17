@@ -146,7 +146,17 @@ void PropertyListWidget::setNodeGraph(NodeGraph *graph)
 		default:
 			break;
 		}
-	}
+    }
+}
+
+void PropertyListWidget::clearPropertyList()
+{
+    for(auto child : referenceList){
+        referenceList.removeOne(child);
+        layout->removeWidget(child);
+        child->hide();
+        child->deleteLater();
+    }
 }
 
 void PropertyListWidget::addNewFloatProperty()
@@ -172,6 +182,7 @@ void PropertyListWidget::addFloatProperty(FloatProperty* floatProp)
 	connect(propWidget, &BasePropertyWidget::TitleChanged, [=](QString title) {
 		emit nameChanged(title, floatProp->id);
 	});
+    referenceList.append(propWidget);
 }
 
 void PropertyListWidget::addNewVec2Property()
@@ -196,6 +207,8 @@ void PropertyListWidget::addVec2Property(Vec2Property * vec2Prop)
 	connect(propWidget, &BasePropertyWidget::TitleChanged, [=](QString title) {
 		emit nameChanged(title, vec2Prop->id);
 	});
+    referenceList.append(propWidget);
+
 }
 ///////
 
@@ -221,6 +234,8 @@ void PropertyListWidget::addVec3Property(Vec3Property * vec3Prop)
 	connect(propWidget, &BasePropertyWidget::TitleChanged, [=](QString title) {
 		emit nameChanged(title, vec3Prop->id);
 	});
+    referenceList.append(propWidget);
+
 }
 
 ///////
@@ -247,6 +262,8 @@ void PropertyListWidget::addVec4Property(Vec4Property * vec4Prop)
 	connect(propWidget, &BasePropertyWidget::TitleChanged, [=](QString title) {
 		emit nameChanged(title, vec4Prop->id);
 	});
+    referenceList.append(propWidget);
+
 }
 
 ///////
@@ -273,6 +290,8 @@ void PropertyListWidget::addIntProperty(IntProperty * intProp)
 	connect(propWidget, &BasePropertyWidget::TitleChanged, [=](QString title) {
 		emit nameChanged(title, intProp->id);
 	});
+    referenceList.append(propWidget);
+
 }
 
 ////
@@ -299,4 +318,6 @@ void PropertyListWidget::addTextureProperty(TextureProperty * texProp)
 	connect(propWidget, &BasePropertyWidget::TitleChanged, [=](QString title) {
 		emit nameChanged(title, texProp->id);
 	});
+    referenceList.append(propWidget);
+
 }
