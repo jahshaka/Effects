@@ -51,6 +51,8 @@
 #include <QUuid>
 #endif
 
+
+#include <QDebug>
 namespace shadergraph
 {
 
@@ -87,6 +89,8 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
 	graphicsView->setScene(newScene);
 	graphicsView->setAcceptDrops(true);
     newScene->setNodeGraph(graph);
+
+	qDebug() << graph->settings.name;
 
     // delet old scene and reassign new scene
     if (scene) {
@@ -137,7 +141,11 @@ void MainWindow::saveShader()
 		return;
 	}
 
-    if(graph->settings.name != currentShaderInformation.name) graph->settings.name = currentShaderInformation.name;
+
+	qDebug() << graph->settings.name;
+	qDebug() << currentShaderInformation.name;
+
+  //  if(graph->settings.name != currentShaderInformation.name) graph->settings.name = currentShaderInformation.name;
 
 	QJsonDocument doc;
 	auto matObj = MaterialHelper::serialize(scene);
@@ -222,7 +230,6 @@ void MainWindow::loadGraph(QString guid)
 #if(EFFECT_BUILD_AS_LIB)
 	QJsonObject obj = QJsonDocument::fromBinaryData(fetchAsset(guid)).object();
 
-	//graph = NodeGraph::deserialize(obj["graph"].toObject(), new LibraryV1());
 	graph = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
 	this->setNodeGraph(graph);
 	this->restoreGraphPositions(obj["shadergraph"].toObject());
@@ -255,8 +262,7 @@ void MainWindow::loadGraph(QString guid)
 
 	currentProjectShader = selectCorrectItemFromDrop(guid);
 	currentShaderInformation.GUID = currentProjectShader->data(MODEL_GUID_ROLE).toString();
-	currentShaderInformation.name = currentProjectShader->data(Qt::DisplayRole || Qt::UserRole).toString(); 
-	materialSettingsWidget->setName(currentShaderInformation.name);
+	oldName = currentShaderInformation.name = currentProjectShader->data(Qt::DisplayRole).toString(); 
 }
 
 void MainWindow::exportGraph()
@@ -285,7 +291,6 @@ void MainWindow::restoreGraphPositions(const QJsonObject &data)
 {
     auto scene = data["scene"].toObject();
     auto nodeList = scene["nodes"].toArray();
-    qDebug() << nodeList.toVariantList();
 
     for(auto nodeVal : nodeList) {
         auto nodeObj = nodeVal.toObject();
@@ -576,7 +581,7 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 {
 	QString newShader;
 	if(shaderName)	 newShader = *shaderName;
-	else   newShader = "Untitled Shader";
+	else   newShader = "Untitled Material";
 	QListWidgetItem *item = new QListWidgetItem;
 	item->setFlags(item->flags() | Qt::ItemIsEditable);
 	item->setSizeHint(defaultItemSize);
@@ -602,10 +607,6 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 
 	currentShaderInformation.GUID = assetGuid;
 	currentShaderInformation.name = newShader;
-
-
-	//assetItemShader.wItem = item;
-
 
 	//QStringList assetsInProject = dataBase->fetchAssetNameByParent(assetItemShader.selectedGuid);
 
@@ -634,29 +635,15 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 
 
 #if(EFFECT_BUILD_AS_LIB)
-	//QFile *templateShaderFile = new QFile(IrisUtils::getAbsoluteAssetPath("app/templates/ShaderTemplate.shader"));
-	//templateShaderFile->open(QIODevice::ReadOnly | QIODevice::Text);
-	//QJsonObject shaderDefinition;// = QJsonDocument::fromJson(templateShaderFile->readAll()).object();
-	//templateShaderFile->close();
-	//shaderDefinition["name"] = newShader;
-	//shaderDefinition.insert("guid", assetGuid);
 
-	//shaderDefinition["MODEL_GRAPH"] = item->data(MODEL_GRAPH).toJsonObject();
-
-	
-	//auto shaderDefinition = writer.serializeMaterial(nodeGraph);
-	//auto shaderDefinition = scene->serialize();
 	auto shaderDefinition = MaterialHelper::serialize(scene);
 
-	dataBase->createAssetEntry(QString::null, assetGuid,
-		IrisUtils::buildFileName(newShader, "material"),
-		static_cast<int>(ModelTypes::Material), QJsonDocument(shaderDefinition).toBinaryData());
-
+	dataBase->createAssetEntry(QString::null, assetGuid,newShader,static_cast<int>(ModelTypes::Material), QJsonDocument(shaderDefinition).toBinaryData());
 
 	auto assetShader = new AssetMaterial;
 	assetShader->fileName = IrisUtils::buildFileName(newShader, "material");
 	assetShader->assetGuid = assetGuid;
-	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(newShader, "shader"));
+	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), newShader);
 	assetShader->setValue(QVariant::fromValue(shaderDefinition));
 	assetShader->setValue(QVariant::fromValue(MaterialHelper::createMaterialFromShaderGraph(scene)));
 
@@ -1251,12 +1238,14 @@ void MainWindow::configureConnections()
     connect(materialSettingsWidget, &MaterialSettingsWidget::settingsChanged,[=](MaterialSettings settings){
         currentProjectShader = selectCorrectItemFromDrop(currentShaderInformation.GUID);
 		if (currentProjectShader) {
-			currentProjectShader->setData(Qt::DisplayRole, settings.name);
-			currentProjectShader->setData(Qt::UserRole, settings.name);
-			newName = settings.name;
-			saveShader();
+			
+		}
+		//change name 
+		if (settings.name != oldName) {
+			editingFinishedOnListItem();
 			renameShader();
 		}
+		
     });
 
     //connection for renaming item
@@ -1272,6 +1261,8 @@ void MainWindow::editingFinishedOnListItem()
     QListWidgetItem item = *selectCorrectItemFromDrop(pressedShaderInfo.GUID);
     auto oldName = pressedShaderInfo.name;
     auto newName = item.data(Qt::DisplayRole).toString();
+
+	if (oldName == newName) return;
 
 #if(EFFECT_BUILD_AS_LIB)
     QJsonDocument doc;
