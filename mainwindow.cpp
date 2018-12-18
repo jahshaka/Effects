@@ -59,14 +59,16 @@ namespace shadergraph
 MainWindow::MainWindow( QWidget *parent, Database *database) :
     QMainWindow(parent)
 {
-  //  ui->setupUi(this);
+  //  ui->setupUi(this); 
+	scene = nullptr;
+	sceneWidget = new SceneWidget();
 	fontIcons = new QtAwesome;
 	fontIcons->initFontAwesome();
 	configureUI();
 	configureToolbar();
+	addMenuToSceneWidget();
 
-    scene = nullptr;
-	sceneWidget = new SceneWidget();
+   
 
 	installEventFilter(this);
 
@@ -98,14 +100,11 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
     }
     scene = newScene;
 
-//	if (!scene->currentlyEditing) scene->currentlyEditing = currentProjectShader;
-	
-    //ui->propertyContainerPage1->setNodeGraph(graph);
+
+
 	propertyListWidget->setNodeGraph(graph);
 	sceneWidget->setNodeGraph(graph);
 	sceneWidget->graphScene = newScene;
-	displayWidget->setWidget(sceneWidget);
-	displayWidget->setMinimumSize(300, 230);
 	materialSettingsWidget->setMaterialSettings(&graph->settings);
 	sceneWidget->setMaterialSettings(graph->settings);
 	this->graph = graph;
@@ -141,16 +140,9 @@ void MainWindow::saveShader()
 		return;
 	}
 
-
-	qDebug() << graph->settings.name;
-	qDebug() << currentShaderInformation.name;
-
-  //  if(graph->settings.name != currentShaderInformation.name) graph->settings.name = currentShaderInformation.name;
-
 	QJsonDocument doc;
 	auto matObj = MaterialHelper::serialize(scene);
     doc.setObject(matObj);
-
 
 #if(EFFECT_BUILD_AS_LIB)
 	dataBase->updateAssetAsset(currentShaderInformation.GUID, doc.toBinaryData());
@@ -727,6 +719,10 @@ void MainWindow::configureUI()
 	addDockWidget(Qt::RightDockWidgetArea, materialSettingsDock, Qt::Vertical);
 	addDockWidget(Qt::LeftDockWidgetArea, propertyWidget, Qt::Vertical);
 
+	//auto displayLayout = new QVBoxLayout;
+	//displayWidget->setLayout(displayLayout);
+	//displayWidget->setWidget(sceneWidget);
+	displayWidget->setMinimumSize(300, 230);
 
 	textWidget->setWidget(textEdit);
 	propertyWidget->setWidget(propertyListWidget);
@@ -1295,6 +1291,55 @@ void MainWindow::editingFinishedOnListItem()
     }
 
 	pressedShaderInfo = shaderInfo();
+}
+
+void MainWindow::addMenuToSceneWidget()
+{
+	QMenu *modelMenu = new QMenu("model");
+	QMenu *sceneMenu = new QMenu("scene");
+	QMenu *backgroundMenu = new QMenu("background");
+	modelMenu->setStyleSheet(
+		"QMenu { background-color: #1A1A1A; color: #EEE; padding: 0; margin: 0; }"
+		"QMenu::item { background-color: #1A1A1A; padding: 6px 8px; margin: 0; }"
+		"QMenu::item:selected { background-color: #3498db; color: #EEE; padding: 6px 8px; margin: 0; }"
+		"QMenu::item : disabled { color: #555; }"
+	);
+	sceneMenu->setStyleSheet(modelMenu->styleSheet());
+	backgroundMenu->setStyleSheet(modelMenu->styleSheet());
+
+	QMainWindow *window = new QMainWindow;
+	QToolBar *bar = new QToolBar;
+	window->menuBar()->addMenu(modelMenu);
+	window->menuBar()->addMenu(sceneMenu);
+	window->menuBar()->addMenu(backgroundMenu);
+	displayWidget->setWidget(window);
+	window->setCentralWidget(sceneWidget);
+	
+	auto cubeAction = new QAction("cube");
+	connect(cubeAction, &QAction::triggered, [=]() {});		
+	auto planeAction = new QAction("plane");
+	connect(planeAction, &QAction::triggered, [=]() {});
+	auto sphareAction = new QAction("sphere");
+	connect(sphareAction, &QAction::triggered, [=]() {});
+	auto customModelAction = new QAction("custom");
+	connect(customModelAction, &QAction::triggered, [=]() {});
+	modelMenu->addActions({cubeAction,planeAction,sphareAction,customModelAction});
+
+	auto whiteAction = new QAction("white");
+	connect(whiteAction, &QAction::triggered, [=]() {});
+	auto blackAction = new QAction("black");
+	connect(blackAction, &QAction::triggered, [=]() {});
+	auto checkeredAction = new QAction("checkered");
+	connect(checkeredAction, &QAction::triggered, [=]() {});
+	auto blankColorAction = new QAction("blank");
+	connect(blankColorAction, &QAction::triggered, [=]() {});
+	sceneMenu->addActions({ whiteAction,blackAction,checkeredAction,blankColorAction });
+
+	auto blankAction = new QAction("blank");
+	connect(blankAction, &QAction::triggered, [=]() {});
+	auto customAction = new QAction("custom");
+	connect(customAction, &QAction::triggered, [=]() {});
+	backgroundMenu->addActions({ blankAction,customAction });
 }
 
 }

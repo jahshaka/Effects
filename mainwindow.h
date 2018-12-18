@@ -100,7 +100,7 @@ private:
 private:
     void configureConnections();
     void editingFinishedOnListItem();
-	void updateGraphSettings(MaterialSettings settings);
+	void addMenuToSceneWidget();
 
     Ui::MainWindow *ui;
     GraphNodeScene* scene;
