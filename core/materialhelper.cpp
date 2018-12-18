@@ -14,6 +14,29 @@ bool MaterialHelper::materialHasEffect(QJsonObject matObj)
 	return false;
 }
 
+QString MaterialHelper::assetPath(QString relPath)
+{
+	//qDebug() << QDir::cleanPath(QDir::currentPath() + QDir::separator() + relPath);
+	return QDir::cleanPath(QDir::currentPath() + QDir::separator() + relPath);
+}
+
+bool MaterialHelper::generateShader(NodeGraph * graph, QString & vertexShader, QString & fragmentShader)
+{
+	//todo: change to proper paths
+	auto vertTemplate = iris::GraphicsHelper::loadAndProcessShader(assetPath("assets/surface.vert"));
+	auto fragTemplate = iris::GraphicsHelper::loadAndProcessShader(assetPath("assets/surface.frag"));
+
+	ShaderGenerator shaderGen;
+	shaderGen.generateShader(graph);
+	auto vertCode = shaderGen.getVertexShader();
+	auto fragCode = shaderGen.getFragmentShader();
+
+	vertexShader = vertTemplate + vertCode;
+	fragmentShader = fragTemplate + fragCode;
+
+	return true;
+}
+
 QJsonObject MaterialHelper::serialize(GraphNodeScene * scene)
 {
 	auto graph = scene->getNodeGraph();
@@ -26,10 +49,8 @@ QJsonObject MaterialHelper::serialize(GraphNodeScene * scene)
 	//matObj["properties"] = 
 
 	// GENERATE SHADERS
-	ShaderGenerator shaderGen;
-	shaderGen.generateShader(graph);
-	auto vertCode = shaderGen.getVertexShader();
-	auto fragCode = shaderGen.getFragmentShader();
+	QString vertCode, fragCode;
+	generateShader(graph, vertCode, fragCode);
 
 	matObj["shadergraph"] = scene->serialize();
 
@@ -62,4 +83,33 @@ NodeGraph* MaterialHelper::extractNodeGraphFromMaterialDefinition(QJsonObject ma
 	auto graph = NodeGraph::deserialize(graphObj, new LibraryV1());
 
 	return graph;
+}
+
+iris::CustomMaterialPtr MaterialHelper::generateMaterialFromMaterialDefinition(QJsonObject matObj, bool generateFromGraph)
+{
+	//auto nodeGraph = extractNodeGraphFromMaterialDefinition(matObj);
+
+	auto shader = iris::Shader::create();
+
+	if (generateFromGraph) {
+		ShaderGenerator shaderGen;
+		auto graph = extractNodeGraphFromMaterialDefinition(matObj);
+		
+		QString vertCode, fragCode;
+		generateShader(graph, vertCode, fragCode);
+
+		// append to shader templates
+		shader->setVertexShader(vertCode);
+		shader->setFragmentShader(fragCode);
+	}
+	else {
+		shader->setVertexShader(matObj["vertexShaderSource"].toString());
+		shader->setFragmentShader(matObj["fragmentShaderSource"].toString());
+	}
+	
+
+	auto mat = iris::CustomMaterial::createFromShader(shader);
+	mat->setMaterialDefinition(matObj);
+
+	return mat;
 }
