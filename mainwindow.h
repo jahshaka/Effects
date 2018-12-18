@@ -100,6 +100,7 @@ private:
 private:
     void configureConnections();
     void editingFinishedOnListItem();
+	void updateGraphSettings(MaterialSettings settings);
 
     Ui::MainWindow *ui;
     GraphNodeScene* scene;

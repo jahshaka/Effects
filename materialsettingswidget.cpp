@@ -117,7 +117,7 @@ MaterialSettingsWidget::MaterialSettingsWidget(QWidget *parent):
 	comboBox->addItems(list);
 
 	list.clear();
-	list << "Font" << "Back" << "None";
+	list << "Front" << "Back" << "None";
 	comboBox_2->addItems(list);
 
 	list.clear();

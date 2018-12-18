@@ -1018,6 +1018,7 @@ void MainWindow::renameShader()
 	QDir().rename(shaderFileOld->fileName() , shaderFileNew->fileName());
 	
 #endif
+	oldName = currentProjectShader->data(Qt::DisplayRole).toString();
 }
 
 bool MainWindow::eventFilter(QObject * watched, QEvent * event)
@@ -1233,19 +1234,9 @@ void MainWindow::configureConnections()
     });
 
 
-
     // change: any settings changed
     connect(materialSettingsWidget, &MaterialSettingsWidget::settingsChanged,[=](MaterialSettings settings){
-        currentProjectShader = selectCorrectItemFromDrop(currentShaderInformation.GUID);
-		if (currentProjectShader) {
-			
-		}
-		//change name 
-		if (settings.name != oldName) {
-			editingFinishedOnListItem();
-			renameShader();
-		}
-		
+		graph->settings = settings;
     });
 
     //connection for renaming item
@@ -1258,9 +1249,9 @@ void MainWindow::configureConnections()
 
 void MainWindow::editingFinishedOnListItem()
 {
-    QListWidgetItem item = *selectCorrectItemFromDrop(pressedShaderInfo.GUID);
+    QListWidgetItem *item = selectCorrectItemFromDrop(pressedShaderInfo.GUID);
     auto oldName = pressedShaderInfo.name;
-    auto newName = item.data(Qt::DisplayRole).toString();
+    auto newName = item->data(Qt::DisplayRole).toString();
 
 	if (oldName == newName) return;
 
@@ -1293,6 +1284,8 @@ void MainWindow::editingFinishedOnListItem()
     QDir().rename(shaderFileOld->fileName() , shaderFileNew->fileName());
 #endif
 
+	item->setData(Qt::DisplayRole, newName);
+
     // update current settings if the same
     if(pressedShaderInfo.GUID == currentShaderInformation.GUID){
         currentShaderInformation.name = newName;
@@ -1300,6 +1293,8 @@ void MainWindow::editingFinishedOnListItem()
         materialSettingsWidget->setName(newName);
         saveShader();
     }
+
+	pressedShaderInfo = shaderInfo();
 }
 
 }

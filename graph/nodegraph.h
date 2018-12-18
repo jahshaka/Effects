@@ -85,7 +85,7 @@ public:
 	QJsonObject serialize();
 	static NodeGraph* deserialize(QJsonObject obj, NodeLibrary* lib);
 	QJsonObject serializeMaterialSettings();
-	MaterialSettings deserializeMaterialSettings(QJsonObject obj);
+	static MaterialSettings deserializeMaterialSettings(QJsonObject obj);
 
 	void setMaterialSettings(MaterialSettings setting);
 };
