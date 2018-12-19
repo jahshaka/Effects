@@ -37,9 +37,8 @@ ShaderAssetWidget::ShaderAssetWidget(Database *handle) : QWidget()
 		createShader(item);
 	});
 
-    if(handle){
-        setUpDatabse(handle);
-    }
+    if(handle) setUpDatabase(handle);
+
 
 	layout->addWidget(breadCrumbsWidget);
 	
@@ -186,7 +185,7 @@ void ShaderAssetWidget::addItem(const AssetRecord & assetData)
 	assetViewWidget->addItem(item);
 }
 
-void ShaderAssetWidget::setUpDatabse(Database * db)
+void ShaderAssetWidget::setUpDatabase(Database * db)
 {
 	//remove noWidget if preset and add assetViewWidget
 	if (UiManager::isSceneOpen) {

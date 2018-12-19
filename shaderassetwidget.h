@@ -41,7 +41,7 @@ public:
 	QByteArray fetchAsset(QString string);
 	ShaderListWidget *assetViewWidget;
 	void updateAssetView(const QString &path, int filter = -1, bool showDependencies = false);
-	void setUpDatabse(Database *db);
+    void setUpDatabase(Database *db);
 	void refresh();
 private:
 

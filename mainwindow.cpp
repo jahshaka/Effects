@@ -68,8 +68,6 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
 	configureToolbar();
 	addMenuToSceneWidget();
 
-   
-
 	installEventFilter(this);
 
 	if (database) setAssetWidgetDatabase(database);
@@ -217,6 +215,7 @@ void MainWindow::importGraph()
 
 void MainWindow::loadGraph(QString guid)
 {
+    propertyListWidget->clearPropertyList();
 	NodeGraph *graph;
 
 #if(EFFECT_BUILD_AS_LIB)
@@ -250,8 +249,6 @@ void MainWindow::loadGraph(QString guid)
 
 	
 	regenerateShader();
-    propertyListWidget->clearPropertyList();
-
 	currentProjectShader = selectCorrectItemFromDrop(guid);
 	currentShaderInformation.GUID = currentProjectShader->data(MODEL_GUID_ROLE).toString();
 	oldName = currentShaderInformation.name = currentProjectShader->data(Qt::DisplayRole).toString(); 
@@ -998,7 +995,7 @@ void MainWindow::updateAssetDock()
 void MainWindow::setAssetWidgetDatabase(Database * db)
 {
 #if(EFFECT_BUILD_AS_LIB)
-	assetWidget->setUpDatabse(db);
+    assetWidget->setUpDatabase(db);
 #endif
 }
 

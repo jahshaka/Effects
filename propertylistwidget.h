@@ -51,6 +51,8 @@ private:
 	void addNewTextureProperty();
 	void addTextureProperty(TextureProperty* texProp);
 
+    void addToPropertyListWidget(BasePropertyWidget *widget);
+
 private:
     QVBoxLayout* layout;
     NodeGraph* graph;
