@@ -154,8 +154,8 @@ void ListWidget::customContextMenu(QPoint pos)
                 emit exportShader(guid);
             });
             connect(actionEdit,&QAction::triggered,[guid, index ,this](){
-                this->edit(index);
-              //  emit editShader(guid);
+               // this->edit(index);
+                emit editShader(guid);
             });
             connect(actionDelete,&QAction::triggered,[guid ,this](){
                 emit deleteShader(guid);

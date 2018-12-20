@@ -32,7 +32,7 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 
     layout = new QVBoxLayout();
     layout->addStretch();
-	layout->setSpacing(15);
+    layout->setSpacing(15);
 
 	auto mainLayout = new QVBoxLayout;
 	auto addProp = new QToolButton;
@@ -124,6 +124,7 @@ void PropertyListWidget::setNodeGraph(NodeGraph *graph)
 
     // build properties
 	for (auto prop : graph->properties) {
+
 		switch (prop->type) {
 		case PropertyType::Int:
 			addIntProperty((IntProperty*)prop);
@@ -146,7 +147,18 @@ void PropertyListWidget::setNodeGraph(NodeGraph *graph)
 		default:
 			break;
 		}
-	}
+    }
+}
+
+void PropertyListWidget::clearPropertyList()
+{
+    // remove all QWidgets
+    for(auto child : referenceList){
+        referenceList.removeOne(child);
+        layout->removeWidget(child);
+        child->hide();
+        child->deleteLater();
+    }
 }
 
 void PropertyListWidget::addNewFloatProperty()
@@ -161,17 +173,9 @@ void PropertyListWidget::addNewFloatProperty()
 
 void PropertyListWidget::addFloatProperty(FloatProperty* floatProp)
 {
-	added++;
 	auto propWidget = new FloatPropertyWidget();
-	propWidget->index = added;
-	this->layout->insertWidget(this->layout->count() - 1, propWidget);
 	propWidget->setProp(floatProp);
-	connect(propWidget, &BasePropertyWidget::currentWidget, [=](BasePropertyWidget *wid) {
-		currentWidget = wid;
-	});
-	connect(propWidget, &BasePropertyWidget::TitleChanged, [=](QString title) {
-		emit nameChanged(title, floatProp->id);
-	});
+    addToPropertyListWidget(propWidget);
 }
 
 void PropertyListWidget::addNewVec2Property()
@@ -185,17 +189,11 @@ void PropertyListWidget::addNewVec2Property()
 
 void PropertyListWidget::addVec2Property(Vec2Property * vec2Prop)
 {
-	added++;
+    qDebug() << "vec 2 called";
 	auto propWidget = new Vector2DPropertyWidget();
-	propWidget->index = added;
-	this->layout->insertWidget(this->layout->count() - 1, propWidget);
 	propWidget->setProp(vec2Prop);
-	connect(propWidget, &BasePropertyWidget::currentWidget, [=](BasePropertyWidget *wid) {
-		currentWidget = wid;
-	});
-	connect(propWidget, &BasePropertyWidget::TitleChanged, [=](QString title) {
-		emit nameChanged(title, vec2Prop->id);
-	});
+    addToPropertyListWidget(propWidget);
+
 }
 ///////
 
@@ -210,17 +208,9 @@ void PropertyListWidget::addNewVec3Property()
 
 void PropertyListWidget::addVec3Property(Vec3Property * vec3Prop)
 {
-	added++;
 	auto propWidget = new Vector3DPropertyWidget();
-	propWidget->index = added;
-	this->layout->insertWidget(this->layout->count() - 1, propWidget);
 	propWidget->setProp(vec3Prop);
-	connect(propWidget, &BasePropertyWidget::currentWidget, [=](BasePropertyWidget *wid) {
-		currentWidget = wid;
-	});
-	connect(propWidget, &BasePropertyWidget::TitleChanged, [=](QString title) {
-		emit nameChanged(title, vec3Prop->id);
-	});
+    addToPropertyListWidget(propWidget);
 }
 
 ///////
@@ -236,17 +226,9 @@ void PropertyListWidget::addNewVec4Property()
 
 void PropertyListWidget::addVec4Property(Vec4Property * vec4Prop)
 {
-	added++;
 	auto propWidget = new Vector4DPropertyWidget();
-	propWidget->index = added;
-	this->layout->insertWidget(this->layout->count() - 1, propWidget);
 	propWidget->setProp(vec4Prop);
-	connect(propWidget, &BasePropertyWidget::currentWidget, [=](BasePropertyWidget *wid) {
-		currentWidget = wid;
-	});
-	connect(propWidget, &BasePropertyWidget::TitleChanged, [=](QString title) {
-		emit nameChanged(title, vec4Prop->id);
-	});
+    addToPropertyListWidget(propWidget);
 }
 
 ///////
@@ -262,17 +244,9 @@ void PropertyListWidget::addNewIntProperty()
 
 void PropertyListWidget::addIntProperty(IntProperty * intProp)
 {
-	added++;
 	auto propWidget = new IntPropertyWidget();
-	propWidget->index = added;
-	this->layout->insertWidget(this->layout->count() - 1, propWidget);
 	propWidget->setProp(intProp);
-	connect(propWidget, &BasePropertyWidget::currentWidget, [=](BasePropertyWidget *wid) {
-		currentWidget = wid;
-	});
-	connect(propWidget, &BasePropertyWidget::TitleChanged, [=](QString title) {
-		emit nameChanged(title, intProp->id);
-	});
+    addToPropertyListWidget(propWidget);
 }
 
 ////
@@ -288,15 +262,24 @@ void PropertyListWidget::addNewTextureProperty()
 
 void PropertyListWidget::addTextureProperty(TextureProperty * texProp)
 {
-	added++;
 	auto propWidget = new TexturePropertyWidget;
-	propWidget->index = added;
-	this->layout->insertWidget(this->layout->count() - 1, propWidget);
 	propWidget->setProp(texProp);
-	connect(propWidget, &BasePropertyWidget::currentWidget, [=](BasePropertyWidget *wid) {
-		currentWidget = wid;
-	});
-	connect(propWidget, &BasePropertyWidget::TitleChanged, [=](QString title) {
-		emit nameChanged(title, texProp->id);
-	});
+    addToPropertyListWidget(propWidget);
+}
+
+void PropertyListWidget::addToPropertyListWidget(BasePropertyWidget *widget)
+{
+    qDebug() << widget << widget->modelProperty->displayName;
+    qDebug() << layout->count();
+    layout->insertWidget(layout->count() -1, widget); // minus one to account for stretch
+    connect(widget, &BasePropertyWidget::currentWidget, [=](BasePropertyWidget *wid) {
+        currentWidget = wid;
+    });
+    connect(widget, &BasePropertyWidget::TitleChanged, [=](QString title) {
+        emit nameChanged(title, widget->modelProperty->id);
+    });
+    referenceList.append(widget);
+    added++;
+    widget->index = added;
+    qDebug() << layout->count();
 }

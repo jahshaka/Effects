@@ -39,7 +39,7 @@ public:
 	void setRenderLayer(RenderLayer index);
 
 private:
-	MaterialSettings* settings;
+    MaterialSettings settings;
 
 	void setConnections();
 	Ui::MaterialSettingsWidget* ui;
@@ -67,7 +67,7 @@ private:
 	QCheckBox *checkBox_6;
 	QFont font;
 signals:
-	void settingsChanged(MaterialSettings *value);
+    void settingsChanged(MaterialSettings value);
 };
 
 #endif

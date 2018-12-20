@@ -56,6 +56,9 @@ public:
 	void refreshShaderGraph();
 	void setAssetWidgetDatabase(Database *db);
 	void renameShader();
+
+	void loadGraph(QString guid);
+
     ~MainWindow();
 
 	QList<nodeGraphPreset> list;
@@ -65,10 +68,9 @@ public:
 private:
 	void saveShader();
 	void saveDefaultShader();
-	void loadShader();
-    void saveGraph();
-    void loadGraph();
-    void loadGraph(shaderInfo info);
+    void loadShadersFromDisk();
+
+    void importGraph();
     void exportGraph();
     void restoreGraphPositions(const QJsonObject& data);
     bool deleteShader(QString guid);
@@ -96,6 +98,10 @@ private:
 	QListWidgetItem* selectCorrectItemFromDrop(QString guid);
 	QList<QString> loadedShadersGUID;
 private:
+    void configureConnections();
+    void editingFinishedOnListItem();
+	void addMenuToSceneWidget();
+
     Ui::MainWindow *ui;
     GraphNodeScene* scene;
     SceneWidget* sceneWidget;

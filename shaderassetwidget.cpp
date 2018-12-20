@@ -33,15 +33,16 @@ ShaderAssetWidget::ShaderAssetWidget(Database *handle) : QWidget()
 
 	assetViewWidget = new ShaderListWidget;
     assetViewWidget->shaderContextMenuAllowed = true;
-	assetViewWidget->viewport()->installEventFilter(this);
 	connect(assetViewWidget, &ShaderListWidget::itemDropped, [=](QListWidgetItem *item) {
 		createShader(item);
 	});
 
+    if(handle) setUpDatabase(handle);
+
+
 	layout->addWidget(breadCrumbsWidget);
 	
 
-#if(EFFECT_BUILD_AS_LIB)
 		if (UiManager::isSceneOpen) {
 		}
 		else {
@@ -60,53 +61,12 @@ ShaderAssetWidget::ShaderAssetWidget(Database *handle) : QWidget()
 
 			layout->addWidget(noWidget);
 		}
-#endif
 }
 
 
 ShaderAssetWidget::~ShaderAssetWidget()
 {
 	
-}
-
-void ShaderAssetWidget::createCustomContextMenu(const QPoint pos)
-{
-
-	QMenu menu;
-	menu.setStyleSheet(
-		"QMenu { background-color: #1A1A1A; color: #EEE; padding: 0; margin: 0; }"
-		"QMenu::item { background-color: #1A1A1A; padding: 6px 8px; margin-left: 5; }"
-		"QMenu::item:selected { background-color: #3498db; color: #EEE; padding: 6px 8px; margin: 0; }"
-		"QMenu::item : disabled { color: #555; }"
-	);
-
-	QAction *action;
-
-	QMenu *createMenu = menu.addMenu("Create");
-	action = new QAction(QIcon(), "Shader", this);
-	connect(action, &QAction::triggered, [=]() {
-		createShader();
-	});
-	createMenu->addAction(action);
-
-	action = new QAction(QIcon(), "New Folder", this);
-	connect(action, &QAction::triggered, [=]() {
-		createFolder();
-	});
-	createMenu->addAction(action);
-
-	/*action = new QAction(QIcon(), "Import Asset", this);
-	connect(action, &QAction::triggered, [=]() {
-		createShader();
-	});
-	menu.addAction(action);*/
-
-
-	connect(action, &QAction::triggered, [=]() {
-
-	});
-
-	menu.exec(assetViewWidget->mapToGlobal(pos));
 }
 
 void ShaderAssetWidget::updateAssetView(const QString & path, int filter, bool showDependencies)
@@ -175,7 +135,6 @@ void ShaderAssetWidget::addItem(const AssetRecord & assetData)
 	item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
 	item->setData(MODEL_GUID_ROLE, assetData.guid);
 	item->setData(MODEL_PARENT_ROLE, assetData.parent);
-	item->setData(MODEL_GRAPH, obj["MODEL_GRAPH"].toObject());
 
 
 	QPixmap thumbnail;
@@ -226,7 +185,7 @@ void ShaderAssetWidget::addItem(const AssetRecord & assetData)
 	assetViewWidget->addItem(item);
 }
 
-void ShaderAssetWidget::setUpDatabse(Database * db)
+void ShaderAssetWidget::setUpDatabase(Database * db)
 {
 	//remove noWidget if preset and add assetViewWidget
 	if (UiManager::isSceneOpen) {
@@ -388,90 +347,9 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 	AssetManager::addAsset(assetShader);
 }
 
-void ShaderAssetWidget::createLocalShader()
-{
-	const QString newShader = "Untitled Shader";
-	QListWidgetItem *item = new QListWidgetItem;
-	item->setFlags(item->flags() | Qt::ItemIsEditable);
-	item->setSizeHint(currentSize);
-	item->setTextAlignment(Qt::AlignCenter);
-	item->setIcon(QIcon(":/icons/icons8-file-72.png"));
-
-	const QString assetGuid = GUIDManager::generateGUID();
-
-	item->setData(MODEL_GUID_ROLE, assetGuid);
-	item->setData(MODEL_PARENT_ROLE, assetItemShader.selectedGuid);
-	item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
-	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Material));
-
-	assetItemShader.wItem = item;
-
-	QString shaderName = newShader;
-
-	QStringList assetsInProject = db->fetchAssetNameByParent(assetItemShader.selectedGuid);
-
-	//// If we encounter the same file, make a duplicate...
-	int increment = 1;
-	while (assetsInProject.contains(IrisUtils::buildFileName(shaderName, "material"))) {
-		shaderName = QString(newShader + " %1").arg(QString::number(increment++));
-	}
-
-	db->createAssetEntry(assetGuid,
-		IrisUtils::buildFileName(shaderName, "material"),
-		static_cast<int>(ModelTypes::Material),
-		assetItemShader.selectedGuid,
-		QByteArray());
-
-	item->setText(shaderName);
-	assetViewWidget->addItem(item);
-
-	QFile *templateShaderFile = new QFile(IrisUtils::getAbsoluteAssetPath("app/templates/ShaderTemplate.shader"));
-	templateShaderFile->open(QIODevice::ReadOnly | QIODevice::Text);
-	QJsonObject shaderDefinition = QJsonDocument::fromJson(templateShaderFile->readAll()).object();
-	templateShaderFile->close();
-	shaderDefinition["name"] = shaderName;
-	shaderDefinition.insert("guid", assetGuid);
-
-	auto assetShader = new AssetShader;
-	assetShader->fileName = IrisUtils::buildFileName(shaderName, "material");
-	assetShader->assetGuid = assetGuid;
-	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(shaderName, "material"));
-	assetShader->setValue(QVariant::fromValue(shaderDefinition));
-
-	db->updateAssetAsset(assetGuid, QJsonDocument(shaderDefinition).toBinaryData());
-
-	AssetManager::addAsset(assetShader);
-}
-
 QByteArray ShaderAssetWidget::fetchAsset(QString string)
 {
 	return db->fetchAssetData(string);
 }
 
-bool ShaderAssetWidget::eventFilter(QObject * watched, QEvent * event)
-{
 
-	if (watched == assetViewWidget->viewport()) {
-		switch (event->type())
-		{
-
-		case QEvent::MouseButtonPress: {
-			auto evt = static_cast<QMouseEvent*>(event);
-			if (evt->button() == Qt::RightButton) {
-				QModelIndex index = assetViewWidget->indexAt(evt->pos());
-				if (index.isValid()) {
-
-				}
-				else {
-					createCustomContextMenu(evt->pos());
-				}
-			}
-		}
-			
-		default:
-			break;
-		}
-	}
-	return QObject::eventFilter(watched, event);
-
-}

@@ -276,25 +276,26 @@ MaterialSettings NodeGraph::deserializeMaterialSettings(QJsonObject obj)
 {
 
 	auto getBlendmode = [](QJsonObject obj) {
-		if (obj["blendMode"].toString().compare("Opaque")) return 0;
-		if (obj["blendMode"].toString().compare("Blend")) return 1;
-		if (obj["blendMode"].toString().compare("Additive")) return 2;
-		return 0;
+		if (obj["blendMode"].toString() == "Opaque") return BlendMode::Opaque;
+		if (obj["blendMode"].toString() == "Blend") return BlendMode::Blend;
+		if (obj["blendMode"].toString() == "Additive") return BlendMode::Additive;
+		return BlendMode::Opaque;
 	};
 	auto getCullMode = [](QJsonObject obj) {
-		if (obj["blendMode"].toString().compare("Front")) return 0;
-		if (obj["blendMode"].toString().compare("Back")) return 1;
-		if (obj["blendMode"].toString().compare("None")) return 2;
-		return 0;
+		if (obj["cullMode"].toString() == "Front") return CullMode::Front;
+		if (obj["cullMode"].toString() == "Back") return CullMode::Back;
+		if (obj["cullMode"].toString() == "None") return CullMode::None;
+		return CullMode::Front;
 	};
 	auto getRenderLayer = [](QJsonObject obj) {
-		if (obj["blendMode"].toString().compare("Opaque")) return 0;
-		if (obj["blendMode"].toString().compare("AlphaTested")) return 1;
-		if (obj["blendMode"].toString().compare("Transparent")) return 2;
-		if (obj["blendMode"].toString().compare("Overlay")) return 3;
-		return 0;
+		if (obj["renderLayer"].toString() == "Opaque") return RenderLayer::Opaque;
+		if (obj["renderLayer"].toString() == "AlphaTested") return RenderLayer::AlphaTested;
+		if (obj["renderLayer"].toString() == "Transparent") return RenderLayer::Transparent;
+		if (obj["renderLayer"].toString() == "Overlay") return RenderLayer::Overlay;
+		return RenderLayer::Opaque;
 	};
 
+	MaterialSettings settings;
 	settings.name = obj["name"].toString();
 	settings.zwrite = obj["zWrite"].toBool();
 	settings.depthTest = obj["depthTest"].toBool();
@@ -302,9 +303,10 @@ MaterialSettings NodeGraph::deserializeMaterialSettings(QJsonObject obj)
 	settings.castShadow = obj["castShadow"].toBool();
 	settings.receiveShadow = obj["receiveShadow"].toBool();
 	settings.acceptLighting = obj["acceptLighting"].toBool();
-	settings.blendMode = static_cast<BlendMode>(getBlendmode(obj));
-	settings.cullMode = static_cast<CullMode>(getCullMode(obj));
-	settings.renderLayer = static_cast<RenderLayer>(getRenderLayer(obj));
+	settings.blendMode = getBlendmode(obj);
+	settings.cullMode = getCullMode(obj);
+	settings.renderLayer = getRenderLayer(obj);
+
 	return settings;
 }
 

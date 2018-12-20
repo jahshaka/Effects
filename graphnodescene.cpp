@@ -230,7 +230,7 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 			}
 	}
 
-	if (QVariant(event->mimeData()->data("MODEL_TYPE_ROLE")).toInt() == static_cast<int>(ModelTypes::Shader)) {
+	if (QVariant(event->mimeData()->data("MODEL_TYPE_ROLE")).toInt() == static_cast<int>(ModelTypes::Material)) {
 		event->accept();
 
 		QListWidgetItem *item = new QListWidgetItem;
@@ -245,7 +245,7 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 */
 		currentlyEditing = item;
 
-		if(!loadedShadersGUID.contains(item->data(MODEL_GUID_ROLE).toString()))  loadedShadersGUID.append(item->data(MODEL_GUID_ROLE).toString());
+	//	if(!loadedShadersGUID.contains(item->data(MODEL_GUID_ROLE).toString()))  loadedShadersGUID.append(item->data(MODEL_GUID_ROLE).toString());
 
 		emit loadGraph(item);
 		return;
@@ -255,9 +255,6 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 void GraphNodeScene::drawBackground(QPainter * painter, const QRectF & rect)
 {
 	//does not draw background
-	//painter->setBackground(QBrush(QColor(00, 200, 200, 50)));
-	//painter->fillRect(rect, QBrush(QColor(00, 00, 0, 200)));
-//	QGraphicsScene::drawBackground(painter, rect);
 }
 
 GraphNodeScene::GraphNodeScene(QWidget* parent) :

@@ -27,8 +27,12 @@ public:
 
     void addProperty(QWidget* widget);
     void setNodeGraph(NodeGraph* graph);
+    void clearPropertyList();
+
+
 	BasePropertyWidget *currentWidget = Q_NULLPTR;
 private:
+    QVector<BasePropertyWidget*> referenceList;
     void addNewFloatProperty();
 	void addFloatProperty(FloatProperty* floatProp);
 
@@ -46,6 +50,8 @@ private:
 	
 	void addNewTextureProperty();
 	void addTextureProperty(TextureProperty* texProp);
+
+    void addToPropertyListWidget(BasePropertyWidget *widget);
 
 private:
     QVBoxLayout* layout;
