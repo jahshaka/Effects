@@ -111,5 +111,7 @@ iris::CustomMaterialPtr MaterialHelper::generateMaterialFromMaterialDefinition(Q
 	auto mat = iris::CustomMaterial::createFromShader(shader);
 	mat->setMaterialDefinition(matObj);
 
+	// generate properties
+
 	return mat;
 }

@@ -28,7 +28,7 @@ void GraphNodeScene::setNodeGraph(NodeGraph *graph)
 
 	// add nodes
 	for (auto node : graph->nodes.values()) {
-		this->addNodeModel(node, 0, 0, false);
+		this->addNodeModel(node, false);
 	}
 
 	// add connections
@@ -44,11 +44,17 @@ void GraphNodeScene::setNodeGraph(NodeGraph *graph)
 	}
 }
 
+void GraphNodeScene::addNodeModel(NodeModel* model, bool addToGraph)
+{
+	addNodeModel(model, model->x, model->y, addToGraph);
+}
+
 // add
 void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addToGraph)
 {
 	auto nodeView = this->createNode<GraphNode>();
 	nodeView->setNodeGraph(this->nodeGraph);
+	nodeView->setModel(model);
 	nodeView->setTitle(model->title);
 	nodeView->setTitleColor(model->setNodeTitleColor());
 	if (model->title == "Color Node") nodeView->doNotCheckProxyWidgetHeight = true;
@@ -113,7 +119,9 @@ QMenu *GraphNodeScene::createContextMenu(float x, float y)
 		connect(menu->addAction(item->displayName), &QAction::triggered, [this, x, y, factory]() {
 
 			auto node = factory();
-			this->addNodeModel(node, x, y);
+			node->x = x;
+			node->y = y;
+			this->addNodeModel(node);
 
 		});
 	}
@@ -213,7 +221,9 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 		if (prop) {
 			auto propNode = new PropertyNode();
 			propNode->setProperty(prop);
-			this->addNodeModel(propNode, event->scenePos().x(), event->scenePos().y());
+			propNode->x = event->scenePos().x();
+			propNode->y = event->scenePos().y();
+			this->addNodeModel(propNode);
 			
 		}
 	}

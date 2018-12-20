@@ -14,6 +14,9 @@ NodeModel::NodeModel()
 	});
 
 	enablePreview = false;
+
+	x = 0;
+	y = 0;
 }
 
 void NodeModel::updateStyle()
