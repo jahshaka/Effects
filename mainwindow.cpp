@@ -93,8 +93,6 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
 	graphicsView->setAcceptDrops(true);
     newScene->setNodeGraph(graph);
 
-	qDebug() << graph->settings.name;
-
     // delet old scene and reassign new scene
     if (scene) {
         scene->deleteLater();
@@ -207,8 +205,19 @@ void MainWindow::saveMaterialFile(QString filename, TexturePropertyWidget* widge
 
 	auto folderGUID = genGUID();
 
+	// if a value is already set, remove it;
+	if (widget->getValue() != "") {
+		auto assetsFolder = QDir(assetPath).filePath(widget->getValue());
+		if (QDir().exists(assetsFolder)) {
+			QDir(assetsFolder).removeRecursively();
+		}
+		dataBase->deleteAsset(widget->getValue());
+	}
+
 	const QString assetFolder = QDir(assetPath).filePath(folderGUID);
 	QDir().mkpath(assetFolder);
+
+
 
 	QFileInfo fileInfo(filename);
 	QString fileToCopyTo = IrisUtils::join(assetFolder, fileInfo.fileName());
@@ -216,20 +225,8 @@ void MainWindow::saveMaterialFile(QString filename, TexturePropertyWidget* widge
 
 	widget->setValue(folderGUID);
 
-	auto assetShader = new AssetFile;
-	assetShader->fileName = fileInfo.fileName();
-	assetShader->assetGuid = folderGUID;
-	assetShader->path = QDir().filePath(fileToCopyTo);
-
-	AssetManager::addAsset(assetShader);
-
-	QFile file(filename);
-	QJsonDocument doc;
-
-	if (file.open(QIODevice::ReadWrite)) {
-		file.write(doc.toJson());
-		file.close();
-		assetShader->setValue(QVariant::fromValue(doc));
+	if (copyFile) {
+		
 	}
 	else {
 		//return error msg
@@ -237,7 +234,7 @@ void MainWindow::saveMaterialFile(QString filename, TexturePropertyWidget* widge
 	}
 #if(EFFECT_BUILD_AS_LIB)
 	
-	dataBase->createAssetEntry(QString::null, folderGUID, file.fileName(), static_cast<int>(ModelTypes::File));
+	dataBase->createAssetEntry(QString::null, folderGUID, fileInfo.fileName(), static_cast<int>(ModelTypes::File));
 	//dataBase.upda
 
 #else
@@ -836,6 +833,15 @@ void MainWindow::configureUI()
 		saveMaterialFile(fileName, widget);
 	});
 
+	connect(propertyListWidget, &PropertyListWidget::imageRequestedForTexture, [=](QString guid) {
+		auto assetPath = IrisUtils::join(
+			QStandardPaths::writableLocation(QStandardPaths::DataLocation),
+			"AssetStore"
+		);
+		QString assetFolder = QDir(assetPath).filePath(guid);
+
+	});
+
 	materialSettingsDock->setWidget(materialSettingsWidget);
 
 	nodeContainer->setAlternatingRowColors(false);
@@ -1367,8 +1373,9 @@ void MainWindow::addMenuToSceneWidget()
 	QMenu *backgroundMenu = new QMenu("background");
 	modelMenu->setStyleSheet(
 		"QMenu { background-color: #1A1A1A; color: #EEE; padding: 0; margin: 0; }"
-		"QMenu::item { background-color: #1A1A1A; padding: 6px 8px; margin: 0; }"
-		"QMenu::item:selected { background-color: #3498db; color: #EEE; padding: 6px 8px; margin: 0; }"
+		"QMenu:hover { background-color: #3498db; }"
+		"QMenu::item { background-color: #1A1A1A; padding: 6px 16px; margin: 0; }"
+		"QMenu::item:selected { background-color: #3498db; color: #EEE; }"
 		"QMenu::item : disabled { color: #555; }"
 	);
 	sceneMenu->setStyleSheet(modelMenu->styleSheet());
@@ -1404,9 +1411,24 @@ void MainWindow::addMenuToSceneWidget()
 
 	auto blankAction = new QAction("blank");
 	connect(blankAction, &QAction::triggered, [=]() {});
-	auto customAction = new QAction("custom");
-	connect(customAction, &QAction::triggered, [=]() {});
-	backgroundMenu->addActions({ blankAction,customAction });
+	auto gradientAction = new QAction("custom");
+	connect(gradientAction, &QAction::triggered, [=]() {});
+	backgroundMenu->addActions({ blankAction,gradientAction });
+
+	cubeAction->setCheckable(true);
+	planeAction->setCheckable(true);
+	sphareAction->setCheckable(true);
+	customModelAction->setCheckable(true);
+	whiteAction->setCheckable(true);
+	blackAction->setCheckable(true);
+	checkeredAction->setCheckable(true);
+	blankAction->setCheckable(true);
+	blankColorAction->setCheckable(true);
+	gradientAction->setCheckable(true);
+
+	sphareAction->setChecked(true);
+	whiteAction->setChecked(true);
+	blankAction->setChecked(true);
 }
 
 }

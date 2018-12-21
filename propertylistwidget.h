@@ -50,7 +50,7 @@ private:
 	void addIntProperty(IntProperty* intProp);
 	
 	void addNewTextureProperty();
-	void addTextureProperty(TextureProperty* texProp);
+	void addTextureProperty(TextureProperty* texProp, bool requestTextureFromDatabase = false);
 
     void addToPropertyListWidget(BasePropertyWidget *widget);
 
@@ -63,6 +63,7 @@ private:
 signals:
 	void nameChanged(QString name, QString id);
 	void texturePicked(QString filename, TexturePropertyWidget *widget);
+	QString imageRequestedForTexture(QString guid);
 };
 
 #endif // PROPERTYLISTWIDGET_H

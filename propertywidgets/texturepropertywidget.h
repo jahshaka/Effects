@@ -25,7 +25,7 @@ private:
 	TextureProperty *prop;
 	GraphTexture* graphTexture;
 	QPushButton *texture;
-	QString value;
+	QString value = "";
 	void setConnections();
 
 public slots:

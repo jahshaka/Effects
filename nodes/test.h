@@ -12,6 +12,8 @@
 #include "../graph/sockets.h"
 #include "../generator/shadercontext.h"
 #include "../propertywidgets/propertywidgetbase.h"
+#include "../propertywidgets/texturepropertywidget.h"
+
 
 
 
@@ -143,9 +145,10 @@ public:
 class GraphTexture;
 class TextureNode : public NodeModel
 {
+	Q_OBJECT
 	QPushButton *texture;
 	GraphTexture* graphTexture;
-
+	TexturePropertyWidget *textureWidget;
 public:
 	TextureNode();
 	virtual void process(ModelContext* context) override;

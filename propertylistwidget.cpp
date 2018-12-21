@@ -143,7 +143,7 @@ void PropertyListWidget::setNodeGraph(NodeGraph *graph)
 			addVec4Property((Vec4Property*)prop);
 			break;
 		case PropertyType::Texture:
-			addTextureProperty((TextureProperty*)prop);
+			addTextureProperty((TextureProperty*)prop, true);
 			break;
 		default:
 			break;
@@ -261,9 +261,10 @@ void PropertyListWidget::addNewTextureProperty()
 	this->graph->addProperty(prop);
 }
 
-void PropertyListWidget::addTextureProperty(TextureProperty * texProp)
+void PropertyListWidget::addTextureProperty(TextureProperty * texProp, bool requestTextureFromDatabase)
 {
 	auto propWidget = new TexturePropertyWidget;
+	QString imagePath = emit imageRequestedForTexture(texProp->value);
 	propWidget->setProp(texProp);
     addToPropertyListWidget(propWidget);
 }
