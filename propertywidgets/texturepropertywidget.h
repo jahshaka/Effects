@@ -19,20 +19,19 @@ public:
 	~TexturePropertyWidget();
 	void setProp(TextureProperty *prop);
 	QString getValue();
-
+	void setValue(QString guid);
 
 private:
 	TextureProperty *prop;
 	GraphTexture* graphTexture;
-	WidgetTexture *wid;
-	QString value;
 	QPushButton *texture;
+	QString value;
 	void setConnections();
 
 public slots:
 	void setPropValue(QString value);
 signals:
-	void valueChanged(QString val);
+	void valueChanged(QString val, TexturePropertyWidget* widget);
 	void nameChanged(QString name);
 };
 

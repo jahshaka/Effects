@@ -17,6 +17,7 @@ class Vec4Property;
 class IntProperty;
 class TextureProperty;
 class BasePropertyWidget;
+class TexturePropertyWidget;
 class PropertyListWidget : public QWidget
 {
     Q_OBJECT
@@ -61,6 +62,7 @@ private:
 
 signals:
 	void nameChanged(QString name, QString id);
+	void texturePicked(QString filename, TexturePropertyWidget *widget);
 };
 
 #endif // PROPERTYLISTWIDGET_H

@@ -36,9 +36,12 @@
 #include "listwidget.h"
 #include "scenewidget.h"
 #include "core/project.h"
+#include "propertywidgets/texturepropertywidget.h"
+
 #include <QMainWindow>
 #include <QStandardPaths>
 #include <QDirIterator>
+#include <QMessageBox>
 
 #if(EFFECT_BUILD_AS_LIB)
 #include "../core/database/database.h"
@@ -192,6 +195,79 @@ void MainWindow::loadShadersFromDisk()
 		item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Material));
 		effects->addItem(item);
     }
+	
+}
+
+void MainWindow::saveMaterialFile(QString filename, TexturePropertyWidget* widget)
+{
+	auto assetPath = IrisUtils::join(
+		QStandardPaths::writableLocation(QStandardPaths::DataLocation),
+		"AssetStore"
+	);
+
+	auto folderGUID = genGUID();
+
+	const QString assetFolder = QDir(assetPath).filePath(folderGUID);
+	QDir().mkpath(assetFolder);
+
+	QFileInfo fileInfo(filename);
+	QString fileToCopyTo = IrisUtils::join(assetFolder, fileInfo.fileName());
+	bool copyFile = QFile::copy(fileInfo.absoluteFilePath(), fileToCopyTo);
+
+	widget->setValue(folderGUID);
+
+	auto assetShader = new AssetFile;
+	assetShader->fileName = fileInfo.fileName();
+	assetShader->assetGuid = folderGUID;
+	assetShader->path = QDir().filePath(fileToCopyTo);
+
+	AssetManager::addAsset(assetShader);
+
+	QFile file(filename);
+	QJsonDocument doc;
+
+	if (file.open(QIODevice::ReadWrite)) {
+		file.write(doc.toJson());
+		file.close();
+		assetShader->setValue(QVariant::fromValue(doc));
+	}
+	else {
+		//return error msg
+		QMessageBox::warning(this, "File Not Saved", "file cound not be saved", QMessageBox::StandardButton::Close);
+	}
+#if(EFFECT_BUILD_AS_LIB)
+	
+	dataBase->createAssetEntry(QString::null, folderGUID, file.fileName(), static_cast<int>(ModelTypes::File));
+	//dataBase.upda
+
+#else
+
+	auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/Textures/");
+	if (!QDir(filePath).exists()) QDir().mkpath(filePath);
+	auto shaderFile = new QFile(filePath + guid);
+	if (shaderFile->open(QIODevice::ReadWrite)) {
+		shaderFile->write(doc.toJson());
+		shaderFile->close();
+	}
+
+#endif
+}
+
+void MainWindow::deleteMaterialFile(QString filename)
+{
+#if(EFFECT_BUILD_AS_LIB)
+
+#else
+
+#endif
+}
+
+QString MainWindow::genGUID()
+{
+	auto id = QUuid::createUuid();
+	auto guid = id.toString().remove(0, 1);
+	guid.chop(1);
+	return guid;
 }
 
 void MainWindow::importGraph()
@@ -577,14 +653,7 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 	item->setTextAlignment(Qt::AlignCenter);
 	item->setIcon(QIcon(":/icons/icons8-file-72.png"));
 
-	auto genGuid = []() {
-		auto id = QUuid::createUuid();
-		auto guid = id.toString().remove(0, 1);
-		guid.chop(1);
-		return guid;
-	};
-
-	auto assetGuid = genGuid();
+	auto assetGuid = genGUID();
 
 	item->setData(MODEL_GUID_ROLE, assetGuid);
 	item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
@@ -669,7 +738,6 @@ QByteArray MainWindow::fetchAsset(QString string)
 
 void MainWindow::configureUI()
 {
-
 	font.setPointSizeF(font.pointSize() * devicePixelRatioF());
 //	setFont(font);
 
@@ -762,6 +830,10 @@ void MainWindow::configureUI()
 
 	connect(propertyListWidget, &PropertyListWidget::nameChanged, [=](QString name, QString id) {
 		scene->updateNodeTitle(name, id);
+	});
+
+	connect(propertyListWidget, &PropertyListWidget::texturePicked, [=](QString fileName, TexturePropertyWidget* widget) {
+		saveMaterialFile(fileName, widget);
 	});
 
 	materialSettingsDock->setWidget(materialSettingsWidget);
@@ -961,9 +1033,7 @@ bool MainWindow::createNewGraph(bool loadNewGraph)
 		createShader(&shaderName, &shaderType, &shaderTemplateName, loadNewGraph);
 		return true;
 	}
-
 	return false;
-
 }
 
 void MainWindow::updateAssetDock()

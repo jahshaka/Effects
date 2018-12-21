@@ -12,6 +12,7 @@
 #include "propertywidgets/texturepropertywidget.h"
 #include "properties.h"
 #include "graph/nodegraph.h"
+#include "mainwindow.h"
 //#include "nodemodel.h"
 
 PropertyListWidget::PropertyListWidget(QWidget *parent) :
@@ -269,8 +270,7 @@ void PropertyListWidget::addTextureProperty(TextureProperty * texProp)
 
 void PropertyListWidget::addToPropertyListWidget(BasePropertyWidget *widget)
 {
-    qDebug() << widget << widget->modelProperty->displayName;
-    qDebug() << layout->count();
+
     layout->insertWidget(layout->count() -1, widget); // minus one to account for stretch
     connect(widget, &BasePropertyWidget::currentWidget, [=](BasePropertyWidget *wid) {
         currentWidget = wid;
@@ -278,6 +278,16 @@ void PropertyListWidget::addToPropertyListWidget(BasePropertyWidget *widget)
     connect(widget, &BasePropertyWidget::TitleChanged, [=](QString title) {
         emit nameChanged(title, widget->modelProperty->id);
     });
+	// if texture widget, listen for additional signal
+	if (widget->modelProperty->type == PropertyType::Texture) {
+
+		auto textureWidget = static_cast<TexturePropertyWidget*>(widget);
+		connect(textureWidget, &TexturePropertyWidget::valueChanged, [=](QString filename, TexturePropertyWidget *widget) { 
+			//textureWidget->setValue(shadergraph::MainWindow::genGUID());
+			emit texturePicked(filename, textureWidget);
+		});
+	}
+
     referenceList.append(widget);
     added++;
     widget->index = added;

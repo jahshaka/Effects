@@ -29,6 +29,7 @@ class GraphNodeScene;
 class NodeGraph;
 class NodeLibraryItem;
 class Database;
+class TexturePropertyWidget;
 
 namespace shadergraph
 {
@@ -44,6 +45,7 @@ struct nodeListModel {
 	int outSockets;
 
 };
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -58,6 +60,7 @@ public:
 	void renameShader();
 
 	void loadGraph(QString guid);
+	static QString genGUID();
 
     ~MainWindow();
 
@@ -69,6 +72,9 @@ private:
 	void saveShader();
 	void saveDefaultShader();
     void loadShadersFromDisk();
+
+	void saveMaterialFile(QString filename, TexturePropertyWidget* widget);
+	void deleteMaterialFile(QString filename);
 
     void importGraph();
     void exportGraph();
