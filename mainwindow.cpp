@@ -54,7 +54,7 @@
 #include <QUuid>
 #endif
 
-
+#include "texturemanager.h"
 #include <QDebug>
 namespace shadergraph
 {
@@ -73,7 +73,10 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
 
 	installEventFilter(this);
 
-	if (database) setAssetWidgetDatabase(database);
+	if (database) {
+		setAssetWidgetDatabase(database);
+		TextureManager::getSingleton()->setDatabase(database);
+	}
 
 	newNodeGraph();
 	generateTileNode();
@@ -83,6 +86,7 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
     configureConnections();
 	setMinimumSize(300, 400);
     loadShadersFromDisk();
+	
 }
 
 void MainWindow::setNodeGraph(NodeGraph *graph)
@@ -198,44 +202,11 @@ void MainWindow::loadShadersFromDisk()
 
 void MainWindow::saveMaterialFile(QString filename, TexturePropertyWidget* widget)
 {
-	auto assetPath = IrisUtils::join(
-		QStandardPaths::writableLocation(QStandardPaths::DataLocation),
-		"AssetStore"
-	);
-
-	auto folderGUID = genGUID();
-
-	// if a value is already set, remove it;
-	if (widget->getValue() != "") {
-		auto assetsFolder = QDir(assetPath).filePath(widget->getValue());
-		if (QDir().exists(assetsFolder)) {
-			QDir(assetsFolder).removeRecursively();
-		}
-		dataBase->deleteAsset(widget->getValue());
-	}
-
-	const QString assetFolder = QDir(assetPath).filePath(folderGUID);
-	QDir().mkpath(assetFolder);
-
-
-
-	QFileInfo fileInfo(filename);
-	QString fileToCopyTo = IrisUtils::join(assetFolder, fileInfo.fileName());
-	bool copyFile = QFile::copy(fileInfo.absoluteFilePath(), fileToCopyTo);
-
-	widget->setValue(folderGUID);
-
-	if (copyFile) {
-		
-	}
-	else {
-		//return error msg
-		QMessageBox::warning(this, "File Not Saved", "file cound not be saved", QMessageBox::StandardButton::Close);
-	}
-#if(EFFECT_BUILD_AS_LIB)
 	
-	dataBase->createAssetEntry(QString::null, folderGUID, fileInfo.fileName(), static_cast<int>(ModelTypes::File));
-	//dataBase.upda
+#if(EFFECT_BUILD_AS_LIB)
+	TextureManager::getSingleton()->removeTextureByGuid(widget->getValue());
+	auto tex = TextureManager::getSingleton()->importTexture(filename);
+	widget->setValue(tex->guid);
 
 #else
 
@@ -1071,6 +1042,7 @@ void MainWindow::updateAssetDock()
 void MainWindow::setAssetWidgetDatabase(Database * db)
 {
 #if(EFFECT_BUILD_AS_LIB)
+	TextureManager::getSingleton()->setDatabase(db);
     assetWidget->setUpDatabase(db);
 #endif
 }

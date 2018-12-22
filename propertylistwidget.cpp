@@ -282,11 +282,11 @@ void PropertyListWidget::addToPropertyListWidget(BasePropertyWidget *widget)
 	// if texture widget, listen for additional signal
 	if (widget->modelProperty->type == PropertyType::Texture) {
 
-		auto textureWidget = static_cast<TexturePropertyWidget*>(widget);
-		connect(textureWidget, &TexturePropertyWidget::valueChanged, [=](QString filename, TexturePropertyWidget *widget) { 
-			//textureWidget->setValue(shadergraph::MainWindow::genGUID());
-			emit texturePicked(filename, textureWidget);
-		});
+		//auto textureWidget = static_cast<TexturePropertyWidget*>(widget);
+		//connect(textureWidget, &TexturePropertyWidget::valueChanged, [=](QString filename, TexturePropertyWidget *widget) { 
+		//	//textureWidget->setValue(shadergraph::MainWindow::genGUID());
+		//	//emit texturePicked(filename, textureWidget);
+		//});
 	}
 
     referenceList.append(widget);

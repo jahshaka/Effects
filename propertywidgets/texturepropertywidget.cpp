@@ -37,40 +37,51 @@ void TexturePropertyWidget::setProp(TextureProperty * prop)
 	displayName->setText(prop->displayName);
 	value = prop->value;
 	modelProperty = prop;
-
+	
+#if(EFFECT_BUILD_AS_LIB)
+	graphTexture = TextureManager::getSingleton()->loadTextureFromGuid(prop->value);
+	QIcon icon(graphTexture->path);
+	texture->setIcon(icon);
+#else
 	graphTexture = TextureManager::getSingleton()->createTexture();
+	if (QFile::exists(prop->value))
+		graphTexture->setImage(prop->value);
+	QIcon icon(prop->value);
+	texture->setIcon(icon);
+#endif
+	
 	graphTexture->uniformName = prop->getUniformName();
-	if (QFile::exists(value))
-		graphTexture->setImage(value);
-
-	//emit nameChanged(displayName->text());
-	//emit valueChanged(value, this);
 }
 
 QString TexturePropertyWidget::getValue()
 {
-	return value;
+	return prop->value;
 }
 
 void TexturePropertyWidget::setValue(QString guid)
 {
-	prop->setValue(guid);
-	value = guid;
+	prop->value = guid;
 }
 
 void TexturePropertyWidget::setConnections()
 {
 	connect(texture, &QPushButton::clicked, [=]() {
 		auto filename = QFileDialog::getOpenFileName();
-		graphTexture->setImage(filename);
 
+#if(EFFECT_BUILD_AS_LIB)
+		TextureManager::getSingleton()->removeTexture(graphTexture);
+		graphTexture = TextureManager::getSingleton()->importTexture(filename);
+		prop->value = graphTexture->guid;
+		QIcon icon(graphTexture->path);
+		texture->setIcon(icon);
+#else
+		graphTexture->setImage(filename);
+		prop->value = filename;
 		QIcon icon(filename);
 		texture->setIcon(icon);
-		emit valueChanged(filename, this);
-	});
+#endif
 
-	connect(this, &TexturePropertyWidget::valueChanged, [=](QString val) {
-		setPropValue(val);
+		emit valueChanged(filename, this);
 	});
 }
 
