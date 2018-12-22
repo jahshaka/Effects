@@ -17,9 +17,9 @@ public:
 	// returns true if all goes well, false if otherwose
 	static bool generateShader(NodeGraph* graph, QString& vertexShader, QString& fragmentShader);
 	
-	// Converts a GraphNodeScene to the Material json format
-	static QJsonObject serialize(GraphNodeScene* scene);
-	static iris::CustomMaterialPtr createMaterialFromShaderGraph(GraphNodeScene* scene);
+	// Converts a NodeGraph to the Material json format
+	static QJsonObject serialize(NodeGraph* graph);
+	static iris::CustomMaterialPtr createMaterialFromShaderGraph(NodeGraph* scene);
 
 	static NodeGraph* extractNodeGraphFromMaterialDefinition(QJsonObject matObj);
 
@@ -28,6 +28,9 @@ public:
 	// if there's an error generating the code then a null material is returned
 	static iris::CustomMaterialPtr generateMaterialFromMaterialDefinition(QJsonObject matObj, bool generateFromGraph = false);
 	//static QJsonObject serialize(GraphNodeScene* scene);
+
+	static void parseMaterialProperties(iris::CustomMaterialPtr material, QJsonArray propList);
+	//static QJsonArray serializeMateriaProperties(iris::)
 
 
 	static QString vertexShaderTemplate;
