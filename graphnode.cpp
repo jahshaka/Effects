@@ -232,10 +232,16 @@ GraphNode::GraphNode(QGraphicsItem* parent) :
 	// preview widget
 	proxyPreviewWidget = nullptr;
 	previewWidget = nullptr;
+	model = nullptr;
 }
 
 GraphNode::~GraphNode()
 {
+}
+
+void GraphNode::setModel(NodeModel * model)
+{
+	this->model = model;
 }
 
 void GraphNode::setIcon(QIcon icon)
@@ -496,6 +502,20 @@ void GraphNode::paint(QPainter *painter,
 int GraphNode::type() const
 {
 	return (int)GraphicsItemType::Node;
+}
+
+QVariant GraphNode::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant & value)
+{
+	if (change == QGraphicsItem::ItemPositionChange && scene()) {
+		// update positon for node
+		if (model) {
+			auto pos = this->pos();
+			model->x = pos.x();
+			model->y = pos.y();
+		}
+	}
+
+	return QGraphicsItem::itemChange(change, value);
 }
 
 void GraphNode::highlightNode(bool val, int lvl)

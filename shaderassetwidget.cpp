@@ -302,46 +302,37 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 		return guid;
 	};
 
-	const QString assetGuid = genGuid();
+	const QString targetGuid = genGuid();
 
 	
 	assetItemShader.wItem = item;
 
 	QString shaderName = item->data(Qt::DisplayRole).toString();
+	QString sourceGuid = item->data(MODEL_GUID_ROLE).toString();
 
-	QStringList assetsInProject = db->fetchAssetNameByParent(assetItemShader.selectedGuid);
+	AssetRecord sourceRecord = db->fetchAsset(sourceGuid);
+	auto sourceData = db->fetchAssetData(sourceGuid);
 
-	//// If we encounter the same file, make a duplicate...
-	int increment = 1;
-	while (assetsInProject.contains(IrisUtils::buildFileName(shaderName, "material"))) {
-		shaderName = QString(newShader + " %1").arg(QString::number(increment++));
-	}
-
-	db->createAssetEntry(assetGuid,
-		item->data(Qt::DisplayRole).toString(),
+	db->createAssetEntry(targetGuid,
+		sourceRecord.name,
 		static_cast<int>(ModelTypes::Material),
-		assetItemShader.selectedGuid,
-		QByteArray());
+		assetItemShader.selectedGuid);
+	db->updateAssetAsset(targetGuid, sourceData);
 
+	// todo: create new item
 	assetViewWidget->addItem(item);
-
-	QFile *templateShaderFile = new QFile(IrisUtils::getAbsoluteAssetPath("app/templates/ShaderTemplate.shader"));
-	templateShaderFile->open(QIODevice::ReadOnly | QIODevice::Text);
-	QJsonObject shaderDefinition = QJsonDocument::fromJson(templateShaderFile->readAll()).object();
-	templateShaderFile->close();
-	shaderDefinition["name"] = shaderName;
-	shaderDefinition.insert("guid", assetGuid);
 
 	auto assetShader = new AssetMaterial;
 	assetShader->fileName = IrisUtils::buildFileName(shaderName, "material");
-	assetShader->assetGuid = assetGuid;
+	assetShader->assetGuid = targetGuid;
 	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(shaderName, "shader"));
-	assetShader->setValue(QVariant::fromValue(shaderDefinition));
 
+	//auto assetData = db->fetchAssetData(targetGuid);
+	auto matObj = QJsonDocument::fromBinaryData(sourceData).object();
+	auto mat = MaterialHelper::generateMaterialFromMaterialDefinition(matObj, true);
+	assetShader->setValue(QVariant::fromValue(mat));
 
-	//assetShader->setValue(MaterialHelper::createMaterialFromShaderGraph);
-
-	db->updateAssetAsset(assetGuid, QJsonDocument::fromBinaryData(fetchAsset(item->data(MODEL_GUID_ROLE).toString())).toBinaryData());
+	//db->updateAssetAsset(assetGuid, QJsonDocument::fromBinaryData(fetchAsset(item->data(MODEL_GUID_ROLE).toString())).toBinaryData());
 
 	// build material from definition
 	AssetManager::addAsset(assetShader);

@@ -112,6 +112,8 @@ QJsonObject NodeGraph::serialize()
 		nodeObj["id"] = node->id;
 		nodeObj["value"] = node->serializeWidgetValue();
 		nodeObj["type"] = node->typeName;
+		nodeObj["x"] = node->x;
+		nodeObj["y"] = node->y;
 		nodesJson.append(nodeObj);
 	}
 	graph.insert("nodes", nodesJson);
@@ -177,6 +179,8 @@ NodeGraph* NodeGraph::deserialize(QJsonObject graphObj, NodeLibrary* library)
 			nodeModel = graph->library->createNode(type);
 		}
 		nodeModel->id = nodeObj["id"].toString();
+		nodeModel->x = nodeObj["x"].toDouble();
+		nodeModel->y = nodeObj["y"].toDouble();
 
 
 		// special case for properties

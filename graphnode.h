@@ -63,6 +63,7 @@ enum class GraphicsItemType : int
 
 class Socket;
 class SocketConnection;
+class NodeModel;
 class GraphNode : public QGraphicsPathItem
 {
 	QVector<Socket*> sockets;
@@ -71,6 +72,7 @@ class GraphNode : public QGraphicsPathItem
 	QGraphicsProxyWidget* proxyWidget;
 	QGraphicsProxyWidget* proxyPreviewWidget;
 	NodeGraph* nodeGraph;
+	NodeModel* model;
 
 	int inSocketCount = 0;
 	int outSocketCount = 0;
@@ -91,6 +93,7 @@ public:
 	GraphNode(QGraphicsItem* parent);
 	~GraphNode();
 
+	void setModel(NodeModel* model);
 	void setIcon(QIcon icon);
 	void setTitleColor(QColor color);
 	void setTitle(QString title);
@@ -117,6 +120,11 @@ public:
 		QWidget *widget = 0) override;
 
 	virtual int type() const override;
+
+	QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+
+signals:
+	void positionChanged(const QPointF& pos);
 private:
 	QColor connectedColor = QColor(50, 150, 250);
 	QColor disconnectedColor = QColor(90, 90, 90, 0);

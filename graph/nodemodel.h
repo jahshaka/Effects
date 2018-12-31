@@ -42,6 +42,9 @@ public:
 	QColor titleColor;
 	QIcon icon;
 
+	float x;
+	float y;
+
 	bool enablePreview;
 	bool isPreviewEnabled()
 	{
