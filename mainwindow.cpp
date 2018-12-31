@@ -144,12 +144,9 @@ void MainWindow::saveShader()
 	}
 
 	QJsonDocument doc;
-<<<<<<< HEAD
-	auto matObj = MaterialHelper::serialize(scene);
-    doc.setObject(matObj);
-=======
 	auto matObj = MaterialHelper::serialize(graph);
->>>>>>> Updated shadergraph json format
+	doc.setObject(matObj);
+	QString data = doc.toJson();
 
 #if(EFFECT_BUILD_AS_LIB)
 	dataBase->updateAssetAsset(currentShaderInformation.GUID, doc.toBinaryData());
@@ -666,29 +663,16 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 
 #if(EFFECT_BUILD_AS_LIB)
 
-<<<<<<< HEAD
-	auto shaderDefinition = MaterialHelper::serialize(scene);
-=======
-	
-	//auto shaderDefinition = writer.serializeMaterial(nodeGraph);
-	//auto shaderDefinition = scene->serialize();
 	auto shaderDefinition = MaterialHelper::serialize(graph);
->>>>>>> Updated shadergraph json format
 
 	dataBase->createAssetEntry(QString::null, assetGuid,newShader,static_cast<int>(ModelTypes::Material), QJsonDocument(shaderDefinition).toBinaryData());
 
 	auto assetShader = new AssetMaterial;
 	assetShader->fileName = IrisUtils::buildFileName(newShader, "material");
 	assetShader->assetGuid = assetGuid;
-<<<<<<< HEAD
-	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), newShader);
-	assetShader->setValue(QVariant::fromValue(shaderDefinition));
-	assetShader->setValue(QVariant::fromValue(MaterialHelper::createMaterialFromShaderGraph(scene)));
-=======
+
 	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(newShader, "shader"));
-	//assetShader->setValue(QVariant::fromValue(shaderDefinition));
 	assetShader->setValue(QVariant::fromValue(MaterialHelper::createMaterialFromShaderGraph(graph)));
->>>>>>> Updated shadergraph json format
 
 	dataBase->updateAssetAsset(assetGuid, QJsonDocument(shaderDefinition).toBinaryData());
 
