@@ -2,10 +2,11 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QUuid>
+#include "core/guidhelper.h"
 
 Property::Property()
 {
-    id = QUuid::createUuid().toString();
+	id = GuidHelper::createGuid();
 }
 
 QJsonObject Property::serialize()

@@ -4,10 +4,11 @@
 
 #include "nodemodel.h"
 #include "socketmodel.h"
+#include "../core/guidhelper.h"
 
 NodeModel::NodeModel()
 {
-	id = QUuid::createUuid().toString();
+	id = GuidHelper::createGuid();
 	widget = nullptr;
 	connect(this, &NodeModel::titleColorChanged, [=]() {
 		setNodeTitleColor();

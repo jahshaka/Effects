@@ -1,6 +1,7 @@
 #include <QUuid>
 #include "socketmodel.h"
 #include "connectionmodel.h"
+#include "../core/guidhelper.h"
 
 void SocketModel::setGraph(NodeGraph *value)
 {
@@ -65,5 +66,5 @@ SocketModel::SocketModel(QString name, QString typeName) :
 	name(name),
 	typeName(typeName)
 {
-	id = QUuid::createUuid().toString();
+	id = GuidHelper::createGuid();
 }

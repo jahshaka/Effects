@@ -57,7 +57,7 @@ private:
 private:
     QVBoxLayout* layout;
     NodeGraph* graph;
-	int added = -1;
+	int added = 0;
 	QFont font;
 
 signals:

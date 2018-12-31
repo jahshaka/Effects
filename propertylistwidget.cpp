@@ -122,6 +122,7 @@ void PropertyListWidget::setNodeGraph(NodeGraph *graph)
 	//todo: clear widgets
 
     this->graph = graph;
+	added = 0;
 
     // build properties
 	for (auto prop : graph->properties) {
@@ -160,6 +161,8 @@ void PropertyListWidget::clearPropertyList()
         child->hide();
         child->deleteLater();
     }
+
+	added = 0;
 }
 
 void PropertyListWidget::addNewFloatProperty()
@@ -290,7 +293,7 @@ void PropertyListWidget::addToPropertyListWidget(BasePropertyWidget *widget)
 	}
 
     referenceList.append(widget);
-    added++;
     widget->index = added;
+	added++;
     qDebug() << layout->count();
 }
