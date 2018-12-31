@@ -728,6 +728,8 @@ TextureNode::TextureNode()
 
 		graphTexture = TextureManager::getSingleton()->createTexture();
 		graphTexture->path = filename;
+
+
 	});
 	
 	widget->setStyleSheet("background:rgba(0,0,0,0); color: rgba(250,250,250,.9);");
