@@ -77,6 +77,7 @@ private:
 	void deleteMaterialFile(QString filename);
 
     void importGraph();
+    void importGraphFromFilePath(QString filePath);
     void exportGraph();
     void restoreGraphPositions(const QJsonObject& data);
     bool deleteShader(QString guid);

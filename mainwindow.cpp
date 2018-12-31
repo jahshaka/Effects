@@ -243,18 +243,20 @@ QString MainWindow::genGUID()
 void MainWindow::importGraph()
 {
     QString path = QFileDialog::getOpenFileName(this, "Choose file name","material.json","Material File (*.json)");
+	importGraphFromFilePath(path);
+}
 
-    QFile file;
-    file.setFileName(path);
-    file.open(QIODevice::ReadOnly | QIODevice::Text);
-    auto val = file.readAll();
-    file.close();
-    QJsonDocument d = QJsonDocument::fromJson(val);
+void MainWindow::importGraphFromFilePath(QString filePath)
+{
+	QFile file(filePath);
+	file.open(QIODevice::ReadOnly | QIODevice::Text);
+	auto val = file.readAll();
+	file.close();
+	QJsonDocument d = QJsonDocument::fromJson(val);
 
 	auto obj = d.object();
- //   auto graph = NodeGraph::deserialize(obj, new LibraryV1());
 	auto graph = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
-    this->setNodeGraph(graph);
+	this->setNodeGraph(graph);
 
 	regenerateShader();
 }
@@ -650,11 +652,16 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 
 	// sets new scene
 
-	if (*shaderName == "Basic") {
-		QFile file("assets/effect_template1.json");
+	if (*templateName == "Basic") {
+		auto str = "assets/effect_template1.json";
+		importGraphFromFilePath(str);
 	}
-
-	if (loadNewGraph) {
+	else if  (*templateName == "Texture") {
+		auto str = "assets/effect_texture_template.json";
+		importGraphFromFilePath(str);
+	}
+	else if (loadNewGraph)
+	{
 		auto nodeGraph = new NodeGraph();
 		auto masterNode = new SurfaceMasterNode();
 		nodeGraph->setNodeLibrary(new LibraryV1());
