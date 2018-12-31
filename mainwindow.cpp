@@ -252,7 +252,8 @@ void MainWindow::importGraph()
     QJsonDocument d = QJsonDocument::fromJson(val);
 
 	auto obj = d.object();
-    auto graph = NodeGraph::deserialize(obj, new LibraryV1());
+ //   auto graph = NodeGraph::deserialize(obj, new LibraryV1());
+	auto graph = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
     this->setNodeGraph(graph);
 
 	regenerateShader();
@@ -593,10 +594,10 @@ void MainWindow::configureAssetsDock()
 		buttonBar->setContentsMargins(0, 0, 0, 0);
 
 		connect(exportBtn, &QPushButton::clicked, [=]() {
-
+			exportGraph();
 		});
 		connect(importBtn, &QPushButton::clicked, [=]() {
-
+			importGraph();
 		});
 		connect(addBtn, &QPushButton::clicked, [=]() {
 			createNewGraph();
@@ -648,6 +649,10 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 	effects->displayAllContents();
 
 	// sets new scene
+
+	if (*shaderName == "Basic") {
+		QFile file("assets/effect_template1.json");
+	}
 
 	if (loadNewGraph) {
 		auto nodeGraph = new NodeGraph();
@@ -994,12 +999,16 @@ bool MainWindow::createNewGraph(bool loadNewGraph)
 	list.clear();
 
 	if (loadNewGraph) {
-		for (int i = 0; i < 3; i++) {
-			nodeGraphPreset will;
-			will.name = "willroy" + QString::number(i);
-			will.title = "will" + QString::number(i);
-			list.append(will);
-		}
+		
+		nodeGraphPreset will;
+		will.name = "Basic";
+		will.title = "Basic Template";
+		list.append(will);
+		will.name = "Texture";
+		will.title = "Texture Template";
+		list.append(will);
+
+
 	}
 	CreateNewDialog node(list);
 	node.exec();

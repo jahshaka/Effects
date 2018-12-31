@@ -26,6 +26,7 @@ public:
 
 	nodeGraphPreset info;
 	QPixmap checkedIconIcon;
+	int type = 0;
 protected:
     void paintEvent(QPaintEvent *event) override;
 

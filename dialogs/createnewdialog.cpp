@@ -100,7 +100,6 @@ CreateNewDialog::CreateNewDialog(QList<nodeGraphPreset> list) : QDialog()
 			currentInfoSelected = button->info;
 			infoLabel->setText(currentInfoSelected.title + " selected");
 			templateName = button->info.name;
-			type = 1;
 			confirm->setEnabled(true);
 		});
     }
