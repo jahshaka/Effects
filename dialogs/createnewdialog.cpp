@@ -4,7 +4,7 @@
 #include "../mainwindow.h"
 #include <QDebug>
 
-CreateNewDialog::CreateNewDialog(QList<nodeGraphPreset> list) : QDialog()
+CreateNewDialog::CreateNewDialog(QList<NodeGraphPreset> list) : QDialog()
 {
 
 	auto layout = new QVBoxLayout;
@@ -207,7 +207,7 @@ void CreateNewDialog::configureStylesheet()
 	
 }
 
-OptionSelection::OptionSelection(nodeGraphPreset node) : QPushButton()
+OptionSelection::OptionSelection(NodeGraphPreset node) : QPushButton()
 {
 	setFixedSize(120, 120);
 	checkedIconIcon.load(":/icons/checked.svg"); 
@@ -244,6 +244,7 @@ OptionSelection::OptionSelection(nodeGraphPreset node) : QPushButton()
 	connect(this, &OptionSelection::clicked, [=]() {
 		emit buttonSelected(this);
 	});
+
 }
 
 void OptionSelection::paintEvent(QPaintEvent *event)

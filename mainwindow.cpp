@@ -246,7 +246,7 @@ void MainWindow::importGraph()
 	importGraphFromFilePath(path);
 }
 
-void MainWindow::importGraphFromFilePath(QString filePath)
+NodeGraph* MainWindow::importGraphFromFilePath(QString filePath, bool assign)
 {
 	QFile file(filePath);
 	file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -256,9 +256,13 @@ void MainWindow::importGraphFromFilePath(QString filePath)
 
 	auto obj = d.object();
 	auto graph = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
-	this->setNodeGraph(graph);
 
-	regenerateShader();
+	if (assign) {
+		this->setNodeGraph(graph);
+		regenerateShader();
+	}
+	
+	return graph;
 }
 
 void MainWindow::loadGraph(QString guid)
@@ -614,11 +618,11 @@ void MainWindow::configureAssetsDock()
 	updateAssetDock();
 }
 
-void MainWindow::createShader(QString *shaderName, int *templateType , QString *templateName, bool loadNewGraph)
+void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 {
 	QString newShader;
-	if(shaderName)	 newShader = *shaderName;
-	else   newShader = "Untitled Material";
+	newShader = preset.title;
+
 	QListWidgetItem *item = new QListWidgetItem;
 	item->setFlags(item->flags() | Qt::ItemIsEditable);
 	item->setSizeHint(defaultItemSize);
@@ -652,25 +656,35 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 
 	// sets new scene
 
-	if (*templateName == "Basic") {
-		auto str = "assets/effect_template1.json";
-		importGraphFromFilePath(str);
-	}
-	else if  (*templateName == "Texture") {
+	//if (preset.name == "Basic") {
+	//	auto str = "assets/effect_template1.json";
+	//	importGraphFromFilePath(str);
+	//}
+	//else if  (preset.name == "Texture") {
 		auto str = "assets/effect_texture_template.json";
-		importGraphFromFilePath(str);
-	}
-	else if (loadNewGraph)
-	{
-		auto nodeGraph = new NodeGraph();
-		auto masterNode = new SurfaceMasterNode();
-		nodeGraph->setNodeLibrary(new LibraryV1());
-		nodeGraph->addNode(masterNode);
-		nodeGraph->setMasterNode(masterNode);
-        nodeGraph->settings.name = newShader;
-		this->setNodeGraph(nodeGraph);
-        propertyListWidget->clearPropertyList();
-	}
+		auto graph = importGraphFromFilePath(preset.templatePath, false);
+		int i = 0;
+		for (auto prop : graph->properties) {
+			if (prop->type == PropertyType::Texture) {
+				auto graphTexture = TextureManager::getSingleton()->importTexture(preset.list.at(i));
+				prop->setValue(graphTexture->guid);
+				i++;
+			}
+		}
+		setNodeGraph(graph);
+		regenerateShader();
+	//}
+	//else if (loadNewGraph)
+	//{
+	//	auto nodeGraph = new NodeGraph();
+	//	auto masterNode = new SurfaceMasterNode();
+	//	nodeGraph->setNodeLibrary(new LibraryV1());
+	//	nodeGraph->addNode(masterNode);
+	//	nodeGraph->setMasterNode(masterNode);
+ //       nodeGraph->settings.name = newShader;
+	//	this->setNodeGraph(nodeGraph);
+ //       propertyListWidget->clearPropertyList();
+	//}
 
 
 #if(EFFECT_BUILD_AS_LIB)
@@ -690,11 +704,10 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 
 	AssetManager::addAsset(assetShader);
 
-#else
-	saveShader();
 
 #endif
 	
+	saveShader();
 }
 
 void MainWindow::setCurrentShaderItem()
@@ -1006,25 +1019,34 @@ bool MainWindow::createNewGraph(bool loadNewGraph)
 	list.clear();
 
 	if (loadNewGraph) {
-		
-		nodeGraphPreset will;
-		will.name = "Basic";
-		will.title = "Basic Template";
-		list.append(will);
-		will.name = "Texture";
-		will.title = "Texture Template";
-		list.append(will);
+			NodeGraphPreset graphPreset;
 
+			graphPreset.name = "Default";
+			graphPreset.title = "Default Template";
+			graphPreset.templatePath = "";
+			graphPreset.iconPath = ":/icons/icon.ico";
+			list.append(graphPreset);
+
+			graphPreset.name = "Basic";
+			graphPreset.title = "Basic Template";
+			graphPreset.templatePath = "assets/effect_template1.json";
+			graphPreset.iconPath = ":/icon/icon.ico";
+			list.append(graphPreset);
+
+			graphPreset.name = "Texture";
+			graphPreset.title = "Texture Template";
+			graphPreset.templatePath = "assets/effect_texture_template.json";
+			graphPreset.list.append("assets/grass.jpg");
+			list.append(graphPreset);
+		
 
 	}
 	CreateNewDialog node(list);
 	node.exec();
 
 	if (node.result() == QDialog::Accepted) {
-		auto shaderName = node.getName();
-		auto shaderType = node.getType();
-		auto shaderTemplateName = node.getTemplateName();
-		createShader(&shaderName, &shaderType, &shaderTemplateName, loadNewGraph);
+		auto preset = node.getPreset();
+		createShader(preset, loadNewGraph);
 		return true;
 	}
 	return false;
