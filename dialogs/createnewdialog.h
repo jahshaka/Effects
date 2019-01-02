@@ -64,8 +64,8 @@ private:
 	QWidget* presets;
 	QWidget *holder;
 	QTabWidget *tabbedWidget;
-	QScrollArea *optionsScroll;
-	QScrollArea *presetsScroll;
+	QWidget *optionsScroll;
+	QWidget *presetsScroll;
     QWidget *optionsWidget;
     QWidget *presetsWidget;
 	NodeGraphPreset currentInfoSelected;

@@ -9,14 +9,14 @@ CreateNewDialog::CreateNewDialog(QList<NodeGraphPreset> list) : QDialog()
 
 	auto layout = new QVBoxLayout;
 	setLayout(layout);
-	setMinimumSize(480,250);
+	setMinimumSize(430,565);
 
 	QSize currentSize(90, 90);
 
 	nameEdit = new QLineEdit;
 
-	optionsScroll = new QScrollArea;
-    presetsScroll = new QScrollArea;
+	optionsScroll = new QWidget;
+    presetsScroll = new QWidget;
     options = new QWidget;
     presets = new QWidget;
     auto optionLayout = new QGridLayout;
@@ -24,8 +24,8 @@ CreateNewDialog::CreateNewDialog(QList<NodeGraphPreset> list) : QDialog()
 	infoLabel = new QLabel;
 
     //controls pading in selection window
-    optionLayout->setContentsMargins(10,20,15,25);
-    presetLayout->setContentsMargins(10,20,15,25);
+    optionLayout->setContentsMargins(10,10,10,10);
+    presetLayout->setContentsMargins(10,10,10,10);
 
     tabbedWidget = new QTabWidget;
     cancel = new QPushButton("Cancel");
@@ -35,8 +35,10 @@ CreateNewDialog::CreateNewDialog(QList<NodeGraphPreset> list) : QDialog()
 
     options->setLayout(optionLayout);
     presets->setLayout(presetLayout);
-	optionLayout->setSpacing(20);
-	presetLayout->setSpacing(20);
+	options->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	presets->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	optionLayout->setSpacing(10);
+	presetLayout->setSpacing(10);
 
 	auto buttonHolder = new QWidget;
 	auto buttonLayout = new QHBoxLayout;
@@ -56,36 +58,128 @@ CreateNewDialog::CreateNewDialog(QList<NodeGraphPreset> list) : QDialog()
 	auto holderLayout = new QVBoxLayout;
 	holder->setLayout(holderLayout);
 	holderLayout->setContentsMargins(0, 20, 0, 0);
-	holderLayout->addWidget(tabbedWidget);
+//	holderLayout->addWidget(tabbedWidget);
 
-    optionsScroll->setWidget(options);
+ /*   optionsScroll->setWidget(options);
     presetsScroll->setWidget(presets);
     optionsScroll->setWidgetResizable(true);
-    presetsScroll->setWidgetResizable(true);
+    presetsScroll->setWidgetResizable(true);*/
 
 	if (list.count() != 0) {
-		layout->addWidget(holder);
-		layout->addSpacing(15);
-		layout->addWidget(infoLabel);
-		setMinimumSize(480, 250);
+		//layout->addWidget(holder);
+		//layout->addSpacing(15);
+		//layout->addWidget(infoLabel);
+	//	setMinimumSize(480, 250);
 	}
+	layout->addWidget(holder);
+	layout->addWidget(infoLabel);
 	layout->addWidget(nameHolder);
 	layout->addWidget(buttonHolder);
 
-	setMinimumSize(480, 150);
+	auto scrollView = new QScrollArea;
+	auto contentHolder = new QWidget;
+	auto contentLayout = new QVBoxLayout;
+	contentHolder->setLayout(contentLayout);
+	scrollView->setWidget(contentHolder);
+	scrollView->setWidgetResizable(true);
+	scrollView->setContentsMargins(0, 0, 0, 0);
+	scrollView->setStyleSheet(
+		"QScrollBar:vertical {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 10px; }"
+		"QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 5px;  left: 8px; }"
+		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
+		"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
+		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .0);}"
+	);
 
+	auto starterLabel = new QLabel("Starters");
+	auto presetLabel = new QLabel("Preset");
+
+	starterLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	presetLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+	starterLabel->setStyleSheet("QLabel{ background: rgba(20,20,20,1); padding: 3px; padding-left: 8px; color: rgba(200,200,200,1); }");
+	presetLabel->setStyleSheet(starterLabel->styleSheet());
+
+	contentLayout->addWidget(starterLabel);
+	contentLayout->addWidget(options);
+	contentLayout->addWidget(presetLabel);
+	contentLayout->addWidget(presets);
+	contentLayout->setContentsMargins(0, 0, 0, 0);
+	contentLayout->setSpacing(2);
+
+	holderLayout->addWidget(scrollView);
 
 	nameEdit->setPlaceholderText("Enter name here...");
 	nameEdit->setTextMargins(3, 0, 0, 0);
 	infoLabel->setAlignment(Qt::AlignCenter);
 	infoLabel->setObjectName(QStringLiteral("infoLabel"));
 
-    tabbedWidget->addTab(optionsScroll, "options");
-    tabbedWidget->addTab(presetsScroll, "presets");
+ //   tabbedWidget->addTab(optionsScroll, "Starter");
+ //   tabbedWidget->addTab(presetsScroll, "Presets");
+
+
+	QList<NodeGraphPreset> presetsList;
+
+	NodeGraphPreset graphPreset;
+
+	graphPreset.name = "Checker Board";
+	graphPreset.title = "Chacker Board";
+	graphPreset.templatePath = "";
+	graphPreset.iconPath = ":/icons/icon.ico";
+	presetsList.append(graphPreset);
+
+	graphPreset.name = "Grass";
+	graphPreset.title = "Grass Template";
+	//graphPreset.templatePath = "assets/effect_template1.json";
+	graphPreset.iconPath = ":/icon/icon.ico";
+	presetsList.append(graphPreset);
+
+	graphPreset.name = "Gold";
+	graphPreset.title = "Gold Template";
+	//graphPreset.templatePath = "assets/effect_texture_template.json";
+	graphPreset.list.append("assets/grass.jpg");
+	presetsList.append(graphPreset);
+
+	graphPreset.name = "Checker Board";
+	graphPreset.title = "Chacker Board";
+	graphPreset.templatePath = "";
+	graphPreset.iconPath = ":/icons/icon.ico";
+	presetsList.append(graphPreset);
+
+	graphPreset.name = "Grass";
+	graphPreset.title = "Grass Template";
+	//graphPreset.templatePath = "assets/effect_template1.json";
+	graphPreset.iconPath = ":/icon/icon.ico";
+	presetsList.append(graphPreset);
+
+	graphPreset.name = "Gold";
+	graphPreset.title = "Gold Template";
+	//graphPreset.templatePath = "assets/effect_texture_template.json";
+	graphPreset.list.append("assets/grass.jpg");
+	presetsList.append(graphPreset);
+
+	graphPreset.name = "Checker Board";
+	graphPreset.title = "Chacker Board";
+	graphPreset.templatePath = "";
+	graphPreset.iconPath = ":/icons/icon.ico";
+	presetsList.append(graphPreset);
+
+	graphPreset.name = "Grass";
+	graphPreset.title = "Grass Template";
+	//graphPreset.templatePath = "assets/effect_template1.json";
+	graphPreset.iconPath = ":/icon/icon.ico";
+	presetsList.append(graphPreset);
+
+	graphPreset.name = "Gold";
+	graphPreset.title = "Gold Template";
+	//graphPreset.templatePath = "assets/effect_texture_template.json";
+	graphPreset.list.append("assets/grass.jpg");
+	presetsList.append(graphPreset);
+
+
 
 	int i = 0;
 	int j = 0;
-
 
     //set up list options
     for (auto tile : list) {
@@ -103,12 +197,17 @@ CreateNewDialog::CreateNewDialog(QList<NodeGraphPreset> list) : QDialog()
 			confirm->setEnabled(true);
 		});
     }
+
+	auto spacerItem = new QWidget;
+	spacerItem->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+	optionLayout->addWidget(spacerItem);
 	
 
     i=0;j=0;
 
     //set up list for presets from whereveer ?
-    for (auto tile : list) {
+	list.clear();
+    for (auto tile : presetsList) {
         auto item = new OptionSelection(tile);
         presetLayout->addWidget(item,i,j);
         j++;
