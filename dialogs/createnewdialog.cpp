@@ -3,6 +3,7 @@
 #include <QPainter>
 #include "../mainwindow.h"
 #include <QDebug>
+#include <QButtonGroup>
 
 CreateNewDialog::CreateNewDialog(QList<NodeGraphPreset> list) : QDialog()
 {
@@ -176,7 +177,8 @@ CreateNewDialog::CreateNewDialog(QList<NodeGraphPreset> list) : QDialog()
 	graphPreset.list.append("assets/grass.jpg");
 	presetsList.append(graphPreset);
 
-
+	auto btnGrp = new QButtonGroup;
+	btnGrp->setExclusive(true);
 
 	int i = 0;
 	int j = 0;
@@ -190,12 +192,14 @@ CreateNewDialog::CreateNewDialog(QList<NodeGraphPreset> list) : QDialog()
             j = 0;
             i++;
         }
+
+		btnGrp->addButton(item);
 		connect(item, &OptionSelection::buttonSelected, [=](OptionSelection* button) {
 			currentInfoSelected = button->info;
 			infoLabel->setText(currentInfoSelected.title + " selected");
-			templateName = button->info.name;
 			confirm->setEnabled(true);
 		});
+
     }
 
 	auto spacerItem = new QWidget;
@@ -215,12 +219,15 @@ CreateNewDialog::CreateNewDialog(QList<NodeGraphPreset> list) : QDialog()
             j = 0;
             i++;
         }
+		btnGrp->addButton(item);
+
 		connect(item, &OptionSelection::buttonSelected, [=](OptionSelection* button) {
 			currentInfoSelected = button->info;
-			templateName = button->info.name;
-			type = 2;
+			confirm->setEnabled(true);
 			infoLabel->setText(currentInfoSelected.title + " selected");
 		});
+
+	
     }
 
 
@@ -305,6 +312,7 @@ void CreateNewDialog::configureStylesheet()
 	);
 	
 }
+
 
 OptionSelection::OptionSelection(NodeGraphPreset node) : QPushButton()
 {

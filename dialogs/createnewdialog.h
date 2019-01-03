@@ -72,9 +72,10 @@ private:
 	QLabel *infoLabel;
     int num_of_widgets_per_row = 3;
 
+
+
 signals:
 	void confirmClicked(int option);
-
 
 };
 
