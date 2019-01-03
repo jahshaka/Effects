@@ -41,7 +41,7 @@ class CreateNewDialog : public QDialog
 {
 	Q_OBJECT
 public:
-	CreateNewDialog(QList<NodeGraphPreset> list);
+	CreateNewDialog(bool maximized = true);
 	~CreateNewDialog();
 
 	void configureStylesheet();
@@ -50,6 +50,10 @@ public:
 	int getType() { return type; }
 	QVector<QString> getList() { return currentInfoSelected.list; }
 	NodeGraphPreset getPreset() { return currentInfoSelected; }
+
+
+	static QList<NodeGraphPreset> getPresetList();
+	static QList<NodeGraphPreset> getStarterList();
 
 
 private:

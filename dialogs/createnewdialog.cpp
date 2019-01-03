@@ -5,7 +5,7 @@
 #include <QDebug>
 #include <QButtonGroup>
 
-CreateNewDialog::CreateNewDialog(QList<NodeGraphPreset> list) : QDialog()
+CreateNewDialog::CreateNewDialog(bool maximized) : QDialog()
 {
 
 	auto layout = new QVBoxLayout;
@@ -59,19 +59,7 @@ CreateNewDialog::CreateNewDialog(QList<NodeGraphPreset> list) : QDialog()
 	auto holderLayout = new QVBoxLayout;
 	holder->setLayout(holderLayout);
 	holderLayout->setContentsMargins(0, 20, 0, 0);
-//	holderLayout->addWidget(tabbedWidget);
 
- /*   optionsScroll->setWidget(options);
-    presetsScroll->setWidget(presets);
-    optionsScroll->setWidgetResizable(true);
-    presetsScroll->setWidgetResizable(true);*/
-
-	if (list.count() != 0) {
-		//layout->addWidget(holder);
-		//layout->addSpacing(15);
-		//layout->addWidget(infoLabel);
-	//	setMinimumSize(480, 250);
-	}
 	layout->addWidget(holder);
 	layout->addWidget(infoLabel);
 	layout->addWidget(nameHolder);
@@ -119,63 +107,9 @@ CreateNewDialog::CreateNewDialog(QList<NodeGraphPreset> list) : QDialog()
  //   tabbedWidget->addTab(presetsScroll, "Presets");
 
 
-	QList<NodeGraphPreset> presetsList;
+	
 
-	NodeGraphPreset graphPreset;
-
-	graphPreset.name = "Checker Board";
-	graphPreset.title = "Chacker Board";
-	graphPreset.templatePath = "";
-	graphPreset.iconPath = ":/icons/icon.ico";
-	presetsList.append(graphPreset);
-
-	graphPreset.name = "Grass";
-	graphPreset.title = "Grass Template";
-	//graphPreset.templatePath = "assets/effect_template1.json";
-	graphPreset.iconPath = ":/icon/icon.ico";
-	presetsList.append(graphPreset);
-
-	graphPreset.name = "Gold";
-	graphPreset.title = "Gold Template";
-	//graphPreset.templatePath = "assets/effect_texture_template.json";
-	graphPreset.list.append("assets/grass.jpg");
-	presetsList.append(graphPreset);
-
-	graphPreset.name = "Checker Board";
-	graphPreset.title = "Chacker Board";
-	graphPreset.templatePath = "";
-	graphPreset.iconPath = ":/icons/icon.ico";
-	presetsList.append(graphPreset);
-
-	graphPreset.name = "Grass";
-	graphPreset.title = "Grass Template";
-	//graphPreset.templatePath = "assets/effect_template1.json";
-	graphPreset.iconPath = ":/icon/icon.ico";
-	presetsList.append(graphPreset);
-
-	graphPreset.name = "Gold";
-	graphPreset.title = "Gold Template";
-	//graphPreset.templatePath = "assets/effect_texture_template.json";
-	graphPreset.list.append("assets/grass.jpg");
-	presetsList.append(graphPreset);
-
-	graphPreset.name = "Checker Board";
-	graphPreset.title = "Chacker Board";
-	graphPreset.templatePath = "";
-	graphPreset.iconPath = ":/icons/icon.ico";
-	presetsList.append(graphPreset);
-
-	graphPreset.name = "Grass";
-	graphPreset.title = "Grass Template";
-	//graphPreset.templatePath = "assets/effect_template1.json";
-	graphPreset.iconPath = ":/icon/icon.ico";
-	presetsList.append(graphPreset);
-
-	graphPreset.name = "Gold";
-	graphPreset.title = "Gold Template";
-	//graphPreset.templatePath = "assets/effect_texture_template.json";
-	graphPreset.list.append("assets/grass.jpg");
-	presetsList.append(graphPreset);
+	
 
 	auto btnGrp = new QButtonGroup;
 	btnGrp->setExclusive(true);
@@ -184,7 +118,7 @@ CreateNewDialog::CreateNewDialog(QList<NodeGraphPreset> list) : QDialog()
 	int j = 0;
 
     //set up list options
-    for (auto tile : list) {
+    for (auto tile : getStarterList()) {
         auto item = new OptionSelection(tile);
         optionLayout->addWidget(item,i,j);
         j++;
@@ -197,7 +131,6 @@ CreateNewDialog::CreateNewDialog(QList<NodeGraphPreset> list) : QDialog()
 		connect(item, &OptionSelection::buttonSelected, [=](OptionSelection* button) {
 			currentInfoSelected = button->info;
 			infoLabel->setText(currentInfoSelected.title + " selected");
-			confirm->setEnabled(true);
 		});
 
     }
@@ -209,9 +142,8 @@ CreateNewDialog::CreateNewDialog(QList<NodeGraphPreset> list) : QDialog()
 
     i=0;j=0;
 
-    //set up list for presets from whereveer ?
-	list.clear();
-    for (auto tile : presetsList) {
+
+    for (auto tile : getPresetList()) {
         auto item = new OptionSelection(tile);
         presetLayout->addWidget(item,i,j);
         j++;
@@ -223,7 +155,6 @@ CreateNewDialog::CreateNewDialog(QList<NodeGraphPreset> list) : QDialog()
 
 		connect(item, &OptionSelection::buttonSelected, [=](OptionSelection* button) {
 			currentInfoSelected = button->info;
-			confirm->setEnabled(true);
 			infoLabel->setText(currentInfoSelected.title + " selected");
 		});
 
@@ -241,7 +172,7 @@ CreateNewDialog::CreateNewDialog(QList<NodeGraphPreset> list) : QDialog()
 	});
 
 	connect(nameEdit, &QLineEdit::textChanged, [=](QString text) {
-		if(text.count() > 1) 	confirm->setEnabled(true);
+		if(text.count() > 0 && currentInfoSelected.name != "") 	confirm->setEnabled(true);
 		else 	confirm->setEnabled(false);
 
 		name = text;
@@ -311,6 +242,56 @@ void CreateNewDialog::configureStylesheet()
 		"QTabBar::tab:!selected{ background: rgba(55, 55, 55, .99); border : 1px solid rgba(21,21,21,.4); color: rgba(200,200,200,.5); }"
 	);
 	
+}
+
+QList<NodeGraphPreset> CreateNewDialog::getPresetList()
+{
+	QList<NodeGraphPreset> presetsList;
+	NodeGraphPreset graphPreset;
+	graphPreset.name = "Checker Board";
+	graphPreset.title = "Chacker Board";
+	graphPreset.templatePath = "";
+	graphPreset.iconPath = ":/icons/icon.ico";
+	presetsList.append(graphPreset);
+
+	graphPreset.name = "Grass";
+	graphPreset.title = "Grass Template";
+	//graphPreset.templatePath = "assets/effect_template1.json";
+	graphPreset.iconPath = ":/icon/icon.ico";
+	presetsList.append(graphPreset);
+
+	graphPreset.name = "Gold";
+	graphPreset.title = "Gold Template";
+	//graphPreset.templatePath = "assets/effect_texture_template.json";
+	graphPreset.list.append("assets/grass.jpg");
+	presetsList.append(graphPreset);
+
+	return presetsList;
+}
+
+QList<NodeGraphPreset> CreateNewDialog::getStarterList()
+{
+	NodeGraphPreset graphPreset;
+	QList<NodeGraphPreset> list;
+	graphPreset.name = "Default";
+	graphPreset.title = "Default Template";
+	graphPreset.templatePath = "";
+	graphPreset.iconPath = ":/icons/icon.ico";
+	list.append(graphPreset);
+
+	graphPreset.name = "Basic";
+	graphPreset.title = "Basic Template";
+	graphPreset.templatePath = "assets/effect_template1.json";
+	graphPreset.iconPath = ":/icon/icon.ico";
+	list.append(graphPreset);
+
+	graphPreset.name = "Texture";
+	graphPreset.title = "Texture Template";
+	graphPreset.templatePath = "assets/effect_texture_template.json";
+	graphPreset.list.append("assets/grass.jpg");
+	list.append(graphPreset);
+
+	return list;
 }
 
 

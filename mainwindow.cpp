@@ -535,14 +535,13 @@ void MainWindow::configureAssetsDock()
 		"border: 1px solid black;"
 	);
 
-	for (int i = 0; i < 5; i++) {
+	// get list of presets
+	for (auto tile : CreateNewDialog::getPresetList()) {
 		auto item = new QListWidgetItem;
-		item->setText("preset" + QString::number(i));
+		item->setText(tile.name);
 		item->setSizeHint(defaultItemSize);
 		item->setTextAlignment(Qt::AlignBottom);
-		item->setFlags(item->flags() | Qt::ItemIsEditable);
-		presets->addItem(item);
-		effects->addItem(item);
+		presets->addToListWidget(item);
 	}
 
 	presets->isResizable = true;
@@ -1019,29 +1018,9 @@ bool MainWindow::createNewGraph(bool loadNewGraph)
 	list.clear();
 
 	if (loadNewGraph) {
-			NodeGraphPreset graphPreset;
-
-			graphPreset.name = "Default";
-			graphPreset.title = "Default Template";
-			graphPreset.templatePath = "";
-			graphPreset.iconPath = ":/icons/icon.ico";
-			list.append(graphPreset);
-
-			graphPreset.name = "Basic";
-			graphPreset.title = "Basic Template";
-			graphPreset.templatePath = "assets/effect_template1.json";
-			graphPreset.iconPath = ":/icon/icon.ico";
-			list.append(graphPreset);
-
-			graphPreset.name = "Texture";
-			graphPreset.title = "Texture Template";
-			graphPreset.templatePath = "assets/effect_texture_template.json";
-			graphPreset.list.append("assets/grass.jpg");
-			list.append(graphPreset);
-		
-
+			
 	}
-	CreateNewDialog node(list);
+	CreateNewDialog node;
 	node.exec();
 
 	if (node.result() == QDialog::Accepted) {
@@ -1071,7 +1050,7 @@ void MainWindow::updateAssetDock()
 				item->setData(Qt::DisplayRole, asset.name);
 				item->setData(MODEL_GUID_ROLE, asset.guid);
 				item->setData(MODEL_TYPE_ROLE, asset.type);
-				effects->addItem(item);
+				effects->addToListWidget(item);
 			}
 		}
 #endif
@@ -1394,6 +1373,7 @@ void MainWindow::addMenuToSceneWidget()
 
 	QMainWindow *window = new QMainWindow;
 	QToolBar *bar = new QToolBar;
+
 	window->menuBar()->addMenu(modelMenu);
 	window->menuBar()->addMenu(sceneMenu);
 	window->menuBar()->addMenu(backgroundMenu);
@@ -1440,6 +1420,13 @@ void MainWindow::addMenuToSceneWidget()
 	sphareAction->setChecked(true);
 	whiteAction->setChecked(true);
 	blankAction->setChecked(true);
+
+	auto screenShotBtn = new QPushButton("screenshot");
+	bar->addWidget(screenShotBtn);
+	connect(screenShotBtn, &QPushButton::clicked, [=]() {
+		
+	});
+
 }
 
 }
