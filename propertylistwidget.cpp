@@ -87,7 +87,7 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 	connect(action4, &QAction::triggered, this, &PropertyListWidget::addNewVec4Property);
 	connect(action5, &QAction::triggered, this, &PropertyListWidget::addNewTextureProperty);
 
-	scrollArea->setStyleSheet("QWidget{background: rgba(12,34,87,1)};"
+	scrollArea->setStyleSheet(""
 		"QScrollBar:vertical {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 10px; }"
 		"QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 5px;  left: 8px; }"
 		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"

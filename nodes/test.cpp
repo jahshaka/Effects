@@ -196,12 +196,12 @@ FloatNodeModel::FloatNodeModel() :
 	auto layout = new QVBoxLayout;
 	auto layoutH = new QHBoxLayout;
 	auto layoutH1 = new QHBoxLayout;
-	auto layoutH2 = new QHBoxLayout;
-	auto layoutH3 = new QHBoxLayout;
+
 	auto min = new QDoubleSpinBox;
 	auto max = new QDoubleSpinBox;
 	auto stepBox = new QDoubleSpinBox;
 	auto valueBox = new QDoubleSpinBox;
+	wid->setMaximumWidth(164);
 
 	min->setValue(0.0);
 	max->setValue(1.0);
@@ -215,40 +215,21 @@ FloatNodeModel::FloatNodeModel() :
 	slider->setMaximum(max->value()*upModifier);
 	slider->setSingleStep(stepBox->value());
 
-	//min->setMaximumWidth(50);
-	//max->setMaximumWidth(50);
-	//valueBox->setMaximumWidth(50);
 	min->setAlignment(Qt::AlignCenter);
 	max->setAlignment(Qt::AlignCenter);
 	valueBox->setAlignment(Qt::AlignCenter);
 	slider->setMaximumWidth(150);
 	
-	
 
-	layout->setSpacing(0);
-	layoutH->setSpacing(0);
 	wid->setLayout(layout);
 
-//	wid->setMaximumWidth(200);
-
-	//layoutH->addWidget(new QLabel("Min"));
 	layoutH->addWidget(min);
-
-//	layoutH1->addWidget(new QLabel("Max"));
 	layoutH->addWidget(max);
-//	layoutH2->addWidget(new QLabel("Step"));
-//	layoutH2->addWidget(stepBox);
-//	layoutH3->addWidget(new QLabel("Value"));
 	layoutH->addWidget(valueBox);
 
 	auto holdem = new QWidget;
 	holdem->setLayout(layoutH);
 
-
-	auto sliderHolder = new QWidget;
-	auto sliderLayout = new QHBoxLayout;
-	sliderHolder->setLayout(sliderLayout);
-	sliderLayout->addWidget(slider);
 	auto minl = new QLabel("min");
 	auto maxl = new QLabel(" max");
 	auto vall = new QLabel("value");
@@ -274,7 +255,7 @@ FloatNodeModel::FloatNodeModel() :
 	/*layout->addLayout(layoutH1);
 	layout->addLayout(layoutH2);
 	layout->addLayout(layoutH3);*/
-	layout->addWidget(sliderHolder);
+	layout->addWidget(slider);
 	
 	this->widget = wid;
 
@@ -284,7 +265,6 @@ FloatNodeModel::FloatNodeModel() :
 	// add output socket
 	valueSock = new FloatSocketModel("value");
 	addOutputSocket(valueSock);
-	widget->setMaximumWidth(164);
 	
 
 	connect(min, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
@@ -315,16 +295,25 @@ FloatNodeModel::FloatNodeModel() :
 		"QWidget{ background: rgba(0,0,0,0); color: rgba(250,250,250,1); }"
 
 		"");
-	min->setStyleSheet("QDoubleSpinBox{border: 2px solid rgba(0, 0, 0, .4); "
-		"border-radius: 0px;"
-		"padding: 2px 2px 2px 2px;"
-		"background: rgba(0,0,0,0.2);"
-		"color: rgba(250,250,250);}"
+	min->setStyleSheet(
+		"QDoubleSpinBox{border: 2px solid rgba(200, 200, 200, .4); padding: 2px; background: rgba(0, 0, 0, 0.0);}"
+		"QWidget{ background: rgba(0,0,0,0); color: rgba(250,250,250,1); }"
 		"QDoubleSpinBox::up-arrow, QDoubleSpinBox::down-arrow { width: 0; height:0;}"
 		"QDoubleSpinBox::up-button, QDoubleSpinBox::down-button { width: 0; height:0;}");
 	max->setStyleSheet(min->styleSheet());
 	stepBox->setStyleSheet(min->styleSheet());
 	valueBox->setStyleSheet(min->styleSheet());
+
+	slider->setStyleSheet(
+		"QSlider::sub-page {	border: 0px solid transparent;	height: 2px;	background: #3498db;	margin: 2px 0;}"
+		"QSlider::groove:horizontal {    border: 0px solid transparent;    height: 4px;   background: #1e1e1e;   margin: 2px 0;}"
+		"QSlider::handle:horizontal {    background-color: #CCC;    width: 12px;    border: 1px solid #1e1e1e;    margin: -5px 0px;   border-radius:7px;}"
+		"QSlider::handle:horizontal:pressed {    background-color: #AAA;    width: 12px;   border: 1px solid #1e1e1e;    margin: -5px 0px;    border-radius: 7px;}"
+		"QSlider::handle:horizontal:disabled {    background-color: #bbbbbb;    width: 12px;    border: 0px solid transparent;    margin: -1px -1px;    border-radius: 4px;}"
+		"QSlider::groove:vertical {background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,stop: 0 white, stop: 1 black); border-radius: 2px; width: 13px; }"
+		" QSlider::handle:vertical {height: 3px; width:1px; margin: -2px 0px; background: rgba(50,148,213,0.9); }"
+		" QSlider::add-page:vertical, QSlider::sub-page:vertical {background: rgba(0,0,0,0); border-radius: 1px;}"
+	);
 
 //	lineEdit->setText("0.0");
 }
@@ -507,7 +496,7 @@ TextureCoordinateNode::TextureCoordinateNode()
 		"QComboBox:editable {}"
 		"QComboBox QAbstractItemView::item {    show-decoration-selected: 1;}"
 		"QComboBox QAbstractItemView::item {    padding: 6px;}"
-		"QComboBox  {    background: rgba(0,0,0,0);   border: 2px solid rgba(0,0,0,.4);    outline: none; padding: 6px 10px; color: rgba(250,250,250,1);}"
+		"QComboBox  {    background: rgba(0,0,0,0);   rgba(200, 200, 200, .4);  outline: none; padding: 6px 10px; color: rgba(250,250,250,1);}"
 	//	"QComboBox:!editable, QComboBox::drop-down:editable {     background: #1A1A1A;}"
 	//	"QComboBox:!editable:on, QComboBox::drop-down:editable:on {    background: #1A1A1A;}"
 		"QComboBox QAbstractItemView { background: rgba(45,45,51,.9);  color: rgba(250,250,250,1);  selection-background-color: #404040; border: 2px solid rgba(0,0,0,.4); outline: none; padding: 4px 10px; }"
@@ -848,7 +837,7 @@ Vector2Node::Vector2Node()
 	auto ySpinBox = new QDoubleSpinBox;
 	xSpinBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	ySpinBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-	ySpinBox->setAlignment(Qt::AlignCenter);
+	xSpinBox->setAlignment(Qt::AlignCenter);
 	ySpinBox->setAlignment(Qt::AlignCenter);
 
 	layout->addWidget(xSpinBox);
@@ -869,10 +858,12 @@ Vector2Node::Vector2Node()
 		emit valueChanged(this, 0);
 	});
 
-	widget->setStyleSheet("QDoubleSpinBox{border: 2px solid rgba(0, 0, 0, .4); padding: 2px; background: rgba(0, 0, 0, 0.2);}" 
+	widget->setStyleSheet(
+		"QDoubleSpinBox{border: 2px solid rgba(200, 200, 200, .4); padding: 2px; background: rgba(0, 0, 0, 0.2);}"
 		"QWidget{ background: rgba(0,0,0,0); color: rgba(250,250,250,1); }"
 		"QDoubleSpinBox::up-arrow, QDoubleSpinBox::down-arrow { width: 0; height:0;}"
-		"QDoubleSpinBox::up-button, QDoubleSpinBox::down-button { width: 0; height:0;}");
+		"QDoubleSpinBox::up-button, QDoubleSpinBox::down-button { width: 0; height:0;}"
+	);
 
 
 	addOutputSocket(new Vector2SocketModel("Result"));
@@ -904,7 +895,7 @@ Vector3Node::Vector3Node()
 	xSpinBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	ySpinBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	zSpinBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-	ySpinBox->setAlignment(Qt::AlignCenter);
+	xSpinBox->setAlignment(Qt::AlignCenter);
 	ySpinBox->setAlignment(Qt::AlignCenter);
 	zSpinBox->setAlignment(Qt::AlignCenter);
 
@@ -933,10 +924,12 @@ Vector3Node::Vector3Node()
 		emit valueChanged(this, 0);
 	});
 
-	widget->setStyleSheet("QDoubleSpinBox{border: 2px solid rgba(0, 0, 0, .4); padding: 2px; background: rgba(0, 0, 0, 0.2);}"
+	widget->setStyleSheet(
+		"QDoubleSpinBox{border: 2px solid rgba(200, 200, 200, .4); padding: 2px; background: rgba(0, 0, 0, 0.2);}"
 		"QWidget{ background: rgba(0,0,0,0); color: rgba(250,250,250,1); }"
 		"QDoubleSpinBox::up-arrow, QDoubleSpinBox::down-arrow { width: 0; height:0;}"
-		"QDoubleSpinBox::up-button, QDoubleSpinBox::down-button { width: 0; height:0;}");
+		"QDoubleSpinBox::up-button, QDoubleSpinBox::down-button { width: 0; height:0;}"
+	);
 
 
 	addOutputSocket(new Vector3SocketModel("Result"));
@@ -959,7 +952,7 @@ Vector4Node::Vector4Node()
 	auto wid = new QWidget;
 	auto layout = new QHBoxLayout;
 	wid->setLayout(layout);
-	wid->setMaximumWidth(164);
+	wid->setMaximumWidth(154);
 
 	auto xSpinBox = new QDoubleSpinBox;
 	auto ySpinBox = new QDoubleSpinBox;
@@ -969,7 +962,7 @@ Vector4Node::Vector4Node()
 	ySpinBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	zSpinBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	wSpinBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-	ySpinBox->setAlignment(Qt::AlignCenter);
+	xSpinBox->setAlignment(Qt::AlignCenter);
 	ySpinBox->setAlignment(Qt::AlignCenter);
 	zSpinBox->setAlignment(Qt::AlignCenter);
 	wSpinBox->setAlignment(Qt::AlignCenter);
@@ -1006,7 +999,8 @@ Vector4Node::Vector4Node()
 		emit valueChanged(this, 0);
 	});
 
-	widget->setStyleSheet("QDoubleSpinBox{border: 2px solid rgba(0, 0, 0, .4); padding: 2px; background: rgba(0, 0, 0, 0.2);}"
+	widget->setStyleSheet(
+		"QDoubleSpinBox{border: 2px solid rgba(200, 200, 200, .4); padding: 2px; background: rgba(0, 0, 0, 0.2);}"
 		"QWidget{ background: rgba(0,0,0,0); color: rgba(250,250,250,1); }"
 		"QDoubleSpinBox::up-arrow, QDoubleSpinBox::down-arrow { width: 0; height:0;}"
 		"QDoubleSpinBox::up-button, QDoubleSpinBox::down-button { width: 0; height:0;}");

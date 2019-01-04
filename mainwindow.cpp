@@ -308,7 +308,7 @@ void MainWindow::loadGraph(QString guid)
 
 void MainWindow::exportGraph()
 {
-	QString path = QFileDialog::getSaveFileName(this, "Choose file name", "material.material", "Material File (*.shader)");
+	QString path = QFileDialog::getSaveFileName(this, "Choose file name", "effect.effect", "Material File (*.effect)");
 
 	QJsonDocument doc;
 	doc.setObject((new MaterialWriter())->serializeMaterial(graph));
