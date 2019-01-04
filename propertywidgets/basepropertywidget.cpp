@@ -64,11 +64,12 @@ BasePropertyWidget::BasePropertyWidget(QWidget * parent) : QWidget(parent)
 			QMessageBox::Yes | QMessageBox::No);
 		if (reply == QMessageBox::Yes) {
 			qDebug() << "Yes was clicked";
+			emit buttonPressed(true);
 		}
 		else {
 			qDebug() << "Yes was *not* clicked";
+			emit buttonPressed(false);
 		}
-		emit buttonPressed();
 	});
 
 	connect(minimize, &QPushButton::clicked, [=]() {

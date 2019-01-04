@@ -63,6 +63,7 @@ private:
 signals:
 	void nameChanged(QString name, QString id);
 	void texturePicked(QString filename, TexturePropertyWidget *widget);
+	void deleteProperty(QString propID);
 	QString imageRequestedForTexture(QString guid);
 };
 

@@ -282,15 +282,10 @@ void PropertyListWidget::addToPropertyListWidget(BasePropertyWidget *widget)
     connect(widget, &BasePropertyWidget::TitleChanged, [=](QString title) {
         emit nameChanged(title, widget->modelProperty->id);
     });
-	// if texture widget, listen for additional signal
-	if (widget->modelProperty->type == PropertyType::Texture) {
 
-		//auto textureWidget = static_cast<TexturePropertyWidget*>(widget);
-		//connect(textureWidget, &TexturePropertyWidget::valueChanged, [=](QString filename, TexturePropertyWidget *widget) { 
-		//	//textureWidget->setValue(shadergraph::MainWindow::genGUID());
-		//	//emit texturePicked(filename, textureWidget);
-		//});
-	}
+	connect(widget, &BasePropertyWidget::buttonPressed, [=](bool shouldDelete) {
+		if (shouldDelete) emit deleteProperty(widget->modelProperty->id);
+	});
 
     referenceList.append(widget);
     widget->index = added;

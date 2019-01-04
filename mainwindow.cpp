@@ -838,6 +838,10 @@ void MainWindow::configureUI()
 
 	});
 
+	connect(propertyListWidget, &PropertyListWidget::deleteProperty, [=](QString propID) {
+		qDebug() << propID;
+	});
+
 	materialSettingsDock->setWidget(materialSettingsWidget);
 
 	nodeContainer->setAlternatingRowColors(false);
