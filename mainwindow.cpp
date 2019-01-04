@@ -924,6 +924,27 @@ void MainWindow::configureToolbar()
 
 	toolBar->addSeparator();
 
+	int fontSize = 12;
+
+	auto exportBtn = new QAction("help");
+	auto importBtn = new QAction("help");
+	auto addBtn = new QAction("+");
+
+	exportBtn->setText(QChar(fa::upload));
+	exportBtn->setFont(fontIcons->font(fontSize));
+	exportBtn->setToolTip("Export material");
+	importBtn->setText(QChar(fa::download));
+	importBtn->setFont(fontIcons->font(fontSize));
+	importBtn->setToolTip("Import material");
+	addBtn->setText(QChar(fa::plus));
+	addBtn->setFont(fontIcons->font(fontSize));
+	addBtn->setToolTip("Create new material");
+
+	toolBar->addActions({ exportBtn, importBtn, addBtn });
+
+
+
+
 	// this acts as a spacer
 	QWidget* empty = new QWidget();
 	empty->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -1426,6 +1447,8 @@ void MainWindow::addMenuToSceneWidget()
 	connect(screenShotBtn, &QPushButton::clicked, [=]() {
 		
 	});
+
+
 
 }
 
