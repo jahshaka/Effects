@@ -503,10 +503,20 @@ TextureCoordinateNode::TextureCoordinateNode()
 		this, &TextureCoordinateNode::comboTextChanged);
 
 	combo->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-	combo->setStyleSheet("QComboBox{border: 2px solid rgba(250,250,250,0);color : rgba(230,230,230,1);}"
-		"QComboBox QAbstractItemView{selection-background-color: lightgray; background: rgba(20,20,20,1); color : rgba(230,230,230,1); border: none; }"
-		//   "QComboBox::drop-down {border: 1px solid black; }"
-		"QComboBox::drop-arrow{color: rgba(230,230,230,1);}");
+	combo->setStyleSheet(
+		"QComboBox:editable {}"
+		"QComboBox QAbstractItemView::item {    show-decoration-selected: 1;}"
+		"QComboBox QAbstractItemView::item {    padding: 6px;}"
+		"QComboBox  {    background: rgba(0,0,0,0);   border: 2px solid rgba(0,0,0,.4);    outline: none; padding: 6px 10px; color: rgba(250,250,250,1);}"
+	//	"QComboBox:!editable, QComboBox::drop-down:editable {     background: #1A1A1A;}"
+	//	"QComboBox:!editable:on, QComboBox::drop-down:editable:on {    background: #1A1A1A;}"
+		"QComboBox QAbstractItemView { background: rgba(45,45,51,.9);  color: rgba(250,250,250,1);  selection-background-color: #404040; border: 2px solid rgba(0,0,0,.4); outline: none; padding: 4px 10px; }"
+		"QComboBox QAbstractItemView::item {    border: none; padding: 4px 10px;}"
+		"QComboBox QAbstractItemView::item:selected {    background: #404040;    padding-left: 5px;}"
+		"QComboBox::drop-down {    subcontrol-origin: padding;    subcontrol-position: top right;    width: 18px;    border-left-width: 1px;}"
+		"QComboBox::down-arrow {    image: url(:/icons/down_arrow_check.png);	width: 18px;	height: 14px;} "
+		"QComboBox::down-arrow:!enabled {    image: url(:/icons/down_arrow_check_disabled.png);    width: 18px;    height: 14px;}"
+	);
 
 	auto containerWidget = new QWidget();
 	auto layout = new QVBoxLayout;
