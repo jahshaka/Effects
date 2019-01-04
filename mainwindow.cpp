@@ -875,9 +875,7 @@ void MainWindow::configureToolbar()
 	options.insert("color-active", QColor(255, 255, 255));
 
 	toolBar = new QToolBar("Tool Bar");
-	toolBar->setIconSize(QSize(16, 16));
-	toolBar->setContentsMargins(8,2,2,2);
-	
+	toolBar->setIconSize(QSize(15, 15));	
 
 	QFont projectNameFont = projectName->font();
 	projectNameFont.setPixelSize(24);
@@ -908,7 +906,6 @@ void MainWindow::configureToolbar()
 
 
     //toolBar->addWidget(projectName);
-	toolBar->addSeparator();
 
 	QAction *actionUndo = new QAction;
 	actionUndo->setToolTip("Undo | Undo last action");
@@ -924,20 +921,17 @@ void MainWindow::configureToolbar()
 
 	toolBar->addSeparator();
 
-	int fontSize = 12;
+	auto exportBtn = new QAction;
+	auto importBtn = new QAction;
+	auto addBtn = new QAction;
 
-	auto exportBtn = new QAction("help");
-	auto importBtn = new QAction("help");
-	auto addBtn = new QAction("+");
-
-	exportBtn->setText(QChar(fa::upload));
-	exportBtn->setFont(fontIcons->font(fontSize));
+	exportBtn->setIcon(fontIcons->icon(fa::upload, options));
 	exportBtn->setToolTip("Export material");
-	importBtn->setText(QChar(fa::download));
-	importBtn->setFont(fontIcons->font(fontSize));
+
+	importBtn->setIcon(fontIcons->icon(fa::download, options));
 	importBtn->setToolTip("Import material");
-	addBtn->setText(QChar(fa::plus));
-	addBtn->setFont(fontIcons->font(fontSize));
+
+	addBtn->setIcon(fontIcons->icon(fa::plus, options));
 	addBtn->setToolTip("Create new material");
 
 	toolBar->addActions({ exportBtn, importBtn, addBtn });
@@ -960,14 +954,18 @@ void MainWindow::configureToolbar()
 	this->addToolBar(toolBar);
 
 	connect(actionSave, &QAction::triggered, this, &MainWindow::saveShader);
+	connect(exportBtn, &QAction::triggered, this, &MainWindow::exportGraph);
+	connect(importBtn, &QAction::triggered, this, &MainWindow::importGraph);
+	connect(addBtn, &QAction::triggered, this, &MainWindow::createNewGraph);
 
-	toolBar->setStyleSheet(
-		"QToolBar{background: rgba(48,48,48, 1); border: .5px solid rgba(20,20,20, .8); padding 6px 9px; spacing : 3px; }"
-		"QToolBar::handle:horizontal { image: url(:/icons/thandleh.png); width: 24px; margin-left: -6px; }"
-		"QToolBar::handle:vertical { image: url(:/icons/thandlev.png); height: 24px;}"
-		"QToolBar::separator { background: rgba(0,0,0,.2); width: 1px; height : 30px;}"
+	toolBar->setStyleSheet(""
+		//"QToolBar{background: rgba(48,48,48, 1); border: .5px solid rgba(20,20,20, .8); border-bottom: 1px solid rgba(20,20,20, .8); padding: 0px;}"
+		"QToolBar{ background: rgba(48,48,48,1); border-bottom: 1px solid rgba(20,20,20, .8);}"
+		"QToolBar::handle:horizontal { image: url(:/icons/thandleh.png); width: 24px; }"
+		//"QToolBar::handle:vertical { image: url(:/icons/thandlev.png); height: 22px;}"
+		"QToolBar::separator { background: rgba(0,0,0,.2); width: 1px; height : 20px;}"
 		"QToolBar::separator:horizontal { background: #272727; width: 1px; margin-left: 6px; margin-right: 6px;} "
-		"QToolButton { border-radius: 3px; background: rgba(33,33,33, 1); color: rgba(250,250,250, 1); border : 1px solid rgba(20,20,20, .5); font: 19px; padding: 7px 9px; margin-top: 4px; } "
+		"QToolButton { border-radius: 2px; background: rgba(33,33,33, 1); color: rgba(250,250,250, 1); border : 1px solid rgba(10,10,10, .4); font: 18px; padding: 8px; } "
 		"QToolButton:hover{ background: rgba(48,48,48, 1); } "
 	//	"QToolButton:checked{ background: rgba(50,150,250,1); }"
 	);

@@ -39,28 +39,32 @@ ShaderAssetWidget::ShaderAssetWidget(Database *handle) : QWidget()
 
     if(handle) setUpDatabase(handle);
 
+	stackWidget = new QStackedWidget;
+
 
 	layout->addWidget(breadCrumbsWidget);
+	layout->addWidget(stackWidget);
+
+	noWidget = new QWidget;
+	auto noWidgetLayout = new QVBoxLayout;
+	auto lableIcon = new QLabel;
+	auto lableText = new QLabel;
+	noWidget->setLayout(noWidgetLayout);
+	noWidgetLayout->addWidget(lableIcon);
+	noWidgetLayout->addWidget(lableText);
+	lableText->setText("No Open projects");
+	lableIcon->setPixmap(QPixmap(":/icons/icons8-empty-box-50.png"));
+	lableIcon->setAlignment(Qt::AlignCenter);
+	lableText->setAlignment(Qt::AlignCenter);
+	noWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+	closeBtn = new QPushButton("Hide Panel");
+	noWidgetLayout->addWidget(closeBtn);
+
+	stackWidget->addWidget(assetViewWidget);
+	stackWidget->addWidget(noWidget);
+	this->setWidgetToBeShown();
 	
-
-		if (UiManager::isSceneOpen) {
-		}
-		else {
-			noWidget = new QWidget;
-			auto noWidgetLayout = new QVBoxLayout;
-			auto lableIcon = new QLabel;
-			auto lableText = new QLabel;
-			noWidget->setLayout(noWidgetLayout);
-			noWidgetLayout->addWidget(lableIcon);
-			noWidgetLayout->addWidget(lableText);
-			lableText->setText("No Open projects");
-			lableIcon->setPixmap(QPixmap(":/icons/icons8-empty-box-50.png"));
-			lableIcon->setAlignment(Qt::AlignCenter);
-			lableText->setAlignment(Qt::AlignCenter);
-			noWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-
-			layout->addWidget(noWidget);
-		}
 }
 
 
@@ -84,17 +88,7 @@ void ShaderAssetWidget::updateAssetView(const QString & path, int filter, bool s
 
 	//goUpOneControl->setEnabled(false);
 
-	if (UiManager::isSceneOpen) {
-		if (noWidget) {
-			layout->removeWidget(noWidget);
-			layout->addWidget(assetViewWidget);
-		}
-	}
-	else {
-		layout->removeWidget(assetViewWidget);
-		layout->addWidget(noWidget);
-
-	}
+	setWidgetToBeShown();
 
 }
 
@@ -192,6 +186,7 @@ void ShaderAssetWidget::setUpDatabase(Database * db)
 		this->db = db;
 		updateAssetView(Globals::project->getProjectGuid());
 		assetItemShader.selectedGuid = Globals::project->getProjectGuid();
+		
 	}
 }
 
@@ -199,6 +194,18 @@ void ShaderAssetWidget::refresh()
 {
 	updateAssetView(Globals::project->getProjectGuid());
 }
+
+void ShaderAssetWidget::setWidgetToBeShown()
+{
+	if (UiManager::isSceneOpen) {
+		stackWidget->setCurrentIndex(0);
+	}
+	else {
+		stackWidget->setCurrentIndex(1);
+
+	}
+}
+
 
 void ShaderAssetWidget::createFolder()
 {
