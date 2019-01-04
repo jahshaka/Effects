@@ -771,10 +771,10 @@ void MainWindow::configureUI()
 	addDockWidget(Qt::LeftDockWidgetArea, projectDock, Qt::Vertical);
 #endif
 	addDockWidget(Qt::LeftDockWidgetArea, assetsDock, Qt::Vertical);
-	addDockWidget(Qt::RightDockWidgetArea, textWidget, Qt::Vertical);
+//	addDockWidget(Qt::RightDockWidgetArea, textWidget, Qt::Vertical);
 	addDockWidget(Qt::RightDockWidgetArea, displayWidget, Qt::Vertical);
-	addDockWidget(Qt::RightDockWidgetArea, materialSettingsDock, Qt::Vertical);
-	addDockWidget(Qt::LeftDockWidgetArea, propertyWidget, Qt::Vertical);
+	addDockWidget(Qt::LeftDockWidgetArea, materialSettingsDock, Qt::Vertical);
+	addDockWidget(Qt::RightDockWidgetArea, propertyWidget, Qt::Vertical);
 
 	//auto displayLayout = new QVBoxLayout;
 	//displayWidget->setLayout(displayLayout);
