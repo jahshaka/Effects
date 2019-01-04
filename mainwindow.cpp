@@ -461,7 +461,7 @@ void MainWindow::configureProjectDock()
 	auto widget = new QWidget;
 	auto layout = new QVBoxLayout;
 	widget->setLayout(layout);
-
+	layout->setContentsMargins(0, 0, 0, 0);
 	projectDock->setWidget(widget);
 	projectDock->setStyleSheet(nodeTray->styleSheet());
 
@@ -499,7 +499,6 @@ void MainWindow::configureAssetsDock()
 	effects = new ListWidget;
 	effects->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
     effects->shaderContextMenuAllowed = true;
-
     //tabWidget->addTab(presets, "Presets");
 	//tabWidget->addTab(effects, "My Fx");
 	//tabWidget->setStyleSheet(tabbedWidget->styleSheet());
@@ -513,7 +512,7 @@ void MainWindow::configureAssetsDock()
 	scrollView->setContentsMargins(0, 0, 0, 0);
 	scrollView->setStyleSheet(
 		"QScrollBar:vertical {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 10px; }"
-		"QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 5px;  left: 8px; }"
+		"QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 3px;  left: 8px; }"
 		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
 		"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
 		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .0);}"
@@ -840,6 +839,7 @@ void MainWindow::configureUI()
 
 	connect(propertyListWidget, &PropertyListWidget::deleteProperty, [=](QString propID) {
 		qDebug() << propID;
+		graph->deletePropertyById(propID);
 	});
 
 	materialSettingsDock->setWidget(materialSettingsWidget);

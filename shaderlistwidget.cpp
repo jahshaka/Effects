@@ -39,9 +39,6 @@ void ShaderListWidget::dropEvent(QDropEvent * event)
 		item->setIcon(QIcon(":/icons/icons8-file-72.png"));
 		item->setText(event->mimeData()->text());
 
-		
-		
-
 		item->setData(MODEL_GUID_ROLE, event->mimeData()->data("MODEL_GUID_ROLE"));
 		item->setData(Qt::DisplayRole, event->mimeData()->text());
 		item->setData(MODEL_PARENT_ROLE, event->mimeData()->data("MODEL_PARENT_ROLE"));

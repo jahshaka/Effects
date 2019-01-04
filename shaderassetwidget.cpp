@@ -33,6 +33,7 @@ ShaderAssetWidget::ShaderAssetWidget(Database *handle) : QWidget()
 
 	assetViewWidget = new ShaderListWidget;
     assetViewWidget->shaderContextMenuAllowed = true;
+	assetViewWidget->setGridSize({ 95,95 });
 	connect(assetViewWidget, &ShaderListWidget::itemDropped, [=](QListWidgetItem *item) {
 		createShader(item);
 	});
@@ -41,7 +42,7 @@ ShaderAssetWidget::ShaderAssetWidget(Database *handle) : QWidget()
 
 	stackWidget = new QStackedWidget;
 
-
+	layout->setContentsMargins(0, 0, 0, 0);
 	layout->addWidget(breadCrumbsWidget);
 	layout->addWidget(stackWidget);
 
