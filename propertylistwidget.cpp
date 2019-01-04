@@ -18,9 +18,6 @@
 PropertyListWidget::PropertyListWidget(QWidget *parent) :
     QWidget(parent)
 {
-
-
-
     auto menu = new QMenu(this);
 //	menu->setWindowFlag(Qt::NoDropShadowWindowHint );
 	menu->setAttribute(Qt::WA_TranslucentBackground);
@@ -58,26 +55,27 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 	addLayout->addWidget(pushButton);
 	addLayout->addSpacing(8);
 
-	scrollLayout->addStretch();
-	scrollLayout->addWidget(scrollArea);
-	scrollLayout->addStretch();
+//	scrollLayout->addStretch();
+//	scrollLayout->addWidget(scrollArea);
+//	scrollLayout->addStretch();
 
-	contentWidget->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Expanding);
+	scrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+	contentWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	contentWidget->setMinimumWidth(200);
 
 	mainLayout->setContentsMargins(3, 0, 3, 0);
 	mainLayout->addSpacing(15);
 	mainLayout->addLayout(addLayout);
 	mainLayout->addSpacing(5);
-	mainLayout->addLayout(scrollLayout);
+	mainLayout->addWidget(scrollArea);
 
 	contentWidget->setLayout(layout);
 	scrollArea->setWidget(contentWidget);
 	scrollArea->setWidgetResizable(true);
-	scrollArea->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
-	scrollArea->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
+//	scrollArea->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+//	scrollArea->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
 	scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	scrollArea->setMaximumWidth(450);
+//	scrollArea->setMaximumWidth(450);
 	scrollArea->setMinimumWidth(280);
 
 	setLayout(mainLayout);
@@ -89,7 +87,7 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 	connect(action4, &QAction::triggered, this, &PropertyListWidget::addNewVec4Property);
 	connect(action5, &QAction::triggered, this, &PropertyListWidget::addNewTextureProperty);
 
-	scrollArea->setStyleSheet(""
+	scrollArea->setStyleSheet("QWidget{background: rgba(12,34,87,1)};"
 		"QScrollBar:vertical {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 10px; }"
 		"QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 5px;  left: 8px; }"
 		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
