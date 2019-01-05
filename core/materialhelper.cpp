@@ -173,8 +173,8 @@ void MaterialHelper::parseMaterialProperties(iris::CustomMaterialPtr material, Q
 			fltProp->id = i;
 			fltProp->displayName = displayName;
 			fltProp->name = name;
-			fltProp->minValue = prop["min"].toDouble();
-			fltProp->maxValue = prop["max"].toDouble();
+			fltProp->minValue = prop["minValue"].toDouble();
+			fltProp->maxValue = prop["maxValue"].toDouble();
 			fltProp->uniform = uniform;
 			fltProp->value = prop["value"].toDouble();
 
@@ -186,8 +186,8 @@ void MaterialHelper::parseMaterialProperties(iris::CustomMaterialPtr material, Q
 			fltProp->id = i;
 			fltProp->displayName = displayName;
 			fltProp->name = name;
-			fltProp->minValue = prop["min"].toDouble();
-			fltProp->maxValue = prop["max"].toDouble();
+			fltProp->minValue = prop["minValue"].toDouble();
+			fltProp->maxValue = prop["maxValue"].toDouble();
 			fltProp->uniform = uniform;
 			fltProp->value = prop["value"].toDouble();
 

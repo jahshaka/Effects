@@ -129,12 +129,16 @@ struct IntProperty : public Property
     {
         auto obj = Property::serialize();
         obj["value"] = value;
+		obj["minValue"] = minValue;
+		obj["maxValue"] = maxValue;
         return obj;
     }
 
     void deserialize(const QJsonObject& obj) override
     {
-        value = obj["value"].toInt();
+		value = obj["value"].toInt();
+		minValue = obj["minValue"].toInt();
+		maxValue = obj["maxValue"].toInt();
     }
 };
 
@@ -174,7 +178,9 @@ struct FloatProperty : public Property
     QJsonObject serialize() override
     {
         auto obj = Property::serialize();
-        obj["value"] = value;
+		obj["value"] = value;
+		obj["minValue"] = minValue;
+		obj["maxValue"] = maxValue;
         return obj;
     }
 
