@@ -13,7 +13,8 @@ QJsonObject Property::serialize()
 {
     QJsonObject obj;
     obj["id"] = id;
-    obj["name"] = name;
+	obj["name"] = name;
+	obj["uniform"] = getUniformName();
     obj["displayName"] = displayName;
 
     switch(type) {
@@ -78,7 +79,7 @@ Property* Property::parse(const QJsonObject& obj)
 
     if (prop != nullptr) {
         prop->id            = obj["id"].toString();
-        prop->name          = obj["name"].toString();
+		prop->name          = obj["name"].toString();
         prop->displayName   = obj["displayName"].toString();
 
         // deserialize custom properties

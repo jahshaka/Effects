@@ -122,7 +122,7 @@ void PropertyListWidget::setNodeGraph(NodeGraph *graph)
 	//todo: clear widgets
 
     this->graph = graph;
-	added = 0;
+	added = 0; 
 
     // build properties
 	for (auto prop : graph->properties) {

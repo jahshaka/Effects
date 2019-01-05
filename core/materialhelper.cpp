@@ -143,13 +143,16 @@ iris::CustomMaterialPtr MaterialHelper::generateMaterialFromMaterialDefinition(Q
 		shader->setFragmentShader(fragCode);
 	}
 	else {
-		shader->setVertexShader(matObj["vertexShaderSource"].toString());
-		shader->setFragmentShader(matObj["fragmentShaderSource"].toString());
+		auto vertShader = matObj["vertexShaderSource"].toString();
+		auto fragShader = matObj["fragmentShaderSource"].toString();
+		shader->setVertexShader(vertShader);
+		shader->setFragmentShader(fragShader);
 	}
 	
 
 	auto mat = iris::CustomMaterial::createFromShader(shader);
 	mat->setMaterialDefinition(matObj);
+	mat->setVersion(2);
 
 	// generate properties
 	parseMaterialProperties(mat, matObj["properties"].toArray());

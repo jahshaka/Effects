@@ -40,7 +40,7 @@ void FloatPropertyWidget::setPropValue(double value)
 
 void FloatPropertyWidget::setConnections() {
 
-	connect(this, &FloatPropertyWidget::valueChanged, [=](double val) {
+	connect(wid, &WidgetFloat::valueChanged, [=](double val) {
 		x = val;
 		setPropValue(val);
 		emit valueChanged(val);

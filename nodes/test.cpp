@@ -520,7 +520,7 @@ TextureCoordinateNode::TextureCoordinateNode()
 
 	//this->widget = combo;
 
-	typeName = "float";
+	//typeName = "float";
 
 	addOutputSocket(new Vector2SocketModel("UV"));
 	uv = "v_texCoord";
@@ -879,7 +879,7 @@ Vector3Node::Vector3Node()
 {
 	setNodeType(NodeType::Constants);
 	title = "Vector 3 Node";
-	typeName = "vector 3 node";
+	typeName = "vector3";
 
 	x = y = z = 0;
 
@@ -942,7 +942,7 @@ Vector4Node::Vector4Node()
 {
 	setNodeType(NodeType::Constants);
 	title = "Vector 4 Node";
-	typeName = "vector 4 node";
+	typeName = "vector4";
 
 	x = y = z = w = 0;
 
