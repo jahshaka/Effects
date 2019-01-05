@@ -69,7 +69,7 @@ private:
 	QtAwesome *fontIcons;
 
 signals:
-	void buttonPressed();
+	void buttonPressed(bool shouldDelete);
 	void buttonClose();
 	void buttonResize(bool resize);
 	void currentWidget(BasePropertyWidget *widget);

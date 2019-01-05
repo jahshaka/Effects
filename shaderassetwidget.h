@@ -4,7 +4,8 @@
 #include <QLabel>
 #include <QListWidget>
 #include <QJsonObject>
-
+#include <QPushButton>
+#include <QStackedWidget>
 #include "listwidget.h"
 #include "shaderlistwidget.h"
 #include "../core/project.h"
@@ -30,6 +31,7 @@ public:
 
 
 	QVBoxLayout *layout;
+	QStackedWidget *stackWidget;
 	QHBoxLayout *breadCrumbs;
 	AssetItemShader assetItemShader;
 
@@ -44,9 +46,10 @@ public:
     void setUpDatabase(Database *db);
 	void refresh();
 private:
-
+	void setWidgetToBeShown();
 	QWidget *noWidget;
 	Database *db;
 	QSize currentSize = QSize(90, 90);
+	QPushButton* closeBtn;
 };
 

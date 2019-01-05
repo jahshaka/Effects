@@ -39,7 +39,7 @@ ListWidget::ListWidget() : QListWidget()
 	sortItems();
     setEditTriggers(QAbstractItemView::EditKeyPressed);
     setContextMenuPolicy(Qt::CustomContextMenu);
-	
+	numberOfItemPerRow = 3;
 	QFont font = this->font();
 	font.setWeight(60);
 	font.setPixelSize(12);
@@ -47,7 +47,7 @@ ListWidget::ListWidget() : QListWidget()
 	setContentsMargins(0, 0, 0, 0);
 	verticalScrollBar()->setStyleSheet(
 		"QScrollBar:vertical {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 10px; }"
-		"QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 5px;  left: 8px; }"
+		"QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 3px;  left: 8px; }"
 		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
 		"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
 		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .0);}"
@@ -72,6 +72,7 @@ ListWidget::~ListWidget()
 
 void ListWidget::displayAllContents()
 {
+	setGridSize(QSize(95, 95));
 
 	int num_of_items_per_row = width() / (gridSize().width()+6);
 	int num_of_models = model()->rowCount();
@@ -81,6 +82,23 @@ void ListWidget::displayAllContents()
 
 	setFixedHeight(calculated_height);
 
+
+	
+		int defaultItemSize = 70;
+		int columnCount = width() / (gridSize().width() + 10);
+		int gridCount = count();
+		if (columnCount > numberOfItemPerRow) numberOfItemPerRow++;
+
+		while (width() > defaultItemSize*numberOfItemPerRow) defaultItemSize++;
+		while (width() < defaultItemSize*numberOfItemPerRow) defaultItemSize--;
+
+		//setIconSize({ defaultItemSize, defaultItemSize });
+		//setGridSize({ defaultItemSize, defaultItemSize });
+
+
+		emit resizeItem(defaultItemSize);
+		qDebug() << defaultItemSize << numberOfItemPerRow;
+	
 }
 
 
@@ -95,17 +113,8 @@ QMimeData * ListWidget::mimeData(const QList<QListWidgetItem *> items) const
 	data->setText(items[0]->data(Qt::DisplayRole).toString());
 	//set html for node
 	data->setHtml(items[0]->data(Qt::UserRole).toString());
-	//QJsonDocument doc(items[0]->data(MODEL_GRAPH).toJsonObject());
 	data->setData("MODEL_TYPE_ROLE", items[0]->data(MODEL_TYPE_ROLE).toByteArray());
-	//data->setData("MODEL_ITEM_TYPE", items[0]->data(MODEL_ITEM_TYPE).toByteArray());
-	//data->setData("MODEL_PARENT_ROLE", items[0]->data(MODEL_PARENT_ROLE).toByteArray());
-	//data->setData("MODEL_GRAPH", doc.toBinaryData());
-
-		data->setData("MODEL_GUID_ROLE", items[0]->data(MODEL_GUID_ROLE).toByteArray());
-
-
-
-
+	data->setData("MODEL_GUID_ROLE", items[0]->data(MODEL_GUID_ROLE).toByteArray());
 	return data;
 }
 
@@ -113,6 +122,15 @@ void ListWidget::resizeEvent(QResizeEvent * event)
 {
 	QListWidget::resizeEvent(event);
 	if(isResizable) displayAllContents();
+}
+
+void ListWidget::addToListWidget(QListWidgetItem * item)
+{
+	connect(this, &ListWidget::resizeItem, [=](int size) {
+	//	item->setSizeHint({ size,size });
+	});
+
+	addItem(item);
 }
 
 void ListWidget::dropEvent(QDropEvent * event)

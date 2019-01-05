@@ -1,6 +1,6 @@
 #pragma once
 #include <QListWidget>
-
+#include <QSize>
 
 struct shaderInfo {
 	QString GUID;
@@ -21,8 +21,13 @@ public:
     bool shaderContextMenuAllowed = false;
     void createContextMenu();
 
+	QSize itemSize;
+	int numberOfItemPerRow;
+	void addToListWidget(QListWidgetItem *item);
+
 private slots:
     void customContextMenu(QPoint pos);
+	
 
 protected:
     QMimeData * mimeData(const QList<QListWidgetItem *> items) const override;
@@ -36,6 +41,6 @@ signals:
     void createShader(QString guid);
     void importShader(QString guid);
 
-
+	void resizeItem(int size);
 };
 

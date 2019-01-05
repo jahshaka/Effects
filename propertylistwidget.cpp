@@ -18,9 +18,6 @@
 PropertyListWidget::PropertyListWidget(QWidget *parent) :
     QWidget(parent)
 {
-
-
-
     auto menu = new QMenu(this);
 //	menu->setWindowFlag(Qt::NoDropShadowWindowHint );
 	menu->setAttribute(Qt::WA_TranslucentBackground);
@@ -58,26 +55,27 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 	addLayout->addWidget(pushButton);
 	addLayout->addSpacing(8);
 
-	scrollLayout->addStretch();
-	scrollLayout->addWidget(scrollArea);
-	scrollLayout->addStretch();
+//	scrollLayout->addStretch();
+//	scrollLayout->addWidget(scrollArea);
+//	scrollLayout->addStretch();
 
-	contentWidget->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Expanding);
+	scrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+	contentWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	contentWidget->setMinimumWidth(200);
 
 	mainLayout->setContentsMargins(3, 0, 3, 0);
 	mainLayout->addSpacing(15);
 	mainLayout->addLayout(addLayout);
 	mainLayout->addSpacing(5);
-	mainLayout->addLayout(scrollLayout);
+	mainLayout->addWidget(scrollArea);
 
 	contentWidget->setLayout(layout);
 	scrollArea->setWidget(contentWidget);
 	scrollArea->setWidgetResizable(true);
-	scrollArea->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
-	scrollArea->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
+//	scrollArea->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+//	scrollArea->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
 	scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	scrollArea->setMaximumWidth(450);
+//	scrollArea->setMaximumWidth(450);
 	scrollArea->setMinimumWidth(280);
 
 	setLayout(mainLayout);
@@ -282,15 +280,10 @@ void PropertyListWidget::addToPropertyListWidget(BasePropertyWidget *widget)
     connect(widget, &BasePropertyWidget::TitleChanged, [=](QString title) {
         emit nameChanged(title, widget->modelProperty->id);
     });
-	// if texture widget, listen for additional signal
-	if (widget->modelProperty->type == PropertyType::Texture) {
 
-		//auto textureWidget = static_cast<TexturePropertyWidget*>(widget);
-		//connect(textureWidget, &TexturePropertyWidget::valueChanged, [=](QString filename, TexturePropertyWidget *widget) { 
-		//	//textureWidget->setValue(shadergraph::MainWindow::genGUID());
-		//	//emit texturePicked(filename, textureWidget);
-		//});
-	}
+	connect(widget, &BasePropertyWidget::buttonPressed, [=](bool shouldDelete) {
+		if (shouldDelete) emit deleteProperty(widget->modelProperty->id);
+	});
 
     referenceList.append(widget);
     widget->index = added;

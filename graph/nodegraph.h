@@ -61,6 +61,7 @@ public:
 	MaterialSettings settings;
 
 	void addProperty(Property* prop);
+	bool deletePropertyById(const QString& id);
 	Property* getPropertyByName(const QString& name);
 	Property* getPropertyById(const QString& id);
 

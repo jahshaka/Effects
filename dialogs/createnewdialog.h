@@ -8,10 +8,12 @@
 #include "../listwidget.h"
 #include <QWidget>
 #include <QScrollArea>
-struct nodeGraphPreset {
-	QString name = "";
+struct NodeGraphPreset {
+	QString name = "Untitled Shader";
 	QString title = "";
 	QString iconPath = "";
+	QString templatePath = "";
+	QVector<QString> list;
 };
 
 struct dialogType {
@@ -22,29 +24,36 @@ class OptionSelection : public QPushButton
 {
 	Q_OBJECT
 public:
-	OptionSelection(nodeGraphPreset node);
+	OptionSelection(NodeGraphPreset node);
 
-	nodeGraphPreset info;
+	NodeGraphPreset info;
 	QPixmap checkedIconIcon;
+	int type = 0;
 protected:
     void paintEvent(QPaintEvent *event) override;
 
 signals:
 	void buttonSelected(OptionSelection* button);
-	void OptionSelected(nodeGraphPreset info);
+	void OptionSelected(NodeGraphPreset info);
 };
 
 class CreateNewDialog : public QDialog
 {
 	Q_OBJECT
 public:
-	CreateNewDialog(QList<nodeGraphPreset> list);
+	CreateNewDialog(bool maximized = true);
 	~CreateNewDialog();
 
 	void configureStylesheet();
 	QString getName() { return name; }
 	QString getTemplateName() { return templateName; }
 	int getType() { return type; }
+	QVector<QString> getList() { return currentInfoSelected.list; }
+	NodeGraphPreset getPreset() { return currentInfoSelected; }
+
+
+	static QList<NodeGraphPreset> getPresetList();
+	static QList<NodeGraphPreset> getStarterList();
 
 
 private:
@@ -59,17 +68,18 @@ private:
 	QWidget* presets;
 	QWidget *holder;
 	QTabWidget *tabbedWidget;
-	QScrollArea *optionsScroll;
-	QScrollArea *presetsScroll;
+	QWidget *optionsScroll;
+	QWidget *presetsScroll;
     QWidget *optionsWidget;
     QWidget *presetsWidget;
-	nodeGraphPreset currentInfoSelected;
+	NodeGraphPreset currentInfoSelected;
 	QLabel *infoLabel;
     int num_of_widgets_per_row = 3;
 
+
+
 signals:
 	void confirmClicked(int option);
-
 
 };
 

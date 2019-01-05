@@ -64,7 +64,7 @@ public:
 
     ~MainWindow();
 
-	QList<nodeGraphPreset> list;
+	QList<NodeGraphPreset> list;
 	QListWidgetItem *currentProjectShader = Q_NULLPTR;
 	shaderInfo currentShaderInformation;
     shaderInfo pressedShaderInfo;
@@ -77,6 +77,7 @@ private:
 	void deleteMaterialFile(QString filename);
 
     void importGraph();
+	NodeGraph* importGraphFromFilePath(QString filePath, bool assign = true);
     void exportGraph();
     void restoreGraphPositions(const QJsonObject& data);
     bool deleteShader(QString guid);
@@ -95,7 +96,7 @@ private:
 	void configureStyleSheet();
 	void configureProjectDock();
 	void configureAssetsDock();
-	void createShader(QString *shaderName = Q_NULLPTR, int *templateType = Q_NULLPTR, QString *templateName = Q_NULLPTR, bool loadNewGraph = true);
+	void createShader(NodeGraphPreset preset, bool loadNewGraph = true);
 	void setCurrentShaderItem();
 	QByteArray fetchAsset(QString string);
 

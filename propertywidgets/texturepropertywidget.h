@@ -26,6 +26,7 @@ private:
 	GraphTexture* graphTexture;
 	QPushButton *texture;
 	QString value = "";
+	WidgetTexture *wid;
 	void setConnections();
 
 public slots:

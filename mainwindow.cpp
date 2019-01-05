@@ -243,19 +243,26 @@ QString MainWindow::genGUID()
 void MainWindow::importGraph()
 {
     QString path = QFileDialog::getOpenFileName(this, "Choose file name","material.json","Material File (*.json)");
+	importGraphFromFilePath(path);
+}
 
-    QFile file;
-    file.setFileName(path);
-    file.open(QIODevice::ReadOnly | QIODevice::Text);
-    auto val = file.readAll();
-    file.close();
-    QJsonDocument d = QJsonDocument::fromJson(val);
+NodeGraph* MainWindow::importGraphFromFilePath(QString filePath, bool assign)
+{
+	QFile file(filePath);
+	file.open(QIODevice::ReadOnly | QIODevice::Text);
+	auto val = file.readAll();
+	file.close();
+	QJsonDocument d = QJsonDocument::fromJson(val);
 
 	auto obj = d.object();
-    auto graph = NodeGraph::deserialize(obj, new LibraryV1());
-    this->setNodeGraph(graph);
+	auto graph = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
 
-	regenerateShader();
+	if (assign) {
+		this->setNodeGraph(graph);
+		regenerateShader();
+	}
+	
+	return graph;
 }
 
 void MainWindow::loadGraph(QString guid)
@@ -301,7 +308,7 @@ void MainWindow::loadGraph(QString guid)
 
 void MainWindow::exportGraph()
 {
-	QString path = QFileDialog::getSaveFileName(this, "Choose file name", "material.material", "Material File (*.shader)");
+	QString path = QFileDialog::getSaveFileName(this, "Choose file name", "effect.effect", "Material File (*.effect)");
 
 	QJsonDocument doc;
 	doc.setObject((new MaterialWriter())->serializeMaterial(graph));
@@ -404,9 +411,9 @@ void MainWindow::configureStyleSheet()
 	);
 
 	nodeContainer->setStyleSheet(
-		"QListView::item{ border-radius: 2px; border: 1px solid rgba(0,0,0,1); background: rgba(80,80,80,1); margin: 3px;  }"
-		"QListView::item:selected{ background: rgba(65,65,65,1); border: 1px solid rgba(50,150,250,1); }"
-		"QListView::item:hover{ background: rgba(55,55,55,1); border: 1px solid rgba(50,150,250,1); }"
+		"QListView::item{ border-radius: 2px; border: 1px solid rgba(0,0,0,.31); background: rgba(51,51,51,1); margin: 3px;  }"
+		"QListView::item:selected{ background: rgba(155,155,155,1); border: 1px solid rgba(50,150,250,.1); }"
+		"QListView::item:hover{ background: rgba(95,95,95,1); border: .1px solid rgba(50,150,250,.1); }"
 		"QListView::text{ top : -6; }"
 
 	);
@@ -454,7 +461,7 @@ void MainWindow::configureProjectDock()
 	auto widget = new QWidget;
 	auto layout = new QVBoxLayout;
 	widget->setLayout(layout);
-
+	layout->setContentsMargins(0, 0, 0, 0);
 	projectDock->setWidget(widget);
 	projectDock->setStyleSheet(nodeTray->styleSheet());
 
@@ -492,7 +499,6 @@ void MainWindow::configureAssetsDock()
 	effects = new ListWidget;
 	effects->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
     effects->shaderContextMenuAllowed = true;
-
     //tabWidget->addTab(presets, "Presets");
 	//tabWidget->addTab(effects, "My Fx");
 	//tabWidget->setStyleSheet(tabbedWidget->styleSheet());
@@ -506,7 +512,7 @@ void MainWindow::configureAssetsDock()
 	scrollView->setContentsMargins(0, 0, 0, 0);
 	scrollView->setStyleSheet(
 		"QScrollBar:vertical {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 10px; }"
-		"QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 5px;  left: 8px; }"
+		"QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 3px;  left: 8px; }"
 		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
 		"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
 		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .0);}"
@@ -528,14 +534,13 @@ void MainWindow::configureAssetsDock()
 		"border: 1px solid black;"
 	);
 
-	for (int i = 0; i < 5; i++) {
+	// get list of presets
+	for (auto tile : CreateNewDialog::getPresetList()) {
 		auto item = new QListWidgetItem;
-		item->setText("preset" + QString::number(i));
+		item->setText(tile.name);
 		item->setSizeHint(defaultItemSize);
 		item->setTextAlignment(Qt::AlignBottom);
-		item->setFlags(item->flags() | Qt::ItemIsEditable);
-		presets->addItem(item);
-		effects->addItem(item);
+		presets->addToListWidget(item);
 	}
 
 	presets->isResizable = true;
@@ -593,10 +598,10 @@ void MainWindow::configureAssetsDock()
 		buttonBar->setContentsMargins(0, 0, 0, 0);
 
 		connect(exportBtn, &QPushButton::clicked, [=]() {
-
+			exportGraph();
 		});
 		connect(importBtn, &QPushButton::clicked, [=]() {
-
+			importGraph();
 		});
 		connect(addBtn, &QPushButton::clicked, [=]() {
 			createNewGraph();
@@ -611,11 +616,11 @@ void MainWindow::configureAssetsDock()
 	updateAssetDock();
 }
 
-void MainWindow::createShader(QString *shaderName, int *templateType , QString *templateName, bool loadNewGraph)
+void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 {
 	QString newShader;
-	if(shaderName)	 newShader = *shaderName;
-	else   newShader = "Untitled Material";
+	newShader = preset.title;
+
 	QListWidgetItem *item = new QListWidgetItem;
 	item->setFlags(item->flags() | Qt::ItemIsEditable);
 	item->setSizeHint(defaultItemSize);
@@ -649,16 +654,35 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 
 	// sets new scene
 
-	if (loadNewGraph) {
-		auto nodeGraph = new NodeGraph();
-		auto masterNode = new SurfaceMasterNode();
-		nodeGraph->setNodeLibrary(new LibraryV1());
-		nodeGraph->addNode(masterNode);
-		nodeGraph->setMasterNode(masterNode);
-        nodeGraph->settings.name = newShader;
-		this->setNodeGraph(nodeGraph);
-        propertyListWidget->clearPropertyList();
-	}
+	//if (preset.name == "Basic") {
+	//	auto str = "assets/effect_template1.json";
+	//	importGraphFromFilePath(str);
+	//}
+	//else if  (preset.name == "Texture") {
+		auto str = "assets/effect_texture_template.json";
+		auto graph = importGraphFromFilePath(preset.templatePath, false);
+		int i = 0;
+		for (auto prop : graph->properties) {
+			if (prop->type == PropertyType::Texture) {
+				auto graphTexture = TextureManager::getSingleton()->importTexture(preset.list.at(i));
+				prop->setValue(graphTexture->guid);
+				i++;
+			}
+		}
+		setNodeGraph(graph);
+		regenerateShader();
+	//}
+	//else if (loadNewGraph)
+	//{
+	//	auto nodeGraph = new NodeGraph();
+	//	auto masterNode = new SurfaceMasterNode();
+	//	nodeGraph->setNodeLibrary(new LibraryV1());
+	//	nodeGraph->addNode(masterNode);
+	//	nodeGraph->setMasterNode(masterNode);
+ //       nodeGraph->settings.name = newShader;
+	//	this->setNodeGraph(nodeGraph);
+ //       propertyListWidget->clearPropertyList();
+	//}
 
 
 #if(EFFECT_BUILD_AS_LIB)
@@ -678,11 +702,10 @@ void MainWindow::createShader(QString *shaderName, int *templateType , QString *
 
 	AssetManager::addAsset(assetShader);
 
-#else
-	saveShader();
 
 #endif
 	
+	saveShader();
 }
 
 void MainWindow::setCurrentShaderItem()
@@ -748,10 +771,10 @@ void MainWindow::configureUI()
 	addDockWidget(Qt::LeftDockWidgetArea, projectDock, Qt::Vertical);
 #endif
 	addDockWidget(Qt::LeftDockWidgetArea, assetsDock, Qt::Vertical);
-	addDockWidget(Qt::RightDockWidgetArea, textWidget, Qt::Vertical);
+//	addDockWidget(Qt::RightDockWidgetArea, textWidget, Qt::Vertical);
 	addDockWidget(Qt::RightDockWidgetArea, displayWidget, Qt::Vertical);
-	addDockWidget(Qt::RightDockWidgetArea, materialSettingsDock, Qt::Vertical);
-	addDockWidget(Qt::LeftDockWidgetArea, propertyWidget, Qt::Vertical);
+	addDockWidget(Qt::LeftDockWidgetArea, materialSettingsDock, Qt::Vertical);
+	addDockWidget(Qt::RightDockWidgetArea, propertyWidget, Qt::Vertical);
 
 	//auto displayLayout = new QVBoxLayout;
 	//displayWidget->setLayout(displayLayout);
@@ -814,6 +837,11 @@ void MainWindow::configureUI()
 
 	});
 
+	connect(propertyListWidget, &PropertyListWidget::deleteProperty, [=](QString propID) {
+		qDebug() << propID;
+		graph->deletePropertyById(propID);
+	});
+
 	materialSettingsDock->setWidget(materialSettingsWidget);
 
 	nodeContainer->setAlternatingRowColors(false);
@@ -851,9 +879,7 @@ void MainWindow::configureToolbar()
 	options.insert("color-active", QColor(255, 255, 255));
 
 	toolBar = new QToolBar("Tool Bar");
-	toolBar->setIconSize(QSize(16, 16));
-	toolBar->setContentsMargins(8,2,2,2);
-	
+	toolBar->setIconSize(QSize(15, 15));	
 
 	QFont projectNameFont = projectName->font();
 	projectNameFont.setPixelSize(24);
@@ -884,7 +910,6 @@ void MainWindow::configureToolbar()
 
 
     //toolBar->addWidget(projectName);
-	toolBar->addSeparator();
 
 	QAction *actionUndo = new QAction;
 	actionUndo->setToolTip("Undo | Undo last action");
@@ -899,6 +924,24 @@ void MainWindow::configureToolbar()
 	toolBar->addAction(actionRedo);
 
 	toolBar->addSeparator();
+
+	auto exportBtn = new QAction;
+	auto importBtn = new QAction;
+	auto addBtn = new QAction;
+
+	exportBtn->setIcon(fontIcons->icon(fa::upload, options));
+	exportBtn->setToolTip("Export material");
+
+	importBtn->setIcon(fontIcons->icon(fa::download, options));
+	importBtn->setToolTip("Import material");
+
+	addBtn->setIcon(fontIcons->icon(fa::plus, options));
+	addBtn->setToolTip("Create new material");
+
+	toolBar->addActions({ exportBtn, importBtn, addBtn });
+
+
+
 
 	// this acts as a spacer
 	QWidget* empty = new QWidget();
@@ -915,14 +958,18 @@ void MainWindow::configureToolbar()
 	this->addToolBar(toolBar);
 
 	connect(actionSave, &QAction::triggered, this, &MainWindow::saveShader);
+	connect(exportBtn, &QAction::triggered, this, &MainWindow::exportGraph);
+	connect(importBtn, &QAction::triggered, this, &MainWindow::importGraph);
+	connect(addBtn, &QAction::triggered, this, &MainWindow::createNewGraph);
 
-	toolBar->setStyleSheet(
-		"QToolBar{background: rgba(48,48,48, 1); border: .5px solid rgba(20,20,20, .8); padding 6px 9px; spacing : 3px; }"
-		"QToolBar::handle:horizontal { image: url(:/icons/thandleh.png); width: 24px; margin-left: -6px; }"
-		"QToolBar::handle:vertical { image: url(:/icons/thandlev.png); height: 24px;}"
-		"QToolBar::separator { background: rgba(0,0,0,.2); width: 1px; height : 30px;}"
+	toolBar->setStyleSheet(""
+		//"QToolBar{background: rgba(48,48,48, 1); border: .5px solid rgba(20,20,20, .8); border-bottom: 1px solid rgba(20,20,20, .8); padding: 0px;}"
+		"QToolBar{ background: rgba(48,48,48,1); border-bottom: 1px solid rgba(20,20,20, .8);}"
+		"QToolBar::handle:horizontal { image: url(:/icons/thandleh.png); width: 24px; }"
+		//"QToolBar::handle:vertical { image: url(:/icons/thandlev.png); height: 22px;}"
+		"QToolBar::separator { background: rgba(0,0,0,.2); width: 1px; height : 20px;}"
 		"QToolBar::separator:horizontal { background: #272727; width: 1px; margin-left: 6px; margin-right: 6px;} "
-		"QToolButton { border-radius: 3px; background: rgba(33,33,33, 1); color: rgba(250,250,250, 1); border : 1px solid rgba(20,20,20, .5); font: 19px; padding: 7px 9px; margin-top: 4px; } "
+		"QToolButton { border-radius: 2px; background: rgba(33,33,33, 1); color: rgba(250,250,250, 1); border : 1px solid rgba(10,10,10, .4); font: 18px; padding: 8px; } "
 		"QToolButton:hover{ background: rgba(48,48,48, 1); } "
 	//	"QToolButton:checked{ background: rgba(50,150,250,1); }"
 	);
@@ -994,21 +1041,14 @@ bool MainWindow::createNewGraph(bool loadNewGraph)
 	list.clear();
 
 	if (loadNewGraph) {
-		for (int i = 0; i < 3; i++) {
-			nodeGraphPreset will;
-			will.name = "willroy" + QString::number(i);
-			will.title = "will" + QString::number(i);
-			list.append(will);
-		}
+			
 	}
-	CreateNewDialog node(list);
+	CreateNewDialog node;
 	node.exec();
 
 	if (node.result() == QDialog::Accepted) {
-		auto shaderName = node.getName();
-		auto shaderType = node.getType();
-		auto shaderTemplateName = node.getTemplateName();
-		createShader(&shaderName, &shaderType, &shaderTemplateName, loadNewGraph);
+		auto preset = node.getPreset();
+		createShader(preset, loadNewGraph);
 		return true;
 	}
 	return false;
@@ -1033,7 +1073,7 @@ void MainWindow::updateAssetDock()
 				item->setData(Qt::DisplayRole, asset.name);
 				item->setData(MODEL_GUID_ROLE, asset.guid);
 				item->setData(MODEL_TYPE_ROLE, asset.type);
-				effects->addItem(item);
+				effects->addToListWidget(item);
 			}
 		}
 #endif
@@ -1356,6 +1396,7 @@ void MainWindow::addMenuToSceneWidget()
 
 	QMainWindow *window = new QMainWindow;
 	QToolBar *bar = new QToolBar;
+
 	window->menuBar()->addMenu(modelMenu);
 	window->menuBar()->addMenu(sceneMenu);
 	window->menuBar()->addMenu(backgroundMenu);
@@ -1402,6 +1443,15 @@ void MainWindow::addMenuToSceneWidget()
 	sphareAction->setChecked(true);
 	whiteAction->setChecked(true);
 	blankAction->setChecked(true);
+
+	auto screenShotBtn = new QPushButton("screenshot");
+	bar->addWidget(screenShotBtn);
+	connect(screenShotBtn, &QPushButton::clicked, [=]() {
+		
+	});
+
+
+
 }
 
 }
