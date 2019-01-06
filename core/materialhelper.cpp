@@ -54,17 +54,22 @@ bool MaterialHelper::materialHasEffect(QJsonObject matObj)
 	return false;
 }
 
+// provides asset path for shadergraph assets
 QString MaterialHelper::assetPath(QString relPath)
 {
 	//qDebug() << QDir::cleanPath(QDir::currentPath() + QDir::separator() + relPath);
-	return QDir::cleanPath(QDir::currentPath() + QDir::separator() + relPath);
+#ifdef EFFECT_BUILD_AS_LIB
+	return IrisUtils::getAbsoluteAssetPath(QString("app") + QDir::separator() + QString("shadergraph") + QDir::separator() + relPath);
+#else
+	return QDir::cleanPath(QDir::currentPath() + QDir::separator() + "assets" + QDir::separator() + relPath);
+#endif
 }
 
 bool MaterialHelper::generateShader(NodeGraph * graph, QString & vertexShader, QString & fragmentShader)
 {
 	//todo: change to proper paths
-	auto vertTemplate = iris::GraphicsHelper::loadAndProcessShader(assetPath("assets/surface.vert"));
-	auto fragTemplate = iris::GraphicsHelper::loadAndProcessShader(assetPath("assets/surface.frag"));
+	auto vertTemplate = iris::GraphicsHelper::loadAndProcessShader(assetPath("surface.vert"));
+	auto fragTemplate = iris::GraphicsHelper::loadAndProcessShader(assetPath("surface.frag"));
 
 	ShaderGenerator shaderGen;
 	shaderGen.generateShader(graph);

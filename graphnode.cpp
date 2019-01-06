@@ -15,6 +15,7 @@
 #include "graph/nodegraph.h"
 #include "graphnodescene.h"
 #include "texturemanager.h"
+#include "core/materialhelper.h"
 //#include "irisgl/src/graphics/graphicshelper.h"
 
 CustomRenderWidget::CustomRenderWidget() :
@@ -52,13 +53,13 @@ void CustomRenderWidget::start()
 	":assets/shaders/color.frag");
 	*/
 
-	mesh = iris::Mesh::loadMesh(assetPath("assets/lowpoly_sphere.obj"));
+	mesh = iris::Mesh::loadMesh(MaterialHelper::assetPath("lowpoly_sphere.obj"));
 	//mat = iris::DefaultMaterial::create();
 
 	font = iris::Font::create(device);
 
-	vertString = iris::GraphicsHelper::loadAndProcessShader(assetPath("assets/preview.vert"));
-	fragString = iris::GraphicsHelper::loadAndProcessShader(assetPath("assets/preview.frag"));
+	vertString = iris::GraphicsHelper::loadAndProcessShader(MaterialHelper::assetPath("preview.vert"));
+	fragString = iris::GraphicsHelper::loadAndProcessShader(MaterialHelper::assetPath("preview.frag"));
 	updateShader("void preview(inout PreviewMaterial preview){}");
 
 	renderTime = 0;

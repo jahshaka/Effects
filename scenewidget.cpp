@@ -15,6 +15,7 @@
 #include "graphnodescene.h"
 #include "texturemanager.h"
 #include "materialsettingswidget.h"
+#include "core/materialhelper.h"
 
 QString assetPath(QString relPath)
 {
@@ -41,13 +42,13 @@ void SceneWidget::start()
                 ":assets/shaders/color.frag");
                 */
 
-    mesh = iris::Mesh::loadMesh(assetPath("assets/lowpoly_sphere.obj"));
+    mesh = iris::Mesh::loadMesh(MaterialHelper::assetPath("lowpoly_sphere.obj"));
     //mat = iris::DefaultMaterial::create();
 
     font = iris::Font::create(device);
 
-    vertString = iris::GraphicsHelper::loadAndProcessShader(assetPath("assets/surface.vert"));
-    fragString = iris::GraphicsHelper::loadAndProcessShader(assetPath("assets/surface.frag"));
+    vertString = iris::GraphicsHelper::loadAndProcessShader(MaterialHelper::assetPath("surface.vert"));
+    fragString = iris::GraphicsHelper::loadAndProcessShader(MaterialHelper::assetPath("surface.frag"));
 	generatedVertString = "void surface(inout vec3 vertexOffset){}";
 	generatedFragString = "void surface(inout Material material){}";
 	//updateShader("void surface(inout Material material){}");
