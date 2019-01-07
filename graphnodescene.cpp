@@ -16,6 +16,19 @@ NodeGraph *GraphNodeScene::getNodeGraph() const
 	return nodeGraph;
 }
 
+GraphNode * GraphNodeScene::getNodeByPropertyId(QString id)
+{
+	return nullptr;
+}
+
+void GraphNodeScene::refreshNodeTitle(QString id)
+{
+	auto node = getNodeById(id);
+	if (node) {
+		
+	}
+}
+
 void GraphNodeScene::setNodeGraph(NodeGraph *graph)
 {
 	// clear previous nodegraph
@@ -57,7 +70,7 @@ void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addTo
 	nodeView->setModel(model);
 	nodeView->setTitle(model->title);
 	nodeView->setTitleColor(model->setNodeTitleColor());
-	if (model->title == "Color Node") nodeView->doNotCheckProxyWidgetHeight = true;
+//	if (model->title == "Color Node") nodeView->doNotCheckProxyWidgetHeight = true;
 
 	//nodeView->setIcon(model->icon);
 
@@ -77,7 +90,7 @@ void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addTo
 	nodeView->setPos(x, y);
 	nodeView->nodeId = model->id;
 	nodeView->layout();
-	if (model->title == "Color Node") nodeView->resetPositionForColorWidget();
+//	if (model->title == "Color Node") nodeView->resetPositionForColorWidget();
 
 	if (model->isPreviewEnabled()) {
 		nodeView->enablePreviewWidget();
@@ -195,10 +208,20 @@ QJsonObject GraphNodeScene::serialize()
 	return data;
 }
 
-void GraphNodeScene::updateNodeTitle(QString title, QString id)
+void GraphNodeScene::updatePropertyNodeTitle(QString title, QString propId)
 {
-	auto node = getNodeById(id);
-	node->setTitle(title);
+
+	auto propList = nodeGraph->getNodesByTypeName("property");
+
+	for (auto node : propList) {
+		auto propNode = static_cast<PropertyNode *>(node);
+		if (propNode->getProperty()->id == propId) {
+			auto node = getNodeById(propNode->id);
+			node->setTitle(title);
+		}
+	}
+
+	
 }
 
 void GraphNodeScene::wheelEvent(QGraphicsSceneWheelEvent * event)

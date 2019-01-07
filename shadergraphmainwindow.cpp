@@ -821,7 +821,7 @@ void MainWindow::configureUI()
 	});
 
 	connect(propertyListWidget, &PropertyListWidget::nameChanged, [=](QString name, QString id) {
-		scene->updateNodeTitle(name, id);
+		scene->updatePropertyNodeTitle(name, id);
 	});
 
 	connect(propertyListWidget, &PropertyListWidget::texturePicked, [=](QString fileName, TexturePropertyWidget* widget) {

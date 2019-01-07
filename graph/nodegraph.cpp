@@ -37,6 +37,20 @@ Property *NodeGraph::getPropertyById(const QString &id)
 	return nullptr;
 }
 
+QVector<NodeModel*> NodeGraph::getNodesByTypeName(QString name)
+{
+	QVector<NodeModel *> list;
+	for (auto node : nodes.values())
+		if (node->typeName == name) {
+			
+			list.append(node);
+			
+		}
+			
+
+	return list;
+}
+
 /*
 void NodeGraph::registerModel(QString name, std::function<NodeModel *()> factoryFunction)
 {

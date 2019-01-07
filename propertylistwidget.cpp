@@ -256,7 +256,7 @@ void PropertyListWidget::addIntProperty(IntProperty * intProp)
 void PropertyListWidget::addNewTextureProperty()
 {
 	auto prop = new TextureProperty;
-	prop->displayName = "Texture property";
+	prop->displayName = "Texture Property";
 	prop->name = QString("property%1").arg(graph->properties.count());
 	this->addTextureProperty(prop);
 	this->graph->addProperty(prop);
@@ -278,6 +278,7 @@ void PropertyListWidget::addToPropertyListWidget(BasePropertyWidget *widget)
         currentWidget = wid;
     });
     connect(widget, &BasePropertyWidget::TitleChanged, [=](QString title) {
+		widget->modelProperty->displayName = title;
         emit nameChanged(title, widget->modelProperty->id);
     });
 
