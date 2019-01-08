@@ -130,7 +130,7 @@ CreateNewDialog::CreateNewDialog(bool maximized) : QDialog()
 		btnGrp->addButton(item);
 		connect(item, &OptionSelection::buttonSelected, [=](OptionSelection* button) {
 			currentInfoSelected = button->info;
-			infoLabel->setText(currentInfoSelected.title + " selected");
+			infoLabel->setText(currentInfoSelected.title + " selected"); 
 		});
 
     }

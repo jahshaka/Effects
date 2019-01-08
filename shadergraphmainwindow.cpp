@@ -304,6 +304,7 @@ void MainWindow::loadGraph(QString guid)
 	currentProjectShader = selectCorrectItemFromDrop(guid);
 	currentShaderInformation.GUID = currentProjectShader->data(MODEL_GUID_ROLE).toString();
 	oldName = currentShaderInformation.name = currentProjectShader->data(Qt::DisplayRole).toString(); 
+	restoreGraphPositions(obj["shadergraph"].toObject());
 }
 
 void MainWindow::exportGraph()
