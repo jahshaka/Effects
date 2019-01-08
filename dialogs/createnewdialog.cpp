@@ -176,6 +176,7 @@ CreateNewDialog::CreateNewDialog(bool maximized) : QDialog()
 		else 	confirm->setEnabled(false);
 
 		name = text;
+		currentInfoSelected.title = text;
 
 	});
 

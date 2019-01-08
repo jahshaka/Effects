@@ -263,7 +263,7 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 			}
 	}
 
-	if (QVariant(event->mimeData()->data("MODEL_TYPE_ROLE")).toInt() == static_cast<int>(ModelTypes::Material)) {
+	if (QVariant(event->mimeData()->data("MODEL_TYPE_ROLE")).toInt() == static_cast<int>(ModelTypes::Shader)) {
 		event->accept();
 
 		QListWidgetItem *item = new QListWidgetItem;

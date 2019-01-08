@@ -195,7 +195,7 @@ void MainWindow::loadShadersFromDisk()
 
 		item->setData(Qt::DisplayRole, obj["name"].toString());
 		item->setData(MODEL_GUID_ROLE, obj["guid"].toString());
-		item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Material));
+		item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Shader));
 		effects->addItem(item);
     }
 	
@@ -566,13 +566,13 @@ void MainWindow::configureAssetsDock()
 
 		exportBtn->setText(QChar(fa::upload));
 		exportBtn->setFont(fontIcons->font(fontSize));
-		exportBtn->setToolTip("Export material");
+		exportBtn->setToolTip("Export shader");
 		importBtn->setText(QChar(fa::download));
 		importBtn->setFont(fontIcons->font(fontSize));
-		importBtn->setToolTip("Import material");
+		importBtn->setToolTip("Import shader");
 		addBtn->setText(QChar(fa::plus));
 		addBtn->setFont(fontIcons->font(fontSize));
-		addBtn->setToolTip("Create new material");
+		addBtn->setToolTip("Create new shader");
 
 		exportBtn->setCursor(Qt::PointingHandCursor);
 		importBtn->setCursor(Qt::PointingHandCursor);
@@ -631,7 +631,7 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 
 	item->setData(MODEL_GUID_ROLE, assetGuid);
 	item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
-	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Material));
+	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Shader));
 	item->setData(Qt::DisplayRole, newShader);
 
 	currentProjectShader = item;
@@ -689,10 +689,10 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 
 	auto shaderDefinition = MaterialHelper::serialize(graph);
 
-	dataBase->createAssetEntry(QString::null, assetGuid,newShader,static_cast<int>(ModelTypes::Material), QJsonDocument(shaderDefinition).toBinaryData());
+	dataBase->createAssetEntry(QString::null, assetGuid,newShader,static_cast<int>(ModelTypes::Shader), QJsonDocument(shaderDefinition).toBinaryData());
 
 	auto assetShader = new AssetMaterial;
-	assetShader->fileName = IrisUtils::buildFileName(newShader, "material");
+	assetShader->fileName = newShader;
 	assetShader->assetGuid = assetGuid;
 
 	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(newShader, "shader"));
@@ -930,13 +930,13 @@ void MainWindow::configureToolbar()
 	auto addBtn = new QAction;
 
 	exportBtn->setIcon(fontIcons->icon(fa::upload, options));
-	exportBtn->setToolTip("Export material");
+	exportBtn->setToolTip("Export shader");
 
 	importBtn->setIcon(fontIcons->icon(fa::download, options));
-	importBtn->setToolTip("Import material");
+	importBtn->setToolTip("Import shader");
 
 	addBtn->setIcon(fontIcons->icon(fa::plus, options));
-	addBtn->setToolTip("Create new material");
+	addBtn->setToolTip("Create new shader");
 
 	toolBar->addActions({ exportBtn, importBtn, addBtn });
 
@@ -1060,7 +1060,7 @@ void MainWindow::updateAssetDock()
 #if(EFFECT_BUILD_AS_LIB)
 		for (const auto &asset : dataBase->fetchAssets())  //dp something{
 		{
-			if (asset.projectGuid == "" && asset.type == static_cast<int>(ModelTypes::Material)) {
+			if (asset.projectGuid == "" && asset.type == static_cast<int>(ModelTypes::Shader)) {
 				 
 				auto item = new QListWidgetItem;
 				item->setText(asset.name);
