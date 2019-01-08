@@ -3,7 +3,7 @@
     "properties": [
         {
             "displayName": "Vector 3 property",
-            "id": "{112083ee-9bad-4197-a030-f6b99fd05cdf}",
+            "id": "112083ee-9bad-4197-a030-f6b99fd05cdf",
             "name": "property0",
             "type": "vec3",
             "value": {
@@ -36,7 +36,7 @@
             {
                 "id": "af7a89a6-24f3-4351-a438-80fbd51d702d",
                 "type": "property",
-                "value": "{112083ee-9bad-4197-a030-f6b99fd05cdf}",
+                "value": "112083ee-9bad-4197-a030-f6b99fd05cdf",
                 "x": -372,
                 "y": 105
             }
@@ -44,7 +44,7 @@
         "properties": [
             {
                 "displayName": "Vector 3 property",
-                "id": "{112083ee-9bad-4197-a030-f6b99fd05cdf}",
+                "id": "112083ee-9bad-4197-a030-f6b99fd05cdf",
                 "name": "property0",
                 "type": "vec3",
                 "value": {

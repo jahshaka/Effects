@@ -653,57 +653,31 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 	effects->addItem(item);
 	effects->displayAllContents();
 
-	// sets new scene
-
-	//if (preset.name == "Basic") {
-	//	auto str = "assets/effect_template1.json";
-	//	importGraphFromFilePath(str);
-	//}
-	//else if  (preset.name == "Texture") {
-		auto str = "assets/effect_texture_template.json";
-        auto graph = importGraphFromFilePath(MaterialHelper::assetPath(preset.templatePath), false);
-		int i = 0;
-		for (auto prop : graph->properties) {
-			if (prop->type == PropertyType::Texture) {
-				auto graphTexture = TextureManager::getSingleton()->importTexture(preset.list.at(i));
-				prop->setValue(graphTexture->guid);
-				i++;
-			}
+	propertyListWidget->clearPropertyList();
+    auto graph = importGraphFromFilePath(MaterialHelper::assetPath(preset.templatePath), false);
+	int i = 0;
+	for (auto prop : graph->properties) {
+		if (prop->type == PropertyType::Texture) {
+			auto graphTexture = TextureManager::getSingleton()->importTexture(preset.list.at(i));
+			prop->setValue(graphTexture->guid);
+			i++;
 		}
-		setNodeGraph(graph);
-		regenerateShader();
-	//}
-	//else if (loadNewGraph)
-	//{
-	//	auto nodeGraph = new NodeGraph();
-	//	auto masterNode = new SurfaceMasterNode();
-	//	nodeGraph->setNodeLibrary(new LibraryV1());
-	//	nodeGraph->addNode(masterNode);
-	//	nodeGraph->setMasterNode(masterNode);
- //       nodeGraph->settings.name = newShader;
-	//	this->setNodeGraph(nodeGraph);
- //       propertyListWidget->clearPropertyList();
-	//}
+	}
+	setNodeGraph(graph);
+	regenerateShader();
 
 
 #if(EFFECT_BUILD_AS_LIB)
 
 	auto shaderDefinition = MaterialHelper::serialize(graph);
-
 	dataBase->createAssetEntry(QString::null, assetGuid,newShader,static_cast<int>(ModelTypes::Shader), QJsonDocument(shaderDefinition).toBinaryData());
-
 	auto assetShader = new AssetMaterial;
 	assetShader->fileName = newShader;
 	assetShader->assetGuid = assetGuid;
-
 	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(newShader, "shader"));
 	assetShader->setValue(QVariant::fromValue(MaterialHelper::createMaterialFromShaderGraph(graph)));
-
 	dataBase->updateAssetAsset(assetGuid, QJsonDocument(shaderDefinition).toBinaryData());
-
 	AssetManager::addAsset(assetShader);
-
-
 #endif
 	
 	saveShader();

@@ -7,6 +7,7 @@ enum class SocketType
 	In,
 	Out
 };
+
 class GraphNode;
 class GraphNodeScene;
 class SocketConnection;

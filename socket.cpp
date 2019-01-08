@@ -24,7 +24,7 @@ Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title) :
 	font.setPixelSize(14);
 	text->setFont(font);
 
-	setSocketColor(disconnectedColor);
+	//setSocketColor(disconnectedColor);
 	QFontMetrics fm(parent->scene()->font());
 	QRect textRect = fm.boundingRect(title);
 	owner = (GraphNode*)parent;
@@ -151,7 +151,7 @@ QColor Socket::getSocketColor()
 
 void Socket::setSocketColor(QColor color)
 {
-    //socketColor = color;
+    socketColor = color;
 }
 
 void Socket::setConnected(bool value)
@@ -201,6 +201,7 @@ void Socket::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, 
 	QPen pen;
 	pen.setWidthF(3);
 	pen.setColor(QColor(100, 100, 100));
+	pen.setColor(getSocketColor());
 	painter->setPen(pen);
 	painter->drawPath(path);
 
@@ -210,18 +211,11 @@ void Socket::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, 
 		auto pad = 6;
 
 	
-			path.addRoundedRect(socketPos.x(), socketPos.y(), dimentions, dimentions, radius, radius);
+		//path.addRoundedRect(socketPos.x(), socketPos.y(), dimentions, dimentions, radius, radius);
 
-			path1.addRoundedRect(socketPos.x() + pad/2, -radius / 2 + pad/2, dimentions- pad, dimentions- pad, radius, radius);
-	
+		path1.addRoundedRect(socketPos.x() + pad/2, -radius / 2 + pad/2, dimentions- pad, dimentions- pad, radius, radius);
 
-
-		QLinearGradient grad;
-		grad.setColorAt(1.0, QColor(47, 47, 53));
-		grad.setColorAt(0.0, QColor(45, 45, 51));
-		grad.setCoordinateMode(QGradient::ObjectBoundingMode);
-		painter->fillPath(path, grad);
-		painter->fillPath(path1, connectedColor);
+		painter->fillPath(path1, getSocketColor());
 	//	painter->drawPath(path);
 
 	}

@@ -75,9 +75,9 @@ void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addTo
 	//nodeView->setIcon(model->icon);
 
 	for (auto sock : model->inSockets)
-		nodeView->addInSocket(sock->name);
+		nodeView->addInSocket(sock);
 	for (auto sock : model->outSockets)
-		nodeView->addOutSocket(sock->name);
+		nodeView->addOutSocket(sock);
 
 	if (model->widget != nullptr) {
 		nodeView->setWidget(model->widget);

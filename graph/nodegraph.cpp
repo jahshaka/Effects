@@ -200,7 +200,7 @@ NodeGraph* NodeGraph::deserialize(QJsonObject graphObj, NodeLibrary* library)
 		}
 		nodeModel->id = nodeObj["id"].toString();
 		nodeModel->x = nodeObj["x"].toDouble();
-		nodeModel->y = nodeObj["y"].toDouble();
+  		nodeModel->y = nodeObj["y"].toDouble();
 
 
 		// special case for properties

@@ -2,7 +2,7 @@
 #define SOCKET_MODEL_H
 
 #include <QString>
-
+#include <QColor>
 class NodeGraph;
 class NodeModel;
 class ConnectionModel;
@@ -19,6 +19,9 @@ public:
 	// used to get calculation results
 	// will sometimes be var name
 	QString value;
+
+	// color for the socket depending on the type of socket - no enum created
+	QColor socketColor;
 
 	// connection if any
 	ConnectionModel* connection = nullptr;

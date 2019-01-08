@@ -191,7 +191,6 @@ void PropertyListWidget::addNewVec2Property()
 
 void PropertyListWidget::addVec2Property(Vec2Property * vec2Prop)
 {
-    qDebug() << "vec 2 called";
 	auto propWidget = new Vector2DPropertyWidget();
 	propWidget->setProp(vec2Prop);
     addToPropertyListWidget(propWidget);
