@@ -1,7 +1,7 @@
 #include "createnewdialog.h"
 #include <QLayout>
 #include <QPainter>
-#include "../mainwindow.h"
+#include "../shadergraphmainwindow.h"
 #include <QDebug>
 #include <QButtonGroup>
 

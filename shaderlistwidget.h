@@ -2,8 +2,11 @@
 #include "listwidget.h"
 
 
+class QListWidgetItem;
+
 class ShaderListWidget : public ListWidget
-{Q_OBJECT
+{
+	Q_OBJECT
 public:
 	ShaderListWidget();
 	~ShaderListWidget();

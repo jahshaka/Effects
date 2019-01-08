@@ -15,7 +15,7 @@
 #include <QJsonArray>
 #include <QListWidgetItem>
 #include <QMenu>
-#include <QPointf>
+#include <QPointF>
 #include <QPropertyAnimation>
 #include "socketconnection.h"
 #include "graphnode.h"

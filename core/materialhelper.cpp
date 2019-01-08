@@ -2,7 +2,7 @@
 #include "../graphnodescene.h"
 #include "../graph/nodegraph.h"
 #include "../generator/shadergenerator.h"
-#include <QjsonObject>
+#include <QJsonObject>
 #include "irisgl/src/materials/custommaterial.h"
 #include "irisgl/src/graphics/shader.h"
 #include "../nodes/libraryv1.h"

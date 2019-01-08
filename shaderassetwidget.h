@@ -25,6 +25,7 @@ struct AssetItemShader {
 class Database;
 class ShaderAssetWidget : public QWidget
 {
+	Q_OBJECT
 public:
 	ShaderAssetWidget(Database *handle = Q_NULLPTR);
 	~ShaderAssetWidget();
