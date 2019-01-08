@@ -660,7 +660,7 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 	//}
 	//else if  (preset.name == "Texture") {
 		auto str = "assets/effect_texture_template.json";
-		auto graph = importGraphFromFilePath(preset.templatePath, false);
+        auto graph = importGraphFromFilePath(MaterialHelper::assetPath(preset.templatePath), false);
 		int i = 0;
 		for (auto prop : graph->properties) {
 			if (prop->type == PropertyType::Texture) {

@@ -275,20 +275,20 @@ QList<NodeGraphPreset> CreateNewDialog::getStarterList()
 	QList<NodeGraphPreset> list;
 	graphPreset.name = "Default";
 	graphPreset.title = "Default Template";
-	graphPreset.templatePath = "";
+    graphPreset.templatePath = "effect_template1.json";
 	graphPreset.iconPath = ":/icons/icon.ico";
 	list.append(graphPreset);
 
 	graphPreset.name = "Basic";
 	graphPreset.title = "Basic Template";
-	graphPreset.templatePath = "assets/effect_template1.json";
+    graphPreset.templatePath = "effect_template1.json";
 	graphPreset.iconPath = ":/icon/icon.ico";
 	list.append(graphPreset);
 
 	graphPreset.name = "Texture";
 	graphPreset.title = "Texture Template";
-	graphPreset.templatePath = "assets/effect_texture_template.json";
-	graphPreset.list.append("assets/grass.jpg");
+    graphPreset.templatePath = "effect_texture_template.json";
+    graphPreset.list.append("grass.jpg");
 	list.append(graphPreset);
 
 	return list;
