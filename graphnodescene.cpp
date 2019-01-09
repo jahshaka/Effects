@@ -247,7 +247,6 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 			propNode->x = event->scenePos().x();
 			propNode->y = event->scenePos().y();
 			this->addNodeModel(propNode);
-			
 		}
 	}
 
