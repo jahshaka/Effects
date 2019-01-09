@@ -195,7 +195,7 @@ void MainWindow::loadShadersFromDisk()
 
 		item->setData(Qt::DisplayRole, obj["name"].toString());
 		item->setData(MODEL_GUID_ROLE, obj["guid"].toString());
-		item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Material));
+		item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Shader));
 		effects->addItem(item);
     }
 	
@@ -304,6 +304,7 @@ void MainWindow::loadGraph(QString guid)
 	currentProjectShader = selectCorrectItemFromDrop(guid);
 	currentShaderInformation.GUID = currentProjectShader->data(MODEL_GUID_ROLE).toString();
 	oldName = currentShaderInformation.name = currentProjectShader->data(Qt::DisplayRole).toString(); 
+	restoreGraphPositions(obj["shadergraph"].toObject());
 }
 
 void MainWindow::exportGraph()
@@ -566,13 +567,13 @@ void MainWindow::configureAssetsDock()
 
 		exportBtn->setText(QChar(fa::upload));
 		exportBtn->setFont(fontIcons->font(fontSize));
-		exportBtn->setToolTip("Export material");
+		exportBtn->setToolTip("Export shader");
 		importBtn->setText(QChar(fa::download));
 		importBtn->setFont(fontIcons->font(fontSize));
-		importBtn->setToolTip("Import material");
+		importBtn->setToolTip("Import shader");
 		addBtn->setText(QChar(fa::plus));
 		addBtn->setFont(fontIcons->font(fontSize));
-		addBtn->setToolTip("Create new material");
+		addBtn->setToolTip("Create new shader");
 
 		exportBtn->setCursor(Qt::PointingHandCursor);
 		importBtn->setCursor(Qt::PointingHandCursor);
@@ -631,7 +632,7 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 
 	item->setData(MODEL_GUID_ROLE, assetGuid);
 	item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
-	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Material));
+	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Shader));
 	item->setData(Qt::DisplayRole, newShader);
 
 	currentProjectShader = item;
@@ -652,57 +653,31 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 	effects->addItem(item);
 	effects->displayAllContents();
 
-	// sets new scene
-
-	//if (preset.name == "Basic") {
-	//	auto str = "assets/effect_template1.json";
-	//	importGraphFromFilePath(str);
-	//}
-	//else if  (preset.name == "Texture") {
-		auto str = "assets/effect_texture_template.json";
-        auto graph = importGraphFromFilePath(MaterialHelper::assetPath(preset.templatePath), false);
-		int i = 0;
-		for (auto prop : graph->properties) {
-			if (prop->type == PropertyType::Texture) {
-				auto graphTexture = TextureManager::getSingleton()->importTexture(preset.list.at(i));
-				prop->setValue(graphTexture->guid);
-				i++;
-			}
+	propertyListWidget->clearPropertyList();
+    auto graph = importGraphFromFilePath(MaterialHelper::assetPath(preset.templatePath), false);
+	int i = 0;
+	for (auto prop : graph->properties) {
+		if (prop->type == PropertyType::Texture) {
+			auto graphTexture = TextureManager::getSingleton()->importTexture(preset.list.at(i));
+			prop->setValue(graphTexture->guid);
+			i++;
 		}
-		setNodeGraph(graph);
-		regenerateShader();
-	//}
-	//else if (loadNewGraph)
-	//{
-	//	auto nodeGraph = new NodeGraph();
-	//	auto masterNode = new SurfaceMasterNode();
-	//	nodeGraph->setNodeLibrary(new LibraryV1());
-	//	nodeGraph->addNode(masterNode);
-	//	nodeGraph->setMasterNode(masterNode);
- //       nodeGraph->settings.name = newShader;
-	//	this->setNodeGraph(nodeGraph);
- //       propertyListWidget->clearPropertyList();
-	//}
+	}
+	setNodeGraph(graph);
+	regenerateShader();
 
 
 #if(EFFECT_BUILD_AS_LIB)
 
 	auto shaderDefinition = MaterialHelper::serialize(graph);
-
-	dataBase->createAssetEntry(QString::null, assetGuid,newShader,static_cast<int>(ModelTypes::Material), QJsonDocument(shaderDefinition).toBinaryData());
-
+	dataBase->createAssetEntry(QString::null, assetGuid,newShader,static_cast<int>(ModelTypes::Shader), QJsonDocument(shaderDefinition).toBinaryData());
 	auto assetShader = new AssetMaterial;
-	assetShader->fileName = IrisUtils::buildFileName(newShader, "material");
+	assetShader->fileName = newShader;
 	assetShader->assetGuid = assetGuid;
-
 	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(newShader, "shader"));
 	assetShader->setValue(QVariant::fromValue(MaterialHelper::createMaterialFromShaderGraph(graph)));
-
 	dataBase->updateAssetAsset(assetGuid, QJsonDocument(shaderDefinition).toBinaryData());
-
 	AssetManager::addAsset(assetShader);
-
-
 #endif
 	
 	saveShader();
@@ -821,7 +796,7 @@ void MainWindow::configureUI()
 	});
 
 	connect(propertyListWidget, &PropertyListWidget::nameChanged, [=](QString name, QString id) {
-		scene->updateNodeTitle(name, id);
+		scene->updatePropertyNodeTitle(name, id);
 	});
 
 	connect(propertyListWidget, &PropertyListWidget::texturePicked, [=](QString fileName, TexturePropertyWidget* widget) {
@@ -930,13 +905,13 @@ void MainWindow::configureToolbar()
 	auto addBtn = new QAction;
 
 	exportBtn->setIcon(fontIcons->icon(fa::upload, options));
-	exportBtn->setToolTip("Export material");
+	exportBtn->setToolTip("Export shader");
 
 	importBtn->setIcon(fontIcons->icon(fa::download, options));
-	importBtn->setToolTip("Import material");
+	importBtn->setToolTip("Import shader");
 
 	addBtn->setIcon(fontIcons->icon(fa::plus, options));
-	addBtn->setToolTip("Create new material");
+	addBtn->setToolTip("Create new shader");
 
 	toolBar->addActions({ exportBtn, importBtn, addBtn });
 
@@ -1060,7 +1035,7 @@ void MainWindow::updateAssetDock()
 #if(EFFECT_BUILD_AS_LIB)
 		for (const auto &asset : dataBase->fetchAssets())  //dp something{
 		{
-			if (asset.projectGuid == "" && asset.type == static_cast<int>(ModelTypes::Material)) {
+			if (asset.projectGuid == "" && asset.type == static_cast<int>(ModelTypes::Shader)) {
 				 
 				auto item = new QListWidgetItem;
 				item->setText(asset.name);
@@ -1290,7 +1265,7 @@ void MainWindow::configureConnections()
     QShortcut *shortcut = new QShortcut(QKeySequence("f"), this);
     connect(shortcut, &QShortcut::activated, [=]() {
         auto dialog = new SearchDialog(this->graph);
-        dialog->show();
+        dialog->exec();
     });
 
     //connections for MyFx sections

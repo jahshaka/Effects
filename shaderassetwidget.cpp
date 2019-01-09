@@ -161,7 +161,7 @@ void ShaderAssetWidget::addItem(const AssetRecord & assetData)
 		item->setIcon(QIcon(":/icons/icons8-file-72-file.png"));
 	}
 
-	if (assetData.type == static_cast<int>(ModelTypes::Material)) {
+	if (assetData.type == static_cast<int>(ModelTypes::Shader)) {
 		item->setData(MODEL_TYPE_ROLE, assetData.type);
 	}
 
@@ -246,7 +246,7 @@ void ShaderAssetWidget::createShader(QString *shaderName)
 {
 	QString newShader;
 	if (shaderName)	 newShader = *shaderName;
-	else   newShader = "Untitled Material";
+	else   newShader = "Untitled Shader";
 	QListWidgetItem *item = new QListWidgetItem;
 	item->setFlags(item->flags() | Qt::ItemIsEditable);
 	item->setSizeHint(currentSize);
@@ -258,7 +258,7 @@ void ShaderAssetWidget::createShader(QString *shaderName)
 	item->setData(MODEL_GUID_ROLE, assetGuid);
 	item->setData(MODEL_PARENT_ROLE, assetItemShader.selectedGuid);
 	item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
-	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Material));
+	item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Shader));
 	assetItemShader.wItem = item;
 
 
@@ -272,7 +272,7 @@ void ShaderAssetWidget::createShader(QString *shaderName)
 
 	db->createAssetEntry(assetGuid,
 		IrisUtils::buildFileName(newShader, "shader"),
-		static_cast<int>(ModelTypes::Material),
+		static_cast<int>(ModelTypes::Shader),
 		assetItemShader.selectedGuid,
 		QByteArray());
 
@@ -287,7 +287,7 @@ void ShaderAssetWidget::createShader(QString *shaderName)
 	shaderDefinition.insert("guid", assetGuid);
 
 	auto assetShader = new AssetMaterial;
-	assetShader->fileName = IrisUtils::buildFileName(newShader, "material");
+	assetShader->fileName = newShader;// IrisUtils::buildFileName(newShader, "material");
 	assetShader->assetGuid = assetGuid;
 	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(newShader, "shader"));
 	assetShader->setValue(QVariant::fromValue(shaderDefinition));
@@ -323,7 +323,7 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 
 	db->createAssetEntry(targetGuid,
 		sourceRecord.name,
-		static_cast<int>(ModelTypes::Material),
+		static_cast<int>(ModelTypes::Shader),
 		assetItemShader.selectedGuid);
 	db->updateAssetAsset(targetGuid, sourceData);
 
@@ -331,7 +331,7 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 	assetViewWidget->addItem(item);
 
 	auto assetShader = new AssetMaterial;
-	assetShader->fileName = IrisUtils::buildFileName(shaderName, "material");
+	assetShader->fileName = shaderName;//  IrisUtils::buildFileName(shaderName, "material");
 	assetShader->assetGuid = targetGuid;
 	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(shaderName, "shader"));
 

@@ -76,6 +76,7 @@ Widget3D::Widget3D() : PropertyWidgetBase()
 	auto xLabel = new QLabel("X");
 	auto yLabel = new QLabel("Y");
 	auto zLabel = new QLabel("Z");
+	x = y = z = 0;
 
 	xSpinBox->setFont(font);
 	ySpinBox->setFont(font);
@@ -120,6 +121,7 @@ Widget3D::~Widget3D()
 
 Widget4D::Widget4D() : PropertyWidgetBase()
 { 
+	x = y = z = w = 0;
 	xSpinBox = new WideRangeSpinBox;
 	ySpinBox = new WideRangeSpinBox;
 	zSpinBox = new WideRangeSpinBox;
@@ -217,6 +219,7 @@ void Widget4D::setWSpinBoxConnection(std::function<void(double val)> func)
 
 WidgetInt::WidgetInt() : PropertyWidgetBase()
 {
+	value = 0;
 	spinBox = new WideRangeIntBox(this); 
 	maxSpinBox = new WideRangeIntBox(this);
 	minSpinBox = new WideRangeIntBox(this);
@@ -321,6 +324,7 @@ void WidgetInt::setIntSpinBoxConnection(std::function<void(int val)> func)
 
 WidgetFloat::WidgetFloat() : PropertyWidgetBase()
 {
+	value = 0;
 	floatSpinBox = new WideRangeSpinBox;
 	maxSpinBox = new WideRangeSpinBox(this);
 	minSpinBox = new WideRangeSpinBox(this);

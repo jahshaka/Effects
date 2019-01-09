@@ -64,6 +64,7 @@ public:
 	bool deletePropertyById(const QString& id);
 	Property* getPropertyByName(const QString& name);
 	Property* getPropertyById(const QString& id);
+	QVector<NodeModel *> getNodesByTypeName(QString name);
 
 	//QMap<QString, std::function<NodeModel*()>> modelFactories;
 	//void registerModel(QString name, std::function<NodeModel*()> factoryFunction);

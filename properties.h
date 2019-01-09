@@ -329,6 +329,9 @@ struct Vec3Property : public Property
 
     Vec3Property() {
         type = PropertyType::Vec3;
+		value.setX(0);
+		value.setY(0);
+		value.setZ(0);
     }
 
     QVariant getValue() {

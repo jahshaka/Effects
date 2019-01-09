@@ -1023,8 +1023,9 @@ ColorPickerNode::ColorPickerNode()
 	typeName = "Color node";
 
 	colorWidget = new ColorPickerWidget();
+	colorWidget->setMaximumWidth(154);
 	this->widget = colorWidget;
-	colorWidget->setGeometry(0, 0, 60, 140);
+	//colorWidget->setGeometry(0, 0, 60, 140);
 	connect(colorWidget, &ColorPickerWidget::onColorChanged, [=](QColor color) {
 		emit valueChanged(this, 0);
 	});
@@ -1034,7 +1035,6 @@ ColorPickerNode::ColorPickerNode()
 	addOutputSocket(new FloatSocketModel("G"));
 	addOutputSocket(new FloatSocketModel("B"));
 	addOutputSocket(new FloatSocketModel("A"));
-	//addOutputSocket(new FloatSocketModel("R"));
 }
 
 void ColorPickerNode::process(ModelContext * context)

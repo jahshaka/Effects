@@ -191,7 +191,6 @@ void PropertyListWidget::addNewVec2Property()
 
 void PropertyListWidget::addVec2Property(Vec2Property * vec2Prop)
 {
-    qDebug() << "vec 2 called";
 	auto propWidget = new Vector2DPropertyWidget();
 	propWidget->setProp(vec2Prop);
     addToPropertyListWidget(propWidget);
@@ -256,7 +255,7 @@ void PropertyListWidget::addIntProperty(IntProperty * intProp)
 void PropertyListWidget::addNewTextureProperty()
 {
 	auto prop = new TextureProperty;
-	prop->displayName = "Texture property";
+	prop->displayName = "Texture Property";
 	prop->name = QString("property%1").arg(graph->properties.count());
 	this->addTextureProperty(prop);
 	this->graph->addProperty(prop);
@@ -278,6 +277,7 @@ void PropertyListWidget::addToPropertyListWidget(BasePropertyWidget *widget)
         currentWidget = wid;
     });
     connect(widget, &BasePropertyWidget::TitleChanged, [=](QString title) {
+		widget->modelProperty->displayName = title;
         emit nameChanged(title, widget->modelProperty->id);
     });
 
