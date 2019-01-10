@@ -73,10 +73,6 @@ SearchDialog::SearchDialog(NodeGraph *graph) : QDialog()
     //nodeContainer->sortItems();
     //nodeContainer->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-	QFont font;
-	font.setPointSizeF(font.pointSize() * devicePixelRatioF());
-	setFont(font);
-
 	//search box
 	auto searchContainer = new QWidget;
 	auto searchLayout = new QHBoxLayout;
@@ -88,7 +84,6 @@ SearchDialog::SearchDialog(NodeGraph *graph) : QDialog()
 
 	searchBar->setPlaceholderText("search");
 	searchBar->setAlignment(Qt::AlignLeft);
-	searchBar->setFont(font);
 	searchBar->setTextMargins(8, 0, 0, 0);
 	QSize currentSize(90, 90);
 
@@ -109,6 +104,7 @@ SearchDialog::SearchDialog(NodeGraph *graph) : QDialog()
 		"QTabBar::tab:!selected{ background: rgba(55, 55, 55, .99); border : 1px solid rgba(21,21,21,.4); color: rgba(200,200,200,.5); }"
 	);
 
+	searchBar->setStyleSheet("border-radius : 2px; ");
 
 
 	clearLayout->addWidget(widgetHolder);
