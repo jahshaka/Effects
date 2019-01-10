@@ -164,6 +164,7 @@ public:
 
 	// doesnt own property
 	void setProperty(Property* property);
+	Property* getProperty() { return prop; }
 
 	virtual QJsonValue serializeWidgetValue(int widgetIndex = 0) override;
 

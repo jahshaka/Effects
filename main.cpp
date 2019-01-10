@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include "shadergraphmainwindow.h"
 #include <QApplication>
 
 

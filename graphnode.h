@@ -62,6 +62,7 @@ enum class GraphicsItemType : int
 };
 
 class Socket;
+class SocketModel;
 class SocketConnection;
 class NodeModel;
 class GraphNode : public QGraphicsPathItem
@@ -97,8 +98,8 @@ public:
 	void setIcon(QIcon icon);
 	void setTitleColor(QColor color);
 	void setTitle(QString title);
-	void addInSocket(QString title);
-	void addOutSocket(QString title);
+	void addInSocket(SocketModel *socket);
+	void addOutSocket(SocketModel *socket);
 	void addSocket(Socket* sock);
 	void setWidget(QWidget* widget);
 	void calcPath();

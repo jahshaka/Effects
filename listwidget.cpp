@@ -115,6 +115,8 @@ QMimeData * ListWidget::mimeData(const QList<QListWidgetItem *> items) const
 	data->setHtml(items[0]->data(Qt::UserRole).toString());
 	data->setData("MODEL_TYPE_ROLE", items[0]->data(MODEL_TYPE_ROLE).toByteArray());
 	data->setData("MODEL_GUID_ROLE", items[0]->data(MODEL_GUID_ROLE).toByteArray());
+
+	if (!items[0]->data(MODEL_EXT_ROLE).isNull()) data->setData("index", items[0]->data(MODEL_EXT_ROLE).toByteArray());
 	return data;
 }
 

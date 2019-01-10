@@ -16,6 +16,7 @@
 #include "graphnodescene.h"
 #include "texturemanager.h"
 #include "core/materialhelper.h"
+#include "graph/socketmodel.h"
 //#include "irisgl/src/graphics/graphicshelper.h"
 
 CustomRenderWidget::CustomRenderWidget() :
@@ -265,23 +266,25 @@ void GraphNode::setTitle(QString title)
 	text->setPos(nodeWidth / 2 - textWidth / 2, titleHeight / 2 - textHeight / 2);
 }
 
-void GraphNode::addInSocket(QString title)
+void GraphNode::addInSocket(SocketModel *socket)
 {
-	auto sock = new Socket(this, SocketType::In, title);
+	auto sock = new Socket(this, SocketType::In, socket->name);
 	auto y = calcHeight();// + sock->calcHeight();
 	sock->setPos(-sock->getRadius(), y);
 	sock->node = this;
 	sock->socketIndex = inSocketCount++;
+	sock->setSocketColor(socket->socketColor);
 	addSocket(sock);
 }
 
-void GraphNode::addOutSocket(QString title)
+void GraphNode::addOutSocket(SocketModel *socket)
 {
-	auto sock = new Socket(this, SocketType::Out, title);
+	auto sock = new Socket(this, SocketType::Out, socket->name);
 	auto y = calcHeight();// + sock->calcHeight();
 	sock->setPos(nodeWidth + sock->getRadius(), y);
 	sock->node = this;
 	sock->socketIndex = outSocketCount++;
+	sock->setSocketColor(socket->socketColor);
 	addSocket(sock);
 }
 

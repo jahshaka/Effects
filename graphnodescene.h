@@ -15,7 +15,7 @@
 #include <QJsonArray>
 #include <QListWidgetItem>
 #include <QMenu>
-#include <QPointf>
+#include <QPointF>
 #include <QPropertyAnimation>
 #include "socketconnection.h"
 #include "graphnode.h"
@@ -76,6 +76,8 @@ public:
 	GraphNode* getNodeByPos(QPointF point);
 	QVector<SocketConnection*> socketConnections;
 	NodeGraph *getNodeGraph() const;
+	GraphNode* getNodeByPropertyId(QString id);
+	void refreshNodeTitle(QString id);
 	void setNodeGraph(NodeGraph* value);
 	void addNodeModel(NodeModel* model, bool addToGraph = true);
 	void addNodeModel(NodeModel* model, float x, float y, bool addToGraph = true);
@@ -89,7 +91,7 @@ public:
 	QList<QString> loadedShadersGUID;
 
 	void setList(QList<QString> list) { loadedShadersGUID = list; }
-	void updateNodeTitle(QString title, QString id);
+	void updatePropertyNodeTitle(QString title, QString propId);
 
 protected:
 	void wheelEvent(QGraphicsSceneWheelEvent *event)override;

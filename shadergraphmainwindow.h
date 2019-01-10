@@ -8,7 +8,7 @@
 #include <QTextEdit>
 #include <QDockWidget>
 #include <QSplitter>
-#include <QToolbar>
+#include <QToolBar>
 
 #include "propertylistwidget.h"
 //#include "nodemodel.h"
@@ -33,6 +33,7 @@ class TexturePropertyWidget;
 
 namespace shadergraph
 {
+Q_NAMESPACE
 
 namespace Ui {
 class MainWindow;
