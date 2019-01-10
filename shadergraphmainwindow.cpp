@@ -1266,6 +1266,7 @@ void MainWindow::configureConnections()
     connect(shortcut, &QShortcut::activated, [=]() {
         auto dialog = new SearchDialog(this->graph);
         dialog->exec();
+        qDebug() << "shortcut pressed";
     });
 
     //connections for MyFx sections

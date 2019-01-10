@@ -29,28 +29,28 @@ SearchDialog::SearchDialog(NodeGraph *graph) : QDialog()
 
 	nodeContainer = new ListWidget;
 	propertyContainer = new ListWidget;
-	//nodeContainer->setAlternatingRowColors(false);
-	//nodeContainer->setSpacing(0);
-	//nodeContainer->setContentsMargins(10, 3, 10, 10);
-	//nodeContainer->setViewMode(QListWidget::IconMode);
-	//nodeContainer->setIconSize({90,90});
-	//nodeContainer->setMouseTracking(true);
-	//nodeContainer->setDragDropMode(QAbstractItemView::DragDrop);
-	//nodeContainer->setMovement(QListView::Static);
-	//nodeContainer->setResizeMode(QListWidget::Adjust);
-	//nodeContainer->setDefaultDropAction(Qt::CopyAction);
-	//nodeContainer->setSelectionMode(QAbstractItemView::SingleSelection);
-	//nodeContainer->setSelectionRectVisible(false);
-	//nodeContainer->setDragEnabled(true);
-	//nodeContainer->viewport()->setAcceptDrops(false);
-	//nodeContainer->setDropIndicatorShown(true);
-	//nodeContainer->installEventFilter(this);
-	//nodeContainer->viewport()->installEventFilter(this);
-	//nodeContainer->setWordWrap(true);
-	//nodeContainer->setGridSize(QSize(90, 90));
-	//nodeContainer->setSortingEnabled(true);
-	//nodeContainer->sortItems();
-	//nodeContainer->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    //nodeContainer->setAlternatingRowColors(false);
+    //nodeContainer->setSpacing(0);
+    //nodeContainer->setContentsMargins(10, 3, 10, 10);
+    //nodeContainer->setViewMode(QListWidget::IconMode);
+    //nodeContainer->setIconSize({90,90});
+    //nodeContainer->setMouseTracking(true);
+    //nodeContainer->setDragDropMode(QAbstractItemView::DragDrop);
+    //nodeContainer->setMovement(QListView::Static);
+    //nodeContainer->setResizeMode(QListWidget::Adjust);
+    //nodeContainer->setDefaultDropAction(Qt::CopyAction);
+    //nodeContainer->setSelectionMode(QAbstractItemView::SingleSelection);
+    //nodeContainer->setSelectionRectVisible(false);
+    //nodeContainer->setDragEnabled(true);
+    //nodeContainer->viewport()->setAcceptDrops(false);
+    //nodeContainer->setDropIndicatorShown(true);
+    //nodeContainer->installEventFilter(this);
+    //nodeContainer->viewport()->installEventFilter(this);
+    //nodeContainer->setWordWrap(true);
+    //nodeContainer->setGridSize(QSize(90, 90));
+    //nodeContainer->setSortingEnabled(true);
+    //nodeContainer->sortItems();
+    //nodeContainer->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
 	QFont font;
 	font.setPointSizeF(font.pointSize() * devicePixelRatioF());
@@ -195,12 +195,8 @@ void SearchDialog::generateTileProperty(NodeGraph * graph)
 
 }
 
-void SearchDialog::focusOutEvent(QFocusEvent * event)
-{
-	this->close();
-}
-
 void SearchDialog::leaveEvent(QEvent * event)
 {
 	this->close();
+    this->deleteLater();
 }

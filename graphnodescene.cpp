@@ -8,6 +8,8 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
+#include <shadergraph/dialogs/searchdialog.h>
+
 
 
 
@@ -386,14 +388,14 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 
 			}
 			if (me->button() == Qt::RightButton) {
-				auto x = me->scenePos().x();
-				auto y = me->scenePos().y();
-				auto menu = removeConnectionContextMenu(x, y);
-				auto view = this->views().first();
-				auto scenePoint = view->mapFromScene(me->scenePos());
-				auto p = view->viewport()->mapToGlobal(scenePoint);
+                auto x = me->scenePos().x();
+                auto y = me->scenePos().y();
+                auto menu = removeConnectionContextMenu(x, y);
+                auto view = this->views().first();
+                auto scenePoint = view->mapFromScene(me->scenePos());
+                auto p = view->viewport()->mapToGlobal(scenePoint);
 
-				menu->exec(p);
+                menu->exec(p);
 			}
 
 			return true;
@@ -401,16 +403,19 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 		else if (me->button() == Qt::RightButton)
 		{
 
-			auto x = me->scenePos().x();
-			auto y = me->scenePos().y();
+//			auto x = me->scenePos().x();
+//			auto y = me->scenePos().y();
 
-			auto menu = createContextMenu(x, y);
+//			auto menu = createContextMenu(x, y);
 
-			auto view = this->views().first();
-			auto scenePoint = view->mapFromScene(me->scenePos());
-			auto p = view->viewport()->mapToGlobal(scenePoint);
+//			auto view = this->views().first();
+//			auto scenePoint = view->mapFromScene(me->scenePos());
+//			auto p = view->viewport()->mapToGlobal(scenePoint);
 
-			menu->exec(p);
+//			menu->exec(p);
+
+            auto dialog = new SearchDialog(this->nodeGraph);
+            dialog->exec();
 		}
 		else if (me->button() == Qt::MiddleButton)
 		{

@@ -39,6 +39,7 @@ ListWidget::ListWidget() : QListWidget()
 	sortItems();
     setEditTriggers(QAbstractItemView::EditKeyPressed);
     setContextMenuPolicy(Qt::CustomContextMenu);
+
 	numberOfItemPerRow = 3;
 	QFont font = this->font();
 	font.setWeight(60);
