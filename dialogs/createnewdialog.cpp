@@ -8,34 +8,82 @@
 CreateNewDialog::CreateNewDialog(bool maximized) : QDialog()
 {
 
+
+	if (maximized) createViewWithOptions();
+	else createViewWithoutOptions();
+
+	
+
+    configureStylesheet();
+}
+
+
+CreateNewDialog::~CreateNewDialog()
+{
+}
+
+void CreateNewDialog::configureStylesheet()
+{
+	setStyleSheet(
+		"QListView::item{ border-radius: 2px; border: 1px solid rgba(0,0,0,1); background: rgba(80,80,80,1); margin: 3px;  }"
+		"QListView::item:selected{ background: rgba(65,65,65,1); border: 1px solid rgba(50,150,250,1); }"
+		"QListView::item:hover{ background: rgba(55,55,55,1); border: 1px solid rgba(50,150,250,1); }"
+		"QListView::text{ top : -6; }"
+
+        "QScrollBar:vertical, QScrollBar:horizontal {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 18px; padding: 4px;}"
+        "QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 4px; width: 8px; }"
+        "QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
+        "QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
+        "QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .0);}"
+
+        "QWidget{background:rgba(32,32,32,1); color:rgba(240,240,240,1); border: 0px solid rgba(0,0,0,0);}"
+		"QMenu{	background: rgba(26,26,26,.9); color: rgba(250,250, 250,.9); border-radius : 2px; }"
+		"QMenu::item{padding: 4px 5px 4px 10px;	}"
+		"QMenu::item:hover{	background: rgba(40,128, 185,.9);}"
+		"QMenu::item:selected{	background: rgba(40,128, 185,.9);}"
+
+        "QPushButton{ background: #333; color: #DEDEDE; border : 0; padding: 4px 16px; }"
+		"QPushButton:hover{ background-color: #555; }"
+		"QPushButton:pressed{ background-color: #444; }"
+		"QPushButton:disabled{ color: #444; }"
+		"QPushButton:checked{ background-color: rgba(50,150,255,1); }"
+
+		"QLineEdit{background: rgba(0,0,0,0); border-bottom: 1px solid rgba(50,50,50,1);}"
+		"QLabel#infoLabel{color: rgba(200,200,200,.5);}"
+	);
+	
+}
+
+void CreateNewDialog::createViewWithOptions()
+{
 	auto layout = new QVBoxLayout;
 	setLayout(layout);
-	setMinimumSize(430,565);
+	setMinimumSize(430, 565);
 
 	QSize currentSize(90, 90);
 
 	nameEdit = new QLineEdit;
 
 	optionsScroll = new QWidget;
-    presetsScroll = new QWidget;
-    options = new QWidget;
-    presets = new QWidget;
-    auto optionLayout = new QGridLayout;
-    auto presetLayout = new QGridLayout;
+	presetsScroll = new QWidget;
+	options = new QWidget;
+	presets = new QWidget;
+	auto optionLayout = new QGridLayout;
+	auto presetLayout = new QGridLayout;
 	infoLabel = new QLabel;
 
-    //controls pading in selection window
-    optionLayout->setContentsMargins(10,10,10,10);
-    presetLayout->setContentsMargins(10,10,10,10);
+	//controls pading in selection window
+	optionLayout->setContentsMargins(10, 10, 10, 10);
+	presetLayout->setContentsMargins(10, 10, 10, 10);
 
-    tabbedWidget = new QTabWidget;
-    cancel = new QPushButton("Cancel");
-    confirm = new QPushButton("Confirm");
+	tabbedWidget = new QTabWidget;
+	cancel = new QPushButton("Cancel");
+	confirm = new QPushButton("Confirm");
 	confirm->setDefault(true);
 	confirm->setEnabled(false);
 
-    options->setLayout(optionLayout);
-    presets->setLayout(presetLayout);
+	options->setLayout(optionLayout);
+	presets->setLayout(presetLayout);
 	options->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	presets->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	optionLayout->setSpacing(10);
@@ -55,7 +103,7 @@ CreateNewDialog::CreateNewDialog(bool maximized) : QDialog()
 	nameHolderLayout->addSpacing(5);
 	nameHolderLayout->addWidget(nameEdit);
 
-    holder = new QWidget;
+	holder = new QWidget;
 	auto holderLayout = new QVBoxLayout;
 	holder->setLayout(holderLayout);
 	holderLayout->setContentsMargins(0, 20, 0, 0);
@@ -103,54 +151,46 @@ CreateNewDialog::CreateNewDialog(bool maximized) : QDialog()
 	infoLabel->setAlignment(Qt::AlignCenter);
 	infoLabel->setObjectName(QStringLiteral("infoLabel"));
 
- //   tabbedWidget->addTab(optionsScroll, "Starter");
- //   tabbedWidget->addTab(presetsScroll, "Presets");
-
-
-	
-
-	
-
 	auto btnGrp = new QButtonGroup;
 	btnGrp->setExclusive(true);
 
 	int i = 0;
 	int j = 0;
 
-    //set up list options
-    for (auto tile : getStarterList()) {
-        auto item = new OptionSelection(tile);
-        optionLayout->addWidget(item,i,j);
-        j++;
-        if (j % num_of_widgets_per_row == 0) {
-            j = 0;
-            i++;
-        }
+	//set up list options
+	for (auto tile : getStarterList()) {
+		auto item = new OptionSelection(tile);
+		optionLayout->addWidget(item, i, j);
+		j++;
+		if (j % num_of_widgets_per_row == 0) {
+			j = 0;
+			i++;
+		}
 
 		btnGrp->addButton(item);
 		connect(item, &OptionSelection::buttonSelected, [=](OptionSelection* button) {
 			currentInfoSelected = button->info;
-			infoLabel->setText(currentInfoSelected.title + " selected"); 
+			infoLabel->setText(currentInfoSelected.title + " selected");
 		});
 
-    }
+	}
 
 	auto spacerItem = new QWidget;
 	spacerItem->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 	optionLayout->addWidget(spacerItem);
-	
-
-    i=0;j=0;
 
 
-    for (auto tile : getPresetList()) {
-        auto item = new OptionSelection(tile);
-        presetLayout->addWidget(item,i,j);
-        j++;
-        if (j % num_of_widgets_per_row == 0) {
-            j = 0;
-            i++;
-        }
+	i = 0; j = 0;
+
+
+	for (auto tile : getPresetList()) {
+		auto item = new OptionSelection(tile);
+		presetLayout->addWidget(item, i, j);
+		j++;
+		if (j % num_of_widgets_per_row == 0) {
+			j = 0;
+			i++;
+		}
 		btnGrp->addButton(item);
 
 		connect(item, &OptionSelection::buttonSelected, [=](OptionSelection* button) {
@@ -158,8 +198,8 @@ CreateNewDialog::CreateNewDialog(bool maximized) : QDialog()
 			infoLabel->setText(currentInfoSelected.title + " selected");
 		});
 
-	
-    }
+
+	}
 
 
 	connect(cancel, &QPushButton::clicked, [=]() {
@@ -172,51 +212,13 @@ CreateNewDialog::CreateNewDialog(bool maximized) : QDialog()
 	});
 
 	connect(nameEdit, &QLineEdit::textChanged, [=](QString text) {
-		if(text.count() > 0 && currentInfoSelected.name != "") 	confirm->setEnabled(true);
+		if (text.count() > 0 && currentInfoSelected.name != "") 	confirm->setEnabled(true);
 		else 	confirm->setEnabled(false);
 
 		name = text;
 		currentInfoSelected.title = text;
 
 	});
-
-    configureStylesheet();
-}
-
-
-CreateNewDialog::~CreateNewDialog()
-{
-}
-
-void CreateNewDialog::configureStylesheet()
-{
-	setStyleSheet(
-		"QListView::item{ border-radius: 2px; border: 1px solid rgba(0,0,0,1); background: rgba(80,80,80,1); margin: 3px;  }"
-		"QListView::item:selected{ background: rgba(65,65,65,1); border: 1px solid rgba(50,150,250,1); }"
-		"QListView::item:hover{ background: rgba(55,55,55,1); border: 1px solid rgba(50,150,250,1); }"
-		"QListView::text{ top : -6; }"
-
-        "QScrollBar:vertical, QScrollBar:horizontal {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 18px; padding: 4px;}"
-        "QScrollBar::handle{ background: rgba(72, 72, 72, 1);	border-radius: 4px; width: 8px; }"
-        "QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
-        "QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
-        "QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .0);}"
-
-        "QWidget{background:rgba(32,32,32,1); color:rgba(240,240,240,1); border: 0px solid rgba(0,0,0,0);}"
-		"QMenu{	background: rgba(26,26,26,.9); color: rgba(250,250, 250,.9); border-radius : 2px; }"
-		"QMenu::item{padding: 4px 5px 4px 10px;	}"
-		"QMenu::item:hover{	background: rgba(40,128, 185,.9);}"
-		"QMenu::item:selected{	background: rgba(40,128, 185,.9);}"
-
-        "QPushButton{ background: #333; color: #DEDEDE; border : 0; padding: 4px 16px; }"
-		"QPushButton:hover{ background-color: #555; }"
-		"QPushButton:pressed{ background-color: #444; }"
-		"QPushButton:disabled{ color: #444; }"
-		"QPushButton:checked{ background-color: rgba(50,150,255,1); }"
-
-		"QLineEdit{background: rgba(0,0,0,0); border-bottom: 1px solid rgba(50,50,50,1);}"
-		"QLabel#infoLabel{color: rgba(200,200,200,.5);}"
-	);
 
 	holder->setStyleSheet(
 		"QWidget{background:rgba(32,32,32,1); color:rgba(240,240,240,1); border: 0px solid rgba(0,0,0,0);}"
@@ -229,11 +231,11 @@ void CreateNewDialog::configureStylesheet()
 		"QTabWidget::tab - bar{	left: 1px;	}"
 		"QDockWidget::tab{	background:rgba(32,32,32,1);} border: 0px solid rgba(0,0,0,0);"
 
-        "QPushButton{ background: #777; color: #DEDEDE; border : 0; padding: 4px 16px; }"
-        "QPushButton:hover{ background-color: #555; }"
-        "QPushButton:pressed{ background-color: #444; }"
-        "QPushButton:disabled{ color: #444; }"
-        "QPushButton:checked{ background-color: rgba(50,150,255,1); }"
+		"QPushButton{ background: #777; color: #DEDEDE; border : 0; padding: 4px 16px; }"
+		"QPushButton:hover{ background-color: #555; }"
+		"QPushButton:pressed{ background-color: #444; }"
+		"QPushButton:disabled{ color: #444; }"
+		"QPushButton:checked{ background-color: rgba(50,150,255,1); }"
 	);
 
 	tabbedWidget->setStyleSheet(
@@ -242,7 +244,59 @@ void CreateNewDialog::configureStylesheet()
 		"QTabBar::tab:selected{ color: rgba(255, 255, 255, .99); border-top: 2px solid rgba(50,150,250,.8); }"
 		"QTabBar::tab:!selected{ background: rgba(55, 55, 55, .99); border : 1px solid rgba(21,21,21,.4); color: rgba(200,200,200,.5); }"
 	);
-	
+}
+
+void CreateNewDialog::createViewWithoutOptions()
+{
+	auto layout = new QVBoxLayout;
+	setLayout(layout);
+	setMinimumSize(430, 65);
+
+	nameEdit = new QLineEdit;
+	nameEdit->setPlaceholderText("Enter name here...");
+	nameEdit->setTextMargins(3, 0, 0, 0);
+
+	cancel = new QPushButton("Cancel");
+	confirm = new QPushButton("Confirm");
+	confirm->setDefault(true);
+	confirm->setEnabled(false);
+
+	auto buttonHolder = new QWidget;
+	auto buttonLayout = new QHBoxLayout;
+	buttonHolder->setLayout(buttonLayout);
+	buttonLayout->addStretch();
+	buttonLayout->addWidget(cancel);
+	buttonLayout->addWidget(confirm);
+
+	auto nameHolder = new QWidget;
+	auto nameHolderLayout = new QHBoxLayout;
+	nameHolder->setLayout(nameHolderLayout);
+	nameHolderLayout->addWidget(new QLabel("Name:"));
+	nameHolderLayout->addSpacing(5);
+	nameHolderLayout->addWidget(nameEdit);
+
+	layout->addWidget(nameHolder);
+	layout->addWidget(buttonHolder);
+
+	currentInfoSelected = getStarterList().at(0);
+
+	connect(cancel, &QPushButton::clicked, [=]() {
+		this->reject();
+	});
+	connect(confirm, &QPushButton::clicked, [=]() {
+		auto projectName = nameEdit->text();
+		this->accept();
+		emit confirmClicked(2);
+	});
+
+	connect(nameEdit, &QLineEdit::textChanged, [=](QString text) {
+		if (text.count() > 0) 	confirm->setEnabled(true);
+		else 	confirm->setEnabled(false);
+		name = text;
+
+		currentInfoSelected.title = text;
+	});
+
 }
 
 QList<NodeGraphPreset> CreateNewDialog::getPresetList()

@@ -51,6 +51,8 @@ public:
 	QVector<QString> getList() { return currentInfoSelected.list; }
 	NodeGraphPreset getPreset() { return currentInfoSelected; }
 
+	void createViewWithOptions();
+	void createViewWithoutOptions();
 
 	static QList<NodeGraphPreset> getPresetList();
 	static QList<NodeGraphPreset> getStarterList();
