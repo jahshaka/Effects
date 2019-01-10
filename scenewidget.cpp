@@ -28,6 +28,10 @@ QString assetPath(QString relPath)
 // NOTE! Context resets when widget is undocked
 void SceneWidget::start()
 {
+	screenshotRT = iris::RenderTarget::create(500, 500);
+	screenshotTex = iris::Texture2D::create(500, 500);
+	screenshotRT->addTexture(screenshotTex);
+
     iris::VertexLayout layout;
     layout.addAttrib(iris::VertexAttribUsage::Position, GL_FLOAT, 3, sizeof (float) * 3);
     vertexBuffer = iris::VertexBuffer::create(layout);
@@ -264,6 +268,17 @@ void SceneWidget::mouseReleaseEvent(QMouseEvent * evt)
 void SceneWidget::wheelEvent(QWheelEvent* evt)
 {
 	scale += (evt->delta()/480.0f);
+}
+
+QImage SceneWidget::takeScreenshot(int width, int height)
+{
+	screenshotRT->resize(width, height, true);
+	device->setRenderTarget(screenshotRT);
+	render();
+	device->clearRenderTarget();
+
+	auto img = screenshotRT->toImage();
+	return img;
 }
 
 SceneWidget::SceneWidget():

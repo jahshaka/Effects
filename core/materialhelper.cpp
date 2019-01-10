@@ -11,13 +11,12 @@
 #include <QVector4D>
 
 /*
-EFFECT MATERIAL FORMAT
+EFFECT SHADER FORMAT
 ===============
 {
 	version:2,
 	name:"",
 	type:"shader", //shader, fx, postprocess
-	shaderGuid:"", // or
 
 	vertexShaderSource:"",
 	fragmentShaderSource:"",

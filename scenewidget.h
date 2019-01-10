@@ -73,6 +73,9 @@ public:
 	void mouseReleaseEvent(QMouseEvent* evt);
 	void wheelEvent(QWheelEvent* evt);
 
+	iris::Texture2DPtr screenshotTex;
+	iris::RenderTargetPtr screenshotRT;
+	QImage takeScreenshot(int width, int height);
 
 public slots:
 	void setMaterialSettings(MaterialSettings settings);
