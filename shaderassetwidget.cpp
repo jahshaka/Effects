@@ -337,8 +337,9 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 
 	//auto assetData = db->fetchAssetData(targetGuid);
 	auto matObj = QJsonDocument::fromBinaryData(sourceData).object();
-	auto mat = MaterialHelper::generateMaterialFromMaterialDefinition(matObj, true);
-	assetShader->setValue(QVariant::fromValue(mat));
+	//auto mat = MaterialHelper::generateMaterialFromMaterialDefinition(matObj, true);
+	//assetShader->setValue(QVariant::fromValue(mat));
+	assetShader->setValue(matObj);
 
 	//db->updateAssetAsset(assetGuid, QJsonDocument::fromBinaryData(fetchAsset(item->data(MODEL_GUID_ROLE).toString())).toBinaryData());
 

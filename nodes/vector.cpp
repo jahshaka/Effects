@@ -83,7 +83,7 @@ void ComposeVectorNode::process(ModelContext* context)
 	auto z = this->getValueFromInputSocket(2);
 	auto w = this->getValueFromInputSocket(3);
 
-	this->outSockets[0]->varName = "vec4("+x+","+y+","+z+","+w+");";
+	this->outSockets[0]->varName = "vec4("+x+","+y+","+z+","+w+")";
 }
 
 
