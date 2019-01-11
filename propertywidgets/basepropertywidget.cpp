@@ -203,13 +203,24 @@ void HeaderObject::enterEvent(QEvent * event)
 
 WideRangeSpinBox::WideRangeSpinBox(QWidget *parent) : QDoubleSpinBox(parent)
 {
-    auto num = std::numeric_limits<float>::max();
-    setRange(-num, num);
+	setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    setRange(-1000, 1000);
+	setStyleSheet("QDoubleSpinBox{ border-radius : 1px; padding : 7px; background: #292929; }"
+		"QDoubleSpinBox::up-arrow, QDoubleSpinBox::down-arrow { width: 0; height:0;}"
+		"QDoubleSpinBox::up-button, QDoubleSpinBox::down-button { width: 0; height:0;}"
+	);
 }
+
 
 WideRangeIntBox::WideRangeIntBox(QWidget *parent) : QSpinBox(parent)
 {
+	setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 	setRange(-INT32_MAX, INT32_MAX);
+	setRange(-1000, 1000);
+	setStyleSheet("QSpinBox{ border-radius : 1px; padding : 7px; background: #292929; }"
+		"QSpinBox::up-arrow, QDoubleSpinBox::down-arrow { width: 0; height:0;}"
+		"QSpinBox::up-button, QDoubleSpinBox::down-button { width: 0; height:0;}"
+	);
 }
 
 
