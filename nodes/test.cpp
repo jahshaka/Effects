@@ -1020,7 +1020,7 @@ ColorPickerNode::ColorPickerNode()
 {
 	setNodeType(NodeType::Constants);
 	title = "Color Node";
-	typeName = "Color node";
+	typeName = "color";
 
 	colorWidget = new ColorPickerWidget();
 	colorWidget->setMaximumWidth(154);

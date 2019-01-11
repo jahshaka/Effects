@@ -330,7 +330,7 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 	// todo: create new item
 	assetViewWidget->addItem(item);
 
-	auto assetShader = new AssetMaterial;
+	auto assetShader = new AssetShader;
 	assetShader->fileName = shaderName;//  IrisUtils::buildFileName(shaderName, "material");
 	assetShader->assetGuid = targetGuid;
 	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(shaderName, "shader"));

@@ -87,7 +87,7 @@ void LibraryV1::initTest()
 	});
 
 	//sample texture
-	lib->addNode("sampleTexture", "Sample Texture", "", []() {
+	lib->addNode("textureSampler", "Sample Texture", "", []() {
 		return new TextureSamplerNode();
 	});
 
