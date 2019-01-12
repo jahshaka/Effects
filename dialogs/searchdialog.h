@@ -4,13 +4,14 @@
 #include "../graph/nodegraph.h"
 #include "../graph/library.h"
 #include "../listwidget.h"
+#include "../graphnodescene.h"
 
 
 class SearchDialog : public QDialog
 {
 	Q_OBJECT
 public:
-	SearchDialog(NodeGraph *graph);
+	SearchDialog(NodeGraph *graph, GraphNodeScene* scene);
 	~SearchDialog();
 
     ListWidget* nodeContainer;
@@ -20,8 +21,11 @@ public:
 	void generateTileProperty(NodeGraph *graph);
 	int index = 0;
 
+	QLineEdit *searchBar;
+
 protected:
 	void leaveEvent(QEvent *event) override;
+	void showEvent(QShowEvent *event) override;
 
 };
 

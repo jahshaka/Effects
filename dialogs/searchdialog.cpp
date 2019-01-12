@@ -2,7 +2,9 @@
 #include <QVBoxLayout>
 #include <QLineEdit>
 #include <QTabWidget>
+#include <QKeyEvent>
 #include <QGraphicsEffect>
+#include <QDebug>
 
 #include "../nodes/libraryv1.h"
 #include "../properties.h"
@@ -10,7 +12,7 @@
 
 
 
-SearchDialog::SearchDialog(NodeGraph *graph) : QDialog()
+SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene) : QDialog()
 {
 	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
 	setAttribute(Qt::WA_TranslucentBackground);
@@ -76,7 +78,7 @@ SearchDialog::SearchDialog(NodeGraph *graph) : QDialog()
 	//search box
 	auto searchContainer = new QWidget;
 	auto searchLayout = new QHBoxLayout;
-	auto searchBar = new QLineEdit;
+	searchBar = new QLineEdit;
 
 	searchContainer->setLayout(searchLayout);
 	searchLayout->addWidget(searchBar);
@@ -86,9 +88,6 @@ SearchDialog::SearchDialog(NodeGraph *graph) : QDialog()
 	searchBar->setAlignment(Qt::AlignLeft);
 	searchBar->setTextMargins(8, 0, 0, 0);
 	QSize currentSize(90, 90);
-
-
-
 
 	nodeWidget->setLayout(nodeLayout);
 	nodeLayout->addWidget(searchContainer);
@@ -132,6 +131,16 @@ SearchDialog::SearchDialog(NodeGraph *graph) : QDialog()
 			generateTileNode(graph);
 		}
 
+		auto item = nodeContainer->item(0);
+		if (item) {
+			item->setSelected(true);
+			nodeContainer->setCurrentItem(item);
+		}
+	});
+
+	connect(searchBar, &QLineEdit::returnPressed, [=]() {
+		scene->addNodeFromSearchDialog(nodeContainer->currentItem());
+		this->close();
 	});
 
 	searchContainer->setStyleSheet("background:rgba(32,32,32,0);");
@@ -225,3 +234,11 @@ void SearchDialog::leaveEvent(QEvent * event)
 	this->close();
  //   this->deleteLater();
 }
+
+void SearchDialog::showEvent(QShowEvent * event)
+{
+
+	QDialog::showEvent(event);
+	searchBar->setFocus();
+}
+
