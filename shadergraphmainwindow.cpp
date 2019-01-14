@@ -275,7 +275,6 @@ void MainWindow::loadGraph(QString guid)
 
 	graph = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
 	this->setNodeGraph(graph);
-	//this->restoreGraphPositions(obj["shadergraph"].toObject());
 #else
 	auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/");
 	QDirIterator it(filePath);
@@ -664,6 +663,7 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 				i++;
 			}
 		}
+		graph->settings.name = newShader;
 		setNodeGraph(graph);
 	}else	setNodeGraph(graph);
 	
