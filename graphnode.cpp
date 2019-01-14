@@ -328,7 +328,7 @@ int GraphNode::calcHeight()
 	for (auto socket : sockets)
 	{
 		height += socket->calcHeight();
-		height += 15; // padding
+		height += increment; // padding
 	}
 
 	//height += 2; // padding
@@ -381,7 +381,7 @@ void GraphNode::layout()
 	for (auto socket : sockets)
 	{
 		height += socket->calcHeight();
-		height += 14; // padding
+		height += increment; // padding
 	}
 
 	//height += 2; // padding

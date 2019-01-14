@@ -31,6 +31,7 @@ public:
 	WideRangeSpinBox* ySpinBox;
 	double x;
 	double y;
+	void setValues(float xValue, float yValue);
 signals:
 	void valueChanged(QVector2D val);
 
@@ -50,6 +51,8 @@ public:
 	double x;
 	double y;
 	double z;
+	void setValues(float xValue, float yValue, float zValue);
+
 signals:
 	void valueChanged(QVector3D val);
 };
@@ -75,6 +78,8 @@ public:
 	double y;
 	double z;
 	double w;
+	void setValues(float xValue, float yValue, float zValue, float wValue);
+
 signals:
 	void valueChanged(QVector4D val);
 

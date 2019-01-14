@@ -82,6 +82,7 @@ public:
 	int level = 0;
 	int titleHeight = 30;
 	int titleRadius = 2;
+	int increment = 12;
 	bool isHighlighted = false;
 	bool currentSelectedState = false;
 	bool check = false;

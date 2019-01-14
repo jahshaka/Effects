@@ -275,7 +275,6 @@ void MainWindow::loadGraph(QString guid)
 
 	graph = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
 	this->setNodeGraph(graph);
-	//this->restoreGraphPositions(obj["shadergraph"].toObject());
 #else
 	auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/");
 	QDirIterator it(filePath);
@@ -654,16 +653,20 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 	effects->displayAllContents();
 
 	propertyListWidget->clearPropertyList();
-    auto graph = importGraphFromFilePath(MaterialHelper::assetPath(preset.templatePath), false);
-	int i = 0;
-	for (auto prop : graph->properties) {
-		if (prop->type == PropertyType::Texture) {
-			auto graphTexture = TextureManager::getSingleton()->importTexture(preset.list.at(i));
-			prop->setValue(graphTexture->guid);
-			i++;
+	if (loadNewGraph) {
+		auto graph = importGraphFromFilePath(MaterialHelper::assetPath(preset.templatePath), false);
+		int i = 0;
+		for (auto prop : graph->properties) {
+			if (prop->type == PropertyType::Texture) {
+				auto graphTexture = TextureManager::getSingleton()->importTexture(preset.list.at(i));
+				prop->setValue(graphTexture->guid);
+				i++;
+			}
 		}
-	}
-	setNodeGraph(graph);
+		graph->settings.name = newShader;
+		setNodeGraph(graph);
+	}else	setNodeGraph(graph);
+	
 	regenerateShader();
 
 
@@ -1012,13 +1015,8 @@ void MainWindow::setNodeLibraryItem(QListWidgetItem *item, NodeLibraryItem *tile
 
 bool MainWindow::createNewGraph(bool loadNewGraph)
 {
-	//TODO get presets from database
-	list.clear();
 
-	if (loadNewGraph) {
-			
-	}
-	CreateNewDialog node;
+	CreateNewDialog node(loadNewGraph);
 	node.exec();
 
 	if (node.result() == QDialog::Accepted) {
@@ -1264,9 +1262,9 @@ void MainWindow::configureConnections()
 
     QShortcut *shortcut = new QShortcut(QKeySequence("f"), this);
     connect(shortcut, &QShortcut::activated, [=]() {
-        auto dialog = new SearchDialog(this->graph);
+        auto dialog = new SearchDialog(this->graph, scene);
         dialog->exec();
-    });
+	});
 
     //connections for MyFx sections
 

@@ -2,13 +2,17 @@
 #include <QVBoxLayout>
 #include <QLineEdit>
 #include <QTabWidget>
+#include <QKeyEvent>
+#include <QGraphicsEffect>
+#include <QDebug>
+
 #include "../nodes/libraryv1.h"
 #include "../properties.h"
 #include "../core/project.h"
 
 
 
-SearchDialog::SearchDialog(NodeGraph *graph) : QDialog()
+SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene) : QDialog()
 {
 	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
 	setAttribute(Qt::WA_TranslucentBackground);
@@ -17,10 +21,29 @@ SearchDialog::SearchDialog(NodeGraph *graph) : QDialog()
 	setWindowFlag(Qt::SubWindow);
 	setAttribute(Qt::WA_QuitOnClose, false);
 	
+	auto widgetHolder = new QWidget;
+	auto widgetLayout = new QVBoxLayout;
+	widgetHolder->setLayout(widgetLayout);
+	widgetLayout->setContentsMargins(5,5,5,5);
+
+	auto clearWidget = new QWidget;
+	auto clearLayout = new QVBoxLayout;
+	clearWidget->setLayout(clearLayout);
+	clearLayout->setContentsMargins(25, 25, 25, 25);
+	clearWidget->setObjectName(QStringLiteral("clearwidget"));
+	clearWidget->setStyleSheet("QWidget#clearwidget{background : rgba(0,0,0,0);}");
+
+	QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
+	effect->setBlurRadius(15);
+	effect->setXOffset(0);
+	effect->setYOffset(0);
+	effect->setColor(QColor(0, 0, 0, 255));
+	widgetHolder->setGraphicsEffect(effect);
+
 
 	auto layout = new QVBoxLayout;
 	setLayout(layout);
-	setMinimumSize(350, 150);
+	setMinimumSize(400, 150);
 	setWindowModality(Qt::NonModal);
 
 	auto tabWidget = new QTabWidget;
@@ -29,37 +52,33 @@ SearchDialog::SearchDialog(NodeGraph *graph) : QDialog()
 
 	nodeContainer = new ListWidget;
 	propertyContainer = new ListWidget;
-	//nodeContainer->setAlternatingRowColors(false);
-	//nodeContainer->setSpacing(0);
-	//nodeContainer->setContentsMargins(10, 3, 10, 10);
-	//nodeContainer->setViewMode(QListWidget::IconMode);
-	//nodeContainer->setIconSize({90,90});
-	//nodeContainer->setMouseTracking(true);
-	//nodeContainer->setDragDropMode(QAbstractItemView::DragDrop);
-	//nodeContainer->setMovement(QListView::Static);
-	//nodeContainer->setResizeMode(QListWidget::Adjust);
-	//nodeContainer->setDefaultDropAction(Qt::CopyAction);
-	//nodeContainer->setSelectionMode(QAbstractItemView::SingleSelection);
-	//nodeContainer->setSelectionRectVisible(false);
-	//nodeContainer->setDragEnabled(true);
-	//nodeContainer->viewport()->setAcceptDrops(false);
-	//nodeContainer->setDropIndicatorShown(true);
-	//nodeContainer->installEventFilter(this);
-	//nodeContainer->viewport()->installEventFilter(this);
-	//nodeContainer->setWordWrap(true);
-	//nodeContainer->setGridSize(QSize(90, 90));
-	//nodeContainer->setSortingEnabled(true);
-	//nodeContainer->sortItems();
-	//nodeContainer->setEditTriggers(QAbstractItemView::NoEditTriggers);
-
-	QFont font;
-	font.setPointSizeF(font.pointSize() * devicePixelRatioF());
-	setFont(font);
+    //nodeContainer->setAlternatingRowColors(false);
+    //nodeContainer->setSpacing(0);
+    //nodeContainer->setContentsMargins(10, 3, 10, 10);
+    //nodeContainer->setViewMode(QListWidget::IconMode);
+    //nodeContainer->setIconSize({90,90});
+    //nodeContainer->setMouseTracking(true);
+    //nodeContainer->setDragDropMode(QAbstractItemView::DragDrop);
+    //nodeContainer->setMovement(QListView::Static);
+    //nodeContainer->setResizeMode(QListWidget::Adjust);
+    //nodeContainer->setDefaultDropAction(Qt::CopyAction);
+    //nodeContainer->setSelectionMode(QAbstractItemView::SingleSelection);
+    //nodeContainer->setSelectionRectVisible(false);
+    //nodeContainer->setDragEnabled(true);
+    //nodeContainer->viewport()->setAcceptDrops(false);
+    //nodeContainer->setDropIndicatorShown(true);
+    //nodeContainer->installEventFilter(this);
+    //nodeContainer->viewport()->installEventFilter(this);
+    //nodeContainer->setWordWrap(true);
+    //nodeContainer->setGridSize(QSize(90, 90));
+    //nodeContainer->setSortingEnabled(true);
+    //nodeContainer->sortItems();
+    //nodeContainer->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
 	//search box
 	auto searchContainer = new QWidget;
 	auto searchLayout = new QHBoxLayout;
-	auto searchBar = new QLineEdit;
+	searchBar = new QLineEdit;
 
 	searchContainer->setLayout(searchLayout);
 	searchLayout->addWidget(searchBar);
@@ -67,12 +86,8 @@ SearchDialog::SearchDialog(NodeGraph *graph) : QDialog()
 
 	searchBar->setPlaceholderText("search");
 	searchBar->setAlignment(Qt::AlignLeft);
-	searchBar->setFont(font);
 	searchBar->setTextMargins(8, 0, 0, 0);
 	QSize currentSize(90, 90);
-
-
-
 
 	nodeWidget->setLayout(nodeLayout);
 	nodeLayout->addWidget(searchContainer);
@@ -82,13 +97,18 @@ SearchDialog::SearchDialog(NodeGraph *graph) : QDialog()
 	tabWidget->addTab(propertyContainer, "Properties");
 
 	tabWidget->setStyleSheet(
-		"QTabWidget::pane{	border: 1px solid rgba(0, 0, 0, .5); border - top: 0px solid rgba(0, 0, 0, 0);}"
+		"QTabWidget::pane{	border: 1px solid rgba(0, 0, 0, .1); border - top: 0px solid rgba(0, 0, 0, 0);}"
 		"QTabBar::tab{	background: rgba(21, 21, 21, .7); color: rgba(250, 250, 250, .9); font - weight: 400; font - size: 13em; padding: 5px 22px 5px 22px; }"
 		"QTabBar::tab:selected{ color: rgba(255, 255, 255, .99); border-top: 2px solid rgba(50,150,250,.8); }"
 		"QTabBar::tab:!selected{ background: rgba(55, 55, 55, .99); border : 1px solid rgba(21,21,21,.4); color: rgba(200,200,200,.5); }"
 	);
 
-	layout->addWidget(tabWidget);
+	searchBar->setStyleSheet("border-radius : 2px; ");
+
+
+	clearLayout->addWidget(widgetHolder);
+	widgetLayout->addWidget(tabWidget);
+	layout->addWidget(clearWidget);
 
 
 //	layout->addWidget(searchContainer);
@@ -111,6 +131,16 @@ SearchDialog::SearchDialog(NodeGraph *graph) : QDialog()
 			generateTileNode(graph);
 		}
 
+		auto item = nodeContainer->item(0);
+		if (item) {
+			item->setSelected(true);
+			nodeContainer->setCurrentItem(item);
+		}
+	});
+
+	connect(searchBar, &QLineEdit::returnPressed, [=]() {
+		scene->addNodeFromSearchDialog(nodeContainer->currentItem());
+		this->close();
 	});
 
 	searchContainer->setStyleSheet("background:rgba(32,32,32,0);");
@@ -120,11 +150,15 @@ SearchDialog::SearchDialog(NodeGraph *graph) : QDialog()
 
 		"QWidget{background: rgba(21,21,21,1); border: 0px solid rgba(0,0,0,0);}"
 
-		"QListView::item{ border-radius: 2px; border: 1px solid rgba(0,0,0,1); background: rgba(80,80,80,1); margin: 3px; color: rgba(253,253,253,1);  }"
-		"QListView::item:selected{ background: rgba(65,65,65,1); border: 1px solid rgba(50,150,250,1); }"
-		"QListView::item:hover{ background: rgba(55,55,55,1); border: 1px solid rgba(50,150,250,1); }"
+		"QListView::item{color: rgba(255,255,255,1); border-radius: 2px; border: 1px solid rgba(0,0,0,.31); background: rgba(51,51,51,1); margin: 3px;  }"
+		"QListView::item:selected{ background: rgba(155,155,155,1); border: 1px solid rgba(50,150,250,.1); }"
+		"QListView::item:hover{ background: rgba(95,95,95,1); border: .1px solid rgba(50,150,250,.1); }"
 		"QListView::text{ top : -6; }"
+
 	);
+
+	nodeContainer->setStyleSheet(styleSheet());
+	propertyContainer->setStyleSheet(styleSheet());
 
 }
 
@@ -195,12 +229,16 @@ void SearchDialog::generateTileProperty(NodeGraph * graph)
 
 }
 
-void SearchDialog::focusOutEvent(QFocusEvent * event)
-{
-	this->close();
-}
-
 void SearchDialog::leaveEvent(QEvent * event)
 {
 	this->close();
+ //   this->deleteLater();
 }
+
+void SearchDialog::showEvent(QShowEvent * event)
+{
+
+	QDialog::showEvent(event);
+	searchBar->setFocus();
+}
+

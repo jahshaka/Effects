@@ -66,6 +66,14 @@ Widget2D::~Widget2D()
 {
 }
 
+void Widget2D::setValues(float xValue, float yValue)
+{
+	x = xValue;
+	y = yValue;
+	xSpinBox->setValue(xValue);
+	ySpinBox->setValue(yValue);
+}
+
 
 
 Widget3D::Widget3D() : PropertyWidgetBase()
@@ -116,6 +124,16 @@ Widget3D::Widget3D() : PropertyWidgetBase()
 
 Widget3D::~Widget3D()
 {
+}
+
+void Widget3D::setValues(float xValue, float yValue, float zValue)
+{
+	x = xValue;
+	y = yValue;
+	z = zValue;
+	xSpinBox->setValue(xValue);
+	ySpinBox->setValue(yValue);
+	zSpinBox->setValue(zValue);
 }
 
 
@@ -214,6 +232,18 @@ void Widget4D::setWSpinBoxConnection(std::function<void(double val)> func)
 		func(val);
 		emit valueChanged(QVector4D(x, y, z, w));
 	});
+}
+
+void Widget4D::setValues(float xValue, float yValue, float zValue, float wValue)
+{
+	x = xValue;
+	y = yValue;
+	z = zValue;
+	w = wValue;
+	xSpinBox->setValue(xValue);
+	ySpinBox->setValue(yValue);
+	zSpinBox->setValue(zValue);
+	wSpinBox->setValue(wValue);
 }
 
 

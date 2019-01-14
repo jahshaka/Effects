@@ -8,6 +8,8 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
+#include <shadergraph/dialogs/searchdialog.h>
+
 
 
 
@@ -224,23 +226,36 @@ void GraphNodeScene::updatePropertyNodeTitle(QString title, QString propId)
 	
 }
 
-void GraphNodeScene::wheelEvent(QGraphicsSceneWheelEvent * event)
+void GraphNodeScene::addNodeFromSearchDialog(QListWidgetItem * item)
 {
-	QGraphicsScene::wheelEvent(event);
-}
+	if (!item->data(MODEL_EXT_ROLE).isNull()) {
+		auto prop = nodeGraph->properties.at(item->data(MODEL_EXT_ROLE).toInt());
+		if (prop) {
+			auto propNode = new PropertyNode();
+			propNode->setProperty(prop);
+			propNode->x = 10;
+			propNode->y = 10;
+			this->addNodeModel(propNode);
+		}
+	}
 
-void GraphNodeScene::drawItems(QPainter * painter, int numItems, QGraphicsItem * items[], const QStyleOptionGraphicsItem options[], QWidget * widget)
-{
-	QGraphicsScene::drawItems(painter, numItems, items, options, widget);
+	if (item->data(MODEL_TYPE_ROLE).toString() == "node") {
+		auto node = nodeGraph->library->createNode(item->data(Qt::UserRole).toString());
+
+		//	auto factory = nodeGraph->modelFactories[event->mimeData()->text()];
+		if (node) {
+			this->addNodeModel(node, 10, 10);
+			return;
+		}
+	}
 }
 
 void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 {
 
 	if (!event->mimeData()->data("index").isNull()) {
-
+		event->accept();
 		auto prop = nodeGraph->properties.at(event->mimeData()->data("index").toInt());
-		qDebug() << prop << prop->id << prop->displayName << prop->getValue();
 		if (prop) {
 			auto propNode = new PropertyNode();
 			propNode->setProperty(prop);
@@ -267,17 +282,9 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 
 		QListWidgetItem *item = new QListWidgetItem;
 
-	//	auto obj = QJsonDocument::fromBinaryData(event->mimeData()->data("MODEL_GRAPH")).object();
 		item->setData(Qt::DisplayRole, event->mimeData()->text());
 		item->setData(MODEL_GUID_ROLE, event->mimeData()->data("MODEL_GUID_ROLE"));
-	/*	item->setData(MODEL_PARENT_ROLE, event->mimeData()->data("MODEL_PARENT_ROLE"));
-		item->setData(MODEL_ITEM_TYPE, event->mimeData()->data("MODEL_ITEM_TYPE"));
-		item->setData(MODEL_TYPE_ROLE, event->mimeData()->data("MODEL_TYPE_ROLE"));
-		item->setData(MODEL_GRAPH, obj);
-*/
 		currentlyEditing = item;
-
-	//	if(!loadedShadersGUID.contains(item->data(MODEL_GUID_ROLE).toString()))  loadedShadersGUID.append(item->data(MODEL_GUID_ROLE).toString());
 
 		emit loadGraph(item);
 		return;
@@ -386,14 +393,14 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 
 			}
 			if (me->button() == Qt::RightButton) {
-				auto x = me->scenePos().x();
-				auto y = me->scenePos().y();
-				auto menu = removeConnectionContextMenu(x, y);
-				auto view = this->views().first();
-				auto scenePoint = view->mapFromScene(me->scenePos());
-				auto p = view->viewport()->mapToGlobal(scenePoint);
+                auto x = me->scenePos().x();
+                auto y = me->scenePos().y();
+                auto menu = removeConnectionContextMenu(x, y);
+                auto view = this->views().first();
+                auto scenePoint = view->mapFromScene(me->scenePos());
+                auto p = view->viewport()->mapToGlobal(scenePoint);
 
-				menu->exec(p);
+                menu->exec(p);
 			}
 
 			return true;
@@ -401,16 +408,19 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 		else if (me->button() == Qt::RightButton)
 		{
 
-			auto x = me->scenePos().x();
-			auto y = me->scenePos().y();
+//			auto x = me->scenePos().x();
+//			auto y = me->scenePos().y();
 
-			auto menu = createContextMenu(x, y);
+//			auto menu = createContextMenu(x, y);
 
-			auto view = this->views().first();
-			auto scenePoint = view->mapFromScene(me->scenePos());
-			auto p = view->viewport()->mapToGlobal(scenePoint);
+//			auto view = this->views().first();
+//			auto scenePoint = view->mapFromScene(me->scenePos());
+//			auto p = view->viewport()->mapToGlobal(scenePoint);
 
-			menu->exec(p);
+//			menu->exec(p);
+
+            auto dialog = new SearchDialog(this->nodeGraph, this);
+            dialog->exec();
 		}
 		else if (me->button() == Qt::MiddleButton)
 		{
