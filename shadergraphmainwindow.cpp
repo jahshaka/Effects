@@ -21,6 +21,8 @@
 #include <QMimeData>
 #include <QFile>
 #include <QByteArray>
+#include <QBuffer>
+#include <QPixmap>
 #include <QScrollBar>
 #include <QShortcut>
 #include "generator/shadergenerator.h"
@@ -148,8 +150,15 @@ void MainWindow::saveShader()
 	doc.setObject(matObj);
 	QString data = doc.toJson();
 
+	//take screenshot and save it to bytearray
+	QByteArray arr;
+	QBuffer buffer(&arr);
+	buffer.open(QIODevice::WriteOnly);
+	sceneWidget->takeScreenshot(512, 512).save(&buffer, "PNG");
+
 #if(EFFECT_BUILD_AS_LIB)
 	dataBase->updateAssetAsset(currentShaderInformation.GUID, doc.toBinaryData());
+	dataBase->updateAssetThumbnail(currentShaderInformation.GUID, arr);
 #else
 
 	auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/");
@@ -163,6 +172,8 @@ void MainWindow::saveShader()
 		qDebug() << "device not open";
 	}
 #endif
+
+	updateThumbnailImage(arr);
 }
 
 void MainWindow::saveDefaultShader()
@@ -1051,6 +1062,15 @@ void MainWindow::updateAssetDock()
 		}
 #endif
 
+}
+
+void MainWindow::updateThumbnailImage(QByteArray arr)
+{
+	auto img = QImage::fromData(arr, "PNG");
+	auto pixmap = QPixmap::fromImage(img);
+	pixmap = pixmap.scaled(defaultItemSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+	//auto pixmap = QPixmap::fromImage(img.scaled(defaultItemSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+	currentProjectShader->setIcon(QIcon(pixmap));
 }
 
 void MainWindow::setAssetWidgetDatabase(Database * db)

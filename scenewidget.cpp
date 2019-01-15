@@ -10,6 +10,7 @@
 #include <QWheelEvent>
 #include <qmath.h>
 #include <QOpenGLFunctions>
+#include <QImage>
 
 #include "graph/nodegraph.h"
 #include "graphnodescene.h"
@@ -36,6 +37,8 @@ void SceneWidget::start()
     layout.addAttrib(iris::VertexAttribUsage::Position, GL_FLOAT, 3, sizeof (float) * 3);
     vertexBuffer = iris::VertexBuffer::create(layout);
     //vertexBuffer->setData()
+
+	clearColor = Qt::white;
 
     cam = iris::CameraNode::create();
     cam->setLocalPos(QVector3D(2, 0, 3));
@@ -90,7 +93,7 @@ void SceneWidget::start()
 
 void SceneWidget::update(float dt)
 {
-    cam->aspectRatio = width()/(float)height();
+    cam->aspectRatio = viewportWidth/(float)viewportHeight;
     cam->update(dt);
 
     //qDebug()<<1.0/dt;
@@ -100,17 +103,18 @@ void SceneWidget::update(float dt)
 
 void SceneWidget::render()
 {
-    device->clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, Qt::white);
-
-    spriteBatch->begin();
-    spriteBatch->drawString(font, QString("fps %1").arg(fps), QVector2D(), Qt::black);
-    spriteBatch->end();
-
-    device->setBlendState(iris::BlendState::createOpaque());
-    device->setDepthState(iris::DepthState());
+    device->clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, clearColor);
+	
+    //spriteBatch->begin();
+    //spriteBatch->drawString(font, QString("fps %1").arg(fps), QVector2D(), Qt::black);
+    //spriteBatch->end();
+	
+    device->setBlendState(iris::BlendState::createOpaque(), true);
+    device->setDepthState(iris::DepthState(), true);
+	device->setRasterizerState(iris::RasterizerState::createCullCounterClockwise(), true);
 
     auto& graphics = device;
-    device->setViewport(QRect(0, 0, width(), height()));
+    device->setViewport(QRect(0, 0, viewportWidth, viewportHeight));
     device->setShader(shader);
     device->setShaderUniform("u_viewMatrix", cam->viewMatrix);
     device->setShaderUniform("u_projMatrix", cam->projMatrix);
@@ -176,6 +180,9 @@ void SceneWidget::render()
     passNodeGraphUniforms();
 
     mesh->draw(device);
+
+	//device->setRasterizerState(iris::RasterizerState::createCullNone(), true);
+	//device->setDepthState(iris::DepthState(false, false), true);
 }
 
 void SceneWidget::setVertexShader(QString vertShader)
@@ -272,13 +279,37 @@ void SceneWidget::wheelEvent(QWheelEvent* evt)
 
 QImage SceneWidget::takeScreenshot(int width, int height)
 {
+	this->makeCurrent();
+	auto tempW = viewportWidth;
+	auto tempH = viewportHeight;
+	viewportWidth = width;
+	viewportHeight = height;
+	clearColor = QColor(0, 0, 0, 0);
+
+	cam->aspectRatio = viewportWidth / (float)viewportHeight;
+	cam->update(0.01f);// just a non-zero value is needed here
+
 	screenshotRT->resize(width, height, true);
 	device->setRenderTarget(screenshotRT);
 	render();
 	device->clearRenderTarget();
+	
+	viewportWidth = tempW;
+	viewportHeight = tempH;
+	clearColor = Qt::white;
 
 	auto img = screenshotRT->toImage();
+	this->doneCurrent();
+
 	return img;
+}
+
+void SceneWidget::resizeEvent(QResizeEvent* evt)
+{
+	viewportWidth = width();
+	viewportHeight = height();
+
+	iris::RenderWidget::resizeEvent(evt);
 }
 
 SceneWidget::SceneWidget():
