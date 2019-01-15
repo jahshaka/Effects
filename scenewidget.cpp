@@ -306,8 +306,8 @@ QImage SceneWidget::takeScreenshot(int width, int height)
 
 void SceneWidget::resizeEvent(QResizeEvent* evt)
 {
-	viewportWidth = width();
-	viewportHeight = height();
+	viewportWidth = (int)(width() * devicePixelRatioF());
+	viewportHeight = (int)(height() * devicePixelRatioF());
 
 	iris::RenderWidget::resizeEvent(evt);
 }

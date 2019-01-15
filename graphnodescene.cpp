@@ -226,15 +226,22 @@ void GraphNodeScene::updatePropertyNodeTitle(QString title, QString propId)
 	
 }
 
-void GraphNodeScene::addNodeFromSearchDialog(QListWidgetItem * item)
+void GraphNodeScene::addNodeFromSearchDialog(QListWidgetItem * item, QPoint &point)
 {
+	auto view = this->views().first();
+	auto viewPoint = view->viewport()->mapFromGlobal(point);
+	auto scenePoint = view->mapToScene(viewPoint);
+
+	auto p = scenePoint;
+
+
 	if (!item->data(MODEL_EXT_ROLE).isNull()) {
 		auto prop = nodeGraph->properties.at(item->data(MODEL_EXT_ROLE).toInt());
 		if (prop) {
 			auto propNode = new PropertyNode();
 			propNode->setProperty(prop);
-			propNode->x = 10;
-			propNode->y = 10;
+			propNode->x = p.x();
+			propNode->y = p.y();
 			this->addNodeModel(propNode);
 		}
 	}
@@ -244,7 +251,7 @@ void GraphNodeScene::addNodeFromSearchDialog(QListWidgetItem * item)
 
 		//	auto factory = nodeGraph->modelFactories[event->mimeData()->text()];
 		if (node) {
-			this->addNodeModel(node, 10, 10);
+			this->addNodeModel(node, p.x(), p.y());
 			return;
 		}
 	}
@@ -270,7 +277,6 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 
 		auto node = nodeGraph->library->createNode(event->mimeData()->html());
 
-			//	auto factory = nodeGraph->modelFactories[event->mimeData()->text()];
 			if (node) {
 				this->addNodeModel(node, event->scenePos().x(), event->scenePos().y());
 					return;
@@ -408,18 +414,18 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 		else if (me->button() == Qt::RightButton)
 		{
 
-//			auto x = me->scenePos().x();
-//			auto y = me->scenePos().y();
-
+			auto x = me->scenePos().x();
+			auto y = me->scenePos().y();
+			auto point = QPoint(x, y);
 //			auto menu = createContextMenu(x, y);
 
-//			auto view = this->views().first();
-//			auto scenePoint = view->mapFromScene(me->scenePos());
-//			auto p = view->viewport()->mapToGlobal(scenePoint);
+			auto view = this->views().first();
+			auto scenePoint = view->mapFromScene(me->scenePos());
+			auto p = view->viewport()->mapToGlobal(scenePoint);
 
 //			menu->exec(p);
 
-            auto dialog = new SearchDialog(this->nodeGraph, this);
+            auto dialog = new SearchDialog(this->nodeGraph, this, p);
             dialog->exec();
 		}
 		else if (me->button() == Qt::MiddleButton)

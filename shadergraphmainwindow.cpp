@@ -1282,8 +1282,8 @@ void MainWindow::configureConnections()
 
     QShortcut *shortcut = new QShortcut(QKeySequence("f"), this);
     connect(shortcut, &QShortcut::activated, [=]() {
-        auto dialog = new SearchDialog(this->graph, scene);
-        dialog->exec();
+        //auto dialog = new SearchDialog(this->graph, scene);
+        //dialog->exec();
 	});
 
     //connections for MyFx sections

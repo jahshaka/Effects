@@ -12,7 +12,7 @@
 
 
 
-SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene) : QDialog()
+SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point) : QDialog()
 {
 	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
 	setAttribute(Qt::WA_TranslucentBackground);
@@ -21,6 +21,7 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene) : QDialog()
 	setWindowFlag(Qt::SubWindow);
 	setAttribute(Qt::WA_QuitOnClose, false);
 	
+	this->point = point;
 	auto widgetHolder = new QWidget;
 	auto widgetLayout = new QVBoxLayout;
 	widgetHolder->setLayout(widgetLayout);
@@ -139,7 +140,7 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene) : QDialog()
 	});
 
 	connect(searchBar, &QLineEdit::returnPressed, [=]() {
-		scene->addNodeFromSearchDialog(nodeContainer->currentItem());
+		scene->addNodeFromSearchDialog(nodeContainer->currentItem(), this->point);
 		this->close();
 	});
 
@@ -239,6 +240,7 @@ void SearchDialog::showEvent(QShowEvent * event)
 {
 
 	QDialog::showEvent(event);
+	this->setGeometry(point.x(), point.y(), geometry().width(), geometry().height());
 	searchBar->setFocus();
 }
 
