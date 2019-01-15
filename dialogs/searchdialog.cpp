@@ -21,7 +21,6 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 	setWindowFlag(Qt::SubWindow);
 	setAttribute(Qt::WA_QuitOnClose, false);
 	
-	this->point = point;
 	auto widgetHolder = new QWidget;
 	auto widgetLayout = new QVBoxLayout;
 	widgetHolder->setLayout(widgetLayout);
@@ -87,7 +86,7 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 
 	searchBar->setPlaceholderText("search");
 	searchBar->setAlignment(Qt::AlignLeft);
-	searchBar->setTextMargins(8, 0, 0, 0);
+	searchBar->setTextMargins(6, 0, 0, 0);
 	QSize currentSize(90, 90);
 
 	nodeWidget->setLayout(nodeLayout);
@@ -145,7 +144,7 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 	});
 
 	searchContainer->setStyleSheet("background:rgba(32,32,32,0);");
-	searchBar->setStyleSheet("QLineEdit{ background:rgba(41,41,41,1); border: 1px solid rgba(150,150,150,.2); border-radius: 1px; color: rgba(250,250,250,.95); }");
+	searchBar->setStyleSheet("QLineEdit{ background:rgba(41,41,41,1); border: 1px solid rgba(150,150,150,.2); border-radius: 1px; color: rgba(250,250,250,.95); padding: 6px;  }");
 
 	setStyleSheet(""
 
@@ -160,6 +159,16 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 
 	nodeContainer->setStyleSheet(styleSheet());
 	propertyContainer->setStyleSheet(styleSheet());
+
+
+	if (point == QPoint(0,0)) {
+		auto view = scene->views().first();
+		auto viewPoint = view->viewport()->mapToGlobal(point);
+		auto scenePoint = view->mapFromScene(viewPoint);
+		this->point = scenePoint;
+		qDebug() << this->point;
+	}else 	this->point = point;
+
 
 }
 
