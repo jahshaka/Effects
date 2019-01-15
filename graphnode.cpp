@@ -527,13 +527,7 @@ void GraphNode::highlightNode(bool val, int lvl)
 	isHighlighted = val;
 	level = lvl;
 
-	auto setLevel = [val, lvl]() {
-		int i = 0;
-		if (lvl == 0)  i = 0;
-		else  i = lvl + 1;
-		return i;
-
-	};
+	
 
 	for (Socket* sock : sockets) {
 		if (sock->socketType == SocketType::In) {
@@ -560,5 +554,4 @@ void GraphNode::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
 	check = true;
 	QGraphicsPathItem::mousePressEvent(event);
-
 }

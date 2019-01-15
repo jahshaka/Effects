@@ -46,6 +46,7 @@ private:
 	QPointF socketPos;
 	QColor socketColor;
 	QColor disconnectedColor = QColor(60, 60, 64).darker(175);
+	QColor regularColor = QColor(97, 97, 97, 150);
 	bool connected = false;
 	bool rounded = true;
 	int outSocketXOffset;
