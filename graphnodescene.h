@@ -79,7 +79,7 @@ public:
 	GraphNode* getNodeById(QString id);
     QVector<GraphNode*> getNodes();
 	GraphNode* getNodeByPos(QPointF point);
-	QVector<SocketConnection*> socketConnections;
+	//QVector<SocketConnection*> socketConnections;
 	NodeGraph *getNodeGraph() const;
 	GraphNode* getNodeByPropertyId(QString id);
 	void refreshNodeTitle(QString id);
@@ -101,6 +101,7 @@ public:
 	void addNodeFromSearchDialog(QListWidgetItem* item);
 
 	void deleteSelectedNodes();
+	void deleteNode(GraphNode* node);
 
 protected:
 	void dropEvent(QGraphicsSceneDragDropEvent *event) override;

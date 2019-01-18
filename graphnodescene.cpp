@@ -260,7 +260,6 @@ void GraphNodeScene::addNodeFromSearchDialog(QListWidgetItem * item, QPoint &poi
 
 void GraphNodeScene::deleteSelectedNodes()
 {
-	// delete selected nodes
 	auto items = selectedItems();
 	QList<GraphNode*> nodes;
 
@@ -273,20 +272,37 @@ void GraphNodeScene::deleteSelectedNodes()
 
 	// remove each node's connections then remove the nodes
 	for (auto node : nodes) {
-		// remove in and out connections
-		auto conns = nodeGraph->getNodeConnections(node->nodeId);
-
-		// remove node from scenegraph
-		nodeGraph->removeNode(node->nodeId);
-
-		// remove them from scene
-		for (auto con : conns) {
-			this->removeConnection(con->id);
-		}
-		
-		this->removeItem(node);
+		deleteNode(node);
 	}
 }
+
+void GraphNodeScene::deleteNode(GraphNode* node)
+{
+	// remove in and out connections
+	auto conns = nodeGraph->getNodeConnections(node->nodeId);
+
+	// remove node from scenegraph
+	nodeGraph->removeNode(node->nodeId);
+
+	// remove them from scene
+	for (auto con : conns) {
+		//this->removeConnection(con->id);
+		// removeConnection removes connection from nodeGraph, which is already done
+		// in nodeGraph->removeNode(node->nodeId),
+		// and emits a connection, which is not wanted
+		// so the socket removal logic is done nere (nick)
+		auto connection = this->getConnection(con->id);
+		auto socket1 = connection->socket1;
+		auto socket2 = connection->socket2;
+		socket1->removeConnection(connection);
+		socket2->removeConnection(connection);
+
+		this->removeItem(connection);
+	}
+
+	this->removeItem(node);
+}
+
 
 void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 {
@@ -417,7 +433,7 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 
 					con->pos2 = me->scenePos();
 					con->updatePath();
-					socketConnections.removeOne(con);
+					//socketConnections.removeOne(con);
 
 					views().at(0)->setDragMode(QGraphicsView::NoDrag);
 
@@ -498,7 +514,7 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 						con->socket2->addConnection(con);
 						con->updatePosFromSockets();
 						con->updatePath();
-						socketConnections.append(con);
+						//socketConnections.append(con);
 
 						// connect models too
 						if (nodeGraph != nullptr) {
@@ -572,9 +588,13 @@ SocketConnection* GraphNodeScene::getConnectionAt(float x, float y)
 
 SocketConnection* GraphNodeScene::getConnection(const QString& conId)
 {
-	for (auto con : socketConnections)
-		if (con->connectionId == conId)
-			return con;
+	auto items = this->items();
+	for (auto item : items) {
+		if (item && item->type() == (int)GraphicsItemType::Connection)
+			if (((SocketConnection*)item)->connectionId == conId)
+				return (SocketConnection*)item;
+	}
+
 	return nullptr;
 }
 
