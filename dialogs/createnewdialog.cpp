@@ -4,6 +4,7 @@
 #include "../shadergraphmainwindow.h"
 #include <QDebug>
 #include <QButtonGroup>
+#include <QGraphicsEffect>
 
 #include "../core/materialhelper.h"
 
@@ -373,14 +374,24 @@ OptionSelection::OptionSelection(NodeGraphPreset node) : QPushButton()
     setLayout(layout);
     auto label = new QLabel;
     auto name = new QLabel;
-    name->setAlignment(Qt::AlignCenter);
+    name->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
     name->setText(node.title);
     label->setPixmap(QPixmap(":/icons/icon.png"));
     label->setAlignment(Qt::AlignCenter);
 
+	auto font = name->font();
+	font.setWeight(65);
+	name->setFont(font);
+
+	QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
+	effect->setBlurRadius(15);
+	effect->setXOffset(0);
+	effect->setYOffset(1);
+	effect->setColor(QColor(0, 0, 0, 255));
+	name->setGraphicsEffect(effect);
+
     layout->addWidget(label);
     layout->addWidget(name);
-
 
     setStyleSheet("QPushButton{ background: #333; color: #DEDEDE; border : 0px; padding: 4px 16px; border-radius: 3px;}"
                   "QPushButton:hover{ background-color: #555; }"

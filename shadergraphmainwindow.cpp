@@ -105,8 +105,6 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
     }
     scene = newScene;
 
-
-
 	propertyListWidget->setNodeGraph(graph);
 	sceneWidget->setNodeGraph(graph);
 	sceneWidget->graphScene = newScene;
@@ -670,7 +668,7 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 		int i = 0;
 		for (auto prop : graph->properties) {
 			if (prop->type == PropertyType::Texture) {
-				auto graphTexture = TextureManager::getSingleton()->importTexture(preset.list.at(i));
+				auto graphTexture = TextureManager::getSingleton()->importTexture(MaterialHelper::assetPath(preset.list.at(i)));
 				prop->setValue(graphTexture->guid);
 				i++;
 			}
