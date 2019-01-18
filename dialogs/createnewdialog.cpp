@@ -5,6 +5,8 @@
 #include <QDebug>
 #include <QButtonGroup>
 
+#include "../core/materialhelper.h"
+
 CreateNewDialog::CreateNewDialog(bool maximized) : QDialog()
 {
 
@@ -305,20 +307,23 @@ QList<NodeGraphPreset> CreateNewDialog::getPresetList()
 	NodeGraphPreset graphPreset;
 	graphPreset.name = "Checker Board";
 	graphPreset.title = "Chacker Board";
-	graphPreset.templatePath = "";
-	graphPreset.iconPath = ":/icons/icon.ico";
+	graphPreset.templatePath = "checker.effect";
+	graphPreset.iconPath = "checkerThumb.png";
+	graphPreset.list.append("checker.jpg");
 	presetsList.append(graphPreset);
 
 	graphPreset.name = "Grass";
 	graphPreset.title = "Grass Template";
-	//graphPreset.templatePath = "assets/effect_template1.json";
-	graphPreset.iconPath = ":/icon/icon.ico";
+	graphPreset.templatePath = "grass.effect";
+	graphPreset.iconPath = "grassThumb.png";
+	graphPreset.list.append("grass.jpg");
 	presetsList.append(graphPreset);
 
 	graphPreset.name = "Gold";
 	graphPreset.title = "Gold Template";
-	//graphPreset.templatePath = "assets/effect_texture_template.json";
-	graphPreset.list.append("assets/grass.jpg");
+	graphPreset.templatePath = "gold.effect";
+	graphPreset.iconPath = "goldThumb.png";
+	//graphPreset.list.append("assets/grass.jpg");
 	presetsList.append(graphPreset);
 
 	return presetsList;
@@ -337,12 +342,13 @@ QList<NodeGraphPreset> CreateNewDialog::getStarterList()
 	graphPreset.name = "Basic";
 	graphPreset.title = "Basic Template";
     graphPreset.templatePath = "effect_template1.json";
-	graphPreset.iconPath = ":/icon/icon.ico";
+	graphPreset.iconPath = ":/icons/icon.ico";
 	list.append(graphPreset);
 
 	graphPreset.name = "Texture";
 	graphPreset.title = "Texture Template";
     graphPreset.templatePath = "effect_texture_template.json";
+	graphPreset.iconPath = "grass.jpg";
     graphPreset.list.append("grass.jpg");
 	list.append(graphPreset);
 
@@ -358,7 +364,7 @@ OptionSelection::OptionSelection(NodeGraphPreset node) : QPushButton()
 	info = node;
 
 	if (info.iconPath == "") setIcon(QIcon(info.iconPath));
-	else setIcon(QIcon(":/icons/icon.png"));
+	else setIcon(QIcon(MaterialHelper::assetPath(info.iconPath)));
 	setIconSize(QSize(120,120));
 	setCheckable(true);
 	setAutoExclusive(true);

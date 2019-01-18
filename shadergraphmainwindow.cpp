@@ -551,6 +551,7 @@ void MainWindow::configureAssetsDock()
 		item->setText(tile.name);
 		item->setSizeHint(defaultItemSize);
 		item->setTextAlignment(Qt::AlignBottom);
+		item->setIcon(QIcon(MaterialHelper::assetPath(tile.iconPath)));
 		presets->addToListWidget(item);
 	}
 
@@ -949,7 +950,10 @@ void MainWindow::configureToolbar()
 	connect(actionSave, &QAction::triggered, this, &MainWindow::saveShader);
 	connect(exportBtn, &QAction::triggered, this, &MainWindow::exportGraph);
 	connect(importBtn, &QAction::triggered, this, &MainWindow::importGraph);
-	connect(addBtn, &QAction::triggered, this, &MainWindow::createNewGraph);
+	//connect(addBtn, &QAction::triggered, this, &MainWindow::createNewGraph);
+	connect(addBtn, &QAction::triggered, this, [=]() {
+		createNewGraph(true);
+	});
 
 	toolBar->setStyleSheet(""
 		//"QToolBar{background: rgba(48,48,48, 1); border: .5px solid rgba(20,20,20, .8); border-bottom: 1px solid rgba(20,20,20, .8); padding: 0px;}"
@@ -1050,13 +1054,13 @@ void MainWindow::updateAssetDock()
 				item->setText(asset.name);
 				item->setFlags(item->flags() | Qt::ItemIsEditable);
 				item->setSizeHint(defaultItemSize);
-				item->setIcon(QIcon(":/icons/icons8-file-72.png"));
 				item->setTextAlignment( Qt::AlignHCenter | Qt::AlignBottom);
 
 				item->setData(Qt::UserRole, asset.name);
 				item->setData(Qt::DisplayRole, asset.name);
 				item->setData(MODEL_GUID_ROLE, asset.guid);
 				item->setData(MODEL_TYPE_ROLE, asset.type);
+				updateThumbnailImage(asset.thumbnail, item);
 				effects->addToListWidget(item);
 			}
 		}
@@ -1067,10 +1071,19 @@ void MainWindow::updateAssetDock()
 void MainWindow::updateThumbnailImage(QByteArray arr)
 {
 	auto img = QImage::fromData(arr, "PNG");
+	QUrl url("C:\\Users\\will\\Documents\\Studio\\build\\bin\\Debug\\app\\shadergraph\\thumb.png");
+	qDebug() << img.save(url.path()) << img;
 	auto pixmap = QPixmap::fromImage(img);
 	pixmap = pixmap.scaled(defaultItemSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-	//auto pixmap = QPixmap::fromImage(img.scaled(defaultItemSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
 	currentProjectShader->setIcon(QIcon(pixmap));
+}
+
+void MainWindow::updateThumbnailImage(QByteArray arr, QListWidgetItem *item)
+{
+	auto img = QImage::fromData(arr, "PNG");
+	auto pixmap = QPixmap::fromImage(img);
+	pixmap = pixmap.scaled(defaultItemSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+	item->setIcon(QIcon(pixmap));
 }
 
 void MainWindow::setAssetWidgetDatabase(Database * db)

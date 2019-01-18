@@ -92,6 +92,7 @@ private:
 	bool createNewGraph(bool loadNewGraph = true);
 	void updateAssetDock();
 	void updateThumbnailImage(QByteArray arr);
+	void updateThumbnailImage(QByteArray arr, QListWidgetItem *);
 
 	bool eventFilter(QObject *watched, QEvent *event);
 
