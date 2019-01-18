@@ -413,12 +413,6 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 		}
 		else if (me->button() == Qt::RightButton)
 		{
-
-			auto x = me->scenePos().x();
-			auto y = me->scenePos().y();
-			auto point = QPoint(x, y);
-//			auto menu = createContextMenu(x, y);
-
 			auto view = this->views().first();
 			auto scenePoint = view->mapFromScene(me->scenePos());
 			auto p = view->viewport()->mapToGlobal(scenePoint);

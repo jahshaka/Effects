@@ -143,6 +143,15 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 		this->close();
 	});
 
+	connect(nodeContainer, &ListWidget::itemDoubleClicked, [=](QListWidgetItem *item) {
+		scene->addNodeFromSearchDialog(nodeContainer->currentItem(), this->point);
+		this->close();
+	});
+	connect(propertyContainer, &ListWidget::itemDoubleClicked, [=](QListWidgetItem *item) {
+		scene->addNodeFromSearchDialog(propertyContainer->currentItem(), this->point);
+		this->close();
+	});
+
 	searchContainer->setStyleSheet("background:rgba(32,32,32,0);");
 	searchBar->setStyleSheet("QLineEdit{ background:rgba(41,41,41,1); border: 1px solid rgba(150,150,150,.2); border-radius: 1px; color: rgba(250,250,250,.95); padding: 6px;  }");
 
