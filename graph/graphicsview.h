@@ -4,11 +4,14 @@
 #include <QWidget>
 #include <QGraphicsView>
 
+class GraphNodeScene;
 class GraphicsView : public QGraphicsView
 {
 public:
     GraphicsView(QWidget *parent = Q_NULLPTR);
 	static qreal currentScale;
+
+	void setScene(GraphNodeScene *scene);
 
 private:
 	void increaseScale();
@@ -17,7 +20,10 @@ private:
 	bool dragging = false;
 	QPointF clickPos;
 	QFont font;
-	
+
+	GraphNodeScene *scene;
+
+	void addShortcuts();
 
 protected:
 	void dragEnterEvent(QDragEnterEvent *event) override;

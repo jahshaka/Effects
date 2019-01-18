@@ -51,6 +51,7 @@ public:
 	GraphNodeScene(QWidget* parent);
 	// model for scene
 	NodeGraph* nodeGraph;
+	GraphNode* selectedNode;
 	template<class nodeType>
 	GraphNode* createNode()
 	{
@@ -63,14 +64,18 @@ public:
 
 		return node;
 	}
+
 	SocketConnection* addConnection(QString leftNodeId, int leftSockIndex, QString rightNodeId, int rightSockIndex);
 	SocketConnection* removeConnection(SocketConnection* connection);
+	void removeConnection(const QString& conId);
 	SocketConnection* addConnection(Socket* leftCon, Socket* rightCon);
 
 
 	bool eventFilter(QObject *o, QEvent *e);
 	Socket* getSocketAt(float x, float y);
-	Socket* getConnectionAt(float x, float y);
+	SocketConnection* getConnectionAt(float x, float y);
+	SocketConnection* getConnection(const QString& conId);
+
 	GraphNode* getNodeById(QString id);
     QVector<GraphNode*> getNodes();
 	GraphNode* getNodeByPos(QPointF point);
@@ -92,14 +97,20 @@ public:
 
 	void setList(QList<QString> list) { loadedShadersGUID = list; }
 	void updatePropertyNodeTitle(QString title, QString propId);
-	void addNodeFromSearchDialog(QListWidgetItem* item, QPoint &);
+
+	void addNodeFromSearchDialog(QListWidgetItem* item);
+
+	void deleteSelectedNodes();
+
 protected:
 	void dropEvent(QGraphicsSceneDragDropEvent *event) override;
 	void drawBackground(QPainter *painter, const QRectF &rect);
 
 signals:
 	void newConnection(SocketConnection* connection);
+	// not emitted when a node is deleted
 	void connectionRemoved(SocketConnection* connection);
+	void nodeRemoved(SocketConnection* connection);
 	void nodeValueChanged(NodeModel* nodeModel, int socketIndex);
 	void loadGraph(QListWidgetItem *item);
 };

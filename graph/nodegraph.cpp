@@ -69,6 +69,36 @@ void NodeGraph::addNode(NodeModel *model)
 	nodes.insert(model->id, model);
 }
 
+NodeModel* NodeGraph::getNode(const QString& nodeId)
+{
+	return nodes[nodeId];
+}
+
+QVector<ConnectionModel*> NodeGraph::getNodeConnections(const QString& nodeId)
+{
+	auto node = getNode(nodeId);
+	QVector<ConnectionModel*> conns;
+
+	for (auto con : this->connections.values()) {
+		if (con->leftSocket->node == node || con->rightSocket->node == node) {
+			conns.append(con);
+		}
+	}
+
+	return conns;
+}
+
+void NodeGraph::removeNode(const QString& nodeId)
+{
+	auto conns = getNodeConnections(nodeId);
+
+	for (auto con : conns) {
+		removeConnection(con->id);
+	}
+
+	nodes.remove(nodeId);
+}
+
 void NodeGraph::setMasterNode(NodeModel *masterNode)
 {
 	this->masterNode = masterNode;

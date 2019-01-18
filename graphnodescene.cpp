@@ -7,6 +7,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QShortcut>
 
 #include <shadergraph/dialogs/searchdialog.h>
 
@@ -257,6 +258,36 @@ void GraphNodeScene::addNodeFromSearchDialog(QListWidgetItem * item, QPoint &poi
 	}
 }
 
+void GraphNodeScene::deleteSelectedNodes()
+{
+	// delete selected nodes
+	auto items = selectedItems();
+	QList<GraphNode*> nodes;
+
+	// gather all nodes
+	for (auto item : items) {
+		if (item->type() == (int)GraphicsItemType::Node) {
+			nodes.append(static_cast<GraphNode*>(item));
+		}
+	}
+
+	// remove each node's connections then remove the nodes
+	for (auto node : nodes) {
+		// remove in and out connections
+		auto conns = nodeGraph->getNodeConnections(node->nodeId);
+
+		// remove node from scenegraph
+		nodeGraph->removeNode(node->nodeId);
+
+		// remove them from scene
+		for (auto con : conns) {
+			this->removeConnection(con->id);
+		}
+		
+		this->removeItem(node);
+	}
+}
+
 void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 {
 
@@ -311,6 +342,7 @@ GraphNodeScene::GraphNodeScene(QWidget* parent) :
 	conGroup = new QGraphicsItemGroup;
 	addItem(conGroup);
 	
+	selectedNode = nullptr;
 }
 
 SocketConnection *GraphNodeScene::addConnection(QString leftNodeId, int leftSockIndex, QString rightNodeId, int rightSockIndex)
@@ -347,6 +379,11 @@ SocketConnection * GraphNodeScene::removeConnection(SocketConnection * connectio
 	return connection;
 }
 
+void GraphNodeScene::removeConnection(const QString& conId)
+{
+	auto con = getConnection(conId);
+	removeConnection(con);
+}
 
 bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 {
@@ -521,15 +558,23 @@ Socket* GraphNodeScene::getSocketAt(float x, float y)
 	return nullptr;
 }
 
-Socket* GraphNodeScene::getConnectionAt(float x, float y)
+SocketConnection* GraphNodeScene::getConnectionAt(float x, float y)
 {
 	auto items = this->items(QPointF(x, y));
 	//auto items = this->items();
 	for (auto item : items) {
 		if (item && item->type() == (int)GraphicsItemType::Connection)
-			return (Socket*)item;
+			return (SocketConnection*)item;
 	}
 
+	return nullptr;
+}
+
+SocketConnection* GraphNodeScene::getConnection(const QString& conId)
+{
+	for (auto con : socketConnections)
+		if (con->connectionId == conId)
+			return con;
 	return nullptr;
 }
 
@@ -569,4 +614,3 @@ GraphNode *GraphNodeScene::getNodeByPos(QPointF point)
 
 	return nullptr;
 }
-
