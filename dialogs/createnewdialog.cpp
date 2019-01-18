@@ -339,23 +339,23 @@ QList<NodeGraphPreset> CreateNewDialog::getStarterList()
 	QList<NodeGraphPreset> list;
 	graphPreset.name = "Default";
 	graphPreset.title = "Default Template";
-    graphPreset.templatePath = "effect_template1.json";
-	graphPreset.iconPath = ":/icons/icon.ico";
+    graphPreset.templatePath = "default.effect";
+	graphPreset.iconPath = "default.png";
 	list.append(graphPreset);
 	graphPreset.list.clear();
 
 	graphPreset.name = "Basic";
 	graphPreset.title = "Basic Template";
-    graphPreset.templatePath = "effect_template1.json";
-	graphPreset.iconPath = ":/icons/icon.ico";
+    graphPreset.templatePath = "basic.effect";
+	graphPreset.iconPath = "basic.png";
 	list.append(graphPreset);
 	graphPreset.list.clear();
 
 	graphPreset.name = "Texture";
 	graphPreset.title = "Texture Template";
-    graphPreset.templatePath = "effect_texture_template.json";
-	graphPreset.iconPath = "grass.jpg";
-    graphPreset.list.append("grass.jpg");
+    graphPreset.templatePath = "texture.effect";
+	graphPreset.iconPath = "texture.png";
+    graphPreset.list.append("wood.jpg");
 	list.append(graphPreset);
 	graphPreset.list.clear();
 

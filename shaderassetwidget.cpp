@@ -130,47 +130,7 @@ void ShaderAssetWidget::addItem(const AssetRecord & assetData)
 	item->setData(MODEL_ITEM_TYPE, MODEL_ASSET);
 	item->setData(MODEL_GUID_ROLE, assetData.guid);
 	item->setData(MODEL_PARENT_ROLE, assetData.parent);
-
-
-	QPixmap thumbnail;
-	if (thumbnail.loadFromData(assetData.thumbnail, "PNG")) {
-		item->setIcon(QIcon(thumbnail));
-	}
-	else {
-		item->setIcon(QIcon(":/icons/empty_object.png"));
-	}
-
-	if (assetData.type == static_cast<int>(ModelTypes::Texture)) {
-
-	}
-
-	if (assetData.type == static_cast<int>(ModelTypes::Shader)) {
-		item->setData(MODEL_TYPE_ROLE, assetData.type);
-		item->setIcon(QIcon(":/icons/icons8-file-72.png"));
-	}
-
-	if (assetData.type == static_cast<int>(ModelTypes::ParticleSystem)) {
-		item->setData(MODEL_TYPE_ROLE, assetData.type);
-		item->setIcon(QIcon(":/icons/icons8-file-72-ps.png"));
-	}
-
-	if (assetData.type == static_cast<int>(ModelTypes::File)) {
-		item->setData(MODEL_TYPE_ROLE, assetData.type);
-		// TODO - make this some generic value all assets can use
-		//item->setData(MODEL_MESH_ROLE, shaderAssetName.name);
-		item->setIcon(QIcon(":/icons/icons8-file-72-file.png"));
-	}
-
-	if (assetData.type == static_cast<int>(ModelTypes::Shader)) {
-		item->setData(MODEL_TYPE_ROLE, assetData.type);
-	}
-
-	if (assetData.type == static_cast<int>(ModelTypes::Object)) {
-		const QString meshAssetGuid =
-			db->getDependencyByType(static_cast<int>(ModelTypes::Mesh), assetData.guid);
-		item->setData(MODEL_TYPE_ROLE, assetData.type);
-		item->setData(MODEL_MESH_ROLE, db->fetchAsset(meshAssetGuid).name);
-	}
+	ListWidget::updateThumbnailImage(assetData.thumbnail, item);
 
 	item->setSizeHint(currentSize);
 	item->setTextAlignment(Qt::AlignCenter);
@@ -326,6 +286,7 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 		static_cast<int>(ModelTypes::Shader),
 		assetItemShader.selectedGuid);
 	db->updateAssetAsset(targetGuid, sourceData);
+	db->updateAssetThumbnail(targetGuid, db->fetchAsset(item->data(MODEL_GUID_ROLE).toString()).thumbnail);
 
 	// todo: create new item
 	assetViewWidget->addItem(item);

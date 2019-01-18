@@ -71,6 +71,14 @@ ListWidget::~ListWidget()
 {
 }
 
+void ListWidget::updateThumbnailImage(QByteArray arr, QListWidgetItem *item)
+{
+	auto img = QImage::fromData(arr, "PNG");
+	auto pixmap = QPixmap::fromImage(img);
+	pixmap = pixmap.scaled({ 90,90 }, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+	item->setIcon(QIcon(pixmap));
+}
+
 void ListWidget::displayAllContents()
 {
 	setGridSize(QSize(95, 95));

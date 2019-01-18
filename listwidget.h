@@ -24,7 +24,7 @@ public:
 	QSize itemSize;
 	int numberOfItemPerRow;
 	void addToListWidget(QListWidgetItem *item);
-
+	static void updateThumbnailImage(QByteArray arr, QListWidgetItem *item);
 private slots:
     void customContextMenu(QPoint pos);
 	

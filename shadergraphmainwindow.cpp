@@ -647,8 +647,7 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 	currentProjectShader = item;
 	oldName = newShader;
 
-	currentShaderInformation.GUID = assetGuid;
-	currentShaderInformation.name = newShader;
+	
 
 	//QStringList assetsInProject = dataBase->fetchAssetNameByParent(assetItemShader.selectedGuid);
 
@@ -667,6 +666,8 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 		loadGraphFromTemplate(preset);
 	}else	setNodeGraph(graph);
 	
+	currentShaderInformation.GUID = assetGuid;
+	currentShaderInformation.name = newShader;
 	regenerateShader();
 
 
@@ -687,6 +688,7 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 
 void MainWindow::loadGraphFromTemplate(NodeGraphPreset preset)
 {
+	currentShaderInformation.GUID = "";
 	auto graph = importGraphFromFilePath(MaterialHelper::assetPath(preset.templatePath), false);
 	int i = 0;
 	for (auto prop : graph->properties) {
@@ -1073,7 +1075,7 @@ void MainWindow::updateAssetDock()
 void MainWindow::updateThumbnailImage(QByteArray arr)
 {
 	auto img = QImage::fromData(arr, "PNG");
-	QUrl url("C:\\Users\\will\\Documents\\Studio\\build\\bin\\Debug\\app\\shadergraph\\thumb.png");
+	QUrl url("C:\\Users\\W\\Documents\\Studio\\build\\bin\\Debug\\app\\shadergraph\\thumb.png");
 	qDebug() << img.save(url.path()) << img;
 	auto pixmap = QPixmap::fromImage(img);
 	pixmap = pixmap.scaled(defaultItemSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
@@ -1084,7 +1086,7 @@ void MainWindow::updateThumbnailImage(QByteArray arr, QListWidgetItem *item)
 {
 	auto img = QImage::fromData(arr, "PNG");
 	auto pixmap = QPixmap::fromImage(img);
-	pixmap = pixmap.scaled(defaultItemSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+	pixmap = pixmap.scaled({90,90}, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 	item->setIcon(QIcon(pixmap));
 }
 
