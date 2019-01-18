@@ -312,6 +312,7 @@ QList<NodeGraphPreset> CreateNewDialog::getPresetList()
 	graphPreset.iconPath = "checkerThumb.png";
 	graphPreset.list.append("checker.jpg");
 	presetsList.append(graphPreset);
+	graphPreset.list.clear();
 
 	graphPreset.name = "Grass";
 	graphPreset.title = "Grass Template";
@@ -319,6 +320,7 @@ QList<NodeGraphPreset> CreateNewDialog::getPresetList()
 	graphPreset.iconPath = "grassThumb.png";
 	graphPreset.list.append("grass.jpg");
 	presetsList.append(graphPreset);
+	graphPreset.list.clear();
 
 	graphPreset.name = "Gold";
 	graphPreset.title = "Gold Template";
@@ -326,6 +328,7 @@ QList<NodeGraphPreset> CreateNewDialog::getPresetList()
 	graphPreset.iconPath = "goldThumb.png";
 	//graphPreset.list.append("assets/grass.jpg");
 	presetsList.append(graphPreset);
+	graphPreset.list.clear();
 
 	return presetsList;
 }
@@ -339,12 +342,14 @@ QList<NodeGraphPreset> CreateNewDialog::getStarterList()
     graphPreset.templatePath = "effect_template1.json";
 	graphPreset.iconPath = ":/icons/icon.ico";
 	list.append(graphPreset);
+	graphPreset.list.clear();
 
 	graphPreset.name = "Basic";
 	graphPreset.title = "Basic Template";
     graphPreset.templatePath = "effect_template1.json";
 	graphPreset.iconPath = ":/icons/icon.ico";
 	list.append(graphPreset);
+	graphPreset.list.clear();
 
 	graphPreset.name = "Texture";
 	graphPreset.title = "Texture Template";
@@ -352,6 +357,7 @@ QList<NodeGraphPreset> CreateNewDialog::getStarterList()
 	graphPreset.iconPath = "grass.jpg";
     graphPreset.list.append("grass.jpg");
 	list.append(graphPreset);
+	graphPreset.list.clear();
 
 	return list;
 }

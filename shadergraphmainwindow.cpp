@@ -177,7 +177,7 @@ void MainWindow::saveShader()
 void MainWindow::saveDefaultShader()
 {
 	bool shouldSaveGraph = createNewGraph(false);
-	if(shouldSaveGraph) saveShader();
+//	if(shouldSaveGraph) saveShader();
 }
 
 void MainWindow::loadShadersFromDisk()
@@ -664,17 +664,7 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 
 	propertyListWidget->clearPropertyList();
 	if (loadNewGraph) {
-		auto graph = importGraphFromFilePath(MaterialHelper::assetPath(preset.templatePath), false);
-		int i = 0;
-		for (auto prop : graph->properties) {
-			if (prop->type == PropertyType::Texture) {
-				auto graphTexture = TextureManager::getSingleton()->importTexture(MaterialHelper::assetPath(preset.list.at(i)));
-				prop->setValue(graphTexture->guid);
-				i++;
-			}
-		}
-		graph->settings.name = newShader;
-		setNodeGraph(graph);
+		loadGraphFromTemplate(preset);
 	}else	setNodeGraph(graph);
 	
 	regenerateShader();
@@ -692,8 +682,22 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 	dataBase->updateAssetAsset(assetGuid, QJsonDocument(shaderDefinition).toBinaryData());
 	AssetManager::addAsset(assetShader);
 #endif
-	
 	saveShader();
+}
+
+void MainWindow::loadGraphFromTemplate(NodeGraphPreset preset)
+{
+	auto graph = importGraphFromFilePath(MaterialHelper::assetPath(preset.templatePath), false);
+	int i = 0;
+	for (auto prop : graph->properties) {
+		if (prop->type == PropertyType::Texture) {
+			auto graphTexture = TextureManager::getSingleton()->importTexture(MaterialHelper::assetPath(preset.list.at(i)));
+			prop->setValue(graphTexture->guid);
+			i++;
+		}
+	}
+	graph->settings.name = preset.name;
+	setNodeGraph(graph);
 }
 
 void MainWindow::setCurrentShaderItem()
@@ -1289,7 +1293,14 @@ void MainWindow::configureConnections()
         pressedShaderInfo.GUID = item->data(MODEL_GUID_ROLE).toString();
     });
 
+	connect(presets, &QListWidget::itemDoubleClicked, [=](QListWidgetItem *item) {
+		for (auto preset : CreateNewDialog::getPresetList()) {
+			if (item->data(Qt::DisplayRole).toString() == preset.name) {
+				loadGraphFromTemplate(preset);
+			}
+		}
 
+	});
 
     QShortcut *shortcut = new QShortcut(QKeySequence("space"), this);
     connect(shortcut, &QShortcut::activated, [=]() {
