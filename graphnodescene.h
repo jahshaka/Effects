@@ -98,7 +98,7 @@ public:
 	void setList(QList<QString> list) { loadedShadersGUID = list; }
 	void updatePropertyNodeTitle(QString title, QString propId);
 
-	void addNodeFromSearchDialog(QListWidgetItem* item);
+	void addNodeFromSearchDialog(QListWidgetItem* item, const QPoint& point);
 
 	void deleteSelectedNodes();
 	void deleteNode(GraphNode* node);

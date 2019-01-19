@@ -228,7 +228,7 @@ void GraphNodeScene::updatePropertyNodeTitle(QString title, QString propId)
 	
 }
 
-void GraphNodeScene::addNodeFromSearchDialog(QListWidgetItem * item, QPoint &point)
+void GraphNodeScene::addNodeFromSearchDialog(QListWidgetItem * item, const QPoint &point)
 {
 	auto view = this->views().first();
 	auto viewPoint = view->viewport()->mapFromGlobal(point);
