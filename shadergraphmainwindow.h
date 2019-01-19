@@ -91,6 +91,8 @@ private:
 	void setNodeLibraryItem(QListWidgetItem *item, NodeLibraryItem *tile);
 	bool createNewGraph(bool loadNewGraph = true);
 	void updateAssetDock();
+	void updateThumbnailImage(QByteArray arr);
+	static void updateThumbnailImage(QByteArray arr, QListWidgetItem *);
 
 	bool eventFilter(QObject *watched, QEvent *event);
 
@@ -98,6 +100,7 @@ private:
 	void configureProjectDock();
 	void configureAssetsDock();
 	void createShader(NodeGraphPreset preset, bool loadNewGraph = true);
+	void loadGraphFromTemplate(NodeGraphPreset preset);
 	void setCurrentShaderItem();
 	QByteArray fetchAsset(QString string);
 

@@ -21,6 +21,8 @@
 #include <QMimeData>
 #include <QFile>
 #include <QByteArray>
+#include <QBuffer>
+#include <QPixmap>
 #include <QScrollBar>
 #include <QShortcut>
 #include "generator/shadergenerator.h"
@@ -103,8 +105,6 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
     }
     scene = newScene;
 
-
-
 	propertyListWidget->setNodeGraph(graph);
 	sceneWidget->setNodeGraph(graph);
 	sceneWidget->graphScene = newScene;
@@ -148,8 +148,15 @@ void MainWindow::saveShader()
 	doc.setObject(matObj);
 	QString data = doc.toJson();
 
+	//take screenshot and save it to bytearray
+	QByteArray arr;
+	QBuffer buffer(&arr);
+	buffer.open(QIODevice::WriteOnly);
+	sceneWidget->takeScreenshot(512, 512).save(&buffer, "PNG");
+
 #if(EFFECT_BUILD_AS_LIB)
 	dataBase->updateAssetAsset(currentShaderInformation.GUID, doc.toBinaryData());
+	dataBase->updateAssetThumbnail(currentShaderInformation.GUID, arr);
 #else
 
 	auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/");
@@ -163,12 +170,14 @@ void MainWindow::saveShader()
 		qDebug() << "device not open";
 	}
 #endif
+
+	updateThumbnailImage(arr);
 }
 
 void MainWindow::saveDefaultShader()
 {
 	bool shouldSaveGraph = createNewGraph(false);
-	if(shouldSaveGraph) saveShader();
+//	if(shouldSaveGraph) saveShader();
 }
 
 void MainWindow::loadShadersFromDisk()
@@ -540,6 +549,7 @@ void MainWindow::configureAssetsDock()
 		item->setText(tile.name);
 		item->setSizeHint(defaultItemSize);
 		item->setTextAlignment(Qt::AlignBottom);
+		item->setIcon(QIcon(MaterialHelper::assetPath(tile.iconPath)));
 		presets->addToListWidget(item);
 	}
 
@@ -637,8 +647,7 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 	currentProjectShader = item;
 	oldName = newShader;
 
-	currentShaderInformation.GUID = assetGuid;
-	currentShaderInformation.name = newShader;
+	
 
 	//QStringList assetsInProject = dataBase->fetchAssetNameByParent(assetItemShader.selectedGuid);
 
@@ -654,19 +663,11 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 
 	propertyListWidget->clearPropertyList();
 	if (loadNewGraph) {
-		auto graph = importGraphFromFilePath(MaterialHelper::assetPath(preset.templatePath), false);
-		int i = 0;
-		for (auto prop : graph->properties) {
-			if (prop->type == PropertyType::Texture) {
-				auto graphTexture = TextureManager::getSingleton()->importTexture(preset.list.at(i));
-				prop->setValue(graphTexture->guid);
-				i++;
-			}
-		}
-		graph->settings.name = newShader;
-		setNodeGraph(graph);
+		loadGraphFromTemplate(preset);
 	}else	setNodeGraph(graph);
 	
+	currentShaderInformation.GUID = assetGuid;
+	currentShaderInformation.name = newShader;
 	regenerateShader();
 
 
@@ -682,8 +683,23 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 	dataBase->updateAssetAsset(assetGuid, QJsonDocument(shaderDefinition).toBinaryData());
 	AssetManager::addAsset(assetShader);
 #endif
-	
 	saveShader();
+}
+
+void MainWindow::loadGraphFromTemplate(NodeGraphPreset preset)
+{
+	currentShaderInformation.GUID = "";
+	auto graph = importGraphFromFilePath(MaterialHelper::assetPath(preset.templatePath), false);
+	int i = 0;
+	for (auto prop : graph->properties) {
+		if (prop->type == PropertyType::Texture) {
+			auto graphTexture = TextureManager::getSingleton()->importTexture(MaterialHelper::assetPath(preset.list.at(i)));
+			prop->setValue(graphTexture->guid);
+			i++;
+		}
+	}
+	graph->settings.name = preset.name;
+	setNodeGraph(graph);
 }
 
 void MainWindow::setCurrentShaderItem()
@@ -938,7 +954,10 @@ void MainWindow::configureToolbar()
 	connect(actionSave, &QAction::triggered, this, &MainWindow::saveShader);
 	connect(exportBtn, &QAction::triggered, this, &MainWindow::exportGraph);
 	connect(importBtn, &QAction::triggered, this, &MainWindow::importGraph);
-	connect(addBtn, &QAction::triggered, this, &MainWindow::createNewGraph);
+	//connect(addBtn, &QAction::triggered, this, &MainWindow::createNewGraph);
+	connect(addBtn, &QAction::triggered, this, [=]() {
+		createNewGraph(true);
+	});
 
 	toolBar->setStyleSheet(""
 		//"QToolBar{background: rgba(48,48,48, 1); border: .5px solid rgba(20,20,20, .8); border-bottom: 1px solid rgba(20,20,20, .8); padding: 0px;}"
@@ -1039,18 +1058,36 @@ void MainWindow::updateAssetDock()
 				item->setText(asset.name);
 				item->setFlags(item->flags() | Qt::ItemIsEditable);
 				item->setSizeHint(defaultItemSize);
-				item->setIcon(QIcon(":/icons/icons8-file-72.png"));
 				item->setTextAlignment( Qt::AlignHCenter | Qt::AlignBottom);
 
 				item->setData(Qt::UserRole, asset.name);
 				item->setData(Qt::DisplayRole, asset.name);
 				item->setData(MODEL_GUID_ROLE, asset.guid);
 				item->setData(MODEL_TYPE_ROLE, asset.type);
+				updateThumbnailImage(asset.thumbnail, item);
 				effects->addToListWidget(item);
 			}
 		}
 #endif
 
+}
+
+void MainWindow::updateThumbnailImage(QByteArray arr)
+{
+	auto img = QImage::fromData(arr, "PNG");
+	QUrl url("C:\\Users\\W\\Documents\\Studio\\build\\bin\\Debug\\app\\shadergraph\\thumb.png");
+	qDebug() << img.save(url.path()) << img;
+	auto pixmap = QPixmap::fromImage(img);
+	pixmap = pixmap.scaled(defaultItemSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+	currentProjectShader->setIcon(QIcon(pixmap));
+}
+
+void MainWindow::updateThumbnailImage(QByteArray arr, QListWidgetItem *item)
+{
+	auto img = QImage::fromData(arr, "PNG");
+	auto pixmap = QPixmap::fromImage(img);
+	pixmap = pixmap.scaled({90,90}, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+	item->setIcon(QIcon(pixmap));
 }
 
 void MainWindow::setAssetWidgetDatabase(Database * db)
@@ -1258,11 +1295,18 @@ void MainWindow::configureConnections()
         pressedShaderInfo.GUID = item->data(MODEL_GUID_ROLE).toString();
     });
 
+	connect(presets, &QListWidget::itemDoubleClicked, [=](QListWidgetItem *item) {
+		for (auto preset : CreateNewDialog::getPresetList()) {
+			if (item->data(Qt::DisplayRole).toString() == preset.name) {
+				loadGraphFromTemplate(preset);
+			}
+		}
 
+	});
 
-    QShortcut *shortcut = new QShortcut(QKeySequence("f"), this);
+    QShortcut *shortcut = new QShortcut(QKeySequence("space"), this);
     connect(shortcut, &QShortcut::activated, [=]() {
-        auto dialog = new SearchDialog(this->graph, scene);
+		auto dialog = new SearchDialog(this->graph, scene, {0,0});
         dialog->exec();
 	});
 

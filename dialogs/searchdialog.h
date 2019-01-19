@@ -11,7 +11,7 @@ class SearchDialog : public QDialog
 {
 	Q_OBJECT
 public:
-	SearchDialog(NodeGraph *graph, GraphNodeScene* scene);
+	SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point);
 	~SearchDialog();
 
     ListWidget* nodeContainer;
@@ -22,6 +22,7 @@ public:
 	int index = 0;
 
 	QLineEdit *searchBar;
+	QPoint point;
 
 protected:
 	void leaveEvent(QEvent *event) override;

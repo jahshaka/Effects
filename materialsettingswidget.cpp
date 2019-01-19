@@ -184,8 +184,6 @@ void MaterialSettingsWidget::setMaterialSettings(MaterialSettings* settings)
 	setRenderLayer(settings->renderLayer);
     this->settings = *settings;
 	setConnections();
-
-
 }
 
 

@@ -4,6 +4,9 @@
 #include "../shadergraphmainwindow.h"
 #include <QDebug>
 #include <QButtonGroup>
+#include <QGraphicsEffect>
+
+#include "../core/materialhelper.h"
 
 CreateNewDialog::CreateNewDialog(bool maximized) : QDialog()
 {
@@ -305,21 +308,27 @@ QList<NodeGraphPreset> CreateNewDialog::getPresetList()
 	NodeGraphPreset graphPreset;
 	graphPreset.name = "Checker Board";
 	graphPreset.title = "Chacker Board";
-	graphPreset.templatePath = "";
-	graphPreset.iconPath = ":/icons/icon.ico";
+	graphPreset.templatePath = "checker.effect";
+	graphPreset.iconPath = "checkerThumb.png";
+	graphPreset.list.append("checker.jpg");
 	presetsList.append(graphPreset);
+	graphPreset.list.clear();
 
 	graphPreset.name = "Grass";
 	graphPreset.title = "Grass Template";
-	//graphPreset.templatePath = "assets/effect_template1.json";
-	graphPreset.iconPath = ":/icon/icon.ico";
+	graphPreset.templatePath = "grass.effect";
+	graphPreset.iconPath = "grassThumb.png";
+	graphPreset.list.append("grass.jpg");
 	presetsList.append(graphPreset);
+	graphPreset.list.clear();
 
 	graphPreset.name = "Gold";
 	graphPreset.title = "Gold Template";
-	//graphPreset.templatePath = "assets/effect_texture_template.json";
-	graphPreset.list.append("assets/grass.jpg");
+	graphPreset.templatePath = "gold.effect";
+	graphPreset.iconPath = "goldThumb.png";
+	//graphPreset.list.append("assets/grass.jpg");
 	presetsList.append(graphPreset);
+	graphPreset.list.clear();
 
 	return presetsList;
 }
@@ -330,21 +339,25 @@ QList<NodeGraphPreset> CreateNewDialog::getStarterList()
 	QList<NodeGraphPreset> list;
 	graphPreset.name = "Default";
 	graphPreset.title = "Default Template";
-    graphPreset.templatePath = "effect_template1.json";
-	graphPreset.iconPath = ":/icons/icon.ico";
+    graphPreset.templatePath = "default.effect";
+	graphPreset.iconPath = "default.png";
 	list.append(graphPreset);
+	graphPreset.list.clear();
 
 	graphPreset.name = "Basic";
 	graphPreset.title = "Basic Template";
-    graphPreset.templatePath = "effect_template1.json";
-	graphPreset.iconPath = ":/icon/icon.ico";
+    graphPreset.templatePath = "basic.effect";
+	graphPreset.iconPath = "basic.png";
 	list.append(graphPreset);
+	graphPreset.list.clear();
 
 	graphPreset.name = "Texture";
 	graphPreset.title = "Texture Template";
-    graphPreset.templatePath = "effect_texture_template.json";
-    graphPreset.list.append("grass.jpg");
+    graphPreset.templatePath = "texture.effect";
+	graphPreset.iconPath = "texture.png";
+    graphPreset.list.append("wood.jpg");
 	list.append(graphPreset);
+	graphPreset.list.clear();
 
 	return list;
 }
@@ -358,7 +371,7 @@ OptionSelection::OptionSelection(NodeGraphPreset node) : QPushButton()
 	info = node;
 
 	if (info.iconPath == "") setIcon(QIcon(info.iconPath));
-	else setIcon(QIcon(":/icons/icon.png"));
+	else setIcon(QIcon(MaterialHelper::assetPath(info.iconPath)));
 	setIconSize(QSize(120,120));
 	setCheckable(true);
 	setAutoExclusive(true);
@@ -367,14 +380,24 @@ OptionSelection::OptionSelection(NodeGraphPreset node) : QPushButton()
     setLayout(layout);
     auto label = new QLabel;
     auto name = new QLabel;
-    name->setAlignment(Qt::AlignCenter);
+    name->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
     name->setText(node.title);
     label->setPixmap(QPixmap(":/icons/icon.png"));
     label->setAlignment(Qt::AlignCenter);
 
+	auto font = name->font();
+	font.setWeight(65);
+	name->setFont(font);
+
+	QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
+	effect->setBlurRadius(15);
+	effect->setXOffset(0);
+	effect->setYOffset(1);
+	effect->setColor(QColor(0, 0, 0, 255));
+	name->setGraphicsEffect(effect);
+
     layout->addWidget(label);
     layout->addWidget(name);
-
 
     setStyleSheet("QPushButton{ background: #333; color: #DEDEDE; border : 0px; padding: 4px 16px; border-radius: 3px;}"
                   "QPushButton:hover{ background-color: #555; }"

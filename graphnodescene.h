@@ -92,7 +92,7 @@ public:
 
 	void setList(QList<QString> list) { loadedShadersGUID = list; }
 	void updatePropertyNodeTitle(QString title, QString propId);
-	void addNodeFromSearchDialog(QListWidgetItem* item);
+	void addNodeFromSearchDialog(QListWidgetItem* item, QPoint &);
 protected:
 	void dropEvent(QGraphicsSceneDragDropEvent *event) override;
 	void drawBackground(QPainter *painter, const QRectF &rect);

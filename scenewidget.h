@@ -22,6 +22,8 @@ class SceneWidget : public iris::RenderWidget
     iris::Texture2DPtr tex;
 
     iris::CameraNodePtr cam;
+	int viewportWidth, viewportHeight;
+	QColor clearColor;
 
 	// template files
     QString vertString;
@@ -76,6 +78,8 @@ public:
 	iris::Texture2DPtr screenshotTex;
 	iris::RenderTargetPtr screenshotRT;
 	QImage takeScreenshot(int width, int height);
+
+	void resizeEvent(QResizeEvent* evt);
 
 public slots:
 	void setMaterialSettings(MaterialSettings settings);
