@@ -6,12 +6,12 @@
 #include <QMimeData>
 #include <QPainter>
 #include <QtMath>
+#include <QShortcut>
+#include "shadergraph/graphnodescene.h"
 
 qreal GraphicsView::currentScale = 1.0;
 GraphicsView::GraphicsView( QWidget *parent) : QGraphicsView(parent)
 {
-	
-
 	setAcceptDrops(true);
 	setRenderHint(QPainter::Antialiasing);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -24,6 +24,8 @@ GraphicsView::GraphicsView( QWidget *parent) : QGraphicsView(parent)
 	setDragMode(QGraphicsView::RubberBandDrag);
 
 	QGraphicsView::setAcceptDrops(true);
+
+	addShortcuts();
 }
 
 void GraphicsView::increaseScale()
@@ -159,4 +161,21 @@ void GraphicsView::mouseMoveEvent(QMouseEvent * event)
 	
 	}
 
+}
+
+void GraphicsView::addShortcuts()
+{
+	auto deleteShortcut = new QShortcut(this);
+	deleteShortcut->setKey(Qt::Key_Delete);
+	connect(deleteShortcut, &QShortcut::activated, [this]()
+	{
+		this->scene->deleteSelectedNodes();
+		this->repaint();
+	});
+}
+
+void GraphicsView::setScene(GraphNodeScene * scene)
+{
+	this->scene = scene;
+	QGraphicsView::setScene((QGraphicsScene*)scene);
 }

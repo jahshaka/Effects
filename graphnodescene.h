@@ -51,6 +51,7 @@ public:
 	GraphNodeScene(QWidget* parent);
 	// model for scene
 	NodeGraph* nodeGraph;
+	GraphNode* selectedNode;
 	template<class nodeType>
 	GraphNode* createNode()
 	{
@@ -63,18 +64,22 @@ public:
 
 		return node;
 	}
+
 	SocketConnection* addConnection(QString leftNodeId, int leftSockIndex, QString rightNodeId, int rightSockIndex);
-	SocketConnection* removeConnection(SocketConnection* connection);
+	SocketConnection* removeConnection(SocketConnection* connection, bool removeFromNodeGraph = true, bool emitSignal = true);
+	void removeConnection(const QString& conId, bool removeFromNodeGraph = true, bool emitSignal = true);
 	SocketConnection* addConnection(Socket* leftCon, Socket* rightCon);
 
 
 	bool eventFilter(QObject *o, QEvent *e);
 	Socket* getSocketAt(float x, float y);
-	Socket* getConnectionAt(float x, float y);
+	SocketConnection* getConnectionAt(float x, float y);
+	SocketConnection* getConnection(const QString& conId);
+
 	GraphNode* getNodeById(QString id);
     QVector<GraphNode*> getNodes();
 	GraphNode* getNodeByPos(QPointF point);
-	QVector<SocketConnection*> socketConnections;
+	//QVector<SocketConnection*> socketConnections;
 	NodeGraph *getNodeGraph() const;
 	GraphNode* getNodeByPropertyId(QString id);
 	void refreshNodeTitle(QString id);
@@ -92,16 +97,33 @@ public:
 
 	void setList(QList<QString> list) { loadedShadersGUID = list; }
 	void updatePropertyNodeTitle(QString title, QString propId);
-	void addNodeFromSearchDialog(QListWidgetItem* item, QPoint &);
+
+	void addNodeFromSearchDialog(QListWidgetItem* item, const QPoint& point);
+
+	void deleteSelectedNodes();
+	void deleteNode(GraphNode* node);
+
+	bool areSocketsComptible(Socket* outSock, Socket* inSock);
+
 protected:
 	void dropEvent(QGraphicsSceneDragDropEvent *event) override;
 	void drawBackground(QPainter *painter, const QRectF &rect);
 
 signals:
 	void newConnection(SocketConnection* connection);
+	// not emitted when a node is deleted
 	void connectionRemoved(SocketConnection* connection);
+	void nodeRemoved(GraphNode* connection);
 	void nodeValueChanged(NodeModel* nodeModel, int socketIndex);
 	void loadGraph(QListWidgetItem *item);
+
+	// called whenever something is done that should cause the shader
+	// to be invalidated such as:
+	// adding a connection
+	// removing a connection
+	// deleting a node
+	// changing a value
+	void graphInvalidated();
 };
 
 

@@ -99,7 +99,7 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
 	graphicsView->setAcceptDrops(true);
     newScene->setNodeGraph(graph);
 
-    // delet old scene and reassign new scene
+    // delete old scene and reassign new scene
     if (scene) {
         scene->deleteLater();
     }
@@ -1166,69 +1166,26 @@ GraphNodeScene *MainWindow::createNewScene()
     auto scene = new GraphNodeScene(this);
     scene->setBackgroundBrush(QBrush(QColor(60, 60, 60)));
 
+	connect(scene, &GraphNodeScene::graphInvalidated, [this, scene]()
+	{
+		regenerateShader();
+	});
+	/*
     connect(scene, &GraphNodeScene::newConnection, [this, scene](SocketConnection* connection)
     {
-        auto graph = scene->getNodeGraph();
-        ShaderGenerator shaderGen;
-		shaderGen.generateShader(graph);
-		auto code = shaderGen.getFragmentShader();
-
-        textEdit->setPlainText(code);
-		sceneWidget->setVertexShader(shaderGen.getVertexShader());
-		sceneWidget->setFragmentShader(shaderGen.getFragmentShader());
-		sceneWidget->updateShader();
-        sceneWidget->resetRenderTime();
-
-		// assign previews
-		auto nodes = scene->getNodes();
-		for (auto node : nodes) {
-			if (shaderGen.shaderPreviews.contains(node->nodeId))
-				node->setPreviewShader(shaderGen.shaderPreviews[node->nodeId]);
-		}
-
+		regenerateShader();
     });
 	
 	connect(scene, &GraphNodeScene::connectionRemoved, [this, scene](SocketConnection* connection)
     {
-        auto graph = scene->getNodeGraph();
-        ShaderGenerator shaderGen;
-		shaderGen.generateShader(graph);
-		auto code = shaderGen.getFragmentShader();
-
-        textEdit->setPlainText(code);
-		sceneWidget->setVertexShader(shaderGen.getVertexShader());
-		sceneWidget->setFragmentShader(shaderGen.getFragmentShader());
-		sceneWidget->updateShader();
-        sceneWidget->resetRenderTime();
-
-		// assign previews
-		auto nodes = scene->getNodes();
-		for (auto node : nodes) {
-			if (shaderGen.shaderPreviews.contains(node->nodeId))
-				node->setPreviewShader(shaderGen.shaderPreviews[node->nodeId]);
-		}
+		regenerateShader();
     });
 
     connect(scene, &GraphNodeScene::nodeValueChanged, [this, scene](NodeModel* model, int index)
     {
-        auto graph = scene->getNodeGraph();
-        ShaderGenerator shaderGen;
-		shaderGen.generateShader(graph);
-		auto code = shaderGen.getFragmentShader();
-
-        textEdit->setPlainText(code);
-		sceneWidget->setVertexShader(shaderGen.getVertexShader());
-		sceneWidget->setFragmentShader(shaderGen.getFragmentShader());
-		sceneWidget->updateShader();
-        sceneWidget->resetRenderTime();
-
-		// assign previews
-		auto nodes = scene->getNodes();
-		for (auto node : nodes) {
-			if (shaderGen.shaderPreviews.contains(node->nodeId))
-				node->setPreviewShader(shaderGen.shaderPreviews[node->nodeId]);
-		}
+		regenerateShader();
     });
+	*/
 
 	connect(scene, &GraphNodeScene::loadGraph, [=](QListWidgetItem *item) {
 		currentShaderInformation.name = item->data(Qt::DisplayRole).toString();

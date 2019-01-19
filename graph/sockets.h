@@ -25,6 +25,16 @@ public:
 	{
 		return new FloatSocketModel(name);
 	}
+
+	virtual bool canConvertTo(SocketModel* other)
+	{
+		if (other->typeName == "float" ||
+			other->typeName == "vec2" ||
+			other->typeName == "vec3" ||
+			other->typeName == "vec4")
+			return true;
+		return false;
+	}
 };
 
 class Vector2SocketModel : public SocketModel
@@ -46,6 +56,16 @@ public:
 	{
 		return new Vector2SocketModel(name);
 	}
+
+	virtual bool canConvertTo(SocketModel* other)
+	{
+		if (other->typeName == "float" ||
+			other->typeName == "vec2" ||
+			other->typeName == "vec3" ||
+			other->typeName == "vec4")
+			return true;
+		return false;
+	}
 };
 
 class Vector3SocketModel : public SocketModel
@@ -61,6 +81,16 @@ public:
 	QString convertVarTo(SocketModel* toModel)
 	{
 		return SocketHelper::convertVectorValue(varName, this, toModel);
+	}
+
+	virtual bool canConvertTo(SocketModel* other)
+	{
+		if (other->typeName == "float" ||
+			other->typeName == "vec2" ||
+			other->typeName == "vec3" ||
+			other->typeName == "vec4")
+			return true;
+		return false;
 	}
 
 	virtual SocketModel* duplicate()
@@ -101,6 +131,8 @@ public:
 
 	virtual bool canConvertTo(SocketModel* other)
 	{
+		if (other->typeName == "texture")
+			return true;
 		return false;
 	}
 

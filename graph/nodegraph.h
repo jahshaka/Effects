@@ -72,6 +72,9 @@ public:
 	void setNodeLibrary(NodeLibrary* lib);
 
 	void addNode(NodeModel* model);
+	NodeModel* getNode(const QString& nodeId);
+	QVector<ConnectionModel*> getNodeConnections(const QString& nodeId);
+	void removeNode(const QString& nodeId);
 
 	// master node must already be added as a node
 	void setMasterNode(NodeModel* masterNode);
