@@ -82,6 +82,9 @@ public:
 	QColor setNodeTitleColor();
 	void setNodeType(NodeType type);
 
+	// gets socket from both in and out sockets
+	// return nullptr if sockets isnt found
+	SocketModel* getSocketById(const QString& sockId);
 
 	virtual QJsonValue serializeWidgetValue(int widgetIndex = 0)
 	{

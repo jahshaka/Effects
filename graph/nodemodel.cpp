@@ -158,3 +158,16 @@ void NodeModel::setNodeType(NodeType type)
 	emit titleColorChanged();
 
 }
+
+SocketModel* NodeModel::getSocketById(const QString& sockId)
+{
+	for (auto sock : inSockets)
+		if (sock->id == sockId)
+			return sock;
+
+	for (auto sock : outSockets)
+		if (sock->id == sockId)
+			return sock;
+
+	return nullptr;
+}

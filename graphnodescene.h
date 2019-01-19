@@ -66,8 +66,8 @@ public:
 	}
 
 	SocketConnection* addConnection(QString leftNodeId, int leftSockIndex, QString rightNodeId, int rightSockIndex);
-	SocketConnection* removeConnection(SocketConnection* connection);
-	void removeConnection(const QString& conId);
+	SocketConnection* removeConnection(SocketConnection* connection, bool removeFromNodeGraph = true, bool emitSignal = true);
+	void removeConnection(const QString& conId, bool removeFromNodeGraph = true, bool emitSignal = true);
 	SocketConnection* addConnection(Socket* leftCon, Socket* rightCon);
 
 
@@ -103,6 +103,8 @@ public:
 	void deleteSelectedNodes();
 	void deleteNode(GraphNode* node);
 
+	bool areSocketsComptible(Socket* outSock, Socket* inSock);
+
 protected:
 	void dropEvent(QGraphicsSceneDragDropEvent *event) override;
 	void drawBackground(QPainter *painter, const QRectF &rect);
@@ -111,9 +113,17 @@ signals:
 	void newConnection(SocketConnection* connection);
 	// not emitted when a node is deleted
 	void connectionRemoved(SocketConnection* connection);
-	void nodeRemoved(SocketConnection* connection);
+	void nodeRemoved(GraphNode* connection);
 	void nodeValueChanged(NodeModel* nodeModel, int socketIndex);
 	void loadGraph(QListWidgetItem *item);
+
+	// called whenever something is done that should cause the shader
+	// to be invalidated such as:
+	// adding a connection
+	// removing a connection
+	// deleting a node
+	// changing a value
+	void graphInvalidated();
 };
 
 

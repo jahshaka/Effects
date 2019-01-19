@@ -106,6 +106,7 @@ void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addTo
 
 	connect(model, &NodeModel::valueChanged, [this](NodeModel* nodeModel, int sockedIndex) {
 		emit nodeValueChanged(nodeModel, sockedIndex);
+		emit graphInvalidated();
 	});
 }
 
@@ -262,11 +263,14 @@ void GraphNodeScene::deleteSelectedNodes()
 {
 	auto items = selectedItems();
 	QList<GraphNode*> nodes;
+	auto masterNodeId = nodeGraph->getMasterNode()->id;
 
 	// gather all nodes
 	for (auto item : items) {
 		if (item->type() == (int)GraphicsItemType::Node) {
-			nodes.append(static_cast<GraphNode*>(item));
+			auto node = static_cast<GraphNode*>(item);
+			if (node->nodeId != masterNodeId)
+				nodes.append(node);
 		}
 	}
 
@@ -274,6 +278,8 @@ void GraphNodeScene::deleteSelectedNodes()
 	for (auto node : nodes) {
 		deleteNode(node);
 	}
+
+	emit graphInvalidated();
 }
 
 void GraphNodeScene::deleteNode(GraphNode* node)
@@ -286,21 +292,23 @@ void GraphNodeScene::deleteNode(GraphNode* node)
 
 	// remove them from scene
 	for (auto con : conns) {
-		//this->removeConnection(con->id);
-		// removeConnection removes connection from nodeGraph, which is already done
-		// in nodeGraph->removeNode(node->nodeId),
-		// and emits a connection, which is not wanted
-		// so the socket removal logic is done nere (nick)
-		auto connection = this->getConnection(con->id);
-		auto socket1 = connection->socket1;
-		auto socket2 = connection->socket2;
-		socket1->removeConnection(connection);
-		socket2->removeConnection(connection);
-
-		this->removeItem(connection);
+		// false, because the connection has already been removed
+		// in nodeGraph->removeNode(node->nodeId);
+		this->removeConnection(con->id, false, true);
 	}
 
 	this->removeItem(node);
+
+	emit nodeRemoved(node);
+}
+
+bool GraphNodeScene::areSocketsComptible(Socket* outSock, Socket* inSock)
+{
+	// get the socket models and check if they're compatible
+	auto outSockModel = nodeGraph->getNode(outSock->node->nodeId)->outSockets[outSock->socketIndex];
+	auto inSockModel = nodeGraph->getNode(inSock->node->nodeId)->inSockets[inSock->socketIndex];
+
+	return outSockModel->canConvertTo(inSockModel);
 }
 
 
@@ -381,24 +389,27 @@ SocketConnection *GraphNodeScene::addConnection(QString leftNodeId, int leftSock
 	return con;
 }
 
-SocketConnection * GraphNodeScene::removeConnection(SocketConnection * connection)
+SocketConnection * GraphNodeScene::removeConnection(SocketConnection * connection, bool removeFromNodeGraph, bool emitSignal)
 {
 	auto socket1 = connection->socket1;
 	auto socket2 = connection->socket2;
 	socket1->removeConnection(connection);
 	socket2->removeConnection(connection);
-
 	this->removeItem(connection);
-	this->nodeGraph->removeConnection(connection->connectionId);
 
-	emit connectionRemoved(connection);
+	if (removeFromNodeGraph)
+		this->nodeGraph->removeConnection(connection->connectionId);
+
+	if (emitSignal)
+		emit connectionRemoved(connection);
+
 	return connection;
 }
 
-void GraphNodeScene::removeConnection(const QString& conId)
+void GraphNodeScene::removeConnection(const QString& conId, bool removeFromNodeGraph, bool emitSignal)
 {
 	auto con = getConnection(conId);
-	removeConnection(con);
+	removeConnection(con, removeFromNodeGraph, emitSignal);
 }
 
 bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
@@ -436,6 +447,8 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 					//socketConnections.removeOne(con);
 
 					views().at(0)->setDragMode(QGraphicsView::NoDrag);
+
+					emit graphInvalidated();
 
 				}
 				else {
@@ -508,33 +521,37 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 				if (sock->socketType != con->socket1->socketType) {
 					// todo: prevent recursive connection
 					if (con->socket1->node != sock->node) {// prevent it connecting to itself
-						con->socket2 = sock;
-						con->status = SocketConnectionStatus::Finished;
-						con->socket1->addConnection(con);
-						con->socket2->addConnection(con);
-						con->updatePosFromSockets();
-						con->updatePath();
-						//socketConnections.append(con);
+						if (areSocketsComptible(con->socket1, sock)) {
 
-						// connect models too
-						if (nodeGraph != nullptr) {
-							// check the order of nodes
-							if (con->socket1->socketType == SocketType::Out) {
-								auto conModel = this->nodeGraph->addConnection(con->socket1->node->nodeId, con->socket1->socketIndex,
-									con->socket2->node->nodeId, con->socket2->socketIndex);
-								con->connectionId = conModel->id; // very important!
+							con->socket2 = sock;
+							con->status = SocketConnectionStatus::Finished;
+							con->socket1->addConnection(con);
+							con->socket2->addConnection(con);
+							con->updatePosFromSockets();
+							con->updatePath();
+							//socketConnections.append(con);
+
+							// connect models too
+							if (nodeGraph != nullptr) {
+								// check the order of nodes
+								if (con->socket1->socketType == SocketType::Out) {
+									auto conModel = this->nodeGraph->addConnection(con->socket1->node->nodeId, con->socket1->socketIndex,
+										con->socket2->node->nodeId, con->socket2->socketIndex);
+									con->connectionId = conModel->id; // very important!
+								}
+								else {
+									auto conModel = this->nodeGraph->addConnection(con->socket2->node->nodeId, con->socket2->socketIndex,
+										con->socket1->node->nodeId, con->socket1->socketIndex);
+									con->connectionId = conModel->id; // very important!
+								}
 							}
-							else {
-								auto conModel = this->nodeGraph->addConnection(con->socket2->node->nodeId, con->socket2->socketIndex,
-									con->socket1->node->nodeId, con->socket1->socketIndex);
-								con->connectionId = conModel->id; // very important!
-							}
+
+							emit newConnection(con);
+							con = nullptr;
+							emit graphInvalidated();
+
+							return true;
 						}
-
-						emit newConnection(con);
-						con = nullptr;
-
-						return true;
 					}
 				}
 			}
