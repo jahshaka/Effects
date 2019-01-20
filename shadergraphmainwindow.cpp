@@ -661,7 +661,6 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 	effects->addItem(item);
 	effects->displayAllContents();
 
-	propertyListWidget->clearPropertyList();
 	if (loadNewGraph) {
 		loadGraphFromTemplate(preset);
 	}else	setNodeGraph(graph);
@@ -688,7 +687,8 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 
 void MainWindow::loadGraphFromTemplate(NodeGraphPreset preset)
 {
-	currentShaderInformation.GUID = "";
+    propertyListWidget->clearPropertyList();
+    currentShaderInformation.GUID = "";
 	auto graph = importGraphFromFilePath(MaterialHelper::assetPath(preset.templatePath), false);
 	int i = 0;
 	for (auto prop : graph->properties) {
