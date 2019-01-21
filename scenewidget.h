@@ -11,12 +11,18 @@ class GraphNodeScene;
 class MaterialSettings;
 class SceneWidget : public iris::RenderWidget
 {
-    iris::MeshPtr mesh;
+	iris::MeshPtr sphereMesh;
+	iris::MeshPtr cubeMesh;
+	iris::MeshPtr planeMesh;
+	iris::MeshPtr cylinderMesh;
+
+	iris::MeshPtr mesh;
     iris::ShaderPtr shader;
     iris::MaterialPtr mat;
 
     iris::FontPtr font;
     float fps;
+	bool initialized = false;
 
     iris::VertexBufferPtr vertexBuffer;
     iris::Texture2DPtr tex;

@@ -29,6 +29,9 @@ QString assetPath(QString relPath)
 // NOTE! Context resets when widget is undocked
 void SceneWidget::start()
 {
+	if (initialized)
+		return;
+
 	screenshotRT = iris::RenderTarget::create(500, 500);
 	screenshotTex = iris::Texture2D::create(500, 500);
 	screenshotRT->addTexture(screenshotTex);
@@ -89,6 +92,8 @@ void SceneWidget::start()
     light->color = QColor(255, 255, 255);
     light->intensity = 1;
     lights.append(light);
+
+	initialized = true;
 }
 
 void SceneWidget::update(float dt)
