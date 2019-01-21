@@ -171,13 +171,12 @@ void MainWindow::saveShader()
 	}
 #endif
 
-	updateThumbnailImage(arr);
+	ListWidget::updateThumbnailImage(arr, currentProjectShader);
 }
 
 void MainWindow::saveDefaultShader()
 {
 	bool shouldSaveGraph = createNewGraph(false);
-//	if(shouldSaveGraph) saveShader();
 }
 
 void MainWindow::loadShadersFromDisk()
@@ -1064,7 +1063,7 @@ void MainWindow::updateAssetDock()
 				item->setData(Qt::DisplayRole, asset.name);
 				item->setData(MODEL_GUID_ROLE, asset.guid);
 				item->setData(MODEL_TYPE_ROLE, asset.type);
-				updateThumbnailImage(asset.thumbnail, item);
+				ListWidget::updateThumbnailImage(asset.thumbnail, item);
 				effects->addToListWidget(item);
 			}
 		}
@@ -1072,23 +1071,6 @@ void MainWindow::updateAssetDock()
 
 }
 
-void MainWindow::updateThumbnailImage(QByteArray arr)
-{
-	auto img = QImage::fromData(arr, "PNG");
-	QUrl url("C:\\Users\\W\\Documents\\Studio\\build\\bin\\Debug\\app\\shadergraph\\thumb.png");
-	qDebug() << img.save(url.path()) << img;
-	auto pixmap = QPixmap::fromImage(img);
-	pixmap = pixmap.scaled(defaultItemSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-	currentProjectShader->setIcon(QIcon(pixmap));
-}
-
-void MainWindow::updateThumbnailImage(QByteArray arr, QListWidgetItem *item)
-{
-	auto img = QImage::fromData(arr, "PNG");
-	auto pixmap = QPixmap::fromImage(img);
-	pixmap = pixmap.scaled({90,90}, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-	item->setIcon(QIcon(pixmap));
-}
 
 void MainWindow::setAssetWidgetDatabase(Database * db)
 {

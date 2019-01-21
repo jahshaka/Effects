@@ -310,6 +310,7 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 
 	// build material from definition
 	AssetManager::addAsset(assetShader);
+	refresh();
 }
 
 QByteArray ShaderAssetWidget::fetchAsset(QString string)

@@ -106,8 +106,7 @@ void ListWidget::displayAllContents()
 
 
 		emit resizeItem(defaultItemSize);
-		qDebug() << defaultItemSize << numberOfItemPerRow;
-	
+
 }
 
 

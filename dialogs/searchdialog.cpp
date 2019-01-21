@@ -175,7 +175,6 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 		auto viewPoint = view->viewport()->mapToGlobal(point);
 		auto scenePoint = view->mapFromScene(viewPoint);
 		this->point = scenePoint;
-		qDebug() << this->point;
 	}else 	this->point = point;
 
 
