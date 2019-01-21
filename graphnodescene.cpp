@@ -62,7 +62,7 @@ void GraphNodeScene::setNodeGraph(NodeGraph *graph)
 
 void GraphNodeScene::addNodeModel(NodeModel* model, bool addToGraph)
 {
-	addNodeModel(model, model->x, model->y, addToGraph);
+	addNodeModel(model, model->getX(), model->getY(), addToGraph);
 }
 
 // add
@@ -90,7 +90,7 @@ void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addTo
 	/*nodeView->setTitle(model->title);
 	nodeView->setTitleColor(model->setNodeTitleColor());*/
 
-	nodeView->setPos(x, y);
+	nodeView->setPos(model->getX(), model->getY());
 	nodeView->nodeId = model->id;
 	nodeView->layout();
 //	if (model->title == "Color Node") nodeView->resetPositionForColorWidget();
@@ -136,8 +136,8 @@ QMenu *GraphNodeScene::createContextMenu(float x, float y)
 		connect(menu->addAction(item->displayName), &QAction::triggered, [this, x, y, factory]() {
 
 			auto node = factory();
-			node->x = x;
-			node->y = y;
+			node->setX(x);
+			node->setY(y);
 			this->addNodeModel(node);
 
 		});
@@ -242,8 +242,8 @@ void GraphNodeScene::addNodeFromSearchDialog(QListWidgetItem * item, const QPoin
 		if (prop) {
 			auto propNode = new PropertyNode();
 			propNode->setProperty(prop);
-			propNode->x = p.x();
-			propNode->y = p.y();
+			propNode->setX(p.x());
+			propNode->setY(p.y());
 			this->addNodeModel(propNode);
 		}
 	}
@@ -321,8 +321,8 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 		if (prop) {
 			auto propNode = new PropertyNode();
 			propNode->setProperty(prop);
-			propNode->x = event->scenePos().x();
-			propNode->y = event->scenePos().y();
+			propNode->setX(event->scenePos().x());
+			propNode->setY(event->scenePos().y());
 			this->addNodeModel(propNode);
 		}
 	}

@@ -699,6 +699,7 @@ void MainWindow::loadGraphFromTemplate(NodeGraphPreset preset)
 	}
 	graph->settings.name = preset.name;
 	setNodeGraph(graph);
+	regenerateShader();
 }
 
 void MainWindow::setCurrentShaderItem()

@@ -513,9 +513,10 @@ QVariant GraphNode::itemChange(QGraphicsItem::GraphicsItemChange change, const Q
 	if (change == QGraphicsItem::ItemPositionChange && scene()) {
 		// update positon for node
 		if (model) {
-			auto pos = this->pos();
-			model->x = pos.x();
-			model->y = pos.y();
+			//auto pos = this->pos();
+			auto pos = value.value<QPointF>();
+			model->setX(pos.x());
+			model->setY(pos.y());
 		}
 	}
 

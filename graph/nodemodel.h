@@ -28,6 +28,11 @@ class ModelContext;
 class NodeModel : public QObject
 {
 	Q_OBJECT
+
+private :
+
+	float x;
+	float y;
 public:
 	QString id;
 
@@ -42,8 +47,11 @@ public:
 	QColor titleColor;
 	QIcon icon;
 
-	float x;
-	float y;
+	void setX(float val) { x = val; }
+	float getX() { return x; }
+	
+	void setY(float val) { y = val; }
+	float getY() { return y; }
 
 	bool enablePreview;
 	bool isPreviewEnabled()
