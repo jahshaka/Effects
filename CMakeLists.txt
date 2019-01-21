@@ -69,6 +69,7 @@ set(CPP
 	dialogs/searchdialog.cpp
 	core/project.cpp
 	core/materialhelper.cpp
+	core/undoredo.cpp
 	misc/QtAwesome.cpp
 	misc/QtAwesomeAnim.cpp
 
@@ -121,6 +122,7 @@ set(HEADERS
 		dialogs/createnewdialog.h
 		dialogs/searchdialog.h
 		core/project.h
+		core/undoredo.h
 		core/materialhelper.h
 		misc/QtAwesome.h
 		misc/QtAwesomeAnim.h
