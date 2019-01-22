@@ -37,8 +37,28 @@ void AddNodeCommand::redo()
 	scene->addItem(node);
 }
 
-AddConnectionCommand::AddConnectionCommand(GraphNode * node)
+AddConnectionCommand::AddConnectionCommand(SocketConnection * conn, GraphNodeScene *scene, int leftSocket, int rightSocket)
 {
+	this->connection = conn;
+	this->scene = scene;
+	this->left = leftSocket;
+	this->right = rightSocket;
+	connectionID = conn->connectionId;
+	setText(QObject::tr("Add %1").arg("connection command"));
+
+}
+
+void AddConnectionCommand::undo()
+{
+	scene->removeConnection(connectionID);
+	//remind nick to remove connections from models!
+}
+
+void AddConnectionCommand::redo()
+{
+	scene->addConnection(connection->socket1->owner->nodeId, left, connection->socket2->owner->nodeId, right);
+	//remind nick to add connections to models!
+
 }
 
 MoveNodeCommand::MoveNodeCommand(GraphNode * node)

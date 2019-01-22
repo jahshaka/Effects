@@ -532,21 +532,28 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 							con->socket2->addConnection(con);
 							con->updatePosFromSockets();
 							con->updatePath();
-							//socketConnections.append(con);
+
+							
 
 							// connect models too
 							if (nodeGraph != nullptr) {
 								// check the order of nodes
+								AddConnectionCommand *addConnectionCommand;
 								if (con->socket1->socketType == SocketType::Out) {
 									auto conModel = this->nodeGraph->addConnection(con->socket1->node->nodeId, con->socket1->socketIndex,
 										con->socket2->node->nodeId, con->socket2->socketIndex);
 									con->connectionId = conModel->id; // very important!
+									//push connections to undo redo stack
+									addConnectionCommand = new AddConnectionCommand(con, this, con->socket1->socketIndex, con->socket2->socketIndex);
 								}
 								else {
 									auto conModel = this->nodeGraph->addConnection(con->socket2->node->nodeId, con->socket2->socketIndex,
 										con->socket1->node->nodeId, con->socket1->socketIndex);
 									con->connectionId = conModel->id; // very important!
+									addConnectionCommand = new AddConnectionCommand(con, this, con->socket1->socketIndex, con->socket2->socketIndex);
+
 								}
+								stack->push(addConnectionCommand);
 							}
 
 							emit newConnection(con);
