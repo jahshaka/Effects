@@ -9,6 +9,7 @@
 #include <QPixmap>
 #include <QGraphicsPixmapItem>
 #include <QTimer>
+#include <qmath.h>
 
 #include <irisgl/IrisGL.h>
 #include <irisgl/Graphics.h>
@@ -551,8 +552,4 @@ void GraphNode::highlightNode(bool val, int lvl)
 	update();
 }
 
-void GraphNode::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-	check = true;
-	QGraphicsPathItem::mousePressEvent(event);
-}
+

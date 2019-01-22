@@ -125,6 +125,10 @@ public:
 
 	QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
+	QPointF initialPoint;
+	QPointF movedPoint;
+	int distanceBetweenTwoPoints(QPointF oldPos, QPointF newPos);
+
 signals:
 	void positionChanged(const QPointF& pos);
 private:
@@ -133,6 +137,6 @@ private:
 	void highlightNode(bool val, int lvl);
 	QFont font;
 protected:
-	void mousePressEvent(QGraphicsSceneMouseEvent *event)override;
+
 };
 

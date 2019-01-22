@@ -1,5 +1,5 @@
 #include "undoredo.h"
-
+#include <QPoint>
 
 
 UndoRedo::UndoRedo()
@@ -61,8 +61,22 @@ void AddConnectionCommand::redo()
 
 }
 
-MoveNodeCommand::MoveNodeCommand(GraphNode * node)
+
+MoveNodeCommand::MoveNodeCommand(GraphNode * node, GraphNodeScene *scene, QPointF oldPos, QPointF newPos)
 {
+	this->scene = scene;
+	this->node = node;
+	this->oldPos = oldPos;
+	this->newPos = newPos;
+}
+
+void MoveNodeCommand::undo() {
+	node->setPos(oldPos);
+}
+
+
+void MoveNodeCommand::redo() {
+	node->setPos(newPos);
 }
 
 DeleteNodeCommand::DeleteNodeCommand(GraphNode * node)

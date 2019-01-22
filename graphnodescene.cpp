@@ -111,6 +111,12 @@ void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addTo
 
 	auto addNodeCommand = new AddNodeCommand(nodeView, this);
 	stack->push(addNodeCommand);
+
+	//connect(nodeView, &GraphNode::positionUpdated, [=](QPointF one, QPointF two) {
+	////	auto moveCommand = new MoveNodeCommand(nodeView,this,one,two);
+	////	stack->push(moveCommand);
+
+	//});
 }
 
 QMenu *GraphNodeScene::createContextMenu(float x, float y)
@@ -495,6 +501,13 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 		{
 			views().at(0)->setDragMode(QGraphicsView::NoDrag);
 		}
+
+
+		auto nodes = this->selectedItems();
+		for (auto node : nodes) {
+			auto nod = static_cast<GraphNode*> (node);
+			nod->initialPoint = nod->pos();
+		}
 	}
 	break;
 	case QEvent::GraphicsSceneMouseMove:
@@ -514,6 +527,18 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 	case QEvent::GraphicsSceneMouseRelease:
 	{
 		views().at(0)->setDragMode(QGraphicsView::RubberBandDrag);
+
+		auto nodes = this->selectedItems();
+		for ( auto node : nodes){
+			auto nod = static_cast<GraphNode*> (node);
+			nod->movedPoint = nod->pos();
+			qDebug() << qSqrt(qPow(nod->initialPoint.x() - nod->movedPoint.x(), 2) + qPow(nod->initialPoint.y() - nod->movedPoint.y(), 2));
+			//if the distance between the old point and the new point is greater than 50, then add move command to the stack
+			if (qSqrt(qPow(nod->initialPoint.x() - nod->movedPoint.x(), 2) + qPow(nod->initialPoint.y() - nod->movedPoint.y(), 2)) > 50) {
+				auto moveCommand = new MoveNodeCommand(nod, this, nod->initialPoint, nod->movedPoint);
+				stack->push(moveCommand);
+			}
+		}
 
 
 		if (con) {
