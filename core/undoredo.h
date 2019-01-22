@@ -1,6 +1,8 @@
 #pragma once
 #include <QUndoStack>
+#include <QPoint>
 #include "../graphnode.h"
+#include "../graphnodescene.h"
 
 class UndoRedo : public QUndoCommand
 {
@@ -14,8 +16,16 @@ public:
 
 class AddNodeCommand : public UndoRedo
 {
-	AddNodeCommand(GraphNode *node);
+public:
+	AddNodeCommand(GraphNode *node, GraphNodeScene *);
 
+	void undo() override;
+	void redo() override;
+
+private :
+	QPointF initialPosition;
+	GraphNodeScene* scene;
+	GraphNode* node;
 };
 
 class AddConnectionCommand : public UndoRedo

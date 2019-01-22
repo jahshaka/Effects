@@ -917,6 +917,13 @@ void MainWindow::configureToolbar()
 	actionRedo->setIcon(fontIcons->icon(fa::share, options));
 	toolBar->addAction(actionRedo);
 
+	connect(actionUndo, &QAction::triggered, [=]() {
+		scene->stack->undo();
+	});
+	connect(actionRedo, &QAction::triggered, [=]() {
+		scene->stack->redo();
+	});
+
 	toolBar->addSeparator();
 
 	auto exportBtn = new QAction;

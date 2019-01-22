@@ -108,6 +108,9 @@ void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addTo
 		emit nodeValueChanged(nodeModel, sockedIndex);
 		emit graphInvalidated();
 	});
+
+	auto addNodeCommand = new AddNodeCommand(nodeView, this);
+	stack->push(addNodeCommand);
 }
 
 QMenu *GraphNodeScene::createContextMenu(float x, float y)
@@ -311,7 +314,6 @@ bool GraphNodeScene::areSocketsComptible(Socket* outSock, Socket* inSock)
 	return outSockModel->canConvertTo(inSockModel);
 }
 
-
 void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 {
 
@@ -365,6 +367,7 @@ GraphNodeScene::GraphNodeScene(QWidget* parent) :
 	this->installEventFilter(this);
 	conGroup = new QGraphicsItemGroup;
 	addItem(conGroup);
+	stack = new QUndoStack;
 	
 	selectedNode = nullptr;
 }

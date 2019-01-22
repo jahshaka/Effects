@@ -17,6 +17,7 @@
 #include <QMenu>
 #include <QPointF>
 #include <QPropertyAnimation>
+#include <QUndoStack>
 #include "socketconnection.h"
 #include "graphnode.h"
 #include "graph/nodegraph.h"
@@ -27,6 +28,7 @@
 #include "graph/nodegraph.h"
 #include "graph/library.h"
 #include "graph/graphicsview.h"
+#include "core/undoredo.h"
 //#include "nodes/test.h"
 
 #include <QDebug>
@@ -52,6 +54,7 @@ public:
 	// model for scene
 	NodeGraph* nodeGraph;
 	GraphNode* selectedNode;
+	QUndoStack *stack;
 	template<class nodeType>
 	GraphNode* createNode()
 	{
