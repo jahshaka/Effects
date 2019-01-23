@@ -72,8 +72,7 @@ class GraphNode : public QGraphicsPathItem
 	QGraphicsTextItem* text;
 	QGraphicsProxyWidget* proxyWidget;
 	QGraphicsProxyWidget* proxyPreviewWidget;
-	NodeGraph* nodeGraph;
-	NodeModel* model;
+	
 
 	int inSocketCount = 0;
 	int outSocketCount = 0;
@@ -91,6 +90,8 @@ public:
 	QIcon icon;
 	CustomRenderWidget* previewWidget;
 	QTimer updateTimer;
+	NodeGraph* nodeGraph;
+	NodeModel* model;
 
 	GraphNode(QGraphicsItem* parent);
 	~GraphNode();

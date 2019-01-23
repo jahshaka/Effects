@@ -62,11 +62,20 @@ void GraphNodeScene::setNodeGraph(NodeGraph *graph)
 
 void GraphNodeScene::addNodeModel(NodeModel* model, bool addToGraph)
 {
-	addNodeModel(model, model->getX(), model->getY(), addToGraph);
+	if (model->title != "Surface Material") {
+		auto addNodeCommand = new AddNodeCommand(model, this);
+		stack->push(addNodeCommand);
+	}
+	else {
+		//add surface node to the scene
+		//other nodes get added to the scene from the add node command above
+		//on AddNodeCommand, redo gets called - stupid qt
+			addNodeModel(model, model->getX(), model->getY(), addToGraph);
+	}
 }
 
 // add
-void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addToGraph)
+GraphNode* GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addToGraph)
 {
 	auto nodeView = this->createNode<GraphNode>();
 	nodeView->setNodeGraph(this->nodeGraph);
@@ -89,7 +98,7 @@ void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addTo
 	
 	/*nodeView->setTitle(model->title);
 	nodeView->setTitleColor(model->setNodeTitleColor());*/
-
+	
 	nodeView->setPos(model->getX(), model->getY());
 	nodeView->nodeId = model->id;
 	nodeView->layout();
@@ -109,8 +118,7 @@ void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addTo
 		emit graphInvalidated();
 	});
 
-	auto addNodeCommand = new AddNodeCommand(nodeView, this);
-	stack->push(addNodeCommand);
+	return nodeView;
 
 	//connect(nodeView, &GraphNode::positionUpdated, [=](QPointF one, QPointF two) {
 	////	auto moveCommand = new MoveNodeCommand(nodeView,this,one,two);
@@ -282,11 +290,13 @@ void GraphNodeScene::deleteSelectedNodes()
 				nodes.append(node);
 		}
 	}
-
+	if (nodes.length() > 0) 		auto deleteCommand = new DeleteNodeCommand(nodes, this);
 	// remove each node's connections then remove the nodes
 	for (auto node : nodes) {
 		deleteNode(node);
 	}
+
+
 
 	emit graphInvalidated();
 }
@@ -339,9 +349,10 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 		event->accept();
 
 		auto node = nodeGraph->library->createNode(event->mimeData()->html());
-
+		node->setX(event->scenePos().x());
+		node->setY(event->scenePos().y());
 			if (node) {
-				this->addNodeModel(node, event->scenePos().x(), event->scenePos().y());
+				this->addNodeModel(node);
 					return;
 			}
 	}
@@ -507,6 +518,7 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 		for (auto node : nodes) {
 			auto nod = static_cast<GraphNode*> (node);
 			nod->initialPoint = nod->pos();
+			qDebug() << nod->pos();
 		}
 	}
 	break;
@@ -538,7 +550,7 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 				list.append(nod);
 			}
 		}
-		if (nodes.length() > 0) {
+		if (list.length() > 0) {
 			auto moveCommand = new MoveMultipleCommand(list, this);
 			stack->push(moveCommand);
 		}

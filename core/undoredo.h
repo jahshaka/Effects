@@ -12,12 +12,13 @@ public:
 
 	void undo() override;
 	void redo() override;
+	static int count;
 };
 
 class AddNodeCommand : public UndoRedo
 {
 public:
-	AddNodeCommand(GraphNode *node, GraphNodeScene *);
+	AddNodeCommand(NodeModel * nodeModel, GraphNodeScene *);
 
 	void undo() override;
 	void redo() override;
@@ -25,7 +26,8 @@ public:
 private :
 	QPointF initialPosition;
 	GraphNodeScene* scene;
-	GraphNode* node;
+	NodeModel * nodeModel;
+	GraphNode *node;
 };
 
 class AddConnectionCommand : public UndoRedo
@@ -66,6 +68,7 @@ public:
 	void redo() override;
 private:
 	QList<GraphNode*> nodes;
+	QMap<QString, QPair<QPointF, QPointF>> map;
 	GraphNodeScene* scene;
 
 };
@@ -73,16 +76,14 @@ private:
 class DeleteNodeCommand : public UndoRedo
 {
 public:
-	DeleteNodeCommand(GraphNode *node, GraphNodeScene *);
+	DeleteNodeCommand(QList<GraphNode*> &, GraphNodeScene *);
 
 	void undo() override;
 	void redo() override;
 private:
-	QPointF initialPosition;
 	GraphNodeScene* scene;
+	QList<GraphNode*> list;
 	GraphNode* node;
 	QVector<ConnectionModel*> connections;
-
-
 };
 

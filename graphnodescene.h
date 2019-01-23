@@ -88,7 +88,7 @@ public:
 	void refreshNodeTitle(QString id);
 	void setNodeGraph(NodeGraph* value);
 	void addNodeModel(NodeModel* model, bool addToGraph = true);
-	void addNodeModel(NodeModel* model, float x, float y, bool addToGraph = true);
+	GraphNode* addNodeModel(NodeModel* model, float x, float y, bool addToGraph = true);
 	void addPropertyNode(Property* prop, float x, float y, bool addToGraph = true);
 
 	QMenu* createContextMenu(float x, float y);
