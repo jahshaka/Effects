@@ -50,7 +50,8 @@ AddConnectionCommand::AddConnectionCommand(SocketConnection * conn, GraphNodeSce
 
 void AddConnectionCommand::undo()
 {
-	scene->removeConnection(connectionID);
+
+	scene->removeConnection(connectionID, false, true);
 	//remind nick to remove connections from models!
 }
 
@@ -79,6 +80,37 @@ void MoveNodeCommand::redo() {
 	node->setPos(newPos);
 }
 
-DeleteNodeCommand::DeleteNodeCommand(GraphNode * node)
+
+DeleteNodeCommand::DeleteNodeCommand(GraphNode * node, GraphNodeScene *scene)
 {
+	this->node = node;
+	this->scene = scene;
+	initialPosition = node->pos();
+	connections = scene->nodeGraph->getNodeConnections(node->nodeId);
+}
+
+void DeleteNodeCommand::undo()
+{
+
+}
+
+void DeleteNodeCommand::redo()
+{
+	scene->deleteNode(node);
+}
+
+MoveMultipleCommand::MoveMultipleCommand(QList<GraphNode*>& list, GraphNodeScene *scene)
+{
+	this->scene = scene;
+	this->nodes = list;
+}
+
+void MoveMultipleCommand::undo()
+{
+	for (auto node : nodes) node->setPos(node->initialPoint);
+}
+
+void MoveMultipleCommand::redo()
+{
+	for (auto node : nodes) node->setPos(node->movedPoint);
 }

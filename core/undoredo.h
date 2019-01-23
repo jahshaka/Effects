@@ -55,13 +55,34 @@ private:
 	QPointF newPos;
 	GraphNode* node;
 	GraphNodeScene* scene;
+};
 
+class MoveMultipleCommand : public UndoRedo
+{
+public:
+	MoveMultipleCommand(QList<GraphNode*> &, GraphNodeScene*);
+
+	void undo() override;
+	void redo() override;
+private:
+	QList<GraphNode*> nodes;
+	GraphNodeScene* scene;
 
 };
 
 class DeleteNodeCommand : public UndoRedo
 {
-	DeleteNodeCommand(GraphNode *node);
+public:
+	DeleteNodeCommand(GraphNode *node, GraphNodeScene *);
+
+	void undo() override;
+	void redo() override;
+private:
+	QPointF initialPosition;
+	GraphNodeScene* scene;
+	GraphNode* node;
+	QVector<ConnectionModel*> connections;
+
 
 };
 

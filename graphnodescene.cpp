@@ -529,15 +529,18 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 		views().at(0)->setDragMode(QGraphicsView::RubberBandDrag);
 
 		auto nodes = this->selectedItems();
+		QList<GraphNode*> list;
 		for ( auto node : nodes){
 			auto nod = static_cast<GraphNode*> (node);
 			nod->movedPoint = nod->pos();
-			qDebug() << qSqrt(qPow(nod->initialPoint.x() - nod->movedPoint.x(), 2) + qPow(nod->initialPoint.y() - nod->movedPoint.y(), 2));
 			//if the distance between the old point and the new point is greater than 50, then add move command to the stack
 			if (qSqrt(qPow(nod->initialPoint.x() - nod->movedPoint.x(), 2) + qPow(nod->initialPoint.y() - nod->movedPoint.y(), 2)) > 50) {
-				auto moveCommand = new MoveNodeCommand(nod, this, nod->initialPoint, nod->movedPoint);
-				stack->push(moveCommand);
+				list.append(nod);
 			}
+		}
+		if (nodes.length() > 0) {
+			auto moveCommand = new MoveMultipleCommand(list, this);
+			stack->push(moveCommand);
 		}
 
 
