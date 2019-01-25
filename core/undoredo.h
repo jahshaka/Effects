@@ -33,16 +33,18 @@ private :
 class AddConnectionCommand : public UndoRedo
 {
 public:
-	AddConnectionCommand(SocketConnection *, GraphNodeScene *, int leftSocket, int rightSocket);
+	AddConnectionCommand(const QString &,const QString &, GraphNodeScene *, int leftSocket, int rightSocket);
 
 	void undo() override;
 	void redo() override;
+	QString connectionID;
 private:
 	int left, right;
-	QString connectionID;
 	GraphNodeScene* scene;
 	GraphNode* node;
 	SocketConnection* connection;
+	QString leftNodeId;
+	QString rightNodeId;
 };
 
 class MoveNodeCommand : public UndoRedo

@@ -50,13 +50,13 @@ void AddNodeCommand::redo()
 
 }
 
-AddConnectionCommand::AddConnectionCommand(SocketConnection * conn, GraphNodeScene *scene, int leftSocket, int rightSocket)
+AddConnectionCommand::AddConnectionCommand(const QString &leftNodeId, const QString &rightNodeId, GraphNodeScene *scene, int leftSocket, int rightSocket)
 {
-	this->connection = conn;
 	this->scene = scene;
 	this->left = leftSocket;
 	this->right = rightSocket;
-	connectionID = conn->connectionId;
+	this->leftNodeId = leftNodeId;
+	this->rightNodeId = rightNodeId;
 	setText(QObject::tr("Add %1").arg("connection command"));
 
 }
@@ -64,16 +64,25 @@ AddConnectionCommand::AddConnectionCommand(SocketConnection * conn, GraphNodeSce
 void AddConnectionCommand::undo()
 {
 
-	scene->removeConnection(connectionID, false, true);
+	//scene->nodeGraph->removeConnection(connectionID);
+	scene->removeConnection(connectionID, true, true);
+	scene->removeItem(scene->getConnection(connectionID));
 	//remind nick to remove connections from models!
-
 	UndoRedo::undo();
 
 }
 
 void AddConnectionCommand::redo()
 {
-	scene->addConnection(connection->socket1->owner->nodeId, left, connection->socket2->owner->nodeId, right);
+	auto conModel = scene->nodeGraph->addConnection(leftNodeId, this->left, rightNodeId, this->right);
+	
+	
+	auto con = scene->addConnection(leftNodeId, this->left, rightNodeId, this->right);
+	connectionID = con->connectionId = conModel->id; // very important!
+	
+
+	con->updatePosFromSockets();
+	con->updatePath();
 	//remind nick to add connections to models!
 	UndoRedo::redo();
 
@@ -100,12 +109,9 @@ void DeleteNodeCommand::undo()
 				rightNode->id,
 				rightNode->inSockets.indexOf(con->rightSocket));
 		}
-
 		scene->addItem(node);
 	}
-
 	UndoRedo::undo();
-
 }
 
 void DeleteNodeCommand::redo()
@@ -149,9 +155,9 @@ void MoveMultipleCommand::redo()
 	for (auto node : nodeList) {
 //		if (node->pos() != node->movedPoint) {
 			node->setPos(map.value(node->nodeId).second);
-			node->model->setX(map.value(node->nodeId).second.x());
-			node->model->setY(map.value(node->nodeId).second.y());
-			qDebug() << map.value(node->nodeId).first << map.value(node->nodeId).second;
+			node->model->setX(map[node->nodeId].second.x());
+			node->model->setY(map[node->nodeId].second.y());
+			qDebug() << map[node->nodeId].first << map[node->nodeId].second;
 			qDebug() << node << node->nodeId;
 //		}
 

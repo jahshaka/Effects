@@ -290,10 +290,15 @@ void GraphNodeScene::deleteSelectedNodes()
 				nodes.append(node);
 		}
 	}
-	if (nodes.length() > 0) 		auto deleteCommand = new DeleteNodeCommand(nodes, this);
+	if (nodes.length() > 0)
+	{
+		auto deleteCommand = new DeleteNodeCommand(nodes, this);
+		stack->push(deleteCommand);
+	}
+	
 	// remove each node's connections then remove the nodes
 	for (auto node : nodes) {
-		deleteNode(node);
+	//	deleteNode(node);
 	}
 
 
@@ -405,6 +410,7 @@ SocketConnection *GraphNodeScene::addConnection(QString leftNodeId, int leftSock
 	con->updatePosFromSockets();
 	con->updatePath();
 	this->addItem(con);
+	emit graphInvalidated();
 
 	return con;
 }
@@ -422,6 +428,9 @@ SocketConnection * GraphNodeScene::removeConnection(SocketConnection * connectio
 
 	if (emitSignal)
 		emit connectionRemoved(connection);
+
+	connection->updatePath();
+	emit graphInvalidated();
 
 	return connection;
 }
@@ -580,21 +589,24 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 								// check the order of nodes
 								AddConnectionCommand *addConnectionCommand;
 								if (con->socket1->socketType == SocketType::Out) {
-									auto conModel = this->nodeGraph->addConnection(con->socket1->node->nodeId, con->socket1->socketIndex,
-										con->socket2->node->nodeId, con->socket2->socketIndex);
-									con->connectionId = conModel->id; // very important!
+									//auto conModel = this->nodeGraph->addConnection(con->socket1->node->nodeId, con->socket1->socketIndex,
+									//	con->socket2->node->nodeId, con->socket2->socketIndex);
+									//con->connectionId = conModel->id; // very important!
 									//push connections to undo redo stack
-									addConnectionCommand = new AddConnectionCommand(con, this, con->socket1->socketIndex, con->socket2->socketIndex);
+									addConnectionCommand = new AddConnectionCommand(con->socket1->node->nodeId, con->socket2->node->nodeId, this, con->socket1->socketIndex, con->socket2->socketIndex);
+									con->connectionId = addConnectionCommand->connectionID;
 								}
 								else {
-									auto conModel = this->nodeGraph->addConnection(con->socket2->node->nodeId, con->socket2->socketIndex,
-										con->socket1->node->nodeId, con->socket1->socketIndex);
-									con->connectionId = conModel->id; // very important!
-									addConnectionCommand = new AddConnectionCommand(con, this, con->socket1->socketIndex, con->socket2->socketIndex);
-
+									//auto conModel = this->nodeGraph->addConnection(con->socket2->node->nodeId, con->socket2->socketIndex,
+									//	con->socket1->node->nodeId, con->socket1->socketIndex);
+									//con->connectionId = conModel->id; // very important!
+									addConnectionCommand = new AddConnectionCommand(con->socket1->node->nodeId, con->socket2->node->nodeId, this, con->socket1->socketIndex, con->socket2->socketIndex);
+									con->connectionId = addConnectionCommand->connectionID;
 								}
 								stack->push(addConnectionCommand);
 							}
+
+							this->removeConnection(con->connectionId, false, false);
 
 							emit newConnection(con);
 							con = nullptr;
