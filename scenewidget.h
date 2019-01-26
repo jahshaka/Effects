@@ -3,6 +3,16 @@
 #include <irisgl/IrisGL.h>
 #include "materialsettingswidget.h"
 
+enum class PreviewModel
+{
+	Sphere,
+	Cube,
+	Plane,
+	Cylinder,
+	Capsule,
+	Torus
+};
+
 class QMouseEvent;
 class QWheelEvent;
 
@@ -11,12 +21,20 @@ class GraphNodeScene;
 class MaterialSettings;
 class SceneWidget : public iris::RenderWidget
 {
-    iris::MeshPtr mesh;
+	iris::MeshPtr sphereMesh;
+	iris::MeshPtr cubeMesh;
+	iris::MeshPtr planeMesh;
+	iris::MeshPtr cylinderMesh;
+	iris::MeshPtr capsuleMesh;
+	iris::MeshPtr torusMesh;
+
+	iris::MeshPtr mesh;
     iris::ShaderPtr shader;
     iris::MaterialPtr mat;
 
     iris::FontPtr font;
     float fps;
+	bool initialized = false;
 
     iris::VertexBufferPtr vertexBuffer;
     iris::Texture2DPtr tex;
@@ -33,7 +51,7 @@ class SceneWidget : public iris::RenderWidget
 	QString generatedVertString;
 	QString generatedFragString;
 
-    float renderTime;
+    static float renderTime;
     QList<iris::LightNodePtr> lights;
 
     NodeGraph* graph;
@@ -48,6 +66,8 @@ class SceneWidget : public iris::RenderWidget
 	iris::BlendState blendState;
 	iris::DepthState depthState;
 	iris::RasterizerState rasterState;
+
+	PreviewModel previewModel;
 public:
 	GraphNodeScene * graphScene;
     SceneWidget();
@@ -58,6 +78,7 @@ public:
 
     void render();
 
+	static float getRenderTime() { return renderTime; }
 	void setVertexShader(QString vertShader);
 	void setFragmentShader(QString fragShader);
 	//void updateShader(QString shaderCode);
@@ -81,6 +102,7 @@ public:
 
 	void resizeEvent(QResizeEvent* evt);
 
+	void setPreviewModel(PreviewModel model);
 public slots:
 	void setMaterialSettings(MaterialSettings settings);
 };

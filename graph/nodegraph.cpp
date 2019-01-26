@@ -3,6 +3,7 @@
 #include "../nodes/test.h"
 #include "library.h"
 #include "../core/guidhelper.h"
+#include "../scenewidget.h"
 ///#include "../nodes/libraryv1.h"
 
 #include <QJsonObject>

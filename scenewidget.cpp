@@ -17,6 +17,9 @@
 #include "texturemanager.h"
 #include "materialsettingswidget.h"
 #include "core/materialhelper.h"
+#include "assets.h"
+
+float SceneWidget::renderTime = 0;
 
 QString assetPath(QString relPath)
 {
@@ -29,6 +32,9 @@ QString assetPath(QString relPath)
 // NOTE! Context resets when widget is undocked
 void SceneWidget::start()
 {
+	if (initialized)
+		return;
+
 	screenshotRT = iris::RenderTarget::create(500, 500);
 	screenshotTex = iris::Texture2D::create(500, 500);
 	screenshotRT->addTexture(screenshotTex);
@@ -49,7 +55,15 @@ void SceneWidget::start()
                 ":assets/shaders/color.frag");
                 */
 
-    mesh = iris::Mesh::loadMesh(MaterialHelper::assetPath("lowpoly_sphere.obj"));
+	//mesh = iris::Mesh::loadMesh(MaterialHelper::assetPath("lowpoly_sphere.obj"));
+	sphereMesh = iris::Mesh::loadMesh(MaterialHelper::assetPath("lowpoly_sphere.obj"));
+	cubeMesh = iris::Mesh::loadMesh(MaterialHelper::assetPath("cube.obj"));
+	planeMesh = iris::Mesh::loadMesh(MaterialHelper::assetPath("plane.obj"));
+	cylinderMesh = iris::Mesh::loadMesh(MaterialHelper::assetPath("cylinder.obj"));
+	capsuleMesh = iris::Mesh::loadMesh(MaterialHelper::assetPath("capsule.obj"));
+	torusMesh = iris::Mesh::loadMesh(MaterialHelper::assetPath("torus.obj"));
+	mesh = sphereMesh;
+	mesh = shadergraph::Assets::sphereMesh;
     //mat = iris::DefaultMaterial::create();
 
     font = iris::Font::create(device);
@@ -89,6 +103,8 @@ void SceneWidget::start()
     light->color = QColor(255, 255, 255);
     light->intensity = 1;
     lights.append(light);
+
+	initialized = true;
 }
 
 void SceneWidget::update(float dt)
@@ -310,6 +326,34 @@ void SceneWidget::resizeEvent(QResizeEvent* evt)
 	viewportHeight = (int)(height() * devicePixelRatioF());
 
 	iris::RenderWidget::resizeEvent(evt);
+}
+
+void SceneWidget::setPreviewModel(PreviewModel model)
+{
+	this->previewModel = model;
+
+	if (initialized) {
+		switch (previewModel) {
+		case PreviewModel::Sphere:
+			mesh = shadergraph::Assets::sphereMesh;
+			break;
+		case PreviewModel::Cube:
+			mesh = shadergraph::Assets::cubeMesh;
+			break;
+		case PreviewModel::Plane:
+			mesh = shadergraph::Assets::planeMesh;
+			break;
+		case PreviewModel::Cylinder:
+			mesh = shadergraph::Assets::cylinderMesh;
+			break;
+		case PreviewModel::Capsule:
+			mesh = shadergraph::Assets::capsuleMesh;
+			break;
+		case PreviewModel::Torus:
+			mesh = shadergraph::Assets::torusMesh;
+			break;
+		}
+	}
 }
 
 SceneWidget::SceneWidget():

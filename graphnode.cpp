@@ -18,7 +18,9 @@
 #include "texturemanager.h"
 #include "core/materialhelper.h"
 #include "graph/socketmodel.h"
+#include "assets.h"
 //#include "irisgl/src/graphics/graphicshelper.h"
+#include "scenewidget.h"
 
 CustomRenderWidget::CustomRenderWidget() :
 	iris::RenderWidget(nullptr)
@@ -55,7 +57,8 @@ void CustomRenderWidget::start()
 	":assets/shaders/color.frag");
 	*/
 
-	mesh = iris::Mesh::loadMesh(MaterialHelper::assetPath("lowpoly_sphere.obj"));
+	//mesh = iris::Mesh::loadMesh(MaterialHelper::assetPath("lowpoly_sphere.obj"));
+	mesh = shadergraph::Assets::sphereMesh;
 	//mat = iris::DefaultMaterial::create();
 
 	font = iris::Font::create(device);
@@ -118,7 +121,7 @@ void CustomRenderWidget::render()
 
 	graphics->setShaderUniform("u_eyePos", cam->getLocalPos());
 	graphics->setShaderUniform("u_sceneAmbient", QVector3D(0, 0, 0));
-	graphics->setShaderUniform("u_time", renderTime);
+	graphics->setShaderUniform("u_time", SceneWidget::getRenderTime());
 
 	// pass textures
 	auto texMan = TextureManager::getSingleton();
