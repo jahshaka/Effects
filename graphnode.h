@@ -72,8 +72,7 @@ class GraphNode : public QGraphicsPathItem
 	QGraphicsTextItem* text;
 	QGraphicsProxyWidget* proxyWidget;
 	QGraphicsProxyWidget* proxyPreviewWidget;
-	NodeGraph* nodeGraph;
-	NodeModel* model;
+	
 
 	int inSocketCount = 0;
 	int outSocketCount = 0;
@@ -91,6 +90,8 @@ public:
 	QIcon icon;
 	CustomRenderWidget* previewWidget;
 	QTimer updateTimer;
+	NodeGraph* nodeGraph;
+	NodeModel* model;
 
 	GraphNode(QGraphicsItem* parent);
 	~GraphNode();
@@ -125,6 +126,10 @@ public:
 
 	QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
+	QPointF initialPoint;
+	QPointF movedPoint;
+	int distanceBetweenTwoPoints(QPointF oldPos, QPointF newPos);
+
 signals:
 	void positionChanged(const QPointF& pos);
 private:
@@ -133,6 +138,6 @@ private:
 	void highlightNode(bool val, int lvl);
 	QFont font;
 protected:
-	void mousePressEvent(QGraphicsSceneMouseEvent *event)override;
+
 };
 

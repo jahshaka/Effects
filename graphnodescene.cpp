@@ -62,11 +62,20 @@ void GraphNodeScene::setNodeGraph(NodeGraph *graph)
 
 void GraphNodeScene::addNodeModel(NodeModel* model, bool addToGraph)
 {
-	addNodeModel(model, model->x, model->y, addToGraph);
+	if (model->title != "Surface Material") {
+		auto addNodeCommand = new AddNodeCommand(model, this);
+		stack->push(addNodeCommand);
+	}
+	else {
+		//add surface node to the scene
+		//other nodes get added to the scene from the add node command above
+		//on AddNodeCommand, redo gets called - stupid qt
+			addNodeModel(model, model->getX(), model->getY(), addToGraph);
+	}
 }
 
 // add
-void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addToGraph)
+GraphNode* GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addToGraph)
 {
 	auto nodeView = this->createNode<GraphNode>();
 	nodeView->setNodeGraph(this->nodeGraph);
@@ -89,8 +98,8 @@ void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addTo
 	
 	/*nodeView->setTitle(model->title);
 	nodeView->setTitleColor(model->setNodeTitleColor());*/
-
-	nodeView->setPos(x, y);
+	
+	nodeView->setPos(model->getX(), model->getY());
 	nodeView->nodeId = model->id;
 	nodeView->layout();
 //	if (model->title == "Color Node") nodeView->resetPositionForColorWidget();
@@ -108,6 +117,14 @@ void GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool addTo
 		emit nodeValueChanged(nodeModel, sockedIndex);
 		emit graphInvalidated();
 	});
+
+	return nodeView;
+
+	//connect(nodeView, &GraphNode::positionUpdated, [=](QPointF one, QPointF two) {
+	////	auto moveCommand = new MoveNodeCommand(nodeView,this,one,two);
+	////	stack->push(moveCommand);
+
+	//});
 }
 
 QMenu *GraphNodeScene::createContextMenu(float x, float y)
@@ -136,8 +153,8 @@ QMenu *GraphNodeScene::createContextMenu(float x, float y)
 		connect(menu->addAction(item->displayName), &QAction::triggered, [this, x, y, factory]() {
 
 			auto node = factory();
-			node->x = x;
-			node->y = y;
+			node->setX(x);
+			node->setY(y);
 			this->addNodeModel(node);
 
 		});
@@ -242,8 +259,8 @@ void GraphNodeScene::addNodeFromSearchDialog(QListWidgetItem * item, const QPoin
 		if (prop) {
 			auto propNode = new PropertyNode();
 			propNode->setProperty(prop);
-			propNode->x = p.x();
-			propNode->y = p.y();
+			propNode->setX(p.x());
+			propNode->setY(p.y());
 			this->addNodeModel(propNode);
 		}
 	}
@@ -273,11 +290,18 @@ void GraphNodeScene::deleteSelectedNodes()
 				nodes.append(node);
 		}
 	}
-
+	if (nodes.length() > 0)
+	{
+		auto deleteCommand = new DeleteNodeCommand(nodes, this);
+		stack->push(deleteCommand);
+	}
+	
 	// remove each node's connections then remove the nodes
 	for (auto node : nodes) {
-		deleteNode(node);
+	//	deleteNode(node);
 	}
+
+
 
 	emit graphInvalidated();
 }
@@ -311,7 +335,6 @@ bool GraphNodeScene::areSocketsComptible(Socket* outSock, Socket* inSock)
 	return outSockModel->canConvertTo(inSockModel);
 }
 
-
 void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 {
 
@@ -321,8 +344,8 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 		if (prop) {
 			auto propNode = new PropertyNode();
 			propNode->setProperty(prop);
-			propNode->x = event->scenePos().x();
-			propNode->y = event->scenePos().y();
+			propNode->setX(event->scenePos().x());
+			propNode->setY(event->scenePos().y());
 			this->addNodeModel(propNode);
 		}
 	}
@@ -331,9 +354,10 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 		event->accept();
 
 		auto node = nodeGraph->library->createNode(event->mimeData()->html());
-
+		node->setX(event->scenePos().x());
+		node->setY(event->scenePos().y());
 			if (node) {
-				this->addNodeModel(node, event->scenePos().x(), event->scenePos().y());
+				this->addNodeModel(node);
 					return;
 			}
 	}
@@ -365,6 +389,7 @@ GraphNodeScene::GraphNodeScene(QWidget* parent) :
 	this->installEventFilter(this);
 	conGroup = new QGraphicsItemGroup;
 	addItem(conGroup);
+	stack = new QUndoStack;
 	
 	selectedNode = nullptr;
 }
@@ -385,6 +410,7 @@ SocketConnection *GraphNodeScene::addConnection(QString leftNodeId, int leftSock
 	con->updatePosFromSockets();
 	con->updatePath();
 	this->addItem(con);
+	emit graphInvalidated();
 
 	return con;
 }
@@ -402,6 +428,9 @@ SocketConnection * GraphNodeScene::removeConnection(SocketConnection * connectio
 
 	if (emitSignal)
 		emit connectionRemoved(connection);
+
+	connection->updatePath();
+	emit graphInvalidated();
 
 	return connection;
 }
@@ -492,6 +521,14 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 		{
 			views().at(0)->setDragMode(QGraphicsView::NoDrag);
 		}
+
+
+		auto nodes = this->selectedItems();
+		for (auto node : nodes) {
+			auto nod = static_cast<GraphNode*> (node);
+			nod->initialPoint = nod->pos();
+			qDebug() << nod->pos();
+		}
 	}
 	break;
 	case QEvent::GraphicsSceneMouseMove:
@@ -512,6 +549,21 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 	{
 		views().at(0)->setDragMode(QGraphicsView::RubberBandDrag);
 
+		auto nodes = this->selectedItems();
+		QList<GraphNode*> list;
+		for ( auto node : nodes){
+			auto nod = static_cast<GraphNode*> (node);
+			nod->movedPoint = nod->pos();
+			//if the distance between the old point and the new point is greater than 50, then add move command to the stack
+			if (qSqrt(qPow(nod->initialPoint.x() - nod->movedPoint.x(), 2) + qPow(nod->initialPoint.y() - nod->movedPoint.y(), 2)) > 50) {
+				list.append(nod);
+			}
+		}
+		if (list.length() > 0) {
+			auto moveCommand = new MoveMultipleCommand(list, this);
+			stack->push(moveCommand);
+		}
+
 
 		if (con) {
 			// make it an official connection
@@ -529,22 +581,32 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 							con->socket2->addConnection(con);
 							con->updatePosFromSockets();
 							con->updatePath();
-							//socketConnections.append(con);
+
+							
 
 							// connect models too
 							if (nodeGraph != nullptr) {
 								// check the order of nodes
+								AddConnectionCommand *addConnectionCommand;
 								if (con->socket1->socketType == SocketType::Out) {
-									auto conModel = this->nodeGraph->addConnection(con->socket1->node->nodeId, con->socket1->socketIndex,
-										con->socket2->node->nodeId, con->socket2->socketIndex);
-									con->connectionId = conModel->id; // very important!
+									//auto conModel = this->nodeGraph->addConnection(con->socket1->node->nodeId, con->socket1->socketIndex,
+									//	con->socket2->node->nodeId, con->socket2->socketIndex);
+									//con->connectionId = conModel->id; // very important!
+									//push connections to undo redo stack
+									addConnectionCommand = new AddConnectionCommand(con->socket1->node->nodeId, con->socket2->node->nodeId, this, con->socket1->socketIndex, con->socket2->socketIndex);
+									con->connectionId = addConnectionCommand->connectionID;
 								}
 								else {
-									auto conModel = this->nodeGraph->addConnection(con->socket2->node->nodeId, con->socket2->socketIndex,
-										con->socket1->node->nodeId, con->socket1->socketIndex);
-									con->connectionId = conModel->id; // very important!
+									//auto conModel = this->nodeGraph->addConnection(con->socket2->node->nodeId, con->socket2->socketIndex,
+									//	con->socket1->node->nodeId, con->socket1->socketIndex);
+									//con->connectionId = conModel->id; // very important!
+									addConnectionCommand = new AddConnectionCommand(con->socket1->node->nodeId, con->socket2->node->nodeId, this, con->socket1->socketIndex, con->socket2->socketIndex);
+									con->connectionId = addConnectionCommand->connectionID;
 								}
+								stack->push(addConnectionCommand);
 							}
+
+							this->removeConnection(con->connectionId, false, false);
 
 							emit newConnection(con);
 							con = nullptr;

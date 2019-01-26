@@ -171,13 +171,12 @@ void MainWindow::saveShader()
 	}
 #endif
 
-	updateThumbnailImage(arr);
+	ListWidget::updateThumbnailImage(arr, currentProjectShader);
 }
 
 void MainWindow::saveDefaultShader()
 {
 	bool shouldSaveGraph = createNewGraph(false);
-//	if(shouldSaveGraph) saveShader();
 }
 
 void MainWindow::loadShadersFromDisk()
@@ -661,7 +660,6 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 	effects->addItem(item);
 	effects->displayAllContents();
 
-	propertyListWidget->clearPropertyList();
 	if (loadNewGraph) {
 		loadGraphFromTemplate(preset);
 	}else	setNodeGraph(graph);
@@ -688,7 +686,8 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 
 void MainWindow::loadGraphFromTemplate(NodeGraphPreset preset)
 {
-	currentShaderInformation.GUID = "";
+    propertyListWidget->clearPropertyList();
+    currentShaderInformation.GUID = "";
 	auto graph = importGraphFromFilePath(MaterialHelper::assetPath(preset.templatePath), false);
 	int i = 0;
 	for (auto prop : graph->properties) {
@@ -700,6 +699,7 @@ void MainWindow::loadGraphFromTemplate(NodeGraphPreset preset)
 	}
 	graph->settings.name = preset.name;
 	setNodeGraph(graph);
+	regenerateShader();
 }
 
 void MainWindow::setCurrentShaderItem()
@@ -917,6 +917,13 @@ void MainWindow::configureToolbar()
 	actionRedo->setIcon(fontIcons->icon(fa::share, options));
 	toolBar->addAction(actionRedo);
 
+	connect(actionUndo, &QAction::triggered, [=]() {
+		scene->stack->undo();
+	});
+	connect(actionRedo, &QAction::triggered, [=]() {
+		scene->stack->redo();
+	});
+
 	toolBar->addSeparator();
 
 	auto exportBtn = new QAction;
@@ -1064,7 +1071,7 @@ void MainWindow::updateAssetDock()
 				item->setData(Qt::DisplayRole, asset.name);
 				item->setData(MODEL_GUID_ROLE, asset.guid);
 				item->setData(MODEL_TYPE_ROLE, asset.type);
-				updateThumbnailImage(asset.thumbnail, item);
+				ListWidget::updateThumbnailImage(asset.thumbnail, item);
 				effects->addToListWidget(item);
 			}
 		}
@@ -1072,23 +1079,6 @@ void MainWindow::updateAssetDock()
 
 }
 
-void MainWindow::updateThumbnailImage(QByteArray arr)
-{
-	auto img = QImage::fromData(arr, "PNG");
-	QUrl url("C:\\Users\\W\\Documents\\Studio\\build\\bin\\Debug\\app\\shadergraph\\thumb.png");
-	qDebug() << img.save(url.path()) << img;
-	auto pixmap = QPixmap::fromImage(img);
-	pixmap = pixmap.scaled(defaultItemSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-	currentProjectShader->setIcon(QIcon(pixmap));
-}
-
-void MainWindow::updateThumbnailImage(QByteArray arr, QListWidgetItem *item)
-{
-	auto img = QImage::fromData(arr, "PNG");
-	auto pixmap = QPixmap::fromImage(img);
-	pixmap = pixmap.scaled({90,90}, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-	item->setIcon(QIcon(pixmap));
-}
 
 void MainWindow::setAssetWidgetDatabase(Database * db)
 {

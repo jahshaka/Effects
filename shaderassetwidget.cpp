@@ -83,7 +83,9 @@ void ShaderAssetWidget::updateAssetView(const QString & path, int filter, bool s
 	}
 	else {
 		for (const auto &folder : db->fetchChildFolders(path)) addItem(folder);
-		for (const auto &asset : db->fetchChildAssets(path, filter, showDependencies)) addItem(asset);  /* TODO : irk this out */
+		for (const auto &asset : db->fetchChildAssets(path, filter, showDependencies))
+			if(asset.type == static_cast<int>(ModelTypes::Shader))
+				addItem(asset);  /* TODO : irk this out */
 		//addCrumbs(db->fetchCrumbTrail(path));
 	}
 
@@ -118,6 +120,8 @@ void ShaderAssetWidget::addItem(const AssetRecord & assetData)
 		// No need to check further, this is a builtin asset
 		return;
 	}
+
+	// dont show item if its not a shader asset
 
 	auto doc = QJsonDocument::fromBinaryData(assetData.asset);
 	auto obj = doc.object();
@@ -306,6 +310,7 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 
 	// build material from definition
 	AssetManager::addAsset(assetShader);
+	refresh();
 }
 
 QByteArray ShaderAssetWidget::fetchAsset(QString string)

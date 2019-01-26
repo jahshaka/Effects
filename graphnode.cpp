@@ -9,6 +9,7 @@
 #include <QPixmap>
 #include <QGraphicsPixmapItem>
 #include <QTimer>
+#include <qmath.h>
 
 #include <irisgl/IrisGL.h>
 #include <irisgl/Graphics.h>
@@ -513,9 +514,10 @@ QVariant GraphNode::itemChange(QGraphicsItem::GraphicsItemChange change, const Q
 	if (change == QGraphicsItem::ItemPositionChange && scene()) {
 		// update positon for node
 		if (model) {
-			auto pos = this->pos();
-			model->x = pos.x();
-			model->y = pos.y();
+			//auto pos = this->pos();
+			auto pos = value.value<QPointF>();
+			model->setX(pos.x());
+			model->setY(pos.y());
 		}
 	}
 
@@ -550,8 +552,4 @@ void GraphNode::highlightNode(bool val, int lvl)
 	update();
 }
 
-void GraphNode::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-	check = true;
-	QGraphicsPathItem::mousePressEvent(event);
-}
+

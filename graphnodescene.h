@@ -17,6 +17,7 @@
 #include <QMenu>
 #include <QPointF>
 #include <QPropertyAnimation>
+#include <QUndoStack>
 #include "socketconnection.h"
 #include "graphnode.h"
 #include "graph/nodegraph.h"
@@ -27,6 +28,7 @@
 #include "graph/nodegraph.h"
 #include "graph/library.h"
 #include "graph/graphicsview.h"
+#include "core/undoredo.h"
 //#include "nodes/test.h"
 
 #include <QDebug>
@@ -52,6 +54,7 @@ public:
 	// model for scene
 	NodeGraph* nodeGraph;
 	GraphNode* selectedNode;
+	QUndoStack *stack;
 	template<class nodeType>
 	GraphNode* createNode()
 	{
@@ -85,7 +88,7 @@ public:
 	void refreshNodeTitle(QString id);
 	void setNodeGraph(NodeGraph* value);
 	void addNodeModel(NodeModel* model, bool addToGraph = true);
-	void addNodeModel(NodeModel* model, float x, float y, bool addToGraph = true);
+	GraphNode* addNodeModel(NodeModel* model, float x, float y, bool addToGraph = true);
 	void addPropertyNode(Property* prop, float x, float y, bool addToGraph = true);
 
 	QMenu* createContextMenu(float x, float y);

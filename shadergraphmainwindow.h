@@ -91,8 +91,6 @@ private:
 	void setNodeLibraryItem(QListWidgetItem *item, NodeLibraryItem *tile);
 	bool createNewGraph(bool loadNewGraph = true);
 	void updateAssetDock();
-	void updateThumbnailImage(QByteArray arr);
-	static void updateThumbnailImage(QByteArray arr, QListWidgetItem *);
 
 	bool eventFilter(QObject *watched, QEvent *event);
 
