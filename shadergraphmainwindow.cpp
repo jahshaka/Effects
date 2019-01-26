@@ -38,6 +38,7 @@
 #include "listwidget.h"
 #include "scenewidget.h"
 #include "core/project.h"
+#include "assets.h"
 #include "propertywidgets/texturepropertywidget.h"
 
 #include <QMainWindow>
@@ -88,6 +89,8 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
     configureConnections();
 	setMinimumSize(300, 400);
     loadShadersFromDisk();
+
+	Assets::load();
 	
 }
 
@@ -1346,7 +1349,7 @@ void MainWindow::editingFinishedOnListItem()
 void MainWindow::addMenuToSceneWidget()
 {
 	QMenu *modelMenu = new QMenu("model");
-	QMenu *sceneMenu = new QMenu("scene");
+	//QMenu *sceneMenu = new QMenu("scene");
 	QMenu *backgroundMenu = new QMenu("background");
 	modelMenu->setStyleSheet(
 		"QMenu { background-color: #1A1A1A; color: #EEE; padding: 0; margin: 0; }"
@@ -1355,58 +1358,76 @@ void MainWindow::addMenuToSceneWidget()
 		"QMenu::item:selected { background-color: #3498db; color: #EEE; }"
 		"QMenu::item : disabled { color: #555; }"
 	);
-	sceneMenu->setStyleSheet(modelMenu->styleSheet());
+	//sceneMenu->setStyleSheet(modelMenu->styleSheet());
 	backgroundMenu->setStyleSheet(modelMenu->styleSheet());
 
 	QMainWindow *window = new QMainWindow;
 	QToolBar *bar = new QToolBar;
 
 	window->menuBar()->addMenu(modelMenu);
-	window->menuBar()->addMenu(sceneMenu);
+	//window->menuBar()->addMenu(sceneMenu);
 	window->menuBar()->addMenu(backgroundMenu);
 	displayWidget->setWidget(window);
 	window->setCentralWidget(sceneWidget);
 	
 	auto cubeAction = new QAction("cube");
-	connect(cubeAction, &QAction::triggered, [=]() {});		
+	connect(cubeAction, &QAction::triggered, [=]() {
+		sceneWidget->setPreviewModel(PreviewModel::Cube);
+	});		
 	auto planeAction = new QAction("plane");
-	connect(planeAction, &QAction::triggered, [=]() {});
-	auto sphareAction = new QAction("sphere");
-	connect(sphareAction, &QAction::triggered, [=]() {});
-	auto customModelAction = new QAction("custom");
-	connect(customModelAction, &QAction::triggered, [=]() {});
-	modelMenu->addActions({cubeAction,planeAction,sphareAction,customModelAction});
+	connect(planeAction, &QAction::triggered, [=]() {
+		sceneWidget->setPreviewModel(PreviewModel::Plane);
+	});
+	auto sphereAction = new QAction("sphere");
+	connect(sphereAction, &QAction::triggered, [=]() {
+		sceneWidget->setPreviewModel(PreviewModel::Sphere);
+	});
+	auto cylinderAction = new QAction("cylinder");
+	connect(cylinderAction, &QAction::triggered, [=]() {
+		sceneWidget->setPreviewModel(PreviewModel::Cylinder);
+	});
+	auto capsuleAction = new QAction("capsule");
+	connect(capsuleAction, &QAction::triggered, [=]() {
+		sceneWidget->setPreviewModel(PreviewModel::Capsule);
+	});
+	auto torusAction = new QAction("torus");
+	connect(torusAction, &QAction::triggered, [=]() {
+		sceneWidget->setPreviewModel(PreviewModel::Torus);
+	});
+	//auto customModelAction = new QAction("custom");
+	//connect(customModelAction, &QAction::triggered, [=]() {});
+	modelMenu->addActions({cubeAction,
+						   planeAction,
+						   sphereAction,
+						   cylinderAction,
+						   capsuleAction,
+						   torusAction,
+						   //customModelAction
+		});
 
 	auto whiteAction = new QAction("white");
 	connect(whiteAction, &QAction::triggered, [=]() {});
 	auto blackAction = new QAction("black");
 	connect(blackAction, &QAction::triggered, [=]() {});
-	auto checkeredAction = new QAction("checkered");
-	connect(checkeredAction, &QAction::triggered, [=]() {});
-	auto blankColorAction = new QAction("blank");
-	connect(blankColorAction, &QAction::triggered, [=]() {});
-	sceneMenu->addActions({ whiteAction,blackAction,checkeredAction,blankColorAction });
-
-	auto blankAction = new QAction("blank");
-	connect(blankAction, &QAction::triggered, [=]() {});
-	auto gradientAction = new QAction("custom");
-	connect(gradientAction, &QAction::triggered, [=]() {});
-	backgroundMenu->addActions({ blankAction,gradientAction });
+	backgroundMenu->addActions({ whiteAction, blackAction});
 
 	cubeAction->setCheckable(true);
 	planeAction->setCheckable(true);
-	sphareAction->setCheckable(true);
-	customModelAction->setCheckable(true);
+	sphereAction->setCheckable(true);
+	cylinderAction->setCheckable(true);
+	capsuleAction->setCheckable(true);
+	torusAction->setCheckable(true);
+	//customModelAction->setCheckable(true);
 	whiteAction->setCheckable(true);
 	blackAction->setCheckable(true);
-	checkeredAction->setCheckable(true);
-	blankAction->setCheckable(true);
-	blankColorAction->setCheckable(true);
-	gradientAction->setCheckable(true);
+	//checkeredAction->setCheckable(true);
+	//blankAction->setCheckable(true);
+	//blankColorAction->setCheckable(true);
+	//gradientAction->setCheckable(true);
 
-	sphareAction->setChecked(true);
+	sphereAction->setChecked(true);
 	whiteAction->setChecked(true);
-	blankAction->setChecked(true);
+	//blankAction->setChecked(true);
 
 	auto screenShotBtn = new QPushButton("screenshot");
 	bar->addWidget(screenShotBtn);
@@ -1414,8 +1435,22 @@ void MainWindow::addMenuToSceneWidget()
 		
 	});
 
+	// model group
+	auto modelGroup = new QActionGroup(this);
+	modelGroup->addAction(sphereAction);
+	modelGroup->addAction(planeAction);
+	modelGroup->addAction(cubeAction);
+	modelGroup->addAction(cylinderAction);
+	modelGroup->addAction(capsuleAction);
+	modelGroup->addAction(torusAction);
+	//modelGroup->addAction(customModelAction);
+	modelGroup->setExclusive(true);
 
-
+	// background group
+	modelGroup = new QActionGroup(this);
+	modelGroup->addAction(whiteAction);
+	modelGroup->addAction(blackAction);
+	modelGroup->setExclusive(true);
 }
 
 }
