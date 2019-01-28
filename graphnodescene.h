@@ -119,6 +119,7 @@ signals:
 	void nodeRemoved(GraphNode* connection);
 	void nodeValueChanged(NodeModel* nodeModel, int socketIndex);
 	void loadGraph(QListWidgetItem *item);
+	void loadGraphFromPreset(QString name);
 
 	// called whenever something is done that should cause the shader
 	// to be invalidated such as:

@@ -347,7 +347,7 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 		}
 	}
 
-	if (0 == QString("node").compare(QString(event->mimeData()->data("MODEL_TYPE_ROLE")))) {
+	if ("node" == event->mimeData()->data("MODEL_TYPE_ROLE").toStdString()) {
 		event->accept();
 
 		auto node = nodeGraph->library->createNode(event->mimeData()->html());
@@ -359,7 +359,7 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 			}
 	}
 
-	if (QVariant(event->mimeData()->data("MODEL_TYPE_ROLE")).toInt() == static_cast<int>(ModelTypes::Shader)) {
+	if (QVariant(event->mimeData()->data("MODEL_TYPE_ROLE")).toInt() == static_cast<int>(ModelTypes::Shader) ) {
 		event->accept();
 
 		QListWidgetItem *item = new QListWidgetItem;
@@ -370,6 +370,10 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 
 		emit loadGraph(item);
 		return;
+	}
+
+	if (event->mimeData()->data("MODEL_TYPE_ROLE").toStdString() == "presets") {
+		emit loadGraphFromPreset(event->mimeData()->text());
 	}
 }
 

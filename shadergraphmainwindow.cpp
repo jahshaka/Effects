@@ -114,6 +114,8 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
 	materialSettingsWidget->setMaterialSettings(&graph->settings);
 	sceneWidget->setMaterialSettings(graph->settings);
 	this->graph = graph;
+
+	
 }
 
 void MainWindow::newNodeGraph(QString *shaderName, int *templateType, QString *templateName)
@@ -552,6 +554,7 @@ void MainWindow::configureAssetsDock()
 		item->setSizeHint(defaultItemSize);
 		item->setTextAlignment(Qt::AlignBottom);
 		item->setIcon(QIcon(MaterialHelper::assetPath(tile.iconPath)));
+		item->setData(MODEL_TYPE_ROLE, "presets");
 		presets->addToListWidget(item);
 	}
 
@@ -1166,6 +1169,14 @@ GraphNodeScene *MainWindow::createNewScene()
 		loadGraph(currentShaderInformation.GUID);
 	});
 
+	connect(scene, &GraphNodeScene::loadGraphFromPreset, [=](QString name) {
+		for (auto preset : CreateNewDialog::getPresetList()) {
+			if (name == preset.name) {
+				loadGraphFromTemplate(preset);
+			}
+		}
+	});
+
     return scene;
 }
 
@@ -1231,8 +1242,9 @@ void MainWindow::configureConnections()
 				loadGraphFromTemplate(preset);
 			}
 		}
-
 	});
+
+	
 
     QShortcut *shortcut = new QShortcut(QKeySequence("space"), this);
     connect(shortcut, &QShortcut::activated, [=]() {
