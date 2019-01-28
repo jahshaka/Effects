@@ -130,6 +130,8 @@ public:
 	QPointF movedPoint;
 	int distanceBetweenTwoPoints(QPointF oldPos, QPointF newPos);
 
+	static long pressedZValue;
+
 signals:
 	void positionChanged(const QPointF& pos);
 private:
@@ -138,6 +140,8 @@ private:
 	void highlightNode(bool val, int lvl);
 	QFont font;
 protected:
+	void mousePressEvent(QGraphicsSceneMouseEvent *) override;
+	void mouseReleaseEvent(QGraphicsSceneMouseEvent *) override;
 
 };
 

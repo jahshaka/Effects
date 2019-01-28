@@ -288,5 +288,4 @@ void PropertyListWidget::addToPropertyListWidget(BasePropertyWidget *widget)
     referenceList.append(widget);
     widget->index = added;
 	added++;
-    qDebug() << layout->count();
 }

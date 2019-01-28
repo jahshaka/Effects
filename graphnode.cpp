@@ -30,9 +30,6 @@ CustomRenderWidget::CustomRenderWidget() :
 
 QString CustomRenderWidget::assetPath(QString relPath)
 {
-	//qDebug()<< QDir::cleanPath(QCoreApplication::applicationFilePath() + QDir::separator() + relPath);
-	//return QDir::cleanPath(QCoreApplication::applicationFilePath() + QDir::separator() + relPath);
-	qDebug() << QDir::cleanPath(QDir::currentPath() + QDir::separator() + relPath);
 	return QDir::cleanPath(QDir::currentPath() + QDir::separator() + relPath);
 }
 
@@ -191,6 +188,7 @@ void CustomRenderWidget::setNodeGraph(NodeGraph *graph)
 	this->graph = graph;
 }
 
+long GraphNode::pressedZValue = 0;
 GraphNode::GraphNode(QGraphicsItem* parent) :
 	QGraphicsPathItem(parent)
 {
@@ -239,6 +237,9 @@ GraphNode::GraphNode(QGraphicsItem* parent) :
 	proxyPreviewWidget = nullptr;
 	previewWidget = nullptr;
 	model = nullptr;
+
+	pressedZValue++;
+	setZValue(pressedZValue);
 }
 
 GraphNode::~GraphNode()
@@ -553,6 +554,19 @@ void GraphNode::highlightNode(bool val, int lvl)
 	}
 	if (!val) check = val;
 	update();
+}
+
+void GraphNode::mousePressEvent(QGraphicsSceneMouseEvent * event)
+{
+	pressedZValue++;
+	setZValue(pressedZValue);
+	QGraphicsPathItem::mousePressEvent(event);
+}
+
+void GraphNode::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+	QGraphicsPathItem::mouseReleaseEvent(event);
+
 }
 
 

@@ -835,7 +835,6 @@ void MainWindow::configureUI()
 	});
 
 	connect(propertyListWidget, &PropertyListWidget::deleteProperty, [=](QString propID) {
-		qDebug() << propID;
 		graph->deletePropertyById(propID);
 	});
 

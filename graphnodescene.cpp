@@ -527,7 +527,6 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 		for (auto node : nodes) {
 			auto nod = static_cast<GraphNode*> (node);
 			nod->initialPoint = nod->pos();
-			qDebug() << nod->pos();
 		}
 	}
 	break;
