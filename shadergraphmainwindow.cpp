@@ -876,13 +876,7 @@ void MainWindow::configureToolbar()
 
 	toolBar = new QToolBar("Tool Bar");
 	toolBar->setIconSize(QSize(15, 15));	
-
-	QFont projectNameFont = projectName->font();
-	projectNameFont.setPixelSize(24);
-	projectNameFont.setWeight(65);
-	projectName->setFont(font);
 	
-
 	projectName->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
 	projectName->setMinimumWidth(250);
 	projectName->setText("Untitled Shader");
@@ -892,20 +886,15 @@ void MainWindow::configureToolbar()
 	);
 
 	connect(projectName, &QLineEdit::textEdited, [=](const QString text) {
-
 		currentProjectShader->setData(Qt::DisplayRole, text);
 		currentProjectShader->setData(Qt::UserRole, text);
 		newName = text;
 	});
 
 	connect(projectName, &QLineEdit::editingFinished, [=]() {
-		//update finished, update view;
 		saveShader();
 		renameShader();
 	});
-
-
-    //toolBar->addWidget(projectName);
 
 	QAction *actionUndo = new QAction;
 	actionUndo->setToolTip("Undo | Undo last action");
@@ -943,9 +932,6 @@ void MainWindow::configureToolbar()
 
 	toolBar->addActions({ exportBtn, importBtn, addBtn });
 
-
-
-
 	// this acts as a spacer
 	QWidget* empty = new QWidget();
 	empty->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -963,7 +949,6 @@ void MainWindow::configureToolbar()
 	connect(actionSave, &QAction::triggered, this, &MainWindow::saveShader);
 	connect(exportBtn, &QAction::triggered, this, &MainWindow::exportGraph);
 	connect(importBtn, &QAction::triggered, this, &MainWindow::importGraph);
-	//connect(addBtn, &QAction::triggered, this, &MainWindow::createNewGraph);
 	connect(addBtn, &QAction::triggered, this, [=]() {
 		createNewGraph(true);
 	});
@@ -977,7 +962,6 @@ void MainWindow::configureToolbar()
 		"QToolBar::separator:horizontal { background: #272727; width: 1px; margin-left: 6px; margin-right: 6px;} "
 		"QToolButton { border-radius: 2px; background: rgba(33,33,33, 1); color: rgba(250,250,250, 1); border : 1px solid rgba(10,10,10, .4); font: 18px; padding: 8px; } "
 		"QToolButton:hover{ background: rgba(48,48,48, 1); } "
-	//	"QToolButton:checked{ background: rgba(50,150,250,1); }"
 	);
 
 	empty->setStyleSheet(
@@ -1011,9 +995,7 @@ void MainWindow::generateTileNode()
 void MainWindow::generateTileNode(QList<NodeLibraryItem*> list)
 {
 	QSize currentSize(90, 90);
-
 	for (auto tile : list) {
-		
 		auto item = new QListWidgetItem;
 		item->setText(tile->displayName);
 		item->setData(Qt::DisplayRole, tile->displayName);
@@ -1043,7 +1025,6 @@ void MainWindow::setNodeLibraryItem(QListWidgetItem *item, NodeLibraryItem *tile
 
 bool MainWindow::createNewGraph(bool loadNewGraph)
 {
-
 	CreateNewDialog node(loadNewGraph);
 	node.exec();
 
@@ -1393,15 +1374,13 @@ void MainWindow::addMenuToSceneWidget()
 	connect(torusAction, &QAction::triggered, [=]() {
 		sceneWidget->setPreviewModel(PreviewModel::Torus);
 	});
-	//auto customModelAction = new QAction("custom");
-	//connect(customModelAction, &QAction::triggered, [=]() {});
+
 	modelMenu->addActions({cubeAction,
 						   planeAction,
 						   sphereAction,
 						   cylinderAction,
 						   capsuleAction,
 						   torusAction,
-						   //customModelAction
 		});
 
 	auto whiteAction = new QAction("white");
@@ -1416,17 +1395,11 @@ void MainWindow::addMenuToSceneWidget()
 	cylinderAction->setCheckable(true);
 	capsuleAction->setCheckable(true);
 	torusAction->setCheckable(true);
-	//customModelAction->setCheckable(true);
 	whiteAction->setCheckable(true);
 	blackAction->setCheckable(true);
-	//checkeredAction->setCheckable(true);
-	//blankAction->setCheckable(true);
-	//blankColorAction->setCheckable(true);
-	//gradientAction->setCheckable(true);
 
 	sphereAction->setChecked(true);
 	whiteAction->setChecked(true);
-	//blankAction->setChecked(true);
 
 	auto screenShotBtn = new QPushButton("screenshot");
 	bar->addWidget(screenShotBtn);

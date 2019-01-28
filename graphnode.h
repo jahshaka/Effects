@@ -141,7 +141,5 @@ private:
 	QFont font;
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *) override;
-	void mouseReleaseEvent(QGraphicsSceneMouseEvent *) override;
-
 };
 

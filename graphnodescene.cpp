@@ -82,9 +82,6 @@ GraphNode* GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool
 	nodeView->setModel(model);
 	nodeView->setTitle(model->title);
 	nodeView->setTitleColor(model->setNodeTitleColor());
-//	if (model->title == "Color Node") nodeView->doNotCheckProxyWidgetHeight = true;
-
-	//nodeView->setIcon(model->icon);
 
 	for (auto sock : model->inSockets)
 		nodeView->addInSocket(sock);
