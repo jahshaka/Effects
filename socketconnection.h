@@ -20,6 +20,7 @@ class SocketConnection : public QGraphicsPathItem
 public:
 	QString connectionId;
 
+	// these may not always be in the order of left and right
 	Socket* socket1;
 	Socket* socket2;
 
@@ -31,6 +32,9 @@ public:
     double lineThickness = 5.0;
 
 	SocketConnection();
+
+	Socket* getInSocket();
+	Socket* getOutSocket();
 
 	void updatePosFromSockets();
 	void updatePath();

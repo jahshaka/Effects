@@ -109,6 +109,8 @@ public:
 	void resetPositionForColorWidget();
 	bool doNotCheckProxyWidgetHeight = false;
 
+	int getInSocketCount() { return inSocketCount; }
+	int getOutSocketCount() { return outSocketCount; }
 	Socket* getInSocket(int index);
 	Socket* getOutSocket(int index);
 

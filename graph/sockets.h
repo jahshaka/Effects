@@ -109,6 +109,16 @@ public:
 		socketColor = QColor(105, 150, 150);
 	}
 
+	virtual bool canConvertTo(SocketModel* other)
+	{
+		if (other->typeName == "float" ||
+			other->typeName == "vec2" ||
+			other->typeName == "vec3" ||
+			other->typeName == "vec4")
+			return true;
+		return false;
+	}
+
 	QString convertVarTo(SocketModel* toModel)
 	{
 		return SocketHelper::convertVectorValue(varName, this, toModel);

@@ -45,7 +45,9 @@ void AddNodeCommand::undo()
 
 void AddNodeCommand::redo()
 {
-	scene->addNodeModel(nodeModel, nodeModel->getX(), nodeModel->getY());
+	auto node = scene->addNodeModel(nodeModel, nodeModel->getX(), nodeModel->getY());
+	node->setPos({ nodeModel->getX(), nodeModel->getY() });
+	scene->update();
 	UndoRedo::redo();
 
 }
