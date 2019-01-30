@@ -68,6 +68,9 @@ public:
 
 		return node;
 	}
+	
+	void undo();
+	void redo();
 
 	SocketConnection* addConnection(QString leftNodeId, int leftSockIndex, QString rightNodeId, int rightSockIndex);
 	SocketConnection* removeConnection(SocketConnection* connection, bool removeFromNodeGraph = true, bool emitSignal = true);
@@ -79,6 +82,19 @@ public:
 	Socket* getSocketAt(float x, float y);
 	SocketConnection* getConnectionAt(float x, float y);
 	SocketConnection* getConnection(const QString& conId);
+
+	// sock is the connection that will happ
+	bool canSocketConnect(Socket* outSock, Socket* inSock);
+
+	// checks to see if potential connection will cause a loop
+	// sock1 is the one already in the connection
+	// sock2 is the connection to be added
+	bool willConnectionBeALoop(Socket* sock1, Socket* sock2);
+
+	// assigns inSock and outsock given two sockets
+	// doesnt not handle the case where sock1 and sock2 are both In or Out
+	// Out sockets are on the left and In sockets are on the right
+	void determineOutAndInSockets(Socket* sock1, Socket* sock2, Socket** outSock, Socket** inSock);
 
 	GraphNode* getNodeById(QString id);
     QVector<GraphNode*> getNodes();
