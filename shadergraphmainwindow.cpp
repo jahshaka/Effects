@@ -665,11 +665,11 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 	item->setText(newShader);
 	effects->addItem(item);
 	effects->displayAllContents();
-
+	propertyListWidget->clearPropertyList();
 	if (loadNewGraph) {
 		loadGraphFromTemplate(preset);
 	}else	setNodeGraph(graph);
-	
+
 	currentShaderInformation.GUID = assetGuid;
 	currentShaderInformation.name = newShader;
 	regenerateShader();
