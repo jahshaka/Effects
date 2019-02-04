@@ -300,19 +300,22 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 				const QString assetFolder = QDir(assetPath).filePath(value);
 				QDirIterator it(assetFolder);
 
-				if (it.hasNext()) {
+				while (it.hasNext()) {
 					auto imgGuid = shadergraph::MainWindow::genGUID();
-					QFile file(it.next());
-					QImage img(file.fileName);
-					db->createAssetEntry(targetGuid, imgGuid, file.fileName(), static_cast<int>(ModelTypes::Texture));
+					auto fileName = it.next();
+					auto splitted = fileName.split('/');
+					if (splitted.back() == '.' || splitted.back() == "..") continue;
 
+					QFile file(fileName);
+					//assigns the guid for the file name and the original extension
+					auto newName = value + splitted.back();
 
+					qDebug() << QFile::copy(file.fileName(), Globals::project->getProjectFolder()+'/'+ newName);
 					
+					db->createAssetEntry(Globals::project->getProjectGuid(), imgGuid, newName, static_cast<int>(ModelTypes::Texture));
+					db->createDependency(static_cast<int>(ModelTypes::Shader), static_cast<int>(ModelTypes::Texture), targetGuid, imgGuid, Globals::project->getProjectGuid());
+
 				}
-
-
-
-				qDebug() << value;
 			}
 		}
 	
