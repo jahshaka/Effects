@@ -52,28 +52,6 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 
 	nodeContainer = new ListWidget;
 	propertyContainer = new ListWidget;
-    //nodeContainer->setAlternatingRowColors(false);
-    //nodeContainer->setSpacing(0);
-    //nodeContainer->setContentsMargins(10, 3, 10, 10);
-    //nodeContainer->setViewMode(QListWidget::IconMode);
-    //nodeContainer->setIconSize({90,90});
-    //nodeContainer->setMouseTracking(true);
-    //nodeContainer->setDragDropMode(QAbstractItemView::DragDrop);
-    //nodeContainer->setMovement(QListView::Static);
-    //nodeContainer->setResizeMode(QListWidget::Adjust);
-    //nodeContainer->setDefaultDropAction(Qt::CopyAction);
-    //nodeContainer->setSelectionMode(QAbstractItemView::SingleSelection);
-    //nodeContainer->setSelectionRectVisible(false);
-    //nodeContainer->setDragEnabled(true);
-    //nodeContainer->viewport()->setAcceptDrops(false);
-    //nodeContainer->setDropIndicatorShown(true);
-    //nodeContainer->installEventFilter(this);
-    //nodeContainer->viewport()->installEventFilter(this);
-    //nodeContainer->setWordWrap(true);
-    //nodeContainer->setGridSize(QSize(90, 90));
-    //nodeContainer->setSortingEnabled(true);
-    //nodeContainer->sortItems();
-    //nodeContainer->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
 	//search box
 	auto searchContainer = new QWidget;
@@ -110,9 +88,6 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 	widgetLayout->addWidget(tabWidget);
 	layout->addWidget(clearWidget);
 
-
-//	layout->addWidget(searchContainer);
-//	layout->addWidget(nodeContainer);
 	generateTileNode(graph);
 	generateTileProperty(graph);
 
@@ -143,11 +118,11 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 		this->close();
 	});
 
-	connect(nodeContainer, &ListWidget::itemDoubleClicked, [=](QListWidgetItem *item) {
+	connect(nodeContainer, &ListWidget::itemClicked, [=](QListWidgetItem *item) {
 		scene->addNodeFromSearchDialog(nodeContainer->currentItem(), this->point);
 		this->close();
 	});
-	connect(propertyContainer, &ListWidget::itemDoubleClicked, [=](QListWidgetItem *item) {
+	connect(propertyContainer, &ListWidget::itemClicked, [=](QListWidgetItem *item) {
 		scene->addNodeFromSearchDialog(propertyContainer->currentItem(), this->point);
 		this->close();
 	});
@@ -250,12 +225,10 @@ void SearchDialog::generateTileProperty(NodeGraph * graph)
 void SearchDialog::leaveEvent(QEvent * event)
 {
 	this->close();
- //   this->deleteLater();
 }
 
 void SearchDialog::showEvent(QShowEvent * event)
 {
-
 	QDialog::showEvent(event);
 	this->setGeometry(point.x(), point.y(), geometry().width(), geometry().height());
 	searchBar->setFocus();

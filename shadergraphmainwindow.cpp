@@ -776,10 +776,8 @@ void MainWindow::configureUI()
 	addDockWidget(Qt::LeftDockWidgetArea, materialSettingsDock, Qt::Vertical);
 	addDockWidget(Qt::RightDockWidgetArea, propertyWidget, Qt::Vertical);
 
-	//auto displayLayout = new QVBoxLayout;
-	//displayWidget->setLayout(displayLayout);
-	//displayWidget->setWidget(sceneWidget);
-	displayWidget->setMinimumSize(300, 230);
+	displayWidget->setMinimumSize(400, 230);
+	assetsDock->setMinimumWidth(330);
 
 	textWidget->setWidget(textEdit);
 	propertyWidget->setWidget(propertyListWidget);
