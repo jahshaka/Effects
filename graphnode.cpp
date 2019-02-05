@@ -30,9 +30,6 @@ CustomRenderWidget::CustomRenderWidget() :
 
 QString CustomRenderWidget::assetPath(QString relPath)
 {
-	//qDebug()<< QDir::cleanPath(QCoreApplication::applicationFilePath() + QDir::separator() + relPath);
-	//return QDir::cleanPath(QCoreApplication::applicationFilePath() + QDir::separator() + relPath);
-	qDebug() << QDir::cleanPath(QDir::currentPath() + QDir::separator() + relPath);
 	return QDir::cleanPath(QDir::currentPath() + QDir::separator() + relPath);
 }
 
@@ -191,6 +188,7 @@ void CustomRenderWidget::setNodeGraph(NodeGraph *graph)
 	this->graph = graph;
 }
 
+long GraphNode::pressedZValue = 0;
 GraphNode::GraphNode(QGraphicsItem* parent) :
 	QGraphicsPathItem(parent)
 {
@@ -239,6 +237,9 @@ GraphNode::GraphNode(QGraphicsItem* parent) :
 	proxyPreviewWidget = nullptr;
 	previewWidget = nullptr;
 	model = nullptr;
+
+	pressedZValue++;
+	setZValue(pressedZValue);
 }
 
 GraphNode::~GraphNode()
@@ -273,7 +274,7 @@ void GraphNode::setTitle(QString title)
 void GraphNode::addInSocket(SocketModel *socket)
 {
 	auto sock = new Socket(this, SocketType::In, socket->name);
-	auto y = calcHeight();// + sock->calcHeight();
+	auto y = calcHeight();
 	sock->setPos(-sock->getRadius(), y);
 	sock->node = this;
 	sock->socketIndex = inSocketCount++;
@@ -284,7 +285,7 @@ void GraphNode::addInSocket(SocketModel *socket)
 void GraphNode::addOutSocket(SocketModel *socket)
 {
 	auto sock = new Socket(this, SocketType::Out, socket->name);
-	auto y = calcHeight();// + sock->calcHeight();
+	auto y = calcHeight();
 	sock->setPos(nodeWidth + sock->getRadius(), y);
 	sock->node = this;
 	sock->socketIndex = outSocketCount++;
@@ -295,8 +296,6 @@ void GraphNode::addOutSocket(SocketModel *socket)
 void GraphNode::addSocket(Socket* sock)
 {
 	sockets.append(sock);
-
-	// recalc path
 	calcPath();
 }
 
@@ -307,7 +306,6 @@ void GraphNode::setWidget(QWidget *widget)
 
 	proxyWidget = new QGraphicsProxyWidget(this);
 	proxyWidget->setWidget(widget);
-	//proxyWidget->setPreferredSize(widget->pr);
 	proxyWidget->setPreferredWidth(5);
 	proxyWidget->setPos((nodeWidth - proxyWidget->size().width()) / 2,	y);
 
@@ -316,6 +314,7 @@ void GraphNode::setWidget(QWidget *widget)
 	layout();
 }
 
+//recalculates path
 void GraphNode::calcPath()
 {
 	QPainterPath path_content;
@@ -335,7 +334,6 @@ int GraphNode::calcHeight()
 		height += increment; // padding
 	}
 
-	//height += 2; // padding
 	if (proxyWidget != nullptr && !doNotCheckProxyWidgetHeight)
 		height += proxyWidget->size().height();
 
@@ -344,7 +342,6 @@ int GraphNode::calcHeight()
 
 void GraphNode::resetPositionForColorWidget()
 {
-
 	if (proxyWidget) {
 		proxyWidget->setPos(12, titleHeight+10);
 		doNotCheckProxyWidgetHeight = true;
@@ -361,7 +358,6 @@ Socket *GraphNode::getInSocket(int index)
 			i++;
 		}
 	}
-
 	return nullptr;
 }
 
@@ -388,7 +384,6 @@ void GraphNode::layout()
 		height += increment; // padding
 	}
 
-	//height += 2; // padding
 	if (proxyWidget != nullptr && !doNotCheckProxyWidgetHeight) {
 		proxyWidget->setPos((nodeWidth - proxyWidget->size().width()) / 2,
 			height);
@@ -426,13 +421,10 @@ void GraphNode::enablePreviewWidget()
 	proxyPreviewWidget->setWidget(previewWidget);
 	proxyPreviewWidget->setGeometry(QRectF(0, 260, 160, 160));
 
-	if (this->nodeGraph)
-		previewWidget->setNodeGraph(nodeGraph);
+	if (this->nodeGraph)	previewWidget->setNodeGraph(nodeGraph);
 
-	//updateTimer = new QTimer();
 	QObject::connect(&updateTimer, &QTimer::timeout, [this]()
 	{
-		//this->update();
 		proxyPreviewWidget->update();
 	});
 	updateTimer.start(1000 / 30);
@@ -467,11 +459,6 @@ void GraphNode::paint(QPainter *painter,
 	titlePath.addRoundedRect(0, 0, nodeWidth, titleHeight, titleRadius, titleRadius);
 	painter->fillPath(titlePath, QBrush(titleColor));
 
-	//draw icon
-	//painter->drawPixmap(5, 5, 15, 15, icon.pixmap(50, 50));
-	
-	
-
 	//draw text node seperator
 	QPainterPath block;
 	block.setFillRule(Qt::WindingFill);
@@ -487,7 +474,6 @@ void GraphNode::paint(QPainter *painter,
     painter->drawRoundedRect(rect, titleRadius, titleRadius);
 
     //draw highlight color
-
     if (option->state.testFlag(QStyle::State_Selected) != currentSelectedState) {
         currentSelectedState = option->state.testFlag(QStyle::State_Selected);
         highlightNode(currentSelectedState, 0);
@@ -517,7 +503,6 @@ QVariant GraphNode::itemChange(QGraphicsItem::GraphicsItemChange change, const Q
 	if (change == QGraphicsItem::ItemPositionChange && scene()) {
 		// update positon for node
 		if (model) {
-			//auto pos = this->pos();
 			auto pos = value.value<QPointF>();
 			model->setX(pos.x());
 			model->setY(pos.y());
@@ -531,9 +516,6 @@ void GraphNode::highlightNode(bool val, int lvl)
 {
 	isHighlighted = val;
 	level = lvl;
-
-	
-
 	for (Socket* sock : sockets) {
 		if (sock->socketType == SocketType::In) {
 			for (SocketConnection* con : sock->connections) {
@@ -554,5 +536,13 @@ void GraphNode::highlightNode(bool val, int lvl)
 	if (!val) check = val;
 	update();
 }
+
+void GraphNode::mousePressEvent(QGraphicsSceneMouseEvent * event)
+{
+	pressedZValue++;
+	setZValue(pressedZValue);
+	QGraphicsPathItem::mousePressEvent(event);
+}
+
 
 

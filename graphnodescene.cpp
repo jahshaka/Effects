@@ -82,9 +82,6 @@ GraphNode* GraphNodeScene::addNodeModel(NodeModel *model, float x, float y, bool
 	nodeView->setModel(model);
 	nodeView->setTitle(model->title);
 	nodeView->setTitleColor(model->setNodeTitleColor());
-//	if (model->title == "Color Node") nodeView->doNotCheckProxyWidgetHeight = true;
-
-	//nodeView->setIcon(model->icon);
 
 	for (auto sock : model->inSockets)
 		nodeView->addInSocket(sock);
@@ -350,7 +347,7 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 		}
 	}
 
-	if (0 == QString("node").compare(QString(event->mimeData()->data("MODEL_TYPE_ROLE")))) {
+	if ("node" == event->mimeData()->data("MODEL_TYPE_ROLE").toStdString()) {
 		event->accept();
 
 		auto node = nodeGraph->library->createNode(event->mimeData()->html());
@@ -362,7 +359,7 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 			}
 	}
 
-	if (QVariant(event->mimeData()->data("MODEL_TYPE_ROLE")).toInt() == static_cast<int>(ModelTypes::Shader)) {
+	if (QVariant(event->mimeData()->data("MODEL_TYPE_ROLE")).toInt() == static_cast<int>(ModelTypes::Shader) ) {
 		event->accept();
 
 		QListWidgetItem *item = new QListWidgetItem;
@@ -373,6 +370,10 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 
 		emit loadGraph(item);
 		return;
+	}
+
+	if (event->mimeData()->data("MODEL_TYPE_ROLE").toStdString() == "presets") {
+		emit loadGraphFromPreset(event->mimeData()->text());
 	}
 }
 
@@ -527,7 +528,6 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 		for (auto node : nodes) {
 			auto nod = static_cast<GraphNode*> (node);
 			nod->initialPoint = nod->pos();
-			qDebug() << nod->pos();
 		}
 	}
 	break;

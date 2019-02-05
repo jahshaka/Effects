@@ -9,8 +9,11 @@
 
 #include "irisgl/src/core/irisutils.h"
 #include "core/materialhelper.h"
+#include "properties.h"
+#include <QStandardPaths>
+#include <QDirIterator>
 
-
+#include "shadergraphmainwindow.h"
 #if(EFFECT_BUILD_AS_LIB)
 #include "../io/assetmanager.h"
 #include "../uimanager.h"
@@ -266,15 +269,8 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 	const QString newShader = "Untitled Shader";
 	
 	item->setSizeHint(currentSize);
-	
-	auto genGuid = []() {
-		auto id = QUuid::createUuid();
-		auto guid = id.toString().remove(0, 1);
-		guid.chop(1);
-		return guid;
-	};
 
-	const QString targetGuid = genGuid();
+	const QString targetGuid = shadergraph::MainWindow::genGUID();
 
 	
 	assetItemShader.wItem = item;
@@ -285,11 +281,64 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 	AssetRecord sourceRecord = db->fetchAsset(sourceGuid);
 	auto sourceData = db->fetchAssetData(sourceGuid);
 
+	auto doc = QJsonDocument::fromBinaryData(sourceData);
+	auto obj = doc.object();
+	auto list = obj["properties"].toArray();
+	QString str;
+	str = doc.toJson();
+
+		for (auto prop : list) {
+			auto type = prop.toObject()["type"].toString();
+			if (type == "texture") {
+				auto value = prop.toObject()["value"].toString();
+
+				auto assetPath = IrisUtils::join(
+					QStandardPaths::writableLocation(QStandardPaths::DataLocation),
+					"AssetStore"
+				);
+				
+
+				const QString assetFolder = QDir(assetPath).filePath(value);
+				QDirIterator it(assetFolder);
+
+				while (it.hasNext()) {
+					auto imgGuid = shadergraph::MainWindow::genGUID();
+					auto fileName = it.next();
+					auto splitted = fileName.split('/');
+					if (splitted.back() == '.' || splitted.back() == "..") continue;
+
+					//get extension only
+					auto spl = splitted.back().split('.');
+
+					// find the old guid and replace with the new guid
+					str = str.replace(value, imgGuid);
+
+					QFile file(fileName);
+					//assigns the guid for the file name and the original extension
+					auto newName = value +'.'+ spl.back();
+
+					QFile::copy(file.fileName(), Globals::project->getProjectFolder()+'/'+ newName);
+					
+					db->createAssetEntry(Globals::project->getProjectGuid(), imgGuid, newName, static_cast<int>(ModelTypes::Texture));
+					db->createDependency(static_cast<int>(ModelTypes::Shader), static_cast<int>(ModelTypes::Texture), targetGuid, imgGuid, Globals::project->getProjectGuid());
+
+				}
+			}
+		}
+
+		//update source data after editing guids - dirty
+		auto var = QVariant(str);
+		auto updatedDoc = QJsonDocument::fromJson(str.toUtf8());
+		
+
 	db->createAssetEntry(targetGuid,
 		sourceRecord.name,
 		static_cast<int>(ModelTypes::Shader),
 		assetItemShader.selectedGuid);
-	db->updateAssetAsset(targetGuid, sourceData);
+
+db->updateAssetAsset(targetGuid, updatedDoc.toBinaryData());
+	
+//	db->updateAssetAsset(targetGuid, sourceData);
 	db->updateAssetThumbnail(targetGuid, db->fetchAsset(item->data(MODEL_GUID_ROLE).toString()).thumbnail);
 
 	// todo: create new item
