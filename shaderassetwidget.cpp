@@ -284,7 +284,8 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 	auto doc = QJsonDocument::fromBinaryData(sourceData);
 	auto obj = doc.object();
 	auto list = obj["properties"].toArray();
-
+	QString str;
+	str = doc.toJson();
 
 		for (auto prop : list) {
 			auto type = prop.toObject()["type"].toString();
@@ -306,11 +307,17 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 					auto splitted = fileName.split('/');
 					if (splitted.back() == '.' || splitted.back() == "..") continue;
 
+					//get extension only
+					auto spl = splitted.back().split('.');
+
+					// find the old guid and replace with the new guid
+					str = str.replace(value, imgGuid);
+
 					QFile file(fileName);
 					//assigns the guid for the file name and the original extension
-					auto newName = value + splitted.back();
+					auto newName = value +'.'+ spl.back();
 
-					qDebug() << QFile::copy(file.fileName(), Globals::project->getProjectFolder()+'/'+ newName);
+					QFile::copy(file.fileName(), Globals::project->getProjectFolder()+'/'+ newName);
 					
 					db->createAssetEntry(Globals::project->getProjectGuid(), imgGuid, newName, static_cast<int>(ModelTypes::Texture));
 					db->createDependency(static_cast<int>(ModelTypes::Shader), static_cast<int>(ModelTypes::Texture), targetGuid, imgGuid, Globals::project->getProjectGuid());
@@ -318,15 +325,20 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 				}
 			}
 		}
-	
+
+		//update source data after editing guids - dirty
+		auto var = QVariant(str);
+		auto updatedDoc = QJsonDocument::fromJson(str.toUtf8());
+		
 
 	db->createAssetEntry(targetGuid,
 		sourceRecord.name,
 		static_cast<int>(ModelTypes::Shader),
 		assetItemShader.selectedGuid);
 
-
-	db->updateAssetAsset(targetGuid, sourceData);
+db->updateAssetAsset(targetGuid, updatedDoc.toBinaryData());
+	
+//	db->updateAssetAsset(targetGuid, sourceData);
 	db->updateAssetThumbnail(targetGuid, db->fetchAsset(item->data(MODEL_GUID_ROLE).toString()).thumbnail);
 
 	// todo: create new item
