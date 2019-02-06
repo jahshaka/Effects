@@ -62,6 +62,7 @@ void NodeGraph::registerModel(QString name, std::function<NodeModel *()> factory
 void NodeGraph::setNodeLibrary(NodeLibrary* lib)
 {
 	this->library = lib;
+	library->updateIconsForModel();
 }
 
 

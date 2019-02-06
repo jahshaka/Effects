@@ -1,5 +1,5 @@
 #include "library.h"
-
+#include "nodemodel.h"
 
 QVector<NodeLibraryItem*> NodeLibrary::getItems()
 {
@@ -34,6 +34,13 @@ bool NodeLibrary::hasNode(QString name)
 		if (item->name == name)
 			return true;
 	return false;
+}
+
+void NodeLibrary::updateIconsForModel()
+{
+	for (auto item : items) {
+		item->icon = createNode(item->name)->icon;
+	}
 }
 
 NodeModel* NodeLibrary::createNode(QString name)

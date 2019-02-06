@@ -46,6 +46,7 @@ public:
 	QWidget* widget;
 	QColor titleColor;
 	QIcon icon;
+	QString iconPath;
 
 	void setX(float val) { x = val; }
 	float getX() { return x; }

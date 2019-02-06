@@ -86,7 +86,6 @@ private:
 	void configureUI();
 	void configureToolbar();
 	void generateTileNode();
-	void generateTileNode(QList<NodeLibraryItem*> list);
 	void addTabs();
 	void setNodeLibraryItem(QListWidgetItem *item, NodeLibraryItem *tile);
 	bool createNewGraph(bool loadNewGraph = true);

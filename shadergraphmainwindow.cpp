@@ -981,9 +981,9 @@ void MainWindow::generateTileNode()
 		item->setData(Qt::DisplayRole, tile->displayName);
 		item->setData(Qt::UserRole, tile->name);
 		item->setSizeHint(defaultItemSize);
-		item->setTextAlignment(Qt::AlignCenter);
+		item->setTextAlignment(Qt::AlignBottom | Qt::AlignHCenter);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
-		item->setIcon(QIcon(":/icons/icon.png"));
+		item->setIcon(tile->icon);
 		item->setBackgroundColor(QColor(60, 60, 60));
 		item->setData(MODEL_TYPE_ROLE, QString("node"));
 		setNodeLibraryItem(item, tile);
@@ -991,29 +991,11 @@ void MainWindow::generateTileNode()
 	}
 }
 
-
-// never used, consider deleting
-void MainWindow::generateTileNode(QList<NodeLibraryItem*> list)
-{
-	QSize currentSize(90, 90);
-	for (auto tile : list) {
-		auto item = new QListWidgetItem;
-		item->setText(tile->displayName);
-		item->setData(Qt::DisplayRole, tile->displayName);
-		item->setData(Qt::UserRole, tile->name);
-		item->setSizeHint(defaultItemSize);
-		item->setTextAlignment(Qt::AlignCenter);
-		item->setFlags(item->flags() | Qt::ItemIsEditable);
-		item->setIcon(QIcon(":/icons/icon.png"));
-		item->setBackgroundColor(QColor(60, 60, 60));
-        setNodeLibraryItem(item, tile);
-	}
-}
-
 void MainWindow::addTabs()
 {
 	for (int i = 0; i < (int)NodeType::PlaceHolder; i++) {
 		auto wid = new ListWidget;
+		wid ->setIconSize({ 40,40 });
 		tabbedWidget->addTab(wid, NodeModel::getEnumString(static_cast<NodeType>(i)));
 	}
 }
