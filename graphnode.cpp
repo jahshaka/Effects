@@ -203,12 +203,6 @@ GraphNode::GraphNode(QGraphicsItem* parent) :
 	this->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 
 	nodeWidth = 170;
-	QPainterPath path_content;
-	// path_content.setFillRule(Qt::WindingFill);
-	//path_content.addRoundedRect(QRect(0, 0, 100, 220), 5, 5);
-	//path_content.addRect(QRect(0, 0, nodeWidth, calcHeight()));
-	//path_content.addRoundedRect(QRect(0, 0, nodeWidth, calcHeight()),17,17);
-	setPath(path_content);
 
 	setPen(QPen(Qt::black));
 	setBrush(QColor(240, 240, 240));
@@ -216,7 +210,6 @@ GraphNode::GraphNode(QGraphicsItem* parent) :
 	text = new QGraphicsTextItem(this);
 	text->setPlainText("Title");
 
-	
 	text->setPos(5, 16);
 	text->setDefaultTextColor(QColor(255, 255, 255));
 
@@ -224,14 +217,12 @@ GraphNode::GraphNode(QGraphicsItem* parent) :
     font.setWeight(65);
     text->setFont(font);
 
-
 	QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
 	effect->setBlurRadius(12);
 	effect->setXOffset(0);
 	effect->setYOffset(0);
 	effect->setColor(QColor(00, 00, 00, 40));
 	setGraphicsEffect(effect);
-
 
 	// preview widget
 	proxyPreviewWidget = nullptr;

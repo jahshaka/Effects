@@ -4,7 +4,6 @@
 #include "library.h"
 #include "../core/guidhelper.h"
 #include "../scenewidget.h"
-///#include "../nodes/libraryv1.h"
 
 #include <QJsonObject>
 #include <QJsonArray>
@@ -51,13 +50,6 @@ QVector<NodeModel*> NodeGraph::getNodesByTypeName(QString name)
 
 	return list;
 }
-
-/*
-void NodeGraph::registerModel(QString name, std::function<NodeModel *()> factoryFunction)
-{
-	modelFactories.insert(name, factoryFunction);
-}
-*/
 
 void NodeGraph::setNodeLibrary(NodeLibrary* lib)
 {
@@ -209,7 +201,6 @@ NodeGraph* NodeGraph::deserialize(QJsonObject graphObj, NodeLibrary* library)
 	// read settings
 
 	// read properties
-	//auto graphObj = obj["graph"].toObject();
 	auto propList = graphObj["properties"].toArray();
 	for (auto propObj : propList) {
 		auto prop = Property::parse(propObj.toObject());

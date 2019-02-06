@@ -75,8 +75,8 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 	tabWidget->addTab(propertyContainer, "Properties");
 
 	tabWidget->setStyleSheet(
-		"QTabWidget::pane{	border: 1px solid rgba(0, 0, 0, .1); border - top: 0px solid rgba(0, 0, 0, 0);}"
-		"QTabBar::tab{	background: rgba(21, 21, 21, .7); color: rgba(250, 250, 250, .9); font - weight: 400; font - size: 13em; padding: 5px 22px 5px 22px; }"
+		"QTabWidget::pane{	border: 1px solid rgba(0, 0, 0, .1); border-top: 0px solid rgba(0, 0, 0, 0);}"
+		"QTabBar::tab{	background: rgba(21, 21, 21, .7); color: rgba(250, 250, 250, .9); font - weight: 400; font-size: 13em; padding: 5px 22px 5px 22px; }"
 		"QTabBar::tab:selected{ color: rgba(255, 255, 255, .99); border-top: 2px solid rgba(50,150,250,.8); }"
 		"QTabBar::tab:!selected{ background: rgba(55, 55, 55, .99); border : 1px solid rgba(21,21,21,.4); color: rgba(200,200,200,.5); }"
 	);
@@ -133,7 +133,6 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 	setStyleSheet(""
 
 		"QWidget{background: rgba(21,21,21,1); border: 0px solid rgba(0,0,0,0);}"
-
 		"QListView::item{color: rgba(255,255,255,1); border-radius: 2px; border: 1px solid rgba(0,0,0,.31); background: rgba(51,51,51,1); margin: 3px;  }"
 		"QListView::item:selected{ background: rgba(155,155,155,1); border: 1px solid rgba(50,150,250,.1); }"
 		"QListView::item:hover{ background: rgba(95,95,95,1); border: .1px solid rgba(50,150,250,.1); }"
@@ -175,8 +174,6 @@ void SearchDialog::generateTileNode(QList<NodeLibraryItem*> lis)
 		item->setSizeHint(currentSize);
 		item->setTextAlignment(Qt::AlignCenter);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
-		item->setIcon(QIcon(":/icons/icon.png"));
-
 		nodeContainer->addItem(item);
 	}
 }
@@ -196,7 +193,6 @@ void SearchDialog::generateTileNode(NodeGraph *graph)
 		item->setSizeHint(currentSize);
 		item->setTextAlignment(Qt::AlignCenter);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
-		item->setIcon(QIcon(":/icons/icon.png"));
 		nodeContainer->addItem(item);
 	}
 }
@@ -215,7 +211,6 @@ void SearchDialog::generateTileProperty(NodeGraph * graph)
 		item->setSizeHint(currentSize);
 		item->setTextAlignment(Qt::AlignCenter);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
-		item->setIcon(QIcon(":/icons/icon.png"));
 		propertyContainer->addItem(item);
 		index++;
 	}

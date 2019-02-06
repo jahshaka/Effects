@@ -239,7 +239,6 @@ FloatNodeModel::FloatNodeModel() :
 	vall->setAlignment(Qt::AlignCenter);
 
 	auto textHolder = new QWidget;
-	//textHolder->setMaximumWidth(150);
 	textHolder->setLayout(layoutH1);
 	layoutH1->setContentsMargins(10, 0, 10, 0);
 
@@ -250,11 +249,7 @@ FloatNodeModel::FloatNodeModel() :
 
 	layout->addWidget(textHolder);
 
-	//layout->addLayout(layoutH);
 	layout->addWidget(holdem);
-	/*layout->addLayout(layoutH1);
-	layout->addLayout(layoutH2);
-	layout->addLayout(layoutH3);*/
 	layout->addWidget(slider);
 	
 	this->widget = wid;
@@ -315,7 +310,6 @@ FloatNodeModel::FloatNodeModel() :
 		" QSlider::add-page:vertical, QSlider::sub-page:vertical {background: rgba(0,0,0,0); border-radius: 1px;}"
 	);
 
-//	lineEdit->setText("0.0");
 }
 
 void FloatNodeModel::editTextChanged(const QString& text)
@@ -330,7 +324,6 @@ void FloatNodeModel::process(ModelContext* context)
 	auto res = this->getOutputSocketVarName(0);
 
 	auto code = res + " = " + valueSock->getValue() + ";";
-	//ctx->addCodeChunk(this, code);
 	valueSock->setVarName(valueSock->getValue());
 }
 
@@ -342,7 +335,6 @@ QJsonValue FloatNodeModel::serializeWidgetValue(int widgetIndex)
 void FloatNodeModel::deserializeWidgetValue(QJsonValue val, int widgetIndex)
 {
 	auto value = val.toDouble();
-	//lineEdit->setText(QString("%1").arg(value));
 	valueSock->setValue(QString("%1").arg(value));
 }
 
@@ -365,9 +357,6 @@ void VectorMultiplyNode::process(ModelContext* context)
 	auto valB = this->getValueFromInputSocket(1);
 	auto res = this->getOutputSocketVarName(0);
 
-	//valA = SocketHelper::convertValue(valA,inSockets[0], outSockets[0]);
-	//valB = SocketHelper::convertValue(valB,inSockets[1], outSockets[0]);
-
 	auto code = res + " = " + valA + " * " + valB + ";";
 	ctx->addCodeChunk(this, code);
 }
@@ -388,7 +377,6 @@ void WorldNormalNode::process(ModelContext* context)
 	auto res = this->getOutputSocketVarName(0);
 
 	auto code = res + " = v_normal;";
-	//ctx->addCodeChunk(this, code);
 	outSockets[0]->setVarName("v_normal");
 }
 
@@ -517,10 +505,6 @@ TextureCoordinateNode::TextureCoordinateNode()
 
 	this->widget = containerWidget;
 
-	//this->widget = combo;
-
-	//typeName = "float";
-
 	addOutputSocket(new Vector2SocketModel("UV"));
 	uv = "v_texCoord";
 }
@@ -596,8 +580,6 @@ void PropertyNode::setProperty(Property* property)
 	switch (property->type) {
 	case PropertyType::Int: {
 		this->addOutputSocket(new FloatSocketModel("int"));
-		//this->widget = new WidgetInt;
-		//updateStyle();
 	}
 		break;
 	case PropertyType::Float:
@@ -620,12 +602,6 @@ void PropertyNode::setProperty(Property* property)
 		this->addOutputSocket(new TextureSocketModel("texture"));
 		this->addOutputSocket(new Vector4SocketModel("rgba"));
 		this->addOutputSocket(new Vector3SocketModel("normal"));
-		/*
-		this->addOutputSocket(new FloatSocketModel("r"));
-		this->addOutputSocket(new FloatSocketModel("g"));
-		this->addOutputSocket(new FloatSocketModel("b"));
-		this->addOutputSocket(new FloatSocketModel("a"));
-		*/
 		this->addInputSocket(new Vector2SocketModel("uv","v_texCoord"));
 		
 		break;

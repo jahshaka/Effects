@@ -21,15 +21,6 @@ SocketConnection::SocketConnection()
 	setPen(pen);
 
 	status = SocketConnectionStatus::Finished;
-
-	/*
-	QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
-	effect->setBlurRadius(20);
-	effect->setXOffset(0);
-	effect->setYOffset(0);
-	effect->setColor(QColor(00, 100, 200, 140));
-	setGraphicsEffect(effect);
-	*/
 }
 
 void SocketConnection::updatePosFromSockets()
@@ -55,9 +46,6 @@ void SocketConnection::updatePath()
 
 	
 	setPath(*p);
-	//installSceneEventFilter(this);
-
-	
 }
 
 int SocketConnection::type() const
