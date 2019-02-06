@@ -318,6 +318,7 @@ void GraphNodeScene::deleteNode(GraphNode* node)
 		this->removeConnection(con->id, false, true);
 	}
 
+	node->setGraphicsEffect(nullptr);
 	this->removeItem(node);
 
 	emit nodeRemoved(node);

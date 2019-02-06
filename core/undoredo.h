@@ -1,6 +1,7 @@
 #pragma once
 #include <QUndoStack>
 #include <QPoint>
+#include <QSet>
 #include "../graphnode.h"
 #include "../graphnodescene.h"
 
@@ -86,6 +87,6 @@ private:
 	GraphNodeScene* scene;
 	QList<GraphNode*> list;
 	GraphNode* node;
-	QVector<ConnectionModel*> connections;
+	QSet<ConnectionModel*> connections;
 };
 

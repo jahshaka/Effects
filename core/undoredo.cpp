@@ -95,12 +95,15 @@ DeleteNodeCommand::DeleteNodeCommand(QList<GraphNode*> & list, GraphNodeScene *s
 
 void DeleteNodeCommand::undo()
 {
-	for (auto node : list) {
-		auto conn = scene->nodeGraph->getNodeConnections(node->nodeId);
-		scene->nodeGraph->addNode(node->model);
+	for (int i = 0; i < list.size(); i++) {
+		//auto conn = scene->nodeGraph->getNodeConnections(node->nodeId);
+		//scene->nodeGraph->addNode(node->model);
+
+		auto node = list[i];
+		auto newNode = scene->addNodeModel(node->model, node->x(), node->y());
 
 		//add connections
-		for (auto con : conn) {
+		for (auto con : connections) {
 			auto leftNode = con->leftSocket->node;
 			auto rightNode = con->rightSocket->node;
 			scene->addConnection(leftNode->id,
@@ -108,18 +111,29 @@ void DeleteNodeCommand::undo()
 				rightNode->id,
 				rightNode->inSockets.indexOf(con->rightSocket));
 		}
-		scene->addItem(node);
+
+		// cleanup old node and replace it with the new node
+		list[i] = newNode;
+		delete node;
 	}
 	UndoRedo::undo();
+	scene->update();
 }
 
 void DeleteNodeCommand::redo()
 {
 	for (auto node : list) {
+		// capture all connections
+		auto cons = scene->nodeGraph->getNodeConnections(node->nodeId);
+		for (auto con : cons) {
+			connections.insert(con);
+		}
+
+		// delete node
 		scene->deleteNode(node);
 	}
 	UndoRedo::redo();
-
+	scene->update();
 }
 
 MoveMultipleCommand::MoveMultipleCommand(QList<GraphNode*>& list, GraphNodeScene *scene)
