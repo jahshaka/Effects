@@ -83,7 +83,6 @@ void CustomRenderWidget::update(float dt)
 	cam->aspectRatio = width() / (float)height();
 	cam->update(dt);
 
-	//qDebug()<<1.0/dt;
 	fps = 1.0 / dt;
 	renderTime += dt;
 }
@@ -167,7 +166,6 @@ void CustomRenderWidget::passNodeGraphUniforms()
 			device->setShaderUniform(prop->getUniformName(), prop->getValue().toInt());
 			break;
 		case PropertyType::Float:
-			//qDebug()<<prop->getUniformName()<<" - "<<prop->getValue().toFloat();
 			device->setShaderUniform(prop->getUniformName(), prop->getValue().toFloat());
 			break;
 		case PropertyType::Vec2:

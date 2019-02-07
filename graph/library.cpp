@@ -36,13 +36,6 @@ bool NodeLibrary::hasNode(QString name)
 	return false;
 }
 
-void NodeLibrary::updateIconsForModel()
-{
-	for (auto item : items) {
-		item->icon = createNode(item->name)->icon;
-	}
-}
-
 NodeModel* NodeLibrary::createNode(QString name)
 {
 	for (auto item : items)

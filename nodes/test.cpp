@@ -415,7 +415,7 @@ void TimeNode::process(ModelContext* context)
 
 SineNode::SineNode()
 {
-	setNodeType(NodeType::Input);
+	setNodeType(NodeType::Math);
 
 	title = "Sine";
 	typeName = "sine";
@@ -437,7 +437,7 @@ void SineNode::process(ModelContext* context)
 
 
 MakeColorNode::MakeColorNode() {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeType::Utility);
 
 
 	title = "Color";
@@ -727,7 +727,7 @@ void TextureNode::process(ModelContext * context)
 
 PulsateNode::PulsateNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeType::Utility);
 
 	title = "Pulsate";
 	typeName = "pulsate";

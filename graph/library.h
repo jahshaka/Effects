@@ -27,7 +27,6 @@ public:
 	void addNode(QString name, QString displayName, QIcon icon, std::function<NodeModel *()> factoryFunction);
 	void addNode(QString name, QString displayName, QString iconPath, std::function<NodeModel *()> factoryFunction);
 	bool hasNode(QString name);
-	void updateIconsForModel();
 
 	// returns null if node factory doesnt exist
 	NodeModel* createNode(QString name);

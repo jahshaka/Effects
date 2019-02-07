@@ -21,4 +21,8 @@ public:
 	void initVector();
 
 	void initTexture();
+
+	void initConstants();
+
+	void initUtility();
 };

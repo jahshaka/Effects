@@ -239,7 +239,7 @@ QString MinNode::generatePreview(ModelContext* context)
 /*    MAX    */
 MaxNode::MaxNode()
 {
-	setNodeType(NodeType::Input);
+	setNodeType(NodeType::Math);
 	title = "Max";
 	typeName = "max";
 	enablePreview = true;
@@ -304,7 +304,7 @@ QString AbsNode::generatePreview(ModelContext* context)
 /*    SIGN    */
 SignNode::SignNode()
 {
-	setNodeType(NodeType::Input);
+	setNodeType(NodeType::Math);
 	title = "Sign";
 	typeName = "sign";
 	enablePreview = true;
@@ -429,7 +429,7 @@ QString RoundNode::generatePreview(ModelContext* context)
 /*    TRUNCATE    */
 TruncNode::TruncNode()
 {
-	setNodeType(NodeType::Input);
+	setNodeType(NodeType::Math);
 	title = "Truncate";
 	typeName = "truncate";
 	enablePreview = true;
@@ -461,7 +461,7 @@ QString TruncNode::generatePreview(ModelContext* context)
 /*    STEP    */
 StepNode::StepNode()
 {
-	setNodeType(NodeType::Input);
+	setNodeType(NodeType::Math);
 	title = "Step";
 	typeName = "step";
 	enablePreview = true;
@@ -495,7 +495,7 @@ QString StepNode::generatePreview(ModelContext* context)
 /*    SMOOTHSTEP    */
 SmoothStepNode::SmoothStepNode()
 {
-	setNodeType(NodeType::Input);
+	setNodeType(NodeType::Math);
 	title = "SmoothStep";
 	typeName = "smoothstep";
 	enablePreview = true;
@@ -600,7 +600,7 @@ QString ClampNode::generatePreview(ModelContext* context)
 /*    LERP    */
 LerpNode::LerpNode()
 {
-	setNodeType(NodeType::Input);
+	setNodeType(NodeType::Math);
 	title = "Lerp";
 	typeName = "lerp";
 	enablePreview = true;

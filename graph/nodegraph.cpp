@@ -54,7 +54,6 @@ QVector<NodeModel*> NodeGraph::getNodesByTypeName(QString name)
 void NodeGraph::setNodeLibrary(NodeLibrary* lib)
 {
 	this->library = lib;
-	library->updateIconsForModel();
 }
 
 

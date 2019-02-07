@@ -539,7 +539,7 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 
 			auto sock = getSocketAt(me->scenePos().x(), me->scenePos().y());
 			if (sock != nullptr && con->socket1 != sock) {
-				qDebug() << "connection entered";
+				//"connection entered";
 			}
 			return true;
 		}

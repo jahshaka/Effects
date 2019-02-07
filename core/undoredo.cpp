@@ -16,15 +16,12 @@ UndoRedo::~UndoRedo()
 void UndoRedo::undo()
 {
 	count--;
-	qDebug() << count;
 
 }
 
 void UndoRedo::redo()
 {
 	count++;
-	qDebug() << count;
-
 }
 
 AddNodeCommand::AddNodeCommand(NodeModel * nodeModel, GraphNodeScene* scene)
@@ -153,16 +150,9 @@ void MoveMultipleCommand::redo()
 
 
 	for (auto node : nodeList) {
-//		if (node->pos() != node->movedPoint) {
 			node->setPos(map.value(node->nodeId).second);
 			node->model->setX(map[node->nodeId].second.x());
 			node->model->setY(map[node->nodeId].second.y());
-			qDebug() << map[node->nodeId].first << map[node->nodeId].second;
-			qDebug() << node << node->nodeId;
-//		}
-
-	}
-		
+	}	
 	UndoRedo::redo();
-
 }

@@ -145,8 +145,8 @@ QString NodeModel::getEnumString(NodeType type) {
 		return "Texture";
 	case NodeType::Vector:
 		return "Vector";
-	case NodeType::Vertex:
-		return "Vertex";
+	case NodeType::Utility:
+		return "Utility";
 	default:
 		return "";
 	}
@@ -183,10 +183,6 @@ void NodeModel::setNodeType(NodeType type)
 		return;
 	case NodeType::Vector:
 		iconPath = ":/icons/vector.png";
-		icon = QIcon(iconPath);
-		return;
-	case NodeType::Vertex:
-		iconPath = ":/icons/vertex.png";
 		icon = QIcon(iconPath);
 		return;
 	default:
