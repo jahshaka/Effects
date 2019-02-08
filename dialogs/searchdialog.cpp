@@ -43,7 +43,7 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 
 	auto layout = new QVBoxLayout;
 	setLayout(layout);
-	setMinimumSize(400, 150);
+	setFixedSize(280, 450);
 	setWindowModality(Qt::NonModal);
 
 	auto tabWidget = new QTabWidget;
@@ -51,18 +51,21 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 	auto nodeLayout = new QVBoxLayout;
 
 	propertyContainer = new ListWidget;
+	propertyContainer->setViewMode(QListView::ListMode);
 
 	//search box
 	auto searchContainer = new QWidget;
 	auto searchLayout = new QHBoxLayout;
 	searchBar = new QLineEdit;
+	searchLayout->setContentsMargins(0, 10, 0, 0);
 
 	tree = new TreeWidget;
+	tree->setContentsMargins(10, 10, 60, 10);
 	configureTreeWidget();
 
 	searchContainer->setLayout(searchLayout);
 	searchLayout->addWidget(searchBar);
-	searchLayout->addSpacing(12);
+	searchLayout->addSpacing(0);
 
 	searchBar->setPlaceholderText("search");
 	searchBar->setAlignment(Qt::AlignLeft);
@@ -191,7 +194,10 @@ void SearchDialog::generateTileNode(QList<NodeLibraryItem*> lis)
 			tree->takeTopLevelItem(i);
 		}
 	}
-	tree->expandAll();
+	for (int i = tree->topLevelItemCount() - 1; i >= 0; i--) {
+		auto item = tree->topLevelItem(i);
+		if (item) item->setExpanded(true);
+	}
 }
 
 void SearchDialog::generateTileNode(NodeGraph *graph)
