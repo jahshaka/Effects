@@ -58,6 +58,9 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 	auto searchLayout = new QHBoxLayout;
 	searchBar = new QLineEdit;
 
+	tree = new TreeWidget;
+	configureTreeWidget();
+
 	searchContainer->setLayout(searchLayout);
 	searchLayout->addWidget(searchBar);
 	searchLayout->addSpacing(12);
@@ -69,7 +72,7 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 
 	nodeWidget->setLayout(nodeLayout);
 	nodeLayout->addWidget(searchContainer);
-	nodeLayout->addWidget(nodeContainer);
+	nodeLayout->addWidget(tree);
 
 	tabWidget->addTab(nodeWidget, "Nodes");
 	tabWidget->addTab(propertyContainer, "Properties");
@@ -162,44 +165,46 @@ SearchDialog::~SearchDialog()
 void SearchDialog::generateTileNode(QList<NodeLibraryItem*> lis)
 {
 
-	QSize currentSize(90, 90);
+	QSize currentSize(20, 20);
 
 	for (auto tile : lis) {
 
-		auto item = new QListWidgetItem;
-		item->setText(tile->displayName);
-		item->setData(Qt::DisplayRole, tile->displayName);
-		item->setData(Qt::UserRole, tile->name);
-		item->setData(MODEL_TYPE_ROLE, "node");
-		item->setSizeHint(currentSize);
-		item->setTextAlignment(Qt::AlignCenter);
+		auto item = new QTreeWidgetItem;
+		item->setText(0,tile->displayName);
+		item->setData(0,Qt::DisplayRole, tile->displayName);
+		item->setData(0,Qt::UserRole, tile->name);
+		item->setData(0,MODEL_TYPE_ROLE, "node");
+		item->setSizeHint(0, currentSize);
+		item->setTextAlignment(0,Qt::AlignLeft);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
-		nodeContainer->addItem(item);
+		tree->findItems(NodeModel::getEnumString(tile->nodeCategory), Qt::MatchExactly)[0]->addChild(item);
 	}
 }
 
 void SearchDialog::generateTileNode(NodeGraph *graph)
 {
 
-	QSize currentSize(90, 90);
+	QSize currentSize(20, 20);
 
 	for (NodeLibraryItem *tile : graph->library->items) {
 		if (tile->name == "property") continue;
-		auto item = new QListWidgetItem;
-		item->setText(tile->displayName);
-		item->setData(Qt::DisplayRole, tile->displayName);
-		item->setData(Qt::UserRole, tile->name);
-		item->setData(MODEL_TYPE_ROLE, "node");
-		item->setSizeHint(currentSize);
-		item->setTextAlignment(Qt::AlignCenter);
+		auto item = new QTreeWidgetItem;
+		item->setText(0, tile->displayName);
+		item->setData(0, Qt::DisplayRole, tile->displayName);
+		item->setData(0, Qt::UserRole, tile->name);
+		item->setData(0, MODEL_TYPE_ROLE, "node");
+		item->setSizeHint(0, currentSize);
+		item->setTextAlignment(0, Qt::AlignLeft);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
-		nodeContainer->addItem(item);
+
+		tree->findItems(NodeModel::getEnumString(tile->nodeCategory), Qt::MatchExactly)[0]->addChild(item);
+	
 	}
 }
 
 void SearchDialog::generateTileProperty(NodeGraph * graph)
 {
-	QSize currentSize(90, 90);
+	QSize currentSize(20, 20);
 
 	for (auto tile : graph->properties) {
 		if (tile->name == "property") continue;
@@ -209,12 +214,21 @@ void SearchDialog::generateTileProperty(NodeGraph * graph)
 		item->setData(Qt::UserRole, tile->name);
 		item->setData(MODEL_EXT_ROLE, index);
 		item->setSizeHint(currentSize);
-		item->setTextAlignment(Qt::AlignCenter);
+		item->setTextAlignment(Qt::AlignLeft);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
 		propertyContainer->addItem(item);
 		index++;
 	}
 
+}
+
+void SearchDialog::configureTreeWidget()
+{
+	for (int i = 0; i < (int)NodeCategory::PlaceHolder; i++) {
+		auto wid = new QTreeWidgetItem;
+		wid->setText(0, NodeModel::getEnumString(static_cast<NodeCategory>(i)));
+		tree->addTopLevelItem(wid);
+	}
 }
 
 void SearchDialog::leaveEvent(QEvent * event)

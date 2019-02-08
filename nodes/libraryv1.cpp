@@ -20,38 +20,39 @@ void LibraryV1::init()
 void LibraryV1::initTest()
 {
 	auto lib = this;
-	auto iconPath = ":/icons/input.png";
+	QString iconPath = ":/icons/input.png";
+	auto type = NodeCategory::Input;
 
 	// property
-	lib->addNode("property", "Property", iconPath, []()
+	lib->addNode("property", "Property", iconPath, type, []()
 	{
 		auto node = new PropertyNode();
 		return node;
 	});
 
 	// mult
-	lib->addNode("vectorMultiply", "Vector Multiply", iconPath, []()
+	lib->addNode("vectorMultiply", "Vector Multiply", iconPath, type, []()
 	{
 		auto multNode = new VectorMultiplyNode();
 		return multNode;
 	});
 
 	// normal
-	lib->addNode("worldNormal", "World Normal", iconPath, []()
+	lib->addNode("worldNormal", "World Normal", iconPath, type, []()
 	{
 		auto normalNode = new WorldNormalNode();
 		return normalNode;
 	});
 
 	// normal
-	lib->addNode("localNormal", "Local Normal", iconPath, []()
+	lib->addNode("localNormal", "Local Normal", iconPath, type, []()
 	{
 		auto normalNode = new LocalNormalNode();
 		return normalNode;
 	});
 
 	// time
-	lib->addNode("time", "Time", iconPath, []()
+	lib->addNode("time", "Time", iconPath, type, []()
 	{
 		auto node = new TimeNode();
 		return node;
@@ -59,141 +60,144 @@ void LibraryV1::initTest()
 
 
 	// uv
-	lib->addNode("texCoords", "Texture Coordinate", iconPath, []()
+	lib->addNode("texCoords", "Texture Coordinate", iconPath, type, []()
 	{
 		return new TextureCoordinateNode();
 	});
 
 	//sample texture
-	lib->addNode("textureSampler", "Sample Texture", iconPath, []() {
+	lib->addNode("textureSampler", "Sample Texture", iconPath, type, []() {
 		return new TextureSamplerNode();
 	});
 
 	// texture
-	lib->addNode("texture", "Texture", iconPath, []() {
+	lib->addNode("texture", "Texture", iconPath, type, []() {
 		return new TextureNode();
 	});
 
 	// panner
-	lib->addNode("panner", "Panner", iconPath, []() {
+	lib->addNode("panner", "Panner", iconPath, type, []() {
 		return new PannerNode();
 	});
 	
 	// normal intensity
-	lib->addNode("normalintensity", "Normal Intensity", iconPath, []() {
+	lib->addNode("normalintensity", "Normal Intensity", iconPath, type, []() {
 		return new NormalIntensityNode();
 	});
 }
 
 void LibraryV1::initObject()
 {
-	auto iconPath = ":/icons/object.png";
-	addNode("fresnel", "Fresnel", iconPath,[]() {
+	QString iconPath = ":/icons/object.png";
+	auto type = NodeCategory::Object;
+
+	addNode("fresnel", "Fresnel", iconPath,type, []() {
 		return new FresnelNode();
 	});
 
-	addNode("depth", "Depth", iconPath,[]() {
+	addNode("depth", "Depth", iconPath,type, []() {
 		return new DepthNode();
 	});
 }
 
 void LibraryV1::initMath()
 {
-	auto iconPath = ":/icons/math.png";
+	auto type = NodeCategory::Math;
+	QString iconPath = ":/icons/math.png";
 
-	addNode("add", "Add", iconPath, []() {
+	addNode("add", "Add", iconPath, type, []() {
 		return new AddNode();
 	});
 
-	addNode("subtract", "Subtract", iconPath, []() {
+	addNode("subtract", "Subtract", iconPath, type, []() {
 		return new SubtractNode();
 	});
 
-	addNode("multiply", "Multiply", iconPath, []() {
+	addNode("multiply", "Multiply", iconPath, type, []() {
 		return new MultiplyNode();
 	});
 
-	addNode("divide", "Divide", iconPath, []() {
+	addNode("divide", "Divide", iconPath, type, []() {
 		return new DivideNode();
 	});
 
 	/*
-	addNode(iconPath, iconPath, iconPath, []() {
+	addNode(iconPath, iconPath, iconPath, type, []() {
 		return new Node();
 	});
 	*/
 
 	// sine
-	addNode("sine", "Sine", iconPath, []()
+	addNode("sine", "Sine", iconPath, type, []()
 	{
 		return new SineNode();
 	});
 
-	addNode("power", "Power", iconPath, []() {
+	addNode("power", "Power", iconPath, type, []() {
 		return new PowerNode();
 	});
 
-	addNode("sqrt", "Square Root", iconPath, []() {
+	addNode("sqrt", "Square Root", iconPath, type, []() {
 		return new SqrtNode();
 	});
 
-	addNode("min", "Min", iconPath, []() {
+	addNode("min", "Min", iconPath, type, []() {
 		return new MinNode();
 	});
 
-	addNode("max", "Max", iconPath, []() {
+	addNode("max", "Max", iconPath, type, []() {
 		return new MaxNode();
 	});
 
-	addNode("abs", "Abs", iconPath, []() {
+	addNode("abs", "Abs", iconPath, type, []() {
 		return new AbsNode();
 	});
 
-	addNode("sign", "Sign", iconPath, []() {
+	addNode("sign", "Sign", iconPath, type, []() {
 		return new SignNode();
 	});
 
-	addNode("ceil", "Ceil", iconPath, []() {
+	addNode("ceil", "Ceil", iconPath, type, []() {
 		return new CeilNode();
 	});
 
-	addNode("floor", "Floor", iconPath, []() {
+	addNode("floor", "Floor", iconPath, type, []() {
 		return new FloorNode();
 	});
 
-	addNode("round", "Round", iconPath, []() {
+	addNode("round", "Round", iconPath, type, []() {
 		return new RoundNode();
 	});
 
-	addNode("trunc", "Truncate", iconPath, []() {
+	addNode("trunc", "Truncate", iconPath, type, []() {
 		return new TruncNode();
 	});
 
-	addNode("step", "Step", iconPath, []() {
+	addNode("step", "Step", iconPath, type, []() {
 		return new StepNode();
 	});
 
-	addNode("smoothstep", "Smooth Step", iconPath, []() {
+	addNode("smoothstep", "Smooth Step", iconPath, type, []() {
 		return new SmoothStepNode();
 	});
 
-	addNode("frac", "Fraction", iconPath, []() {
+	addNode("frac", "Fraction", iconPath, type, []() {
 		return new FracNode();
 	});
 
-	addNode("clamp", "Clamp", iconPath, []() {
+	addNode("clamp", "Clamp", iconPath, type, []() {
 		return new ClampNode();
 	});
 
-	addNode("lerp", "Lerp", iconPath, []() {
+	addNode("lerp", "Lerp", iconPath, type, []() {
 		return new LerpNode();
 	});
 
-	addNode("oneminus", "One Minus", iconPath, []() {
+	addNode("oneminus", "One Minus", iconPath, type, []() {
 		return new OneMinusNode();
 	});
 
-	addNode("negate", "Negate", iconPath, []() {
+	addNode("negate", "Negate", iconPath, type, []() {
 		return new NegateNode();
 	});
 
@@ -202,32 +206,33 @@ void LibraryV1::initMath()
 
 void LibraryV1::initVector()
 {
-	auto iconPath = ":/icons/vector.png";
-	addNode("reflect", "Reflect", iconPath, []() {
+	auto type = NodeCategory::Vector;
+	QString iconPath = ":/icons/vector.png";
+	addNode("reflect", "Reflect", iconPath, type, []() {
 		return new ReflectVectorNode();
 	});
 
-	addNode("splitvector", "Split Vector", iconPath, []() {
+	addNode("splitvector", "Split Vector", iconPath, type, []() {
 		return new SplitVectorNode();
 	});
 
-	addNode("composevector", "Compose Vector", iconPath, []() {
+	addNode("composevector", "Compose Vector", iconPath, type, []() {
 		return new ComposeVectorNode();
 	});
 
-	addNode("distance", "Distance", iconPath, []() {
+	addNode("distance", "Distance", iconPath, type, []() {
 		return new DistanceVectorNode();
 	});
 
-	addNode("dot", "Dot", iconPath, []() {
+	addNode("dot", "Dot", iconPath, type, []() {
 		return new DotVectorNode();
 	});
 
-	addNode("length", "Length", iconPath, []() {
+	addNode("length", "Length", iconPath, type, []() {
 		return new LengthVectorNode();
 	});
 
-	addNode("normalize", "Normalize", iconPath, []() {
+	addNode("normalize", "Normalize", iconPath, type, []() {
 		return new NormalizeVectorNode();
 
 	});
@@ -235,45 +240,46 @@ void LibraryV1::initVector()
 
 void LibraryV1::initTexture()
 {
-	auto iconPath = ":/icons/texture.png";
-	addNode("combinenormals", "Combine Normals", iconPath, []() {
+	auto type = NodeCategory::Texture;
+	QString iconPath = ":/icons/texture.png";
+	addNode("combinenormals", "Combine Normals", iconPath, type, []() {
 		return new CombineNormalsNode();
 	});
 
-	addNode("texelsize", "Texel Size", iconPath, []() {
+	addNode("texelsize", "Texel Size", iconPath, type, []() {
 		return new TexelSizeNode();
 	});
 
-	addNode("flipbook", "Flipbook Animation", iconPath, []() {
+	addNode("flipbook", "Flipbook Animation", iconPath, type, []() {
 		return new FlipbookUVAnimationNode();
 	});
 }
 
 void LibraryV1::initConstants()
 {
-
-	auto iconPath = ":/icons/constant.png";
-	addNode("vector2", "Vector2", iconPath, []() {
+	auto type = NodeCategory::Constants;
+	QString iconPath = ":/icons/constant.png";
+	addNode("vector2", "Vector2", iconPath, type, []() {
 		return new Vector2Node();
 	});
 
-	addNode("vector3", "Vector3", iconPath, []() {
+	addNode("vector3", "Vector3", iconPath, type, []() {
 		return new Vector3Node();
 	});
 
-	addNode("vector4", "Vector4", iconPath, []() {
+	addNode("vector4", "Vector4", iconPath, type, []() {
 		return new Vector4Node();
 	});
 
 	// float
-	addNode("float", "Float", iconPath, []()
+	addNode("float", "Float", iconPath, type, []()
 	{
 		auto floatNode = new FloatNodeModel();
 		return floatNode;
 	});
 
 #if(EFFECT_BUILD_AS_LIB)
-	addNode("color", "Color", iconPath, []() {
+	addNode("color", "Color", iconPath, type, []() {
 		return new ColorPickerNode();
 
 	});
@@ -282,16 +288,17 @@ void LibraryV1::initConstants()
 
 void LibraryV1::initUtility()
 {
-	auto iconPath = ":/icons/utility.png";
+	auto type = NodeCategory::Utility;
+	QString iconPath = ":/icons/utility.png";
 
 	// pulsate
-	addNode("pulsate", "Pulsate Node", iconPath, []()
+	addNode("pulsate", "Pulsate Node", iconPath, type, []()
 	{
 		return new PulsateNode();
 	});
 
 	//make color
-	addNode("makeColor", "Make Color", iconPath, []() {
+	addNode("makeColor", "Make Color", iconPath, type, []() {
 		return new MakeColorNode();
 	});
 }

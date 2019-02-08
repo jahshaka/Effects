@@ -105,19 +105,19 @@ void NodeModel::setGraph(NodeGraph *value)
 QColor NodeModel::setNodeTitleColor()
 {
 	switch (nodeType) {
-	case NodeType::Input:
+	case NodeCategory::Input:
 		icon.addPixmap({":/icons/input.png"	});
 		return titleColor = QColor(0, 121, 107);
 		break;
-	case NodeType::Math:
+	case NodeCategory::Math:
 		icon.addPixmap({ ":/icons/math.png" });
 		return titleColor = QColor(25,118,210);
 		break;
-	case NodeType::Properties:
+	case NodeCategory::Properties:
 		icon.addPixmap({ ":/icons/properties.png" });
 		return titleColor = QColor(230, 74, 25);
 		break;
-	case NodeType::Constants:
+	case NodeCategory::Constants:
 		icon.addPixmap({ ":/icons/constant.png" });
 		return titleColor = QColor(150, 24, 35);
 		break;
@@ -128,60 +128,60 @@ QColor NodeModel::setNodeTitleColor()
 
 }
 
-QString NodeModel::getEnumString(NodeType type) {
+QString NodeModel::getEnumString(NodeCategory type) {
 
 	switch (type) {
-	case NodeType::Input:
+	case NodeCategory::Input:
 		return "Input";
-	case NodeType::Math:
+	case NodeCategory::Math:
 		return "Math";
-	case NodeType::Properties:
+	case NodeCategory::Properties:
 		return "Properties";
-	case NodeType::Constants:
+	case NodeCategory::Constants:
 		return "Constants";
-	case NodeType::Object:
+	case NodeCategory::Object:
 		return "Object";
-	case NodeType::Texture:
+	case NodeCategory::Texture:
 		return "Texture";
-	case NodeType::Vector:
+	case NodeCategory::Vector:
 		return "Vector";
-	case NodeType::Utility:
+	case NodeCategory::Utility:
 		return "Utility";
 	default:
 		return "";
 	}
 }
 
-void NodeModel::setNodeType(NodeType type)
+void NodeModel::setNodeType(NodeCategory type)
 {
 	nodeType = type;
 	emit titleColorChanged();
 	switch (type) {
-	case NodeType::Input:
+	case NodeCategory::Input:
 		iconPath = ":/icons/input.png";
 		icon = QIcon(iconPath);
 		return;
-	case NodeType::Math:
+	case NodeCategory::Math:
 		iconPath = ":/icons/math.png";
 		icon = QIcon(iconPath);
 		return;
-	case NodeType::Properties:
+	case NodeCategory::Properties:
 		iconPath = ":/icons/property.png";
 		icon = QIcon(iconPath);
 		return;
-	case NodeType::Constants:
+	case NodeCategory::Constants:
 		iconPath = ":/icons/constant.png";
 		icon = QIcon(iconPath);
 		return;
-	case NodeType::Object:
+	case NodeCategory::Object:
 		iconPath = ":/icons/object.png";
 		icon = QIcon(iconPath);
 		return;
-	case NodeType::Texture:
+	case NodeCategory::Texture:
 		iconPath = ":/icons/texture.png";
 		icon = QIcon(iconPath);
 		return;
-	case NodeType::Vector:
+	case NodeCategory::Vector:
 		iconPath = ":/icons/vector.png";
 		icon = QIcon(iconPath);
 		return;

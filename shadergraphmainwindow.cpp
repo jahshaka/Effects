@@ -961,16 +961,16 @@ void MainWindow::generateTileNode()
 
 void MainWindow::addTabs()
 {
-	for (int i = 0; i < (int)NodeType::PlaceHolder; i++) {
+	for (int i = 0; i < (int)NodeCategory::PlaceHolder; i++) {
 		auto wid = new ListWidget;
 		wid ->setIconSize({ 40,40 });
-		tabbedWidget->addTab(wid, NodeModel::getEnumString(static_cast<NodeType>(i)));
+		tabbedWidget->addTab(wid, NodeModel::getEnumString(static_cast<NodeCategory>(i)));
 	}
 }
 
 void MainWindow::setNodeLibraryItem(QListWidgetItem *item, NodeLibraryItem *tile)
 {
-	auto wid = static_cast<QListWidget*>(tabbedWidget->widget(static_cast<int>(tile->factoryFunction()->nodeType)));
+	auto wid = static_cast<QListWidget*>(tabbedWidget->widget(static_cast<int>(tile->nodeCategory)));
 	wid->addItem(item);
 }
 
