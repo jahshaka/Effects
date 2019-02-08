@@ -40,7 +40,6 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 	effect->setColor(QColor(0, 0, 0, 255));
 	widgetHolder->setGraphicsEffect(effect);
 
-
 	auto layout = new QVBoxLayout;
 	setLayout(layout);
 	setFixedSize(280, 450);
@@ -50,9 +49,6 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 	auto nodeWidget = new QWidget;
 	auto nodeLayout = new QVBoxLayout;
 
-	propertyContainer = new ListWidget;
-	propertyContainer->setViewMode(QListView::ListMode);
-
 	//search box
 	auto searchContainer = new QWidget;
 	auto searchLayout = new QHBoxLayout;
@@ -61,6 +57,7 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 
 	tree = new TreeWidget;
 	tree->setContentsMargins(10, 10, 60, 10);
+	treeProperty = new TreeWidget;
 	configureTreeWidget();
 
 	searchContainer->setLayout(searchLayout);
@@ -77,10 +74,11 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 	nodeLayout->addWidget(tree);
 
 	tabWidget->addTab(nodeWidget, "Nodes");
-	tabWidget->addTab(propertyContainer, "Properties");
+	tabWidget->addTab(treeProperty, "Properties");
+
 
 	tabWidget->setStyleSheet(
-		"QTabWidget::pane{	border: 1px solid rgba(0, 0, 0, .1); border-top: 0px solid rgba(0, 0, 0, 0);}"
+		"QTabWidget::pane{	border: 1px solid rgba(0, 0, 0, .1); border-top: 0px solid rgba(0, 0, 0, 0); padding-top: 7px; }"
 		"QTabBar::tab{	background: rgba(21, 21, 21, .7); color: rgba(250, 250, 250, .9); font - weight: 400; font-size: 13em; padding: 5px 22px 5px 22px; }"
 		"QTabBar::tab:selected{ color: rgba(255, 255, 255, .99); border-top: 2px solid rgba(50,150,250,.8); }"
 		"QTabBar::tab:!selected{ background: rgba(55, 55, 55, .99); border : 1px solid rgba(21,21,21,.4); color: rgba(200,200,200,.5); }"
@@ -135,25 +133,23 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 		}
 	});
 
-	connect(propertyContainer, &ListWidget::itemClicked, [=](QListWidgetItem *item) {
-		//scene->addNodeFromSearchDialog(propertyContainer->currentItem(), this->point);
-		this->close();
+	connect(treeProperty, &TreeWidget::itemClicked, [=](QTreeWidgetItem *item, int column) {
+			scene->addNodeFromSearchDialog(tree->currentItem(), this->point);
+			this->close();		
 	});
+
 
 	searchContainer->setStyleSheet("background:rgba(32,32,32,0);");
 	searchBar->setStyleSheet("QLineEdit{ background:rgba(41,41,41,1); border: 1px solid rgba(150,150,150,.2); border-radius: 1px; color: rgba(250,250,250,.95); padding: 6px;  }");
 
 	setStyleSheet(""
-
 		"QWidget{background: rgba(21,21,21,1); border: 0px solid rgba(0,0,0,0);}"
 		"QListView::item{color: rgba(255,255,255,1); border-radius: 2px; border: 1px solid rgba(0,0,0,.31); background: rgba(51,51,51,1); margin: 3px;  }"
 		"QListView::item:selected{ background: rgba(155,155,155,1); border: 1px solid rgba(50,150,250,.1); }"
 		"QListView::item:hover{ background: rgba(95,95,95,1); border: .1px solid rgba(50,150,250,.1); }"
 		"QListView::text{ top : -6; }"
-
 	);
 
-	propertyContainer->setStyleSheet(styleSheet());
 
 	if (point == QPoint(0,0)) {
 		auto view = scene->views().first();
@@ -225,15 +221,15 @@ void SearchDialog::generateTileProperty(NodeGraph * graph)
 
 	for (auto tile : graph->properties) {
 		if (tile->name == "property") continue;
-		auto item = new QListWidgetItem;
-		item->setText(tile->displayName);
-		item->setData(Qt::DisplayRole, tile->displayName);
-		item->setData(Qt::UserRole, tile->name);
-		item->setData(MODEL_EXT_ROLE, index);
-		item->setSizeHint(currentSize);
-		item->setTextAlignment(Qt::AlignLeft);
+		auto item = new QTreeWidgetItem;
+		item->setText(0,tile->displayName);
+		item->setData(0,Qt::DisplayRole, tile->displayName);
+		item->setData(0,Qt::UserRole, tile->name);
+		item->setData(0,MODEL_EXT_ROLE, index);
+		item->setSizeHint(0,currentSize);
+		item->setTextAlignment(0,Qt::AlignLeft);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
-		propertyContainer->addItem(item);
+		treeProperty->addTopLevelItem(item);
 		index++;
 	}
 
