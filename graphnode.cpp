@@ -80,16 +80,16 @@ void CustomRenderWidget::start()
 
 void CustomRenderWidget::update(float dt)
 {
-	cam->aspectRatio = width() / (float)height();
-	cam->update(dt);
-
 	fps = 1.0 / dt;
 	renderTime += dt;
 }
 
 void CustomRenderWidget::render()
 {
-	cam->aspectRatio = width() / (float)height();
+	auto vpWidth = (int)(width() * devicePixelRatioF());
+	auto vpHeight = (int)(height() * devicePixelRatioF());
+
+	cam->aspectRatio = vpWidth / vpHeight;
 	cam->update(0.016f);
 
 	//device->clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, QColor(qMin((int)(renderTime*0.1f * 255), 255), 0, 0));
@@ -99,9 +99,7 @@ void CustomRenderWidget::render()
 	device->setDepthState(iris::DepthState());
 
 	auto& graphics = device;
-	auto w = width();
-	auto h = height();
-	device->setViewport(QRect(0, 0, w, h));
+	device->setViewport(QRect(0, 0, vpWidth, vpHeight));
 	device->setShader(shader);
 	device->setShaderUniform("u_viewMatrix", cam->viewMatrix);
 	device->setShaderUniform("u_projMatrix", cam->projMatrix);
@@ -142,9 +140,9 @@ void CustomRenderWidget::updateShader(QString shaderCode)
 		vertString,
 		fragString + shaderCode);
 
-	qDebug() << "-------- PREVIEW SHADER --------";
-	qDebug().noquote() << fragString + shaderCode;
-	qDebug() << "-------- PREVIEW SHADER --------";
+	//qDebug() << "-------- PREVIEW SHADER --------";
+	//qDebug().noquote() << fragString + shaderCode;
+	//qDebug() << "-------- PREVIEW SHADER --------";
 }
 
 void CustomRenderWidget::resetRenderTime()
