@@ -15,7 +15,6 @@ public:
 	SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point);
 	~SearchDialog();
 
-    ListWidget* nodeContainer;
     ListWidget* propertyContainer;
 	void generateTileNode(QList<NodeLibraryItem*> lis);
 	void generateTileNode(NodeGraph *graph);

@@ -17,6 +17,7 @@
 #include <QMenu>
 #include <QPointF>
 #include <QPropertyAnimation>
+#include <QTreeWidgetItem>
 #include <QUndoStack>
 #include "socketconnection.h"
 #include "graphnode.h"
@@ -101,7 +102,7 @@ public:
 	void setList(QList<QString> list) { loadedShadersGUID = list; }
 	void updatePropertyNodeTitle(QString title, QString propId);
 
-	void addNodeFromSearchDialog(QListWidgetItem* item, const QPoint& point);
+	void addNodeFromSearchDialog(QTreeWidgetItem* item, const QPoint& point);
 
 	void deleteSelectedNodes();
 	void deleteNode(GraphNode* node);

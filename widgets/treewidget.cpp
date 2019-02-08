@@ -1,6 +1,7 @@
 #include "treewidget.h"
 #include "core/project.h"
 #include <QHeaderView>
+#include <QScrollbar>
 TreeWidget::TreeWidget() : QTreeWidget()
 {
 	setStyleSheet(
@@ -18,11 +19,20 @@ TreeWidget::TreeWidget() : QTreeWidget()
 		"QTreeWidget::item {background-color:rgba(0,0,0,0); padding: 5px 0; height : 10px; }"
 		"QTreeWidget::item:hover { background: #303030; padding: 5px 0; }"
 	);
+	verticalScrollBar()->setStyleSheet(
+		"QScrollBar:vertical {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 10px; }"
+		"QScrollBar::handle{ background: rgba(62, 62, 62, 1);	border-radius: 4px;  left: 8px; }"
+		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
+		"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
+		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .0);}"
+
+	);
+
 	setColumnCount(1);
 	setHeaderLabel("Nodes");
 	setRootIsDecorated(true);
 	setDragEnabled(true);
-	header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+	setHeaderHidden(true);
 
 	setAlternatingRowColors(false);
 	setContentsMargins(10, 3, 10, 10);

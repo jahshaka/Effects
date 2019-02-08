@@ -50,7 +50,6 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 	auto nodeWidget = new QWidget;
 	auto nodeLayout = new QVBoxLayout;
 
-	nodeContainer = new ListWidget;
 	propertyContainer = new ListWidget;
 
 	//search box
@@ -96,7 +95,7 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 
 
 	connect(searchBar, &QLineEdit::textChanged, [=](QString str) {
-		nodeContainer->clear();
+		tree->clear();
 		QList<NodeLibraryItem*> lis;
 		for (auto item : graph->library->items) {
 			if (item->displayName.contains(str, Qt::CaseInsensitive)) lis.append(item);
@@ -105,28 +104,36 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 		generateTileNode(lis);
 
 		if (str.length() == 0) {
-			nodeContainer->clear();
+			tree->clear();
+			configureTreeWidget();
 			generateTileNode(graph);
 		}
 
-		auto item = nodeContainer->item(0);
+		auto item = tree->itemBelow(tree->topLevelItem(0));
 		if (item) {
 			item->setSelected(true);
-			nodeContainer->setCurrentItem(item);
+			tree->setCurrentItem(item);
 		}
 	});
 
 	connect(searchBar, &QLineEdit::returnPressed, [=]() {
-		scene->addNodeFromSearchDialog(nodeContainer->currentItem(), this->point);
+		scene->addNodeFromSearchDialog(tree->currentItem(), this->point);
 		this->close();
 	});
 
-	connect(nodeContainer, &ListWidget::itemClicked, [=](QListWidgetItem *item) {
-		scene->addNodeFromSearchDialog(nodeContainer->currentItem(), this->point);
-		this->close();
+	connect(tree, &TreeWidget::itemClicked, [=](QTreeWidgetItem *item, int column) {
+
+		if (tree->indexOfTopLevelItem(item) == -1) { // is not top level item
+			scene->addNodeFromSearchDialog(tree->currentItem(), this->point);
+			this->close();
+		}
+		else { // is top level item 
+			item->setExpanded(true);
+		}
 	});
+
 	connect(propertyContainer, &ListWidget::itemClicked, [=](QListWidgetItem *item) {
-		scene->addNodeFromSearchDialog(propertyContainer->currentItem(), this->point);
+		//scene->addNodeFromSearchDialog(propertyContainer->currentItem(), this->point);
 		this->close();
 	});
 
@@ -143,9 +150,7 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 
 	);
 
-	nodeContainer->setStyleSheet(styleSheet());
 	propertyContainer->setStyleSheet(styleSheet());
-
 
 	if (point == QPoint(0,0)) {
 		auto view = scene->views().first();
@@ -164,7 +169,7 @@ SearchDialog::~SearchDialog()
 
 void SearchDialog::generateTileNode(QList<NodeLibraryItem*> lis)
 {
-
+	configureTreeWidget();
 	QSize currentSize(20, 20);
 
 	for (auto tile : lis) {
@@ -179,6 +184,14 @@ void SearchDialog::generateTileNode(QList<NodeLibraryItem*> lis)
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
 		tree->findItems(NodeModel::getEnumString(tile->nodeCategory), Qt::MatchExactly)[0]->addChild(item);
 	}
+
+	for (int i = tree->topLevelItemCount() - 1; i >= 0; i--) {
+		auto item = tree->topLevelItem(i);
+		if (item->childCount() < 1) {
+			tree->takeTopLevelItem(i);
+		}
+	}
+	tree->expandAll();
 }
 
 void SearchDialog::generateTileNode(NodeGraph *graph)
@@ -196,9 +209,7 @@ void SearchDialog::generateTileNode(NodeGraph *graph)
 		item->setSizeHint(0, currentSize);
 		item->setTextAlignment(0, Qt::AlignLeft);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
-
 		tree->findItems(NodeModel::getEnumString(tile->nodeCategory), Qt::MatchExactly)[0]->addChild(item);
-	
 	}
 }
 
