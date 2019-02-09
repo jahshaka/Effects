@@ -22,7 +22,6 @@ ListWidget::ListWidget() : QListWidget()
 	setIconSize(currentSize);
 	setMouseTracking(true);
 	setDragDropMode(QAbstractItemView::DragDrop);
-	//setMovement(QListView::Static);
 	setResizeMode(QListWidget::Adjust);
 	setDefaultDropAction(Qt::CopyAction);
 	setSelectionMode(QAbstractItemView::SingleSelection);
@@ -31,8 +30,6 @@ ListWidget::ListWidget() : QListWidget()
 	viewport()->setAcceptDrops(true);
 	setAcceptDrops(true);
 	setDropIndicatorShown(true);
-	//installEventFilter(this);
-	//viewport()->installEventFilter(this);
 	setWordWrap(true);
 	setGridSize(QSize(90, 90));
 	setSortingEnabled(true);
@@ -90,23 +87,6 @@ void ListWidget::displayAllContents()
 	int calculated_height = number_of_rows * (gridSize().height() + num_of_items_per_row*2);
 
 	setFixedHeight(calculated_height);
-
-
-	
-		int defaultItemSize = 70;
-		int columnCount = width() / (gridSize().width() + 10);
-		int gridCount = count();
-		if (columnCount > numberOfItemPerRow) numberOfItemPerRow++;
-
-		while (width() > defaultItemSize*numberOfItemPerRow) defaultItemSize++;
-		while (width() < defaultItemSize*numberOfItemPerRow) defaultItemSize--;
-
-		//setIconSize({ defaultItemSize, defaultItemSize });
-		//setGridSize({ defaultItemSize, defaultItemSize });
-
-
-		emit resizeItem(defaultItemSize);
-
 }
 
 
@@ -136,21 +116,12 @@ void ListWidget::resizeEvent(QResizeEvent * event)
 
 void ListWidget::addToListWidget(QListWidgetItem * item)
 {
-	connect(this, &ListWidget::resizeItem, [=](int size) {
-	//	item->setSizeHint({ size,size });
-	});
-
 	addItem(item);
 }
 
 void ListWidget::dropEvent(QDropEvent * event)
 {
     QListWidget::dropEvent(event);
-}
-
-void ListWidget::createContextMenu()
-{
-
 }
 
 void ListWidget::customContextMenu(QPoint pos)
@@ -176,13 +147,11 @@ void ListWidget::customContextMenu(QPoint pos)
 
             connect(actionRename,&QAction::triggered,[guid ,this](){
                 emit renameShader(guid);
-
             });
             connect(actionExport,&QAction::triggered,[guid ,this](){
                 emit exportShader(guid);
             });
             connect(actionEdit,&QAction::triggered,[guid, index ,this](){
-               // this->edit(index);
                 emit editShader(guid);
             });
             connect(actionDelete,&QAction::triggered,[guid ,this](){

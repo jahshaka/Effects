@@ -23,9 +23,7 @@ float SceneWidget::renderTime = 0;
 
 QString assetPath(QString relPath)
 {
-    //qDebug()<< QDir::cleanPath(QCoreApplication::applicationFilePath() + QDir::separator() + relPath);
-    //return QDir::cleanPath(QCoreApplication::applicationFilePath() + QDir::separator() + relPath);
-    qDebug() << QDir::cleanPath(QDir::currentPath() + QDir::separator() + relPath);
+   QDir::cleanPath(QDir::currentPath() + QDir::separator() + relPath);
     return QDir::cleanPath(QDir::currentPath() + QDir::separator() + relPath);
 }
 

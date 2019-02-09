@@ -3,7 +3,7 @@
 /*    COMBINE NORMAL    */
 CombineNormalsNode::CombineNormalsNode()
 {
-	setNodeType(NodeType::Texture);
+	setNodeType(NodeCategory::Texture);
 	title = "Combine Normals";
 	typeName = "combinenormals";
 	enablePreview = true;
@@ -39,7 +39,7 @@ QString CombineNormalsNode::generatePreview(ModelContext* context)
 
 TexelSizeNode::TexelSizeNode()
 {
-	setNodeType(NodeType::Texture);
+	setNodeType(NodeCategory::Texture);
 	title = "Texel Size";
 	typeName = "texelsize";
 	enablePreview = true;
@@ -82,7 +82,7 @@ SampleEquirectangularTextureNode::SampleEquirectangularTextureNode()
 
 FlipbookUVAnimationNode::FlipbookUVAnimationNode()
 {
-	setNodeType(NodeType::Texture);
+	setNodeType(NodeCategory::Texture);
 	title = "FlipBook";
 	typeName = "flipbook";
 	enablePreview = true;
@@ -133,7 +133,7 @@ void FlipbookUVAnimationNode::process(ModelContext* context)
 
 TileUVNode::TileUVNode()
 {
-	setNodeType(NodeType::Texture);
+	setNodeType(NodeCategory::Texture);
 	title = "Tile UV";
 	typeName = "tileuv";
 

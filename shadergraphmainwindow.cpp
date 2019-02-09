@@ -65,7 +65,6 @@ namespace shadergraph
 MainWindow::MainWindow( QWidget *parent, Database *database) :
     QMainWindow(parent)
 {
-  //  ui->setupUi(this); 
 	scene = nullptr;
 	sceneWidget = new SceneWidget();
 	fontIcons = new QtAwesome;
@@ -492,7 +491,6 @@ void MainWindow::configureProjectDock()
 	searchBar->setTextMargins(8, 0, 0, 0);
 	searchBar->setStyleSheet("QLineEdit{ background:rgba(41,41,41,1); border: 1px solid rgba(150,150,150,.2); border-radius: 1px; color: rgba(250,250,250,.95); }");
 
-
 	layout->addWidget(assetWidget);
 #endif
 }
@@ -500,7 +498,6 @@ void MainWindow::configureProjectDock()
 
 void MainWindow::configureAssetsDock()
 {
-
 	auto holder = new QWidget;
 	auto layout = new QVBoxLayout;
 	holder->setLayout(layout);
@@ -512,9 +509,6 @@ void MainWindow::configureAssetsDock()
 	effects = new ListWidget;
 	effects->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
     effects->shaderContextMenuAllowed = true;
-    //tabWidget->addTab(presets, "Presets");
-	//tabWidget->addTab(effects, "My Fx");
-	//tabWidget->setStyleSheet(tabbedWidget->styleSheet());
 
 	auto scrollView = new QScrollArea;
 	auto contentHolder = new QWidget;
@@ -730,9 +724,6 @@ QByteArray MainWindow::fetchAsset(QString string)
 
 void MainWindow::configureUI()
 {
-	font.setPointSizeF(font.pointSize() * devicePixelRatioF());
-//	setFont(font);
-
 	nodeTray = new QDockWidget("Library");
 	centralWidget = new QWidget();
 	textWidget = new QDockWidget("Code View");
@@ -776,10 +767,8 @@ void MainWindow::configureUI()
 	addDockWidget(Qt::LeftDockWidgetArea, materialSettingsDock, Qt::Vertical);
 	addDockWidget(Qt::RightDockWidgetArea, propertyWidget, Qt::Vertical);
 
-	//auto displayLayout = new QVBoxLayout;
-	//displayWidget->setLayout(displayLayout);
-	//displayWidget->setWidget(sceneWidget);
-	displayWidget->setMinimumSize(300, 230);
+	displayWidget->setMinimumSize(400, 230);
+	assetsDock->setMinimumWidth(330);
 
 	textWidget->setWidget(textEdit);
 	propertyWidget->setWidget(propertyListWidget);
@@ -842,29 +831,6 @@ void MainWindow::configureUI()
 	});
 
 	materialSettingsDock->setWidget(materialSettingsWidget);
-
-	nodeContainer->setAlternatingRowColors(false);
-	nodeContainer->setSpacing(0);
-	nodeContainer->setContentsMargins(10, 3, 10, 10);
-	nodeContainer->setViewMode(QListWidget::IconMode);
-	nodeContainer->setIconSize(currentSize);
-	nodeContainer->setMouseTracking(true);
-	nodeContainer->setDragDropMode(QAbstractItemView::DragDrop);
-	nodeContainer->setMovement(QListView::Static);
-	nodeContainer->setResizeMode(QListWidget::Adjust);
-	nodeContainer->setDefaultDropAction(Qt::MoveAction);
-	nodeContainer->setSelectionMode(QAbstractItemView::SingleSelection);
-	nodeContainer->setSelectionRectVisible(false);
-	nodeContainer->setDragEnabled(true);
-	nodeContainer->viewport()->setAcceptDrops(false);
-	nodeContainer->setDropIndicatorShown(true);
-	nodeContainer->installEventFilter(this);
-	nodeContainer->viewport()->installEventFilter(this);
-	nodeContainer->setWordWrap(true);
-	nodeContainer->setGridSize(defaultGridSize);
-	nodeContainer->setSortingEnabled(true);
-	nodeContainer->sortItems();
-	nodeContainer->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	propertyListWidget->installEventFilter(this);
 
 	addTabs();
@@ -983,9 +949,9 @@ void MainWindow::generateTileNode()
 		item->setData(Qt::DisplayRole, tile->displayName);
 		item->setData(Qt::UserRole, tile->name);
 		item->setSizeHint(defaultItemSize);
-		item->setTextAlignment(Qt::AlignCenter);
+		item->setTextAlignment(Qt::AlignBottom | Qt::AlignHCenter);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
-		item->setIcon(QIcon(":/icons/icon.png"));
+		item->setIcon(tile->icon);
 		item->setBackgroundColor(QColor(60, 60, 60));
 		item->setData(MODEL_TYPE_ROLE, QString("node"));
 		setNodeLibraryItem(item, tile);
@@ -993,36 +959,18 @@ void MainWindow::generateTileNode()
 	}
 }
 
-
-// never used, consider deleting
-void MainWindow::generateTileNode(QList<NodeLibraryItem*> list)
-{
-	QSize currentSize(90, 90);
-	for (auto tile : list) {
-		auto item = new QListWidgetItem;
-		item->setText(tile->displayName);
-		item->setData(Qt::DisplayRole, tile->displayName);
-		item->setData(Qt::UserRole, tile->name);
-		item->setSizeHint(defaultItemSize);
-		item->setTextAlignment(Qt::AlignCenter);
-		item->setFlags(item->flags() | Qt::ItemIsEditable);
-		item->setIcon(QIcon(":/icons/icon.png"));
-		item->setBackgroundColor(QColor(60, 60, 60));
-        setNodeLibraryItem(item, tile);
-	}
-}
-
 void MainWindow::addTabs()
 {
-	for (int i = 0; i < (int)NodeType::PlaceHolder; i++) {
+	for (int i = 0; i < (int)NodeCategory::PlaceHolder; i++) {
 		auto wid = new ListWidget;
-		tabbedWidget->addTab(wid, NodeModel::getEnumString(static_cast<NodeType>(i)));
+		wid ->setIconSize({ 40,40 });
+		tabbedWidget->addTab(wid, NodeModel::getEnumString(static_cast<NodeCategory>(i)));
 	}
 }
 
 void MainWindow::setNodeLibraryItem(QListWidgetItem *item, NodeLibraryItem *tile)
 {
-	auto wid = static_cast<QListWidget*>(tabbedWidget->widget(static_cast<int>(tile->factoryFunction()->nodeType)));
+	auto wid = static_cast<QListWidget*>(tabbedWidget->widget(static_cast<int>(tile->nodeCategory)));
 	wid->addItem(item);
 }
 
@@ -1062,7 +1010,6 @@ void MainWindow::updateAssetDock()
 			}
 		}
 #endif
-
 }
 
 
@@ -1114,8 +1061,7 @@ bool MainWindow::eventFilter(QObject * watched, QEvent * event)
 					auto wid = propertyListWidget->currentWidget;
 					if (!wid) return true;
 					if (!wid->pressed) return true;
-					
-					qDebug() << wid->index;
+
 					auto drag = new QDrag(this);
 					auto mimeData = new QMimeData;
 					QByteArray arr;
@@ -1146,22 +1092,6 @@ GraphNodeScene *MainWindow::createNewScene()
 	{
 		regenerateShader();
 	});
-	/*
-    connect(scene, &GraphNodeScene::newConnection, [this, scene](SocketConnection* connection)
-    {
-		regenerateShader();
-    });
-	
-	connect(scene, &GraphNodeScene::connectionRemoved, [this, scene](SocketConnection* connection)
-    {
-		regenerateShader();
-    });
-
-    connect(scene, &GraphNodeScene::nodeValueChanged, [this, scene](NodeModel* model, int index)
-    {
-		regenerateShader();
-    });
-	*/
 
 	connect(scene, &GraphNodeScene::loadGraph, [=](QListWidgetItem *item) {
 		currentShaderInformation.name = item->data(Qt::DisplayRole).toString();
@@ -1341,7 +1271,6 @@ void MainWindow::editingFinishedOnListItem()
 void MainWindow::addMenuToSceneWidget()
 {
 	QMenu *modelMenu = new QMenu("model");
-	//QMenu *sceneMenu = new QMenu("scene");
 	QMenu *backgroundMenu = new QMenu("background");
 	modelMenu->setStyleSheet(
 		"QMenu { background-color: #1A1A1A; color: #EEE; padding: 0; margin: 0; }"
@@ -1350,14 +1279,12 @@ void MainWindow::addMenuToSceneWidget()
 		"QMenu::item:selected { background-color: #3498db; color: #EEE; }"
 		"QMenu::item : disabled { color: #555; }"
 	);
-	//sceneMenu->setStyleSheet(modelMenu->styleSheet());
 	backgroundMenu->setStyleSheet(modelMenu->styleSheet());
 
 	QMainWindow *window = new QMainWindow;
 	QToolBar *bar = new QToolBar;
 
 	window->menuBar()->addMenu(modelMenu);
-	//window->menuBar()->addMenu(sceneMenu);
 	window->menuBar()->addMenu(backgroundMenu);
 	displayWidget->setWidget(window);
 	window->setCentralWidget(sceneWidget);
@@ -1427,7 +1354,6 @@ void MainWindow::addMenuToSceneWidget()
 	modelGroup->addAction(cylinderAction);
 	modelGroup->addAction(capsuleAction);
 	modelGroup->addAction(torusAction);
-	//modelGroup->addAction(customModelAction);
 	modelGroup->setExclusive(true);
 
 	// background group

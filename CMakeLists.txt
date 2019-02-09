@@ -72,6 +72,7 @@ set(CPP
 	core/undoredo.cpp
 	misc/QtAwesome.cpp
 	misc/QtAwesomeAnim.cpp
+	widgets/treewidget.cpp
 
 	)
 
@@ -126,6 +127,7 @@ set(HEADERS
 		core/materialhelper.h
 		misc/QtAwesome.h
 		misc/QtAwesomeAnim.h
+		widgets/treewidget.h
 	)
 
 set(FORMS

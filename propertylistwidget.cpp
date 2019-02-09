@@ -19,7 +19,6 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
     QWidget(parent)
 {
     auto menu = new QMenu(this);
-//	menu->setWindowFlag(Qt::NoDropShadowWindowHint );
 	menu->setAttribute(Qt::WA_TranslucentBackground);
     auto action = menu->addAction		("Float ");
     auto actionInt = menu->addAction	("Int ");
@@ -55,10 +54,6 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 	addLayout->addWidget(pushButton);
 	addLayout->addSpacing(8);
 
-//	scrollLayout->addStretch();
-//	scrollLayout->addWidget(scrollArea);
-//	scrollLayout->addStretch();
-
 	scrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	contentWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	contentWidget->setMinimumWidth(200);
@@ -72,10 +67,7 @@ PropertyListWidget::PropertyListWidget(QWidget *parent) :
 	contentWidget->setLayout(layout);
 	scrollArea->setWidget(contentWidget);
 	scrollArea->setWidgetResizable(true);
-//	scrollArea->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
-//	scrollArea->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
 	scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-//	scrollArea->setMaximumWidth(450);
 	scrollArea->setMinimumWidth(280);
 
 	setLayout(mainLayout);

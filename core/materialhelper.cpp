@@ -56,7 +56,6 @@ bool MaterialHelper::materialHasEffect(QJsonObject matObj)
 // provides asset path for shadergraph assets
 QString MaterialHelper::assetPath(QString relPath)
 {
-	//qDebug() << QDir::cleanPath(QDir::currentPath() + QDir::separator() + relPath);
 #ifdef EFFECT_BUILD_AS_LIB
 	return IrisUtils::getAbsoluteAssetPath(QString("app") + QDir::separator() + QString("shadergraph") + QDir::separator() + relPath);
 #else

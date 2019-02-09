@@ -5,6 +5,7 @@
 #include "../graph/library.h"
 #include "../listwidget.h"
 #include "../graphnodescene.h"
+#include "../widgets//treewidget.h"
 
 
 class SearchDialog : public QDialog
@@ -14,12 +15,14 @@ public:
 	SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point);
 	~SearchDialog();
 
-    ListWidget* nodeContainer;
-    ListWidget* propertyContainer;
 	void generateTileNode(QList<NodeLibraryItem*> lis);
 	void generateTileNode(NodeGraph *graph);
 	void generateTileProperty(NodeGraph *graph);
+	void configureTreeWidget();
 	int index = 0;
+
+	TreeWidget *tree;
+	TreeWidget *treeProperty;
 
 	QLineEdit *searchBar;
 	QPoint point;

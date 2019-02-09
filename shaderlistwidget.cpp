@@ -13,7 +13,6 @@ ShaderListWidget::ShaderListWidget() : ListWidget()
 {
 	setAcceptDrops(true);
 	viewport()->setAcceptDrops(true);
-
 }
 
 
@@ -49,25 +48,16 @@ void ShaderListWidget::dropEvent(QDropEvent * event)
 
 	}
 	else	event->ignore();
-
-
-//	ListWidget::dropEvent(event);
 }
 
 void ShaderListWidget::dragMoveEvent(QDragMoveEvent * event)
 {
 	event->acceptProposedAction();
-//	ListWidget::dragMoveEvent(event);
 }
 
 void ShaderListWidget::dragEnterEvent(QDragEnterEvent * event)
 {
 	if(event->source() != this)
 	event->acceptProposedAction();
-//	ListWidget::dragEnterEvent(event);
 }
 
-void ShaderListWidget::dragLeaveEvent(QDragLeaveEvent * event)
-{
-//	ListWidget::dragLeaveEvent(event);
-}

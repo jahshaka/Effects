@@ -19,7 +19,6 @@ public:
 	bool isResizable = false;
 	void dropEvent(QDropEvent *event) override;
     bool shaderContextMenuAllowed = false;
-    void createContextMenu();
 
 	QSize itemSize;
 	int numberOfItemPerRow;

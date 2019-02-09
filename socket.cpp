@@ -11,8 +11,6 @@ Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title) :
 	QGraphicsPathItem(parent), 
 	socketType(socketType)
 {
-
-//	this->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 	this->setFlag(QGraphicsItem::ItemSendsScenePositionChanges);
 	text = new QGraphicsTextItem(this);
 	text->setPlainText(title);
@@ -60,9 +58,6 @@ Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title) :
 		text->setPos(inSocketXOffset, -radius);
 	}
 
-	//setBrush(getSocketColor());
-	//QPen pen(regularColor, 3.0);
-	//setPen(pen);
 	setPath(path);
 
 	
@@ -72,7 +67,6 @@ void Socket::addConnection(SocketConnection* con)
 {
 	setConnected(true);
 	connections.append(con);
-	//setSocketColor(connectedColor);
 	text->setDefaultTextColor(QColor(255, 255, 255));
 	updateSocket();
 }
@@ -160,19 +154,6 @@ void Socket::setConnected(bool value)
 
 void Socket::updateSocket()
 {
-	//QPainterPath path;
-	//// socket positions are at the outer right or outer left of the graph node
-
-	//path.addRoundedRect(socketPos.x(), socketPos.y(), dimentions, dimentions, radius, radius);
-
-	//setBrush(getSocketColor());
-	//QPen pen;
-	//pen.setWidth(3);
-	//if (connected) pen.setColor(QColor(27, 27, 27));
-	//else pen.setColor(QColor(97, 97, 97));
-
-	//setPen(pen);
-	//setPath(path);
 	this->update();
 }
 
@@ -205,9 +186,6 @@ void Socket::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, 
 	painter->drawPath(path);
 	QPainterPath path1;
 	auto pad = 6;
-
-
-	//path.addRoundedRect(socketPos.x(), socketPos.y(), dimentions, dimentions, radius, radius);
 
 	path1.addRoundedRect(socketPos.x() + pad / 2, -radius / 2 + pad / 2, dimentions - pad, dimentions - pad, radius, radius);
 	if (connected) {

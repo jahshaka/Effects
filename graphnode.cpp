@@ -80,17 +80,16 @@ void CustomRenderWidget::start()
 
 void CustomRenderWidget::update(float dt)
 {
-	cam->aspectRatio = width() / (float)height();
-	cam->update(dt);
-
-	//qDebug()<<1.0/dt;
 	fps = 1.0 / dt;
 	renderTime += dt;
 }
 
 void CustomRenderWidget::render()
 {
-	cam->aspectRatio = width() / (float)height();
+	auto vpWidth = (int)(width() * devicePixelRatioF());
+	auto vpHeight = (int)(height() * devicePixelRatioF());
+
+	cam->aspectRatio = vpWidth / vpHeight;
 	cam->update(0.016f);
 
 	//device->clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, QColor(qMin((int)(renderTime*0.1f * 255), 255), 0, 0));
@@ -100,9 +99,7 @@ void CustomRenderWidget::render()
 	device->setDepthState(iris::DepthState());
 
 	auto& graphics = device;
-	auto w = width();
-	auto h = height();
-	device->setViewport(QRect(0, 0, w, h));
+	device->setViewport(QRect(0, 0, vpWidth, vpHeight));
 	device->setShader(shader);
 	device->setShaderUniform("u_viewMatrix", cam->viewMatrix);
 	device->setShaderUniform("u_projMatrix", cam->projMatrix);
@@ -143,9 +140,9 @@ void CustomRenderWidget::updateShader(QString shaderCode)
 		vertString,
 		fragString + shaderCode);
 
-	qDebug() << "-------- PREVIEW SHADER --------";
-	qDebug().noquote() << fragString + shaderCode;
-	qDebug() << "-------- PREVIEW SHADER --------";
+	//qDebug() << "-------- PREVIEW SHADER --------";
+	//qDebug().noquote() << fragString + shaderCode;
+	//qDebug() << "-------- PREVIEW SHADER --------";
 }
 
 void CustomRenderWidget::resetRenderTime()
@@ -167,7 +164,6 @@ void CustomRenderWidget::passNodeGraphUniforms()
 			device->setShaderUniform(prop->getUniformName(), prop->getValue().toInt());
 			break;
 		case PropertyType::Float:
-			//qDebug()<<prop->getUniformName()<<" - "<<prop->getValue().toFloat();
 			device->setShaderUniform(prop->getUniformName(), prop->getValue().toFloat());
 			break;
 		case PropertyType::Vec2:
@@ -203,12 +199,6 @@ GraphNode::GraphNode(QGraphicsItem* parent) :
 	this->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 
 	nodeWidth = 170;
-	QPainterPath path_content;
-	// path_content.setFillRule(Qt::WindingFill);
-	//path_content.addRoundedRect(QRect(0, 0, 100, 220), 5, 5);
-	//path_content.addRect(QRect(0, 0, nodeWidth, calcHeight()));
-	//path_content.addRoundedRect(QRect(0, 0, nodeWidth, calcHeight()),17,17);
-	setPath(path_content);
 
 	setPen(QPen(Qt::black));
 	setBrush(QColor(240, 240, 240));
@@ -216,7 +206,6 @@ GraphNode::GraphNode(QGraphicsItem* parent) :
 	text = new QGraphicsTextItem(this);
 	text->setPlainText("Title");
 
-	
 	text->setPos(5, 16);
 	text->setDefaultTextColor(QColor(255, 255, 255));
 
@@ -224,14 +213,12 @@ GraphNode::GraphNode(QGraphicsItem* parent) :
     font.setWeight(65);
     text->setFont(font);
 
-
 	QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
 	effect->setBlurRadius(12);
 	effect->setXOffset(0);
 	effect->setYOffset(0);
 	effect->setColor(QColor(00, 00, 00, 40));
 	setGraphicsEffect(effect);
-
 
 	// preview widget
 	proxyPreviewWidget = nullptr;

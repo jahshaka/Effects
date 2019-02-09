@@ -3,7 +3,7 @@
 /*    ADD    */
 AddNode::AddNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeCategory::Math);
 	title = "Add";
 	typeName = "add";
 	enablePreview = true;
@@ -37,7 +37,7 @@ QString AddNode::generatePreview(ModelContext* context)
 /*    SUBTRACT    */
 SubtractNode::SubtractNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeCategory::Math);
 	title = "Subtract";
 	typeName = "subtract";
 	enablePreview = true;
@@ -71,7 +71,7 @@ QString SubtractNode::generatePreview(ModelContext* context)
 /*    MULTIPLY    */
 MultiplyNode::MultiplyNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeCategory::Math);
 	title = "Multiply";
 	typeName = "multiply";
 	enablePreview = true;
@@ -105,7 +105,7 @@ QString MultiplyNode::generatePreview(ModelContext* context)
 /*    DIVIDE    */
 DivideNode::DivideNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeCategory::Math);
 	title = "Divide";
 	typeName = "divide";
 	enablePreview = true;
@@ -140,7 +140,7 @@ QString DivideNode::generatePreview(ModelContext* context)
 /*    POWER    */
 PowerNode::PowerNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeCategory::Math);
 	title = "Power";
 	typeName = "power";
 	enablePreview = true;
@@ -174,7 +174,7 @@ QString PowerNode::generatePreview(ModelContext* context)
 /*    SQUARE ROOT    */
 SqrtNode::SqrtNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeCategory::Math);
 	title = "Square Root";
 	typeName = "sqrt";
 	enablePreview = true;
@@ -205,7 +205,7 @@ QString SqrtNode::generatePreview(ModelContext* context)
 /*    MIN    */
 MinNode::MinNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeCategory::Math);
 	title = "Min";
 	typeName = "min";
 	enablePreview = true;
@@ -239,7 +239,7 @@ QString MinNode::generatePreview(ModelContext* context)
 /*    MAX    */
 MaxNode::MaxNode()
 {
-	setNodeType(NodeType::Input);
+	setNodeType(NodeCategory::Math);
 	title = "Max";
 	typeName = "max";
 	enablePreview = true;
@@ -273,7 +273,7 @@ QString MaxNode::generatePreview(ModelContext* context)
 /*    ABS    */
 AbsNode::AbsNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeCategory::Math);
 	title = "Abs";
 	typeName = "abs";
 	enablePreview = true;
@@ -304,7 +304,7 @@ QString AbsNode::generatePreview(ModelContext* context)
 /*    SIGN    */
 SignNode::SignNode()
 {
-	setNodeType(NodeType::Input);
+	setNodeType(NodeCategory::Math);
 	title = "Sign";
 	typeName = "sign";
 	enablePreview = true;
@@ -335,7 +335,7 @@ QString SignNode::generatePreview(ModelContext* context)
 /*    CEIL    */
 CeilNode::CeilNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeCategory::Math);
 	title = "Ceil";
 	typeName = "ceil";
 	enablePreview = true;
@@ -366,7 +366,7 @@ QString CeilNode::generatePreview(ModelContext* context)
 /*    FLOOR    */
 FloorNode::FloorNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeCategory::Math);
 	title = "Floor";
 	typeName = "floor";
 	enablePreview = true;
@@ -397,7 +397,7 @@ QString FloorNode::generatePreview(ModelContext* context)
 /*    ROUND    */
 RoundNode::RoundNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeCategory::Math);
 	title = "Round";
 	typeName = "round";
 	enablePreview = true;
@@ -429,7 +429,7 @@ QString RoundNode::generatePreview(ModelContext* context)
 /*    TRUNCATE    */
 TruncNode::TruncNode()
 {
-	setNodeType(NodeType::Input);
+	setNodeType(NodeCategory::Math);
 	title = "Truncate";
 	typeName = "truncate";
 	enablePreview = true;
@@ -461,7 +461,7 @@ QString TruncNode::generatePreview(ModelContext* context)
 /*    STEP    */
 StepNode::StepNode()
 {
-	setNodeType(NodeType::Input);
+	setNodeType(NodeCategory::Math);
 	title = "Step";
 	typeName = "step";
 	enablePreview = true;
@@ -495,7 +495,7 @@ QString StepNode::generatePreview(ModelContext* context)
 /*    SMOOTHSTEP    */
 SmoothStepNode::SmoothStepNode()
 {
-	setNodeType(NodeType::Input);
+	setNodeType(NodeCategory::Math);
 	title = "SmoothStep";
 	typeName = "smoothstep";
 	enablePreview = true;
@@ -532,7 +532,7 @@ QString SmoothStepNode::generatePreview(ModelContext* context)
 /*    FRACTION    */
 FracNode::FracNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeCategory::Math);
 	title = "Fraction";
 	typeName = "fraction";
 	enablePreview = true;
@@ -563,7 +563,7 @@ QString FracNode::generatePreview(ModelContext* context)
 /*    CLAMP    */
 ClampNode::ClampNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeCategory::Math);
 	title = "Clamp";
 	typeName = "clamp";
 	enablePreview = true;
@@ -600,7 +600,7 @@ QString ClampNode::generatePreview(ModelContext* context)
 /*    LERP    */
 LerpNode::LerpNode()
 {
-	setNodeType(NodeType::Input);
+	setNodeType(NodeCategory::Math);
 	title = "Lerp";
 	typeName = "lerp";
 	enablePreview = true;
@@ -638,7 +638,7 @@ QString LerpNode::generatePreview(ModelContext* context)
 /*    ONEMINUS    */
 OneMinusNode::OneMinusNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeCategory::Math);
 	title = "One Minus";
 	typeName = "oneminus";
 	enablePreview = true;
@@ -669,7 +669,7 @@ QString OneMinusNode::generatePreview(ModelContext* context)
 /*    NEGATE    */
 NegateNode::NegateNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeCategory::Math);
 	title = "Negate";
 	typeName = "negate";
 	enablePreview = true;

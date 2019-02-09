@@ -336,9 +336,8 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 		static_cast<int>(ModelTypes::Shader),
 		assetItemShader.selectedGuid);
 
-db->updateAssetAsset(targetGuid, updatedDoc.toBinaryData());
+	db->updateAssetAsset(targetGuid, updatedDoc.toBinaryData());
 	
-//	db->updateAssetAsset(targetGuid, sourceData);
 	db->updateAssetThumbnail(targetGuid, db->fetchAsset(item->data(MODEL_GUID_ROLE).toString()).thumbnail);
 
 	// todo: create new item

@@ -10,16 +10,16 @@
 
 #include "socketmodel.h"
 
-enum class NodeType {
-	Input,
-	Math,
-	Constants,
-	Texture,
-	Vertex,
-	Vector,
-	Object,
-	PlaceHolder,
-	Properties
+enum class NodeCategory {
+	Input = 0,
+	Math = 1,
+	Constants = 2,
+	Texture = 3,
+	Vector = 4,
+	Object = 5,
+	Utility = 6,
+	PlaceHolder = 7,
+	Properties = 8
 };
 
 class QWidget;
@@ -41,11 +41,12 @@ public:
 
 	QString typeName;
 	QString title;
-	NodeType nodeType;
+	NodeCategory nodeType;
 
 	QWidget* widget;
 	QColor titleColor;
 	QIcon icon;
+	QString iconPath;
 
 	void setX(float val) { x = val; }
 	float getX() { return x; }
@@ -88,7 +89,7 @@ public:
 	NodeGraph *getGraph() const;
 	void setGraph(NodeGraph *value);
 	QColor setNodeTitleColor();
-	void setNodeType(NodeType type);
+	void setNodeType(NodeCategory type);
 
 	// gets socket from both in and out sockets
 	// return nullptr if sockets isnt found
@@ -104,7 +105,7 @@ public:
 
 	}
 
-	static QString getEnumString(NodeType type);
+	static QString getEnumString(NodeCategory type);
 
 signals:
 	void valueChanged(NodeModel*, int sockedIndex);

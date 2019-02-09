@@ -4,147 +4,12 @@
 #include "../propertywidgets/vectorpropertywidget.h"
 #include <QFileDialog>
 #include <QDebug>
-void registerModels(NodeGraph* graph)
-{
-	/*
-	// mult
-	graph->registerModel("vectorMultiply", []()
-	{
-		auto multNode = new VectorMultiplyNode();
-		return multNode;
-	});
-
-	// normal
-	graph->registerModel("worldNormal", []()
-	{
-		auto normalNode = new WorldNormalNode();
-		return normalNode;
-	});
-
-	// float
-	graph->registerModel("float", []()
-	{
-		auto floatNode = new FloatNodeModel();
-		return floatNode;
-	});
-
-	// time
-	graph->registerModel("time", []()
-	{
-		auto node = new TimeNode();
-		return node;
-	});
-
-
-	// uv
-	graph->registerModel("Texture Coordinate", []()
-	{
-		return new TextureCoordinateNode();
-	});
-
-	// sine
-	graph->registerModel("sine", []()
-	{
-		return new SineNode();
-	});
-
-	//make color
-	graph->registerModel("Make Color", []() {
-		return new MakeColorNode();
-	});
-
-	// property
-	graph->registerModel("property", []()
-	{
-		return new PropertyNode();
-	});
-
-	*/
-
-	auto lib = new NodeLibrary();
-
-	// mult
-	lib->addNode("vectorMultiply","Vector Multiply","", []()
-	{
-		auto multNode = new VectorMultiplyNode();
-		return multNode;
-	});
-
-	// normal
-	lib->addNode("worldNormal", "World Normal", "", []()
-	{
-		auto normalNode = new WorldNormalNode();
-		return normalNode;
-	});
-
-	// float
-	lib->addNode("float", "Float", "", []()
-	{
-		auto floatNode = new FloatNodeModel();
-		return floatNode;
-	});
-
-	// time
-	lib->addNode("time", "Time", "", []()
-	{
-		auto node = new TimeNode();
-		return node;
-	});
-
-
-	// uv
-	lib->addNode("texCoords", "Texture Coordinate", "", []()
-	{
-		return new TextureCoordinateNode();
-	});
-
-	// sine
-	lib->addNode("sine", "Sine", "", []()
-	{
-		return new SineNode();
-	});
-	
-	// pulsate
-	lib->addNode("pulsate", "Pulsate Node", "", []()
-	{
-		return new PulsateNode();
-	});
-
-	//make color
-	lib->addNode("makeColor", "Make Color", "", []() {
-		return new MakeColorNode();
-	});
-
-	//sample texture
-	lib->addNode("sampleTexture", "Sample Texture", "", []() {
-		return new TextureSamplerNode();
-	});
-
-	//texture
-	lib->addNode("texture", "Texture", "", []() {
-		return new TextureNode();
-	});
-
-	lib->addNode("vector2", "Vector2", "", []() {
-		return new Vector2Node();
-	});
-
-	graph->setNodeLibrary(lib);
-
-	/*
-	// property
-	lib->addNode("property", "", "", []()
-	{
-		return new PropertyNode();
-	});
-	*/
-}
 
 SurfaceMasterNode::SurfaceMasterNode()
 {
 	title = "Surface Material";
 	typeName = "Material";
-	setNodeType(NodeType::Input);
+	setNodeType(NodeCategory::Input);
 	addInputSocket(new Vector3SocketModel("Diffuse","vec3(1.0,1.0,1.0)"));
 	addInputSocket(new Vector3SocketModel("Specular"));
 	addInputSocket(new FloatSocketModel("Shininess"));
@@ -189,7 +54,7 @@ void SurfaceMasterNode::process(ModelContext* ctx)
 FloatNodeModel::FloatNodeModel() :
 	NodeModel()
 {
-	setNodeType(NodeType::Constants);
+	setNodeType(NodeCategory::Constants);
 
 	auto wid = new QWidget;
 	auto label = new QLabel(" ");
@@ -239,7 +104,6 @@ FloatNodeModel::FloatNodeModel() :
 	vall->setAlignment(Qt::AlignCenter);
 
 	auto textHolder = new QWidget;
-	//textHolder->setMaximumWidth(150);
 	textHolder->setLayout(layoutH1);
 	layoutH1->setContentsMargins(10, 0, 10, 0);
 
@@ -250,11 +114,7 @@ FloatNodeModel::FloatNodeModel() :
 
 	layout->addWidget(textHolder);
 
-	//layout->addLayout(layoutH);
 	layout->addWidget(holdem);
-	/*layout->addLayout(layoutH1);
-	layout->addLayout(layoutH2);
-	layout->addLayout(layoutH3);*/
 	layout->addWidget(slider);
 	
 	this->widget = wid;
@@ -315,7 +175,6 @@ FloatNodeModel::FloatNodeModel() :
 		" QSlider::add-page:vertical, QSlider::sub-page:vertical {background: rgba(0,0,0,0); border-radius: 1px;}"
 	);
 
-//	lineEdit->setText("0.0");
 }
 
 void FloatNodeModel::editTextChanged(const QString& text)
@@ -330,7 +189,6 @@ void FloatNodeModel::process(ModelContext* context)
 	auto res = this->getOutputSocketVarName(0);
 
 	auto code = res + " = " + valueSock->getValue() + ";";
-	//ctx->addCodeChunk(this, code);
 	valueSock->setVarName(valueSock->getValue());
 }
 
@@ -342,14 +200,13 @@ QJsonValue FloatNodeModel::serializeWidgetValue(int widgetIndex)
 void FloatNodeModel::deserializeWidgetValue(QJsonValue val, int widgetIndex)
 {
 	auto value = val.toDouble();
-	//lineEdit->setText(QString("%1").arg(value));
 	valueSock->setValue(QString("%1").arg(value));
 }
 
 
 VectorMultiplyNode::VectorMultiplyNode()
 {
-	setNodeType(NodeType::Input);
+	setNodeType(NodeCategory::Input);
 	title = "Vector Multiply";
 	typeName = "vectorMultiply";
 
@@ -365,16 +222,13 @@ void VectorMultiplyNode::process(ModelContext* context)
 	auto valB = this->getValueFromInputSocket(1);
 	auto res = this->getOutputSocketVarName(0);
 
-	//valA = SocketHelper::convertValue(valA,inSockets[0], outSockets[0]);
-	//valB = SocketHelper::convertValue(valB,inSockets[1], outSockets[0]);
-
 	auto code = res + " = " + valA + " * " + valB + ";";
 	ctx->addCodeChunk(this, code);
 }
 
 WorldNormalNode::WorldNormalNode()
 {
-	setNodeType(NodeType::Input);
+	setNodeType(NodeCategory::Input);
 
 	title = "World Normal";
 	typeName = "worldNormal";
@@ -388,13 +242,12 @@ void WorldNormalNode::process(ModelContext* context)
 	auto res = this->getOutputSocketVarName(0);
 
 	auto code = res + " = v_normal;";
-	//ctx->addCodeChunk(this, code);
 	outSockets[0]->setVarName("v_normal");
 }
 
 LocalNormalNode::LocalNormalNode()
 {
-	setNodeType(NodeType::Input);
+	setNodeType(NodeCategory::Input);
 
 	title = "Local Normal";
 	typeName = "localNormal";
@@ -412,7 +265,7 @@ void LocalNormalNode::process(ModelContext* context)
 
 TimeNode::TimeNode()
 {
-	setNodeType(NodeType::Input);
+	setNodeType(NodeCategory::Input);
 
 	title = "Time";
 	typeName = "time";
@@ -427,7 +280,7 @@ void TimeNode::process(ModelContext* context)
 
 SineNode::SineNode()
 {
-	setNodeType(NodeType::Input);
+	setNodeType(NodeCategory::Math);
 
 	title = "Sine";
 	typeName = "sine";
@@ -449,7 +302,7 @@ void SineNode::process(ModelContext* context)
 
 
 MakeColorNode::MakeColorNode() {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeCategory::Utility);
 
 
 	title = "Color";
@@ -477,7 +330,7 @@ void MakeColorNode::process(ModelContext *context)
 
 TextureCoordinateNode::TextureCoordinateNode()
 {
-	setNodeType(NodeType::Input);
+	setNodeType(NodeCategory::Input);
 
 	title = "Texture Coordinate";
 	typeName = "texCoords";
@@ -517,10 +370,6 @@ TextureCoordinateNode::TextureCoordinateNode()
 
 	this->widget = containerWidget;
 
-	//this->widget = combo;
-
-	//typeName = "float";
-
 	addOutputSocket(new Vector2SocketModel("UV"));
 	uv = "v_texCoord";
 }
@@ -551,7 +400,7 @@ void TextureCoordinateNode::comboTextChanged(const QString& text)
 
 TextureSamplerNode::TextureSamplerNode()
 {
-	setNodeType(NodeType::Input);
+	setNodeType(NodeCategory::Input);
 
 
 	title = "Sample Texture";
@@ -583,7 +432,7 @@ void TextureSamplerNode::process(ModelContext* context)
 PropertyNode::PropertyNode()
 {
 	this->typeName = "property";
-	setNodeType(NodeType::Input);
+	setNodeType(NodeCategory::Input);
 }
 
 // doesnt own property
@@ -596,8 +445,6 @@ void PropertyNode::setProperty(Property* property)
 	switch (property->type) {
 	case PropertyType::Int: {
 		this->addOutputSocket(new FloatSocketModel("int"));
-		//this->widget = new WidgetInt;
-		//updateStyle();
 	}
 		break;
 	case PropertyType::Float:
@@ -620,12 +467,6 @@ void PropertyNode::setProperty(Property* property)
 		this->addOutputSocket(new TextureSocketModel("texture"));
 		this->addOutputSocket(new Vector4SocketModel("rgba"));
 		this->addOutputSocket(new Vector3SocketModel("normal"));
-		/*
-		this->addOutputSocket(new FloatSocketModel("r"));
-		this->addOutputSocket(new FloatSocketModel("g"));
-		this->addOutputSocket(new FloatSocketModel("b"));
-		this->addOutputSocket(new FloatSocketModel("a"));
-		*/
 		this->addInputSocket(new Vector2SocketModel("uv","v_texCoord"));
 		
 		break;
@@ -691,7 +532,7 @@ void TexturePropertyNode::process(ModelContext* context)
 
 TextureNode::TextureNode()
 {
-	setNodeType(NodeType::Input);
+	setNodeType(NodeCategory::Input);
 	title = "Texture";
 	typeName = "texture";
 
@@ -751,7 +592,7 @@ void TextureNode::process(ModelContext * context)
 
 PulsateNode::PulsateNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeCategory::Utility);
 
 	title = "Pulsate";
 	typeName = "pulsate";
@@ -772,7 +613,7 @@ void PulsateNode::process(ModelContext * context)
 
 PannerNode::PannerNode()
 {
-	setNodeType(NodeType::Input);
+	setNodeType(NodeCategory::Input);
 
 	title = "Panner";
 	typeName = "panner";
@@ -798,7 +639,7 @@ void PannerNode::process(ModelContext * context)
 
 NormalIntensityNode::NormalIntensityNode()
 {
-	setNodeType(NodeType::Input);
+	setNodeType(NodeCategory::Input);
 
 	title = "Normal Intensity";
 	typeName = "normalintensity";
@@ -822,7 +663,7 @@ void NormalIntensityNode::process(ModelContext* context)
 
 Vector2Node::Vector2Node()
 {
-	setNodeType(NodeType::Constants);
+	setNodeType(NodeCategory::Constants);
 	title = "Vector 2 Node";
 	typeName = "vector 2 node";
 
@@ -878,7 +719,7 @@ void Vector2Node::process(ModelContext * context)
 
 Vector3Node::Vector3Node()
 {
-	setNodeType(NodeType::Constants);
+	setNodeType(NodeCategory::Constants);
 	title = "Vector 3 Node";
 	typeName = "vector3";
 
@@ -943,7 +784,7 @@ void Vector3Node::process(ModelContext * context)
 
 Vector4Node::Vector4Node()
 {
-	setNodeType(NodeType::Constants);
+	setNodeType(NodeCategory::Constants);
 	title = "Vector 4 Node";
 	typeName = "vector4";
 
@@ -1018,7 +859,7 @@ void Vector4Node::process(ModelContext * context)
 #if(EFFECT_BUILD_AS_LIB)
 ColorPickerNode::ColorPickerNode()
 {
-	setNodeType(NodeType::Constants);
+	setNodeType(NodeCategory::Constants);
 	title = "Color Node";
 	typeName = "color";
 

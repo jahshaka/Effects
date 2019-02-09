@@ -242,7 +242,7 @@ void GraphNodeScene::updatePropertyNodeTitle(QString title, QString propId)
 	
 }
 
-void GraphNodeScene::addNodeFromSearchDialog(QListWidgetItem * item, const QPoint &point)
+void GraphNodeScene::addNodeFromSearchDialog(QTreeWidgetItem * item, const QPoint &point)
 {
 	auto view = this->views().first();
 	auto viewPoint = view->viewport()->mapFromGlobal(point);
@@ -251,8 +251,8 @@ void GraphNodeScene::addNodeFromSearchDialog(QListWidgetItem * item, const QPoin
 	auto p = scenePoint;
 
 
-	if (!item->data(MODEL_EXT_ROLE).isNull()) {
-		auto prop = nodeGraph->properties.at(item->data(MODEL_EXT_ROLE).toInt());
+	if (!item->data(0, MODEL_EXT_ROLE).isNull()) {
+		auto prop = nodeGraph->properties.at(item->data(0, MODEL_EXT_ROLE).toInt());
 		if (prop) {
 			auto propNode = new PropertyNode();
 			propNode->setProperty(prop);
@@ -262,8 +262,8 @@ void GraphNodeScene::addNodeFromSearchDialog(QListWidgetItem * item, const QPoin
 		}
 	}
 
-	if (item->data(MODEL_TYPE_ROLE).toString() == "node") {
-		auto node = nodeGraph->library->createNode(item->data(Qt::UserRole).toString());
+	if (item->data(0, MODEL_TYPE_ROLE).toString() == "node") {
+		auto node = nodeGraph->library->createNode(item->data(0, Qt::UserRole).toString());
 
 		//	auto factory = nodeGraph->modelFactories[event->mimeData()->text()];
 		if (node) {
@@ -539,7 +539,7 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 
 			auto sock = getSocketAt(me->scenePos().x(), me->scenePos().y());
 			if (sock != nullptr && con->socket1 != sock) {
-				qDebug() << "connection entered";
+				//"connection entered";
 			}
 			return true;
 		}

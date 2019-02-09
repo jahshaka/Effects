@@ -8,8 +8,6 @@ PropertyWidgetBase::PropertyWidgetBase() : QWidget()
 {
 	layout = new QHBoxLayout;
 	setLayout(layout);
-	//font.setPointSizeF(font.pointSize() * devicePixelRatioF());
-	//setFont(font);
 }
 
 
@@ -46,10 +44,8 @@ Widget2D::Widget2D() : PropertyWidgetBase()
 	layout2->addWidget(yLabel);
 	layout2->addWidget(ySpinBox);
 
-
 	layout->addWidget(box1);
 	layout->addWidget(box2);
-
 
 	connect(xSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
 		x = val;
@@ -96,7 +92,6 @@ Widget3D::Widget3D() : PropertyWidgetBase()
 	xLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
 	yLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
 	zLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-
 
 	layout->addWidget(xLabel);
 	layout->addWidget(xSpinBox);
@@ -270,13 +265,6 @@ WidgetInt::WidgetInt() : PropertyWidgetBase()
 	minSpinBox->setFont(font);
 	stepSpinBox->setFont(font);
 
-	/*label->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-	label1->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-	label2->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-	label3->setAlignment(Qt::AlignVCenter | Qt::AlignRight);*/
-
-
-
 	auto vbox = new QHBoxLayout;
 	auto minbox = new QHBoxLayout;
 	auto maxbox = new QHBoxLayout;
@@ -374,12 +362,6 @@ WidgetFloat::WidgetFloat() : PropertyWidgetBase()
 	maxSpinBox->setFont(font);
 	minSpinBox->setFont(font);
 	stepSpinBox->setFont(font);
-
-	/*label->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-	label1->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-	label2->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-	label3->setAlignment(Qt::AlignVCenter | Qt::AlignRight);*/
-
 
 	auto vbox = new QHBoxLayout;
 	auto minbox = new QHBoxLayout;

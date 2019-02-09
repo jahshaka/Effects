@@ -15,7 +15,6 @@ protected:
 	void dropEvent(QDropEvent* event);
 	void dragMoveEvent(QDragMoveEvent *event) override;
 	void dragEnterEvent(QDragEnterEvent *event) override;
-	void dragLeaveEvent(QDragLeaveEvent *event) override;
 signals:
 	void itemDropped(QListWidgetItem *item);
 };
