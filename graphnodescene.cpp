@@ -442,6 +442,11 @@ void GraphNodeScene::removeConnection(const QString& conId, bool removeFromNodeG
 	removeConnection(con, removeFromNodeGraph, emitSignal);
 }
 
+void GraphNodeScene::setUndoRedoStack(QUndoStack *stack)
+{
+	this->stack = stack;
+}
+
 bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 {
 	QGraphicsSceneMouseEvent *me = (QGraphicsSceneMouseEvent*)e;
