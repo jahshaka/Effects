@@ -9,6 +9,7 @@
 #include <QDockWidget>
 #include <QSplitter>
 #include <QToolBar>
+#include <QUndoStack>
 
 #include "propertylistwidget.h"
 //#include "nodemodel.h"
@@ -30,6 +31,7 @@ class NodeGraph;
 class NodeLibraryItem;
 class Database;
 class TexturePropertyWidget;
+class UndoRedo;
 
 namespace shadergraph
 {
@@ -69,6 +71,8 @@ public:
 	QListWidgetItem *currentProjectShader = Q_NULLPTR;
 	shaderInfo currentShaderInformation;
     shaderInfo pressedShaderInfo;
+	QUndoStack *stack;
+
 private:
 	void saveShader();
 	void saveDefaultShader();

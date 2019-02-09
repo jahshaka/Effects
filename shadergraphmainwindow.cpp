@@ -57,6 +57,7 @@
 #include <QUuid>
 #endif
 
+#include "core/undoredo.h"
 #include "texturemanager.h"
 #include <QDebug>
 namespace shadergraph
@@ -65,6 +66,7 @@ namespace shadergraph
 MainWindow::MainWindow( QWidget *parent, Database *database) :
     QMainWindow(parent)
 {
+	stack = new UndoRedo;
 	scene = nullptr;
 	sceneWidget = new SceneWidget();
 	fontIcons = new QtAwesome;
@@ -1086,6 +1088,8 @@ bool MainWindow::eventFilter(QObject * watched, QEvent * event)
 GraphNodeScene *MainWindow::createNewScene()
 {
     auto scene = new GraphNodeScene(this);
+	stack->setClean();
+	scene->setUndoRedoStack(stack);
     scene->setBackgroundBrush(QBrush(QColor(60, 60, 60)));
 
 	connect(scene, &GraphNodeScene::graphInvalidated, [this, scene]()

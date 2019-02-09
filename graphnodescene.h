@@ -47,8 +47,6 @@ class GraphNodeScene : public QGraphicsScene
 		// only used when dragging
 		SocketConnection* con;
 
-	
-
 	QGraphicsItemGroup *conGroup;
 public:
 	GraphNodeScene(QWidget* parent);
@@ -73,7 +71,7 @@ public:
 	SocketConnection* removeConnection(SocketConnection* connection, bool removeFromNodeGraph = true, bool emitSignal = true);
 	void removeConnection(const QString& conId, bool removeFromNodeGraph = true, bool emitSignal = true);
 	SocketConnection* addConnection(Socket* leftCon, Socket* rightCon);
-
+	void setUndoRedoStack(QUndoStack *);
 
 	bool eventFilter(QObject *o, QEvent *e);
 	Socket* getSocketAt(float x, float y);
