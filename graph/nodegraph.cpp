@@ -16,10 +16,11 @@ void NodeGraph::addProperty(Property* prop)
 	this->properties.append(prop);
 }
 
-bool NodeGraph::deletePropertyById(const QString & id)
+void NodeGraph::removeProperty(Property * prop)
 {
-	return false;
+	this->properties.removeOne(prop);
 }
+
 
 Property *NodeGraph::getPropertyByName(const QString &name)
 {

@@ -2,6 +2,9 @@
 #include <QPoint>
 #include <QDebug>
 
+#include "../propertylistwidget.h"
+
+
 int UndoRedo::count = 0;
 UndoRedo::UndoRedo()
 {
@@ -168,13 +171,41 @@ MaterialSettingsChangeCommand::MaterialSettingsChangeCommand(NodeGraph *graph, M
 void MaterialSettingsChangeCommand::undo()
 {
 	this->graph->settings = oldSettings;
-	//mat->setMaterialSettings(oldSettings);
 	mat->updateMaterialSettingsWidget(oldSettings);
 }
 
 void MaterialSettingsChangeCommand::redo()
 {
 	this->graph->settings = settings;
-	//mat->setMaterialSettings(settings);
 	mat->updateMaterialSettingsWidget(settings);
+}
+
+AddPropertyCommand::AddPropertyCommand(QVBoxLayout *layout, QVector<BasePropertyWidget*>&list, BasePropertyWidget *widget, int *index, PropertyListWidget *pl)
+{
+	this->lay = layout;
+	this->list = &list;
+	this->wid = widget;
+	this->index = index;
+	this->propertyList = pl;
+}
+
+void AddPropertyCommand::undo()
+{
+	lay->removeWidget(wid);
+	list->removeOne(wid);
+	index--;
+	wid->setVisible(false);
+	propertyList->graph->removeProperty(wid->modelProperty);
+
+}
+
+void AddPropertyCommand::redo()
+{
+	lay->insertWidget(lay->count() - 1, wid); // minus one to account for stretch
+	list->append(wid);
+	wid->index = *index;
+	index++;
+	wid->setVisible(true);
+	propertyList->graph->addProperty(wid->modelProperty);
+
 }

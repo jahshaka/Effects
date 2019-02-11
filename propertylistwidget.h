@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include <QListWidget>
+#include <QUndoStack>
+#include "core/undoredo.h"
 
 namespace Ui {
 class PropertyListWidget;
@@ -29,7 +31,8 @@ public:
     void addProperty(QWidget* widget);
     void setNodeGraph(NodeGraph* graph);
     void clearPropertyList();
-
+	void setStack(QUndoStack *);
+	NodeGraph* graph;
 
 	BasePropertyWidget *currentWidget = Q_NULLPTR;
 private:
@@ -56,9 +59,9 @@ private:
 
 private:
     QVBoxLayout* layout;
-    NodeGraph* graph;
 	int added = 0;
 	QFont font;
+	QUndoStack *stack;
 
 signals:
 	void nameChanged(QString name, QString id);

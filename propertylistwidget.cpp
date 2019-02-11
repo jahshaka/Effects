@@ -155,6 +155,11 @@ void PropertyListWidget::clearPropertyList()
 	added = 0;
 }
 
+void PropertyListWidget::setStack(QUndoStack *stack)
+{
+	this->stack = stack;
+}
+
 void PropertyListWidget::addNewFloatProperty()
 {
     auto prop = new FloatProperty();
@@ -264,7 +269,14 @@ void PropertyListWidget::addTextureProperty(TextureProperty * texProp, bool requ
 void PropertyListWidget::addToPropertyListWidget(BasePropertyWidget *widget)
 {
 
-    layout->insertWidget(layout->count() -1, widget); // minus one to account for stretch
+ //   layout->insertWidget(layout->count() -1, widget); // minus one to account for stretch
+	//referenceList.append(widget);
+	//widget->index = added;
+	//added++;
+
+	auto command = new AddPropertyCommand(layout, referenceList, widget, &added, this);
+	stack->push(command);
+
     connect(widget, &BasePropertyWidget::currentWidget, [=](BasePropertyWidget *wid) {
         currentWidget = wid;
     });
@@ -277,7 +289,5 @@ void PropertyListWidget::addToPropertyListWidget(BasePropertyWidget *widget)
 		if (shouldDelete) emit deleteProperty(widget->modelProperty->id);
 	});
 
-    referenceList.append(widget);
-    widget->index = added;
-	added++;
+   
 }
