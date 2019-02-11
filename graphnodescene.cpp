@@ -338,6 +338,7 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 	if (!event->mimeData()->data("index").isNull()) {
 		event->accept();
 		auto prop = nodeGraph->properties.at(event->mimeData()->data("index").toInt());
+		qDebug() << event->mimeData()->data("index").toInt();
 		if (prop) {
 			auto propNode = new PropertyNode();
 			propNode->setProperty(prop);

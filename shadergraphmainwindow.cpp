@@ -110,6 +110,7 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
     scene = newScene;
 
 	propertyListWidget->setNodeGraph(graph);
+	propertyListWidget->setStack(stack);
 	sceneWidget->setNodeGraph(graph);
 	sceneWidget->graphScene = newScene;
 	materialSettingsWidget->setMaterialSettings(graph->settings);
@@ -829,7 +830,7 @@ void MainWindow::configureUI()
 	});
 
 	connect(propertyListWidget, &PropertyListWidget::deleteProperty, [=](QString propID) {
-		graph->deletePropertyById(propID);
+		// remind nick to use thios to delete property by id
 	});
 
 	materialSettingsDock->setWidget(materialSettingsWidget);
@@ -1213,7 +1214,6 @@ void MainWindow::configureConnections()
     connect(materialSettingsWidget, &MaterialSettingsWidget::settingsChanged,[=](MaterialSettings settings){
 		auto command = new MaterialSettingsChangeCommand(graph, settings, materialSettingsWidget);
 		stack->push(command);
-		//graph->settings = settings;
     });
 
     //connection for renaming item

@@ -1,10 +1,13 @@
 #pragma once
 #include <QUndoStack>
 #include <QPoint>
+#include <QVBoxLayout>
 #include "../graphnode.h"
 #include "../graphnodescene.h"
 #include "../materialsettingswidget.h"
+#include "../propertywidgets/basepropertywidget.h"
 
+class PropertyListWidget;
 class UndoRedo : public QUndoCommand
 {
 public:
@@ -102,5 +105,20 @@ private:
 	MaterialSettings settings;
 	MaterialSettings oldSettings;
 	MaterialSettingsWidget *mat;
+};
+
+class AddPropertyCommand : public UndoRedo
+{
+public: 
+	AddPropertyCommand(QVBoxLayout *, QVector<BasePropertyWidget*> &, BasePropertyWidget *, int *index, PropertyListWidget *);
+
+	void undo();
+	void redo();
+private:
+	QVBoxLayout * lay;
+	QVector<BasePropertyWidget*> *list;
+	BasePropertyWidget *wid;
+	PropertyListWidget *propertyList;
+	int *index;
 };
 
