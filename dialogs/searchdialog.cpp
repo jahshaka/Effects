@@ -134,7 +134,7 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 	});
 
 	connect(treeProperty, &TreeWidget::itemClicked, [=](QTreeWidgetItem *item, int column) {
-			scene->addNodeFromSearchDialog(tree->currentItem(), this->point);
+			scene->addNodeFromSearchDialog(treeProperty->currentItem(), this->point);
 			this->close();		
 	});
 

@@ -66,7 +66,7 @@ namespace shadergraph
 MainWindow::MainWindow( QWidget *parent, Database *database) :
     QMainWindow(parent)
 {
-	stack = new UndoRedo;
+	stack = new QUndoStack;
 	scene = nullptr;
 	sceneWidget = new SceneWidget();
 	fontIcons = new QtAwesome;
@@ -112,7 +112,7 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
 	propertyListWidget->setNodeGraph(graph);
 	sceneWidget->setNodeGraph(graph);
 	sceneWidget->graphScene = newScene;
-	materialSettingsWidget->setMaterialSettings(&graph->settings);
+	materialSettingsWidget->setMaterialSettings(graph->settings);
 	sceneWidget->setMaterialSettings(graph->settings);
 	this->graph = graph;
 
@@ -1211,7 +1211,9 @@ void MainWindow::configureConnections()
 
     // change: any settings changed
     connect(materialSettingsWidget, &MaterialSettingsWidget::settingsChanged,[=](MaterialSettings settings){
-		graph->settings = settings;
+		auto command = new MaterialSettingsChangeCommand(graph, settings, materialSettingsWidget);
+		stack->push(command);
+		//graph->settings = settings;
     });
 
     //connection for renaming item

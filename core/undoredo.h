@@ -3,6 +3,7 @@
 #include <QPoint>
 #include "../graphnode.h"
 #include "../graphnodescene.h"
+#include "../materialsettingswidget.h"
 
 class UndoRedo : public QUndoCommand
 {
@@ -87,5 +88,19 @@ private:
 	QList<GraphNode*> list;
 	GraphNode* node;
 	QVector<ConnectionModel*> connections;
+};
+
+class MaterialSettingsChangeCommand : public UndoRedo
+{
+public :
+	MaterialSettingsChangeCommand(NodeGraph *, MaterialSettings &, MaterialSettingsWidget *);
+
+	void undo();
+	void redo();
+private:
+	NodeGraph * graph;
+	MaterialSettings settings;
+	MaterialSettings oldSettings;
+	MaterialSettingsWidget *mat;
 };
 
