@@ -156,3 +156,25 @@ void MoveMultipleCommand::redo()
 	}	
 	UndoRedo::redo();
 }
+
+MaterialSettingsChangeCommand::MaterialSettingsChangeCommand(NodeGraph *graph, MaterialSettings &settings, MaterialSettingsWidget *mat)
+{
+	this->graph = graph;
+	this->settings = settings;
+	this->oldSettings = graph->settings;
+	this->mat = mat;
+}
+
+void MaterialSettingsChangeCommand::undo()
+{
+	this->graph->settings = oldSettings;
+	//mat->setMaterialSettings(oldSettings);
+	mat->updateMaterialSettingsWidget(oldSettings);
+}
+
+void MaterialSettingsChangeCommand::redo()
+{
+	this->graph->settings = settings;
+	//mat->setMaterialSettings(settings);
+	mat->updateMaterialSettingsWidget(settings);
+}

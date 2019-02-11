@@ -160,7 +160,7 @@ MaterialSettingsWidget::MaterialSettingsWidget(QWidget *parent):
     setConnections();
 }
 
-MaterialSettingsWidget::MaterialSettingsWidget(MaterialSettings* settings , QWidget *parent)
+MaterialSettingsWidget::MaterialSettingsWidget(MaterialSettings settings , QWidget *parent)
 {
 	MaterialSettingsWidget();
 	setMaterialSettings(settings);
@@ -168,22 +168,59 @@ MaterialSettingsWidget::MaterialSettingsWidget(MaterialSettings* settings , QWid
 
 MaterialSettingsWidget::~MaterialSettingsWidget()
 {
+	
 }
 
-void MaterialSettingsWidget::setMaterialSettings(MaterialSettings* settings)
+void MaterialSettingsWidget::setMaterialSettings(MaterialSettings settings)
 {
-	setName(settings->name);
-	setZWrite(settings->zwrite);
-	setDepthText(settings->depthTest);
-	setFog(settings->fog);
-	setCastShadows(settings->castShadow);
-	setReceiveShadows(settings->receiveShadow);
-	setAcceptLighting(settings->acceptLighting);
-	setBlendMode(settings->blendMode);
-	setCullMode(settings->cullMode);
-	setRenderLayer(settings->renderLayer);
-    this->settings = *settings;
-	setConnections();
+	setName(settings.name);
+	setZWrite(settings.zwrite);
+	setDepthText(settings.depthTest);
+	setFog(settings.fog);
+	setCastShadows(settings.castShadow);
+	setReceiveShadows(settings.receiveShadow);
+	setAcceptLighting(settings.acceptLighting);
+	setBlendMode(settings.blendMode);
+	setCullMode(settings.cullMode);
+	setRenderLayer(settings.renderLayer);
+    this->settings = settings;
+}
+
+void MaterialSettingsWidget::updateMaterialSettingsWidget(MaterialSettings &set)
+{
+	checkBox->blockSignals(true);
+	checkBox_6->blockSignals(true);
+	checkBox_2->blockSignals(true);
+	checkBox_3->blockSignals(true);
+	checkBox_4->blockSignals(true);
+	checkBox_5->blockSignals(true);
+	lineEdit->blockSignals(true);
+	comboBox->blockSignals(true);
+	comboBox_2->blockSignals(true);
+	comboBox_3->blockSignals(true);
+
+	setName(set.name);
+	setZWrite(set.zwrite);
+	setDepthText(set.depthTest);
+	setFog(set.fog);
+	setCastShadows(set.castShadow);
+	setReceiveShadows(set.receiveShadow);
+	setAcceptLighting(set.acceptLighting);
+	setBlendMode(set.blendMode);
+	setCullMode(set.cullMode);
+	setRenderLayer(set.renderLayer);
+	this->settings = set;
+
+	checkBox->blockSignals(false);
+	checkBox_6->blockSignals(false);
+	checkBox_2->blockSignals(false);
+	checkBox_3->blockSignals(false);
+	checkBox_4->blockSignals(false);
+	checkBox_5->blockSignals(false);
+	lineEdit->blockSignals(false);
+	comboBox->blockSignals(false);
+	comboBox_2->blockSignals(false);
+	comboBox_3->blockSignals(false);
 }
 
 
