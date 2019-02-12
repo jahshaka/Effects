@@ -32,6 +32,9 @@ public:
     void setNodeGraph(NodeGraph* graph);
     void clearPropertyList();
 	void setStack(QUndoStack *);
+
+	void setCount(int val);
+	int getCount();
 	NodeGraph* graph;
 
 	BasePropertyWidget *currentWidget = Q_NULLPTR;

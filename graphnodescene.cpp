@@ -267,6 +267,8 @@ void GraphNodeScene::addNodeFromSearchDialog(QTreeWidgetItem * item, const QPoin
 
 		//	auto factory = nodeGraph->modelFactories[event->mimeData()->text()];
 		if (node) {
+			node->setX(p.x());
+			node->setY(p.y());
 			this->addNodeModel(node, p.x(), p.y());
 			return;
 		}
@@ -338,7 +340,6 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 	if (!event->mimeData()->data("index").isNull()) {
 		event->accept();
 		auto prop = nodeGraph->properties.at(event->mimeData()->data("index").toInt());
-		qDebug() << event->mimeData()->data("index").toInt();
 		if (prop) {
 			auto propNode = new PropertyNode();
 			propNode->setProperty(prop);

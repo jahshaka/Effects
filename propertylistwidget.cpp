@@ -160,6 +160,16 @@ void PropertyListWidget::setStack(QUndoStack *stack)
 	this->stack = stack;
 }
 
+void PropertyListWidget::setCount(int val)
+{
+	added = val;
+}
+
+int PropertyListWidget::getCount()
+{
+	return added;
+}
+
 void PropertyListWidget::addNewFloatProperty()
 {
     auto prop = new FloatProperty();
@@ -167,7 +177,6 @@ void PropertyListWidget::addNewFloatProperty()
     // todo: not safe! find a better way to do this!!!!
     prop->name = QString("property%1").arg(graph->properties.count());
 	this->addFloatProperty(prop);
-	this->graph->addProperty(prop);
 }
 
 void PropertyListWidget::addFloatProperty(FloatProperty* floatProp)
@@ -183,7 +192,6 @@ void PropertyListWidget::addNewVec2Property()
 	prop->displayName = "Vector 2 property";
 	prop->name = QString("property%1").arg(graph->properties.count());
 	this->addVec2Property(prop);
-	this->graph->addProperty(prop);
 }
 
 void PropertyListWidget::addVec2Property(Vec2Property * vec2Prop)
@@ -201,7 +209,6 @@ void PropertyListWidget::addNewVec3Property()
 	prop->displayName = "Vector 3 property";
 	prop->name = QString("property%1").arg(graph->properties.count());
 	this->addVec3Property(prop);
-	this->graph->addProperty(prop);
 }
 
 void PropertyListWidget::addVec3Property(Vec3Property * vec3Prop)
@@ -219,7 +226,6 @@ void PropertyListWidget::addNewVec4Property()
 	prop->displayName = "Vector 4 property";
 	prop->name = QString("property%1").arg(graph->properties.count());
 	this->addVec4Property(prop);
-	this->graph->addProperty(prop);
 }
 
 void PropertyListWidget::addVec4Property(Vec4Property * vec4Prop)
@@ -237,7 +243,6 @@ void PropertyListWidget::addNewIntProperty()
 	prop->displayName = "Int property";
 	prop->name = QString("property%1").arg(graph->properties.count());
 	this->addIntProperty(prop);
-	this->graph->addProperty(prop);
 }
 
 void PropertyListWidget::addIntProperty(IntProperty * intProp)
@@ -255,7 +260,6 @@ void PropertyListWidget::addNewTextureProperty()
 	prop->displayName = "Texture Property";
 	prop->name = QString("property%1").arg(graph->properties.count());
 	this->addTextureProperty(prop);
-	this->graph->addProperty(prop);
 }
 
 void PropertyListWidget::addTextureProperty(TextureProperty * texProp, bool requestTextureFromDatabase)
@@ -274,7 +278,8 @@ void PropertyListWidget::addToPropertyListWidget(BasePropertyWidget *widget)
 	//widget->index = added;
 	//added++;
 
-	auto command = new AddPropertyCommand(layout, referenceList, widget, &added, this);
+	qDebug() << getCount();
+	auto command = new AddPropertyCommand(layout, referenceList, widget, getCount(), this);
 	stack->push(command);
 
     connect(widget, &BasePropertyWidget::currentWidget, [=](BasePropertyWidget *wid) {
