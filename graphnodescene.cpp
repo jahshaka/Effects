@@ -269,7 +269,7 @@ void GraphNodeScene::addNodeFromSearchDialog(QTreeWidgetItem * item, const QPoin
 		if (node) {
 			node->setX(p.x());
 			node->setY(p.y());
-			this->addNodeModel(node, p.x(), p.y());
+			this->addNodeModel(node);
 			return;
 		}
 	}
