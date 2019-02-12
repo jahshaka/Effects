@@ -180,7 +180,7 @@ void MaterialSettingsChangeCommand::redo()
 	mat->updateMaterialSettingsWidget(settings);
 }
 
-AddPropertyCommand::AddPropertyCommand(QVBoxLayout *layout, QVector<BasePropertyWidget*>&list, BasePropertyWidget *widget, int *index, PropertyListWidget *pl)
+AddPropertyCommand::AddPropertyCommand(QVBoxLayout *layout, QVector<BasePropertyWidget*>&list, BasePropertyWidget *widget, int index, PropertyListWidget *pl)
 {
 	this->lay = layout;
 	this->list = &list;
@@ -196,6 +196,7 @@ void AddPropertyCommand::undo()
 	index--;
 	wid->setVisible(false);
 	propertyList->graph->removeProperty(wid->modelProperty);
+	propertyList->setCount(index);
 
 }
 
@@ -203,9 +204,9 @@ void AddPropertyCommand::redo()
 {
 	lay->insertWidget(lay->count() - 1, wid); // minus one to account for stretch
 	list->append(wid);
-	wid->index = *index;
+	wid->index = index;
 	index++;
 	wid->setVisible(true);
 	propertyList->graph->addProperty(wid->modelProperty);
-
+	propertyList->setCount(index);
 }

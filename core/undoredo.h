@@ -110,7 +110,7 @@ private:
 class AddPropertyCommand : public UndoRedo
 {
 public: 
-	AddPropertyCommand(QVBoxLayout *, QVector<BasePropertyWidget*> &, BasePropertyWidget *, int *index, PropertyListWidget *);
+	AddPropertyCommand(QVBoxLayout *, QVector<BasePropertyWidget*> &, BasePropertyWidget *, int index, PropertyListWidget *);
 
 	void undo();
 	void redo();
@@ -119,6 +119,6 @@ private:
 	QVector<BasePropertyWidget*> *list;
 	BasePropertyWidget *wid;
 	PropertyListWidget *propertyList;
-	int *index;
+	int index;
 };
 
