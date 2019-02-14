@@ -109,11 +109,9 @@ void PropertyListWidget::addProperty(QWidget *widget)
 
 void PropertyListWidget::setNodeGraph(NodeGraph *graph)
 {
-	//todo: clear widgets
-
     this->graph = graph;
-	added = 0; 
 
+	added = 0; 
     // build properties
 	for (auto prop : graph->properties) {
 
@@ -151,7 +149,7 @@ void PropertyListWidget::clearPropertyList()
         child->hide();
         child->deleteLater();
     }
-
+	stack->clear();
 	added = 0;
 }
 
@@ -272,13 +270,6 @@ void PropertyListWidget::addTextureProperty(TextureProperty * texProp, bool requ
 
 void PropertyListWidget::addToPropertyListWidget(BasePropertyWidget *widget)
 {
-
- //   layout->insertWidget(layout->count() -1, widget); // minus one to account for stretch
-	//referenceList.append(widget);
-	//widget->index = added;
-	//added++;
-
-	qDebug() << getCount();
 	auto command = new AddPropertyCommand(layout, referenceList, widget, getCount(), this);
 	stack->push(command);
 
@@ -292,6 +283,9 @@ void PropertyListWidget::addToPropertyListWidget(BasePropertyWidget *widget)
 
 	connect(widget, &BasePropertyWidget::buttonPressed, [=](bool shouldDelete) {
 		if (shouldDelete) emit deleteProperty(widget->modelProperty->id);
+
+		auto commandd = new DeletePropertyCommand(layout, widget, added, this);
+		stack->push(commandd);
 	});
 
    

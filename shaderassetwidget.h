@@ -43,7 +43,7 @@ public:
 	void createShader(QListWidgetItem *item);
 	QByteArray fetchAsset(QString string);
 	ShaderListWidget *assetViewWidget;
-	void updateAssetView(const QString &path, int filter = -1, bool showDependencies = false);
+	void updateAssetView(const QString &path);
     void setUpDatabase(Database *db);
 	void refresh();
 private:
@@ -52,5 +52,8 @@ private:
 	Database *db;
 	QSize currentSize = QSize(90, 90);
 	QPushButton* closeBtn;
+
+signals:
+	void loadToGraph(QListWidgetItem *item);
 };
 

@@ -36,10 +36,10 @@ public:
 	void setCount(int val);
 	int getCount();
 	NodeGraph* graph;
-
+	QVector<BasePropertyWidget*> referenceList;
+	QVector<Property*> propertyList;
 	BasePropertyWidget *currentWidget = Q_NULLPTR;
 private:
-    QVector<BasePropertyWidget*> referenceList;
     void addNewFloatProperty();
 	void addFloatProperty(FloatProperty* floatProp);
 

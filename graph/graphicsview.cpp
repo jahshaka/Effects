@@ -20,7 +20,8 @@ GraphicsView::GraphicsView( QWidget *parent) : QGraphicsView(parent)
 	setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
 
 	setCacheMode(QGraphicsView::CacheBackground);
-	setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
+	//setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
+	setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 	setDragMode(QGraphicsView::RubberBandDrag);
 
 	QGraphicsView::setAcceptDrops(true);
