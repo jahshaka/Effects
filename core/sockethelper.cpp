@@ -1,5 +1,5 @@
 #include "sockethelper.h"
-#include "socketmodel.h"
+#include "../models/socketmodel.h"
 
 class SocketModel;
 

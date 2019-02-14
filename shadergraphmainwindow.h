@@ -11,17 +11,17 @@
 #include <QToolBar>
 #include <QUndoStack>
 
-#include "propertylistwidget.h"
+#include "widgets/propertylistwidget.h"
 //#include "nodemodel.h"
-#include "graph/graphicsview.h"
-#include "materialsettingswidget.h"
+#include "widgets/graphicsview.h"
+#include "widgets/materialsettingswidget.h"
 #include "dialogs/createnewdialog.h"
-#include "listwidget.h"
+#include "widgets/listwidget.h"
 #include "misc/QtAwesome.h"
 #include "misc/QtAwesomeAnim.h"
 
 #if(EFFECT_BUILD_AS_LIB)
-#include "shaderassetwidget.h"
+#include "widgets/shaderassetwidget.h"
 #endif
 
 class QMenuBar;

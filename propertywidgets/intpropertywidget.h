@@ -3,7 +3,7 @@
 #include <QSpinBox>
 #include <QLineEdit>
 #include <QPainter>
-#include "../properties.h"
+#include "../models/properties.h"
 #include "basepropertywidget.h"
 #include "propertywidgetbase.h"
 

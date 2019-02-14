@@ -6,8 +6,8 @@
 #include <QGraphicsEffect>
 #include <QDebug>
 
-#include "../nodes/libraryv1.h"
-#include "../properties.h"
+#include "../models/libraryv1.h"
+#include "../models/properties.h"
 #include "../core/project.h"
 
 

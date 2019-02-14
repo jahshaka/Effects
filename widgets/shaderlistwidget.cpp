@@ -6,7 +6,7 @@
 #include <QDebug>
 #include <QUuid>
 
-#include "core/project.h"
+#include "../core/project.h"
 
 
 ShaderListWidget::ShaderListWidget() : ListWidget()

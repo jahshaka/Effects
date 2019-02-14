@@ -9,7 +9,7 @@
 #include <QJsonObject>
 #include <QLayout>
 #include <QMenu>
-#include "core/project.h"
+#include "../core/project.h"
 
 
 ListWidget::ListWidget() : QListWidget()

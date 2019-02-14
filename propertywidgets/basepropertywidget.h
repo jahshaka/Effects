@@ -5,7 +5,7 @@
 #include <QDoubleSpinBox>
 #include <QLineEdit>
 #include <QVBoxLayout>
-#include "../properties.h"
+#include "../models/properties.h"
 #include "../misc/QtAwesome.h"
 #include "../misc/QtAwesomeAnim.h"
 

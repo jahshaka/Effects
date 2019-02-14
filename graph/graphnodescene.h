@@ -21,15 +21,14 @@
 #include <QUndoStack>
 #include "socketconnection.h"
 #include "graphnode.h"
-#include "graph/nodegraph.h"
+#include "nodegraph.h"
 #include "socket.h"
-#include "graph/sockethelper.h"
-#include "graph/nodemodel.h"
-#include "graph/connectionmodel.h"
-#include "graph/nodegraph.h"
-#include "graph/library.h"
-#include "graph/graphicsview.h"
-#include "core/undoredo.h"
+#include "../core/sockethelper.h"
+#include "../models/nodemodel.h"
+#include "../models/connectionmodel.h"
+#include "../models/library.h"
+#include "../widgets/graphicsview.h"
+#include "../core/undoredo.h"
 //#include "nodes/test.h"
 
 #include <QDebug>

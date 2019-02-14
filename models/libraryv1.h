@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../graph/library.h"
+#include "library.h"
 
 class LibraryV1 : public NodeLibrary
 {

@@ -6,14 +6,13 @@
 #include <qgraphicseffect.h>
 #include <QScrollArea>
 #include <QToolButton>
-#include "propertywidgets/floatpropertywidget.h"
-#include "propertywidgets/vectorpropertywidget.h"
-#include "propertywidgets/intpropertywidget.h"
-#include "propertywidgets/texturepropertywidget.h"
-#include "properties.h"
-#include "graph/nodegraph.h"
-#include "mainwindow.h"
-//#include "nodemodel.h"
+#include "../propertywidgets/floatpropertywidget.h"
+#include "../propertywidgets/vectorpropertywidget.h"
+#include "../propertywidgets/intpropertywidget.h"
+#include "../propertywidgets/texturepropertywidget.h"
+#include "../models/properties.h"
+#include "../graph/nodegraph.h"
+#include "../shadergraphmainwindow.h"
 
 PropertyListWidget::PropertyListWidget(QWidget *parent) :
     QWidget(parent)

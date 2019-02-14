@@ -2,8 +2,6 @@
 
 #include <QGraphicsPathItem>
 
-
-
 enum class SocketConnectionStatus
 {
 	Started,
