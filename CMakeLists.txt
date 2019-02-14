@@ -20,114 +20,132 @@ set_target_properties(IrisGL PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_
 set_target_properties(assimp PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 set(CPP
-	#main.cpp
-	mainwindow.cpp
-	#nodegraph.cpp
-    #nodemodel.cpp
-    scenewidget.cpp
-    propertylistwidget.cpp
-	materialsettingswidget.cpp
-    propertywidgets/vectorpropertywidget.cpp
-    propertywidgets/intpropertywidget.cpp
-    propertywidgets/floatpropertywidget.cpp
-    propertywidgets/texturepropertywidget.cpp
-    propertywidgets/basepropertywidget.cpp
-    propertywidgets/propertywidgetbase.cpp
-    properties.cpp
-    materialwriter.cpp
-    texturemanager.cpp
-	socketconnection.cpp
-	socket.cpp
-	graphnode.cpp
-	graphnodescene.cpp
-    #graphtest.cpp
-	# graph
-	graph/nodegraph.cpp
-	graph/nodemodel.cpp
-	graph/connectionmodel.cpp
-	graph/socketmodel.cpp
-	graph/sockethelper.cpp
-	graph/library.cpp
-	graph/graphicsview.cpp
-
-	# generator
-	generator/shadergenerator.cpp
-	generator/shadercontext.cpp
-	listwidget.cpp
-	shaderlistwidget.cpp
-	# nodes
-	nodes/test.cpp
-	nodes/libraryv1.cpp
-	nodes/math.cpp
-	nodes/utils.cpp
-	nodes/inputs.cpp
-	nodes/object.cpp
-	nodes/vector.cpp
-	nodes/texture.cpp
+	core/materialhelper.cpp
+	core/materialwriter.cpp
+	core/project.cpp
+	core/texturemanager.cpp
+	core/undoredo.cpp
+	core/sockethelper.cpp
 
 	dialogs/createnewdialog.cpp
 	dialogs/searchdialog.cpp
-	core/project.cpp
-	core/materialhelper.cpp
-	core/undoredo.cpp
+
+	generator/shadercontext.cpp
+	generator/shadergenerator.cpp
+
+	graph/graphnode.cpp
+	graph/graphnodescene.cpp
+	graph/nodegraph.cpp
+	graph/socket.cpp
+	graph/socketconnection.cpp
+
 	misc/QtAwesome.cpp
 	misc/QtAwesomeAnim.cpp
+
+	models/connectionmodel.cpp
+	models/library.cpp
+	models/libraryv1.cpp
+	models/nodemodel.cpp
+	models/properties.cpp
+	models/socketmodel.cpp
+
+	nodes/inputs.cpp
+	nodes/math.cpp
+	nodes/object.cpp
+	nodes/test.cpp
+	nodes/texture.cpp
+	nodes/utils.cpp
+	nodes/vector.cpp
+	nodes/view.cpp
+
+	propertywidgets/floatpropertywidget.cpp
+    propertywidgets/vectorpropertywidget.cpp
+    propertywidgets/intpropertywidget.cpp
+    propertywidgets/texturepropertywidget.cpp
+    propertywidgets/basepropertywidget.cpp
+    propertywidgets/propertywidgetbase.cpp
+
+	widgets/graphicsview.cpp
+	widgets/listwidget.cpp
+	widgets/materialsettingswidget.cpp
+	widgets/propertylistwidget.cpp
+	widgets/scenewidget.cpp
+	widgets/shaderlistwidget.cpp
+	widgets/shaderassetwidget.cpp
 	widgets/treewidget.cpp
 
+	assets.cpp
+	#graphtest.cpp
+	main.cpp
+	shadergraph.cpp
+	shadergraphmainwindow.cpp
 	)
 
 set(HEADERS
-	mainwindow.h
-        properties.h
-	#nodegraph.h
-        scenewidget.h
-        propertylistwidget.h
-        materialsettingswidget.h
-        propertywidgets/floatpropertywidget.h
-        propertywidgets/vectorpropertywidget.h
-        propertywidgets/intpropertywidget.h
-        propertywidgets/texturepropertywidget.h
-        propertywidgets/basepropertywidget.h
-        propertywidgets/propertywidgetbase.h
-        materialwriter.h
-		texturemanager.h
-		socketconnection.h
-		socket.h
-		graphnode.h
-		graphnodescene.h
-        #graphtest.h
-		#graph
-		graph/nodegraph.h
-		graph/nodemodel.h
-		graph/connectionmodel.h
-		graph/socketmodel.h
-		graph/sockethelper.h
-		graph/sockets.h
-		graph/library.h
-		graph/graphicsview.h
-		# generator
-		generator/shadergenerator.h
-		generator/shadercontext.h
-		listwidget.h
-		shaderlistwidget.h
-		# nodes
-		nodes/test.h
-		nodes/libraryv1.h
-		nodes/math.h
-		nodes/utils.h
-		nodes/inputs.h
-		nodes/object.h
-		nodes/vector.h
-		nodes/texture.h
+	core/guidhelper.h
+	core/materialhelper.h
+	core/materialwriter.h
+	core/project.h
+	core/texturemanager.h
+	core/undoredo.h
+	core/sockethelper.h
+	core/guidhelper.h
 
-		dialogs/createnewdialog.h
-		dialogs/searchdialog.h
-		core/project.h
-		core/undoredo.h
-		core/materialhelper.h
-		misc/QtAwesome.h
-		misc/QtAwesomeAnim.h
-		widgets/treewidget.h
+	dialogs/createnewdialog.h
+	dialogs/searchdialog.h
+
+	generator/shadercontext.h
+	generator/shadergenerator.h
+
+	graph/graphnode.h
+	graph/graphnodescene.h
+	graph/nodegraph.h
+	graph/socket.h
+	graph/sockets.h
+	graph/socketconnection.h
+
+	misc/QtAwesome.h
+	misc/QtAwesomeAnim.h
+
+	models/connectionmodel.h
+	models/library.h
+	models/libraryv1.h
+	models/nodemodel.h
+	models/properties.h
+	models/socketmodel.h
+
+	nodes/inputs.h
+	nodes/math.h
+	nodes/object.h
+	nodes/test.h
+	nodes/texture.h
+	nodes/utils.h
+	nodes/vector.h
+	nodes/vertex.h
+	nodes/view.h
+	nodes/generated.h
+
+	propertywidgets/floatpropertywidget.h
+    propertywidgets/vectorpropertywidget.h
+    propertywidgets/intpropertywidget.h
+    propertywidgets/texturepropertywidget.h
+    propertywidgets/basepropertywidget.h
+    propertywidgets/propertywidgetbase.h
+
+	widgets/graphicsview.h
+	widgets/listwidget.h
+	widgets/materialsettingswidget.h
+	widgets/propertylistwidget.h
+	widgets/scenewidget.h
+	widgets/shaderlistwidget.h
+	widgets/shaderassetwidget.h
+	widgets/treewidget.h
+
+	assets.h
+	#graphtest.h
+	main.h
+	shadergraph.h
+	shadergraphmainwindow.h
 	)
 
 set(FORMS

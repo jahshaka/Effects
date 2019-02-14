@@ -2,8 +2,8 @@
 #include <QList>
 
 #include "shadercontext.h"
-#include "../graph/nodemodel.h"
-#include "../graph/socketmodel.h"
+#include "../models/nodemodel.h"
+#include "../models/socketmodel.h"
 
 void ShaderContext::addFunction(QString name, QString function)
 {

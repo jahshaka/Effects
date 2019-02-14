@@ -9,7 +9,7 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QFormLayout>
-#include "graph/nodegraph.h"
+#include "../graph/nodegraph.h"
 
 namespace Ui {
 class MaterialSettingsWidget;

@@ -13,14 +13,14 @@
 
 #include <irisgl/IrisGL.h>
 #include <irisgl/Graphics.h>
-#include "graph/nodegraph.h"
+#include "nodegraph.h"
 #include "graphnodescene.h"
-#include "texturemanager.h"
-#include "core/materialhelper.h"
-#include "graph/socketmodel.h"
-#include "assets.h"
+#include "../core/texturemanager.h"
+#include "../core/materialhelper.h"
+#include "../models/socketmodel.h"
+#include "../assets.h"
 //#include "irisgl/src/graphics/graphicshelper.h"
-#include "scenewidget.h"
+#include "../widgets/scenewidget.h"
 
 CustomRenderWidget::CustomRenderWidget() :
 	iris::RenderWidget(nullptr)

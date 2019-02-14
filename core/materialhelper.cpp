@@ -1,11 +1,11 @@
 #include "materialhelper.h"
-#include "../graphnodescene.h"
+#include "../graph/graphnodescene.h"
 #include "../graph/nodegraph.h"
 #include "../generator/shadergenerator.h"
 #include <QJsonObject>
 #include "irisgl/src/materials/custommaterial.h"
 #include "irisgl/src/graphics/shader.h"
-#include "../nodes/libraryv1.h"
+#include "../models/libraryv1.h"
 #include <QVector2D>
 #include <QVector3D>
 #include <QVector4D>

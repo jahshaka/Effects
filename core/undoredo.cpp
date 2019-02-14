@@ -2,7 +2,7 @@
 #include <QPoint>
 #include <QDebug>
 
-#include "../propertylistwidget.h"
+#include "../widgets/propertylistwidget.h"
 
 
 int UndoRedo::count = 0;

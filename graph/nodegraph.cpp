@@ -1,9 +1,9 @@
 #include "nodegraph.h"
-#include "connectionmodel.h"
+#include "../models/connectionmodel.h"
 #include "../nodes/test.h"
-#include "library.h"
+#include "../models/library.h"
 #include "../core/guidhelper.h"
-#include "../scenewidget.h"
+#include "../widgets/scenewidget.h"
 
 #include <QJsonObject>
 #include <QJsonArray>

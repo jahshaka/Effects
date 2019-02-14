@@ -8,18 +8,18 @@
 
 
 #include "irisgl/src/core/irisutils.h"
-#include "core/materialhelper.h"
-#include "properties.h"
+#include "../core/materialhelper.h"
+#include "../models/properties.h"
 #include <QStandardPaths>
 #include <QDirIterator>
 
-#include "shadergraphmainwindow.h"
+#include "../shadergraphmainwindow.h"
 #if(EFFECT_BUILD_AS_LIB)
-#include "../io/assetmanager.h"
-#include "../uimanager.h"
-#include "../globals.h"
-#include "../core/database/database.h"
-#include "../core/guidmanager.h"
+#include "../../io/assetmanager.h"
+#include "../../uimanager.h"
+#include "../../globals.h"
+#include "../../core/database/database.h"
+#include "../../core/guidmanager.h"
 #endif
 
 ShaderAssetWidget::ShaderAssetWidget(Database *handle) : QWidget()

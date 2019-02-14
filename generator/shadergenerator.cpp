@@ -2,8 +2,8 @@
 #include "shadercontext.h"
 
 #include "../graph/nodegraph.h"
-#include "../graph/nodemodel.h"
-#include "../graph/connectionmodel.h"
+#include "../models/nodemodel.h"
+#include "../models/connectionmodel.h"
 
 void ShaderGenerator::generateShader(NodeGraph* graph)
 {

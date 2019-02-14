@@ -1,6 +1,6 @@
 #include "shadergraph.h"
 #include "graph/nodegraph.h"
-#include "graph/nodemodel.h"
+#include "models/nodemodel.h"
 #include "nodes/test.h"
 
 

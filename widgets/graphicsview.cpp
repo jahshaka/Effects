@@ -7,7 +7,7 @@
 #include <QPainter>
 #include <QtMath>
 #include <QShortcut>
-#include "shadergraph/graphnodescene.h"
+#include "../graph/graphnodescene.h"
 
 qreal GraphicsView::currentScale = 1.0;
 GraphicsView::GraphicsView( QWidget *parent) : QGraphicsView(parent)

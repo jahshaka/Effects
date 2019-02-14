@@ -1,5 +1,5 @@
 #include "texturemanager.h"
-#include "../mainwindow.h"
+#include "../shadergraphmainwindow.h"
 
 TextureManager* TextureManager::instance = 0;
 

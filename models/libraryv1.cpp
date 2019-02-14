@@ -1,9 +1,9 @@
 #include "libraryv1.h"
-#include "test.h"
-#include "math.h"
-#include "object.h"
-#include "vector.h"
-#include "texture.h"
+#include "../nodes/test.h"
+#include "../nodes/math.h"
+#include "../nodes/object.h"
+#include "../nodes/vector.h"
+#include "../nodes/texture.h"
 
 
 void LibraryV1::init()

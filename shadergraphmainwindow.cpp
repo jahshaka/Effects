@@ -1,12 +1,12 @@
 ﻿#include "mainwindow.h"
 //#include "ui_mainwindow.h"
-#include "graphnode.h"
+#include "graph/graphnode.h"
 #include <QMouseEvent>
 #include <QApplication>
 #include <QButtonGroup>
 #include <QDebug>
 #include <QDrag>
-#include "scenewidget.h"
+#include "widgets/scenewidget.h"
 #include <QLayout>
 #include <QGridLayout>
 #include <QLineEdit>
@@ -27,16 +27,16 @@
 #include <QShortcut>
 #include "generator/shadergenerator.h"
 #include "nodes/test.h"
-#include "materialwriter.h"
+#include "core/materialwriter.h"
 #include "core/materialhelper.h"
-#include "graph/library.h"
-#include "nodes/libraryv1.h"
+#include "models/library.h"
+#include "models/libraryv1.h"
 #include <QPointer>
-#include "graphnodescene.h"
+#include "graph/graphnodescene.h"
 #include "propertywidgets/basepropertywidget.h"
 #include "dialogs/searchdialog.h"
-#include "listwidget.h"
-#include "scenewidget.h"
+#include "widgets/listwidget.h"
+#include "widgets/scenewidget.h"
 #include "core/project.h"
 #include "assets.h"
 #include "propertywidgets/texturepropertywidget.h"
@@ -58,7 +58,7 @@
 #endif
 
 #include "core/undoredo.h"
-#include "texturemanager.h"
+#include "core/texturemanager.h"
 #include <QDebug>
 namespace shadergraph
 {

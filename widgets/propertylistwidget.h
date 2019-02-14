@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QListWidget>
 #include <QUndoStack>
-#include "core/undoredo.h"
+#include "../core/undoredo.h"
 
 namespace Ui {
 class PropertyListWidget;

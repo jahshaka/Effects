@@ -2,7 +2,7 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QUuid>
-#include "core/guidhelper.h"
+#include "../core/guidhelper.h"
 
 Property::Property()
 {

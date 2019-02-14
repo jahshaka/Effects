@@ -1,6 +1,6 @@
 #include "test.h"
-#include "../graph/library.h"
-#include "../texturemanager.h"
+#include "../models/library.h"
+#include "../core/texturemanager.h"
 #include "../propertywidgets/vectorpropertywidget.h"
 #include <QFileDialog>
 #include <QDebug>

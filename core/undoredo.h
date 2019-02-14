@@ -2,9 +2,9 @@
 #include <QUndoStack>
 #include <QPoint>
 #include <QVBoxLayout>
-#include "../graphnode.h"
-#include "../graphnodescene.h"
-#include "../materialsettingswidget.h"
+#include "../graph/graphnode.h"
+#include "../graph/graphnodescene.h"
+#include "../widgets/materialsettingswidget.h"
 #include "../propertywidgets/basepropertywidget.h"
 
 class PropertyListWidget;

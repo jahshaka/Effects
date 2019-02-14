@@ -1,5 +1,5 @@
 #include "graphnodescene.h"
-#include "nodes/test.h"
+#include "../nodes/test.h"
 #include "core/project.h"
 
 #include <QMimeData>
