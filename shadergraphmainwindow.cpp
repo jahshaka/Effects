@@ -97,7 +97,6 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
 
 void MainWindow::setNodeGraph(NodeGraph *graph)
 {
-    // create and set new scene
     auto newScene = createNewScene();
 	graphicsView->setScene(newScene);
 	graphicsView->setAcceptDrops(true);
@@ -109,14 +108,17 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
     }
     scene = newScene;
 
-	propertyListWidget->setNodeGraph(graph);
 	propertyListWidget->setStack(stack);
+
+	propertyListWidget->setNodeGraph(graph);
+
 	sceneWidget->setNodeGraph(graph);
 	sceneWidget->graphScene = newScene;
 	materialSettingsWidget->setMaterialSettings(graph->settings);
 	sceneWidget->setMaterialSettings(graph->settings);
 	this->graph = graph;
 
+	regenerateShader();
 	
 }
 
@@ -258,6 +260,7 @@ QString MainWindow::genGUID()
 void MainWindow::importGraph()
 {
     QString path = QFileDialog::getOpenFileName(this, "Choose file name","material.json","Material File (*.json)");
+	if (path == "") return;
 	importGraphFromFilePath(path);
 }
 
@@ -649,8 +652,6 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 	currentProjectShader = item;
 	oldName = newShader;
 
-	
-
 	//QStringList assetsInProject = dataBase->fetchAssetNameByParent(assetItemShader.selectedGuid);
 
 	//// If we encounter the same file, make a duplicate...
@@ -662,14 +663,16 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 	item->setText(newShader);
 	effects->addItem(item);
 	effects->displayAllContents();
-	propertyListWidget->clearPropertyList();
-	if (loadNewGraph) {
-		loadGraphFromTemplate(preset);
-	}else	setNodeGraph(graph);
 
+	stack->clear();
+
+	propertyListWidget->clearPropertyList();
+	if (loadNewGraph)	loadGraphFromTemplate(preset);
+	else				setNodeGraph(graph);
+	
 	currentShaderInformation.GUID = assetGuid;
 	currentShaderInformation.name = newShader;
-	regenerateShader();
+//	regenerateShader();
 
 
 #if(EFFECT_BUILD_AS_LIB)
@@ -689,6 +692,7 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 
 void MainWindow::loadGraphFromTemplate(NodeGraphPreset preset)
 {
+
     propertyListWidget->clearPropertyList();
     currentShaderInformation.GUID = "";
 	auto graph = importGraphFromFilePath(MaterialHelper::assetPath(preset.templatePath), false);
@@ -700,9 +704,10 @@ void MainWindow::loadGraphFromTemplate(NodeGraphPreset preset)
 			i++;
 		}
 	}
+
 	graph->settings.name = preset.name;
 	setNodeGraph(graph);
-	regenerateShader();
+
 }
 
 void MainWindow::setCurrentShaderItem()
@@ -831,6 +836,7 @@ void MainWindow::configureUI()
 
 	connect(propertyListWidget, &PropertyListWidget::deleteProperty, [=](QString propID) {
 		// remind nick to use thios to delete property by id
+
 	});
 
 	materialSettingsDock->setWidget(materialSettingsWidget);
@@ -1054,10 +1060,6 @@ bool MainWindow::eventFilter(QObject * watched, QEvent * event)
 
 			case QEvent::MouseMove: {
 				auto evt = static_cast<QMouseEvent*>(event);
-				QPoint dragStartPosition(300, 0);
-				if ((evt->pos() - dragStartPosition).manhattanLength()
-					< QApplication::startDragDistance())
-					return true;
 
 				if (evt->buttons() & Qt::LeftButton) {
 
@@ -1065,11 +1067,15 @@ bool MainWindow::eventFilter(QObject * watched, QEvent * event)
 					if (!wid) return true;
 					if (!wid->pressed) return true;
 
+
 					auto drag = new QDrag(this);
 					auto mimeData = new QMimeData;
 					QByteArray arr;
 					arr.setNum(wid->index);
 					drag->setMimeData(mimeData);
+					auto p = propertyListWidget->mapToGlobal(QPoint(wid->x(), wid->y()));
+					drag->setPixmap(QPixmap::grabWidget(wid));
+					drag->setHotSpot(QPoint(wid->width()/2.0, wid->height()/2.0));
 
 					mimeData->setText(wid->modelProperty->displayName);
 					mimeData->setData("index", arr);
@@ -1089,7 +1095,6 @@ bool MainWindow::eventFilter(QObject * watched, QEvent * event)
 GraphNodeScene *MainWindow::createNewScene()
 {
     auto scene = new GraphNodeScene(this);
-	stack->setClean();
 	scene->setUndoRedoStack(stack);
     scene->setBackgroundBrush(QBrush(QColor(60, 60, 60)));
 
@@ -1160,6 +1165,14 @@ QListWidgetItem * MainWindow::selectCorrectItemFromDrop(QString guid)
 
 void MainWindow::configureConnections()
 {
+#if(EFFECT_BUILD_AS_LIB)
+	connect(assetWidget, &ShaderAssetWidget::loadToGraph, [=](QListWidgetItem * item) {
+		currentShaderInformation.name = item->data(Qt::DisplayRole).toString();
+		currentShaderInformation.GUID = item->data(MODEL_GUID_ROLE).toString();
+		loadGraph(currentShaderInformation.GUID);
+	});
+#endif
+
     connect(effects, &QListWidget::itemDoubleClicked, [=](QListWidgetItem *item) {
         currentShaderInformation.name = item->data(Qt::DisplayRole).toString();
         currentShaderInformation.GUID = item->data(MODEL_GUID_ROLE).toString();

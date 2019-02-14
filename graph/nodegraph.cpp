@@ -13,7 +13,7 @@
 
 void NodeGraph::addProperty(Property* prop)
 {
-	this->properties.append(prop);
+	if(!properties.contains(prop))	this->properties.append(prop);
 }
 
 void NodeGraph::removeProperty(Property * prop)

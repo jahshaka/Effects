@@ -40,6 +40,9 @@ ShaderAssetWidget::ShaderAssetWidget(Database *handle) : QWidget()
 	connect(assetViewWidget, &ShaderListWidget::itemDropped, [=](QListWidgetItem *item) {
 		createShader(item);
 	});
+	connect(assetViewWidget, &ShaderListWidget::itemDoubleClicked, [=](QListWidgetItem *item) {
+		emit loadToGraph(item);
+	});
 
     if(handle) setUpDatabase(handle);
 
@@ -77,25 +80,13 @@ ShaderAssetWidget::~ShaderAssetWidget()
 	
 }
 
-void ShaderAssetWidget::updateAssetView(const QString & path, int filter, bool showDependencies)
+void ShaderAssetWidget::updateAssetView(const QString & path)
 {
 	assetViewWidget->clear();
 
-	if (filter > 0) {
-		for (const auto &asset : db->fetchChildAssets(path, filter, showDependencies)) addItem(asset);
-	}
-	else {
-		for (const auto &folder : db->fetchChildFolders(path)) addItem(folder);
-		for (const auto &asset : db->fetchChildAssets(path, filter, showDependencies))
-			if(asset.type == static_cast<int>(ModelTypes::Shader))
-				addItem(asset);  /* TODO : irk this out */
-		//addCrumbs(db->fetchCrumbTrail(path));
-	}
-
-	//goUpOneControl->setEnabled(false);
+	for (const auto &asset : db->fetchChildAssets(path, static_cast<int>(ModelTypes::Shader))) addItem(asset);
 
 	setWidgetToBeShown();
-
 }
 
 void ShaderAssetWidget::addItem(const FolderRecord & folderData)

@@ -63,7 +63,7 @@ BasePropertyWidget::BasePropertyWidget(QWidget * parent) : QWidget(parent)
 		reply = QMessageBox::question(this, "Confirmation", QString("Are you sure you wish to delete %1 ?").arg(displayName->text()),
 			QMessageBox::Yes | QMessageBox::No);
 		if (reply == QMessageBox::Yes) {
-
+			emit buttonPressed(true);
 		}
 		else {
 

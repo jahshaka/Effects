@@ -57,7 +57,7 @@ public:
 	QMap<QString, NodeModel*> nodes;
 	QMap<QString, ConnectionModel*> connections;
 	NodeModel* masterNode = nullptr;
-	QList<Property*> properties;
+	QVector<Property*> properties;
 	MaterialSettings settings;
 
 	void addProperty(Property* prop);

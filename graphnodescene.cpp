@@ -346,6 +346,8 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 			propNode->setX(event->scenePos().x());
 			propNode->setY(event->scenePos().y());
 			this->addNodeModel(propNode);
+			auto nodeView = this->getNodeById(propNode->id);
+			nodeView->setPos(event->scenePos().x() - nodeView->boundingRect().width() / 2.0, event->scenePos().y() - nodeView->boundingRect().height() / 4.0);
 		}
 	}
 
@@ -353,11 +355,12 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 		event->accept();
 
 		auto node = nodeGraph->library->createNode(event->mimeData()->html());
-		node->setX(event->scenePos().x());
-		node->setY(event->scenePos().y());
 			if (node) {
+				node->setX(event->scenePos().x());
+				node->setY(event->scenePos().y());
 				this->addNodeModel(node);
-					return;
+				auto nodeView = this->getNodeById(node->id);
+				nodeView->setPos(event->scenePos().x() - nodeView->boundingRect().width() / 2.0, event->scenePos().y() - nodeView->boundingRect().height() / 4.0);
 			}
 	}
 
