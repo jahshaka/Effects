@@ -108,7 +108,6 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
     }
     scene = newScene;
 
-	propertyListWidget->setStack(stack);
 
 	propertyListWidget->setNodeGraph(graph);
 
@@ -116,6 +115,8 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
 	sceneWidget->graphScene = newScene;
 	materialSettingsWidget->setMaterialSettings(graph->settings);
 	sceneWidget->setMaterialSettings(graph->settings);
+	propertyListWidget->setStack(stack);
+	stack->clear(); // clears stack, later to add seperate routes for each node addition
 	this->graph = graph;
 
 	regenerateShader();
