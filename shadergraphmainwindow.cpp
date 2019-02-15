@@ -38,6 +38,7 @@
 #include "widgets/listwidget.h"
 #include "widgets/scenewidget.h"
 #include "core/project.h"
+#include "core/texturemanager.h"
 #include "assets.h"
 #include "propertywidgets/texturepropertywidget.h"
 
@@ -97,6 +98,8 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
 
 void MainWindow::setNodeGraph(NodeGraph *graph)
 {
+	TextureManager::getSingleton()->clearTextures();
+
     auto newScene = createNewScene();
 	graphicsView->setScene(newScene);
 	graphicsView->setAcceptDrops(true);

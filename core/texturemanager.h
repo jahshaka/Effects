@@ -42,6 +42,7 @@ public:
 	void removeTextureByGuid(QString guid);
 	void loadUnloadedTextures();
 	void setDatabase(Database * dataBase);
+	void clearTextures();
 
 	/*
 	Loads texture using it's Guid

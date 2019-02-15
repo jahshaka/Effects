@@ -63,6 +63,11 @@ void TextureManager::setDatabase(Database * dataBase)
 	this->database = dataBase;
 }
 
+void TextureManager::clearTextures()
+{
+	textures.clear();
+}
+
 GraphTexture * TextureManager::loadTextureFromGuid(QString guid)
 {
 	auto tex = this->createTexture();
