@@ -10,7 +10,7 @@ uniform mat4 u_viewMatrix;
 uniform mat4 u_projMatrix;
 uniform mat4 u_worldMatrix;
 uniform mat3 u_normalMatrix;
-uniform float u_textureScale = 1.0;
+uniform float u_textureScale;
 
 uniform vec3 u_eyePos;
 uniform vec3 u_sceneAmbient;
@@ -22,7 +22,7 @@ out vec3 v_normal;
 out vec3 v_worldPos;
 out mat3 v_tanToWorld;//transforms from tangent space to world space
 
-void surface(inout vec3 vertexOffset);
+void surface(inout vec3 vertexOffset, inout float vertexExtrusion);
 
 void main()
 {
@@ -38,8 +38,10 @@ void main()
 
     // calculated last because generated code might use vars above
     vec3 vertexOffset = vec3(0.0);
-	surface(vertexOffset);
+	float vertexExtrusion = 0.0;
+	surface(vertexOffset, vertexExtrusion);
 
-    v_worldPos = (u_worldMatrix*vec4(a_pos + vertexOffset,1.0)).xyz;
-    gl_Position = u_projMatrix*u_viewMatrix*u_worldMatrix*vec4(a_pos + vertexOffset,1.0);
+	vec4 localPos = vec4(a_pos + vertexOffset + (vertexExtrusion * v_localNormal),1.0);
+    v_worldPos = (u_worldMatrix * localPos).xyz;
+    gl_Position = u_projMatrix * u_viewMatrix * u_worldMatrix * localPos;
 }
