@@ -1198,10 +1198,18 @@ void MainWindow::configureConnections()
 
 	
 
-    QShortcut *shortcut = new QShortcut(QKeySequence("space"), this);
-    connect(shortcut, &QShortcut::activated, [=]() {
-		auto dialog = new SearchDialog(this->graph, scene, {0,0});
-        dialog->exec();
+	QShortcut *shortcut = new QShortcut(QKeySequence("space"), this);
+	QShortcut *undo = new QShortcut(QKeySequence("crtl+z"), this);
+	QShortcut *redo = new QShortcut(QKeySequence("crtl+shift+z"), this);
+	connect(shortcut, &QShortcut::activated, [=]() {
+		auto dialog = new SearchDialog(this->graph, scene, { 0,0 });
+		dialog->exec();
+	});
+	connect(undo, &QShortcut::activated, [=]() {
+		stack->undo();
+	});
+	connect(redo, &QShortcut::activated, [=]() {
+		stack->redo();
 	});
 
     //connections for MyFx sections
