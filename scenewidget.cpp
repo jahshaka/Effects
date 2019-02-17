@@ -68,7 +68,7 @@ void SceneWidget::start()
 
     vertString = iris::GraphicsHelper::loadAndProcessShader(MaterialHelper::assetPath("surface.vert"));
     fragString = iris::GraphicsHelper::loadAndProcessShader(MaterialHelper::assetPath("surface.frag"));
-	generatedVertString = "void surface(inout vec3 vertexOffset){}";
+	generatedVertString = "void surface(inout vec3 vertexOffset, inout float vertexExtrusion){}";
 	generatedFragString = "void surface(inout Material material){}";
 	//updateShader("void surface(inout Material material){}");
 	updateShader();

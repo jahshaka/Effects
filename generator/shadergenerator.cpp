@@ -89,18 +89,26 @@ QString ShaderGenerator::processVertexShader(NodeGraph* graph)
 			auto con = sock->getConnection();
 			processNode(con->leftSocket->getNode(), ctx);
 		}
+
+		if (sock->hasConnection() && sock->name == "Vertex Extrusion") {
+			auto con = sock->getConnection();
+			processNode(con->leftSocket->getNode(), ctx);
+		}
 	}
 
 	auto vertexOffsetVar = masterNode->getValueFromInputSocket(8);
+	auto vertexExtrusionVar = masterNode->getValueFromInputSocket(9);
 	ctx->addCodeChunk(masterNode, "vertexOffset = " + vertexOffsetVar + ";\n");
+	ctx->addCodeChunk(masterNode, "vertexExtrusion = " + vertexExtrusionVar + ";\n");
 	
 
 	auto code = ctx->generateUniforms();
 	code += ctx->generateVars();
 	code += ctx->generateFunctionDefinitions();
 
-	code += "void surface(inout vec3 vertexOffset){\n";
+	code += "void surface(inout vec3 vertexOffset, inout float vertexExtrusion){\n";
 	code += "vertexOffset = " + vertexOffsetVar + ";\n";
+	code += "vertexExtrusion = " + vertexExtrusionVar + ";\n";
 	code += ctx->generateCode(true);;
 	code += "}\n";
 
@@ -120,7 +128,9 @@ QString ShaderGenerator::processFragmentShader(NodeGraph* graph)
 	// process fragment section first
 	//processNode(masterNode, ctx);
 	for (auto sock : masterNode->inSockets) {
-		if (sock->hasConnection() && sock->name != "Vertex Offset") {
+		if (sock->hasConnection() &&
+			sock->name != "Vertex Offset" &&
+			sock->name != "Vertex Extrusion") {
 			auto con = sock->getConnection();
 			processNode(con->leftSocket->getNode(), &ctx);
 		}
