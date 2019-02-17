@@ -49,6 +49,8 @@ public:
 	Returns graph texture even if it's still not in the database
 	*/
 	GraphTexture* loadTextureFromGuid(QString guid);
+	QString loadTextureFromDisk(QString guid);
+	QString loadTextureFromDatabase(QString guid);
 
 	GraphTexture* importTexture(QString path);
 	static TextureManager* getSingleton();
