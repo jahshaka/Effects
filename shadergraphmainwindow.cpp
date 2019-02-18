@@ -1235,6 +1235,7 @@ void MainWindow::configureConnections()
     });
 
 
+
     // change: any settings changed
     connect(materialSettingsWidget, &MaterialSettingsWidget::settingsChanged,[=](MaterialSettings settings){
 		auto command = new MaterialSettingsChangeCommand(graph, settings, materialSettingsWidget);

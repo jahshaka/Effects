@@ -53,6 +53,8 @@ private:
 	QSize currentSize = QSize(90, 90);
 	QPushButton* closeBtn;
 
+	void configureConnections();
+	void deleteShader(QString guid);
 signals:
 	void loadToGraph(QListWidgetItem *item);
 };
