@@ -21,7 +21,6 @@ ShaderListWidget::~ShaderListWidget()
 
 }
 
-
 void ShaderListWidget::dropEvent(QDropEvent * event)
 {
 

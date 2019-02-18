@@ -10,7 +10,6 @@ class ShaderListWidget : public ListWidget
 public:
 	ShaderListWidget();
 	~ShaderListWidget();
-
 protected:
 	void dropEvent(QDropEvent* event);
 	void dragMoveEvent(QDragMoveEvent *event) override;
