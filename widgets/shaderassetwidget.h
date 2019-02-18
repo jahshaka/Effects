@@ -5,6 +5,7 @@
 #include <QListWidget>
 #include <QJsonObject>
 #include <QPushButton>
+#include <QLineEdit>
 #include <QStackedWidget>
 #include "listwidget.h"
 #include "shaderlistwidget.h"
@@ -55,6 +56,7 @@ private:
 
 	void configureConnections();
 	void deleteShader(QString guid);
+	void editingFinishedOnListItem(QListWidgetItem *);
 signals:
 	void loadToGraph(QListWidgetItem *item);
 };

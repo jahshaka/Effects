@@ -168,16 +168,20 @@ void ShaderAssetWidget::setWidgetToBeShown()
 void ShaderAssetWidget::configureConnections()
 {
 	connect(assetViewWidget, &ListWidget::renameShader, [=](QString guid) {
-
+		assetViewWidget->editItem(assetViewWidget->currentItem());
 	});
 	connect(assetViewWidget, &ListWidget::exportShader, [=](QString guid) {
 
 	});
 	connect(assetViewWidget, &ListWidget::editShader, [=](QString guid) {
-
+		emit loadToGraph(assetViewWidget->currentItem());
 	});
 	connect(assetViewWidget, &ListWidget::deleteShader, [=](QString guid) {
 		deleteShader(guid);
+	});
+	connect(assetViewWidget->itemDelegate(), &QAbstractItemDelegate::commitData, [=]() {
+		//item finished editing
+		editingFinishedOnListItem(assetViewWidget->currentItem());
 	});
 }
 
@@ -225,7 +229,7 @@ void ShaderAssetWidget::deleteShader(QString guid)
 				if (file.isFile() && file.exists()) QFile(file.absoluteFilePath()).remove();
 			}
 
-			//updateAssetView(assetItem.selectedGuid);
+			refresh();
 			return;
 		}
 
@@ -312,7 +316,7 @@ void ShaderAssetWidget::deleteShader(QString guid)
 				}
 
 				//delete ui->assetView->takeItem(ui->assetView->row(item));
-				//updateAssetView(assetItem.selectedGuid);
+				refresh();
 			});
 		}
 		else {
@@ -333,7 +337,7 @@ void ShaderAssetWidget::deleteShader(QString guid)
 				}
 
 				//delete ui->assetView->takeItem(ui->assetView->row(item));
-				//updateAssetView(assetItem.selectedGuid);
+				refresh();
 			});
 		}
 
@@ -363,8 +367,23 @@ void ShaderAssetWidget::deleteShader(QString guid)
 		);
 		dialog.exec();
 	}
-	refresh();
-	assetViewWidget->update();
+	
+}
+
+void ShaderAssetWidget::editingFinishedOnListItem(QListWidgetItem *item)
+{
+	QString newName = item->data(Qt::DisplayRole).toString();
+	const QString guid = item->data(MODEL_GUID_ROLE).toString();
+	const QString oldName = db->fetchAsset(guid).name;
+	qDebug() << oldName << newName;
+	if (newName == oldName) return;
+	else {
+		//item->setText(newName);
+		item->setData(Qt::DisplayRole, newName);
+		item->setData(Qt::UserRole, newName);
+		db->renameAsset(guid, newName);
+		refresh();
+	}
 }
 
 
