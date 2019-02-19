@@ -217,6 +217,7 @@ void MainWindow::loadShadersFromDisk()
 		item->setData(Qt::DisplayRole, obj["name"].toString());
 		item->setData(MODEL_GUID_ROLE, obj["guid"].toString());
 		item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Shader));
+		item->icon().addPixmap(QPixmap(":/icons.shader_overlay.png"));
 		effects->addItem(item);
     }
 	
@@ -559,6 +560,7 @@ void MainWindow::configureAssetsDock()
 		item->setTextAlignment(Qt::AlignBottom);
 		item->setIcon(QIcon(MaterialHelper::assetPath(tile.iconPath)));
 		item->setData(MODEL_TYPE_ROLE, "presets");
+		item->icon().addPixmap(QPixmap(":/icons.shader_overlay.png"));
 		presets->addToListWidget(item);
 	}
 
@@ -967,6 +969,7 @@ void MainWindow::generateTileNode()
 		item->setIcon(tile->icon);
 		item->setBackgroundColor(QColor(60, 60, 60));
 		item->setData(MODEL_TYPE_ROLE, QString("node"));
+		item->icon().addPixmap(QPixmap(":/icons/shader_overlay.png"));
 		setNodeLibraryItem(item, tile);
 
 	}

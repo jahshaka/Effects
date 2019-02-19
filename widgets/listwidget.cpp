@@ -3,6 +3,7 @@
 #include <QMimeData>
 #include <QMouseEvent>
 #include <QPixmap>
+#include <QPainter>
 #include <QScrollBar>
 #include <QDebug>
 #include <QJsonDocument>
@@ -70,10 +71,18 @@ ListWidget::~ListWidget()
 
 void ListWidget::updateThumbnailImage(QByteArray arr, QListWidgetItem *item)
 {
+	auto size = 35;
 	auto img = QImage::fromData(arr, "PNG");
 	auto pixmap = QPixmap::fromImage(img);
+	QPixmap pixmap_overlay(":/icons/shader_overlay.png");
+	pixmap_overlay = pixmap_overlay.scaled({ size,size }, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 	pixmap = pixmap.scaled({ 90,90 }, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+	QPainter painter(&pixmap);
+	if(true) painter.drawPixmap(QRect(pixmap.width() - size, 0, size, size), pixmap_overlay);
+
 	item->setIcon(QIcon(pixmap));
+	//item->icon().addPixmap(QPixmap(":/icons/shader_overlay.png"));
+
 }
 
 void ListWidget::displayAllContents()
