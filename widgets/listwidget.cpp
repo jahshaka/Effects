@@ -87,15 +87,15 @@ void ListWidget::updateThumbnailImage(QByteArray arr, QListWidgetItem *item)
 
 void ListWidget::displayAllContents()
 {
-	setGridSize(QSize(95, 95));
+	//setGridSize(QSize(95, 95));
 
-	int num_of_items_per_row = width() / (gridSize().width()+6);
-	int num_of_models = model()->rowCount();
-	int number_of_rows = num_of_models / num_of_items_per_row;
-	if (num_of_models % num_of_items_per_row != 0) number_of_rows++;
-	int calculated_height = number_of_rows * (gridSize().height() + num_of_items_per_row*2);
+	//int num_of_items_per_row = width() / (gridSize().width()+6);
+	//int num_of_models = model()->rowCount();
+	//int number_of_rows = num_of_models / num_of_items_per_row;
+	//if (num_of_models % num_of_items_per_row != 0) number_of_rows++;
+	//int calculated_height = number_of_rows * (gridSize().height() + num_of_items_per_row*2);
 
-	setFixedHeight(calculated_height);
+	//setFixedHeight(calculated_height);
 }
 
 

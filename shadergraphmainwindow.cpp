@@ -521,10 +521,10 @@ void MainWindow::configureAssetsDock()
 	effects->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
     effects->shaderContextMenuAllowed = true;
 
-	tabWidget->addTab(presets, "Presets");
-	tabWidget->addTab(effects, "My Fx");
+	
 
-	auto scrollView = new QScrollArea;
+	auto scrollViewPreset = new QScrollArea;
+	auto scrollViewFx = new QScrollArea;
 	auto contentHolder = new QWidget;
 	auto contentLayout = new QVBoxLayout;
 	/*contentHolder->setLayout(contentLayout);
@@ -569,6 +569,21 @@ void MainWindow::configureAssetsDock()
 
 	presets->isResizable = true;
 	effects->isResizable = true;
+	
+	scrollViewFx->setWidget(effects);
+	scrollViewPreset->setWidget(presets);
+	scrollViewPreset->setWidgetResizable(true);
+	scrollViewFx->setWidgetResizable(true);
+
+
+	tabWidget->addTab(scrollViewPreset, "Presets");
+	tabWidget->addTab(scrollViewFx, "My Fx");
+
+	scrollViewFx->adjustSize();
+	scrollViewPreset->adjustSize();
+
+	scrollViewFx->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+	scrollViewPreset->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
 	/*scrollView->adjustSize();
 	
@@ -745,8 +760,8 @@ void MainWindow::configureUI()
 	centralWidget = new QWidget();
 	textWidget = new QDockWidget("Code View");
 	displayWidget = new QDockWidget("Display");
-	assetsDock = new QDockWidget("Assets");
-	projectDock = new QDockWidget("Project Assets");
+	assetsDock = new QDockWidget("Effects");
+	projectDock = new QDockWidget("Project Effects");
 
 	propertyWidget = new QDockWidget("Properties");
 	materialSettingsDock = new QDockWidget("Material Settings");
