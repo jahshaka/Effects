@@ -132,6 +132,7 @@ private:
 	QDockWidget *projectDock;
 	QDockWidget *assetsDock;
 	QTabWidget *tabbedWidget;
+	QTabWidget *tabWidget;
 	GraphicsView* graphicsView;
 	QTextEdit* textEdit;
 	PropertyListWidget* propertyListWidget;

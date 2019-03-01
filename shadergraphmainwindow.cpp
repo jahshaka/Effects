@@ -485,8 +485,8 @@ void MainWindow::configureProjectDock()
 	auto layout = new QVBoxLayout;
 	widget->setLayout(layout);
 	layout->setContentsMargins(0, 0, 0, 0);
-	projectDock->setWidget(widget);
-	projectDock->setStyleSheet(nodeTray->styleSheet());
+	//projectDock->setWidget(widget);
+	//projectDock->setStyleSheet(nodeTray->styleSheet());
 
 	auto searchContainer = new QWidget;
 	auto searchLayout = new QHBoxLayout;
@@ -502,7 +502,7 @@ void MainWindow::configureProjectDock()
 	searchBar->setTextMargins(8, 0, 0, 0);
 	searchBar->setStyleSheet("QLineEdit{ background:rgba(41,41,41,1); border: 1px solid rgba(150,150,150,.2); border-radius: 1px; color: rgba(250,250,250,.95); }");
 
-	layout->addWidget(assetWidget);
+	//layout->addWidget(assetWidget);
 #endif
 }
 
@@ -515,16 +515,17 @@ void MainWindow::configureAssetsDock()
 	layout->setContentsMargins(0, 0, 0, 0);
 	layout->setSpacing(0);
 
-	auto tabWidget = new QTabWidget;
+	tabWidget = new QTabWidget;
 	presets = new ListWidget;
 	effects = new ListWidget;
 	effects->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
     effects->shaderContextMenuAllowed = true;
 
-	
+	effects->addToProjectMenuAllowed = true;
 
 	auto scrollViewPreset = new QScrollArea;
 	auto scrollViewFx = new QScrollArea;
+	auto scrollViewAsset = new QScrollArea;
 	auto contentHolder = new QWidget;
 	auto contentLayout = new QVBoxLayout;
 	/*contentHolder->setLayout(contentLayout);
@@ -572,12 +573,15 @@ void MainWindow::configureAssetsDock()
 	
 	scrollViewFx->setWidget(effects);
 	scrollViewPreset->setWidget(presets);
+	scrollViewAsset->setWidget(assetWidget);
 	scrollViewPreset->setWidgetResizable(true);
 	scrollViewFx->setWidgetResizable(true);
+	scrollViewAsset->setWidgetResizable(true);
 
 
 	tabWidget->addTab(scrollViewPreset, "Presets");
 	tabWidget->addTab(scrollViewFx, "My Fx");
+	tabWidget->addTab(scrollViewAsset, "Project Fx");
 
 	scrollViewFx->adjustSize();
 	scrollViewPreset->adjustSize();
@@ -779,7 +783,7 @@ void MainWindow::configureUI()
 	displayWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	propertyWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	materialSettingsDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	projectDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	//projectDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	assetsDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 
 	setDockNestingEnabled(true);
@@ -791,7 +795,7 @@ void MainWindow::configureUI()
 
 #if(EFFECT_BUILD_AS_LIB)
 	assetWidget = new ShaderAssetWidget;
-	addDockWidget(Qt::LeftDockWidgetArea, projectDock, Qt::Vertical);
+	//addDockWidget(Qt::LeftDockWidgetArea, projectDock, Qt::Vertical);
 #endif
 	addDockWidget(Qt::LeftDockWidgetArea, assetsDock, Qt::Vertical);
 //	addDockWidget(Qt::RightDockWidgetArea, textWidget, Qt::Vertical);
@@ -1251,9 +1255,13 @@ void MainWindow::configureConnections()
     connect(effects, &ListWidget::createShader, [=](QString guid){
         createNewGraph();
     });
-    connect(effects, &ListWidget::importShader, [=](QString guid){
+	connect(effects, &ListWidget::importShader, [=](QString guid) {
 
-    });
+	});
+	connect(effects, &ListWidget::addToProject, [=](QListWidgetItem *item) {
+		assetWidget->createShader(item);
+		tabWidget->setCurrentIndex(2);
+	});
 
 
 

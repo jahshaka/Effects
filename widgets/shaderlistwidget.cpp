@@ -13,6 +13,7 @@ ShaderListWidget::ShaderListWidget() : ListWidget()
 {
 	setAcceptDrops(true);
 	viewport()->setAcceptDrops(true);
+	addToProjectMenuAllowed = false;
 }
 
 

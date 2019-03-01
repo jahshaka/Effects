@@ -19,6 +19,7 @@ public:
 	bool isResizable = false;
 	void dropEvent(QDropEvent *event) override;
     bool shaderContextMenuAllowed = false;
+	bool addToProjectMenuAllowed = false;
 
 	QSize itemSize;
 	int numberOfItemPerRow;
@@ -39,6 +40,7 @@ signals:
     void deleteShader(QString guid);
     void createShader(QString guid);
     void importShader(QString guid);
+	void addToProject(QListWidgetItem *item);
 
 	void resizeItem(int size);
 };

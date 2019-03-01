@@ -11,6 +11,7 @@
 #include <QLayout>
 #include <QMenu>
 #include "../core/project.h"
+#include "../../uimanager.h"
 
 
 ListWidget::ListWidget() : QListWidget()
@@ -153,6 +154,7 @@ void ListWidget::customContextMenu(QPoint pos)
             auto actionExport = new QAction("Export");
             auto actionEdit = new QAction("Edit");
             auto actionDelete = new QAction("Delete");
+            auto actionProject = new QAction("Add to project");
 
             connect(actionRename,&QAction::triggered,[guid ,this](){
                 emit renameShader(guid);
@@ -163,11 +165,15 @@ void ListWidget::customContextMenu(QPoint pos)
             connect(actionEdit,&QAction::triggered,[guid, index ,this](){
                 emit editShader(guid);
             });
-            connect(actionDelete,&QAction::triggered,[guid ,this](){
-                emit deleteShader(guid);
-            });
+			connect(actionDelete, &QAction::triggered, [guid, this]() {
+				emit deleteShader(guid);
+			});
+			connect(actionProject, &QAction::triggered, [guid, this]() {
+				emit addToProject(this->currentItem());
+			});
 
             menu.addActions({actionRename,actionEdit,actionExport,actionDelete});
+			if (UiManager::isSceneOpen && addToProjectMenuAllowed) menu.addAction(actionProject);
             menu.exec(this->mapToGlobal(pos));
         }else{
             auto actionCreate = new QAction("Create Shader");
