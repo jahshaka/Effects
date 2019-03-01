@@ -89,8 +89,6 @@ set(HEADERS
 	core/texturemanager.h
 	core/undoredo.h
 	core/sockethelper.h
-	core/guidhelper.h
-
 	dialogs/createnewdialog.h
 	dialogs/searchdialog.h
 

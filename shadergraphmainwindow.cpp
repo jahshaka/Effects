@@ -418,8 +418,8 @@ void MainWindow::configureStyleSheet()
 		"QMenu::item:hover{	background: rgba(40,128, 185,.9);}"
 		"QMenu::item:selected{	background: rgba(40,128, 185,.9);}"
 
-		"QTabWidget::pane{border: 1px solid rgba(0,0,0,.5);	border - top: 0px solid rgba(0,0,0,0);	}"
-		"QTabWidget::tab - bar{	left: 1px;	}"
+		"QTabWidget::pane{border: 1px solid rgba(0,0,0,.1);	border - top: 0px solid rgba(0,0,0,0);	}"
+		"QTabWidget::tab - bar{	left: 1px; background: rgba(26,26,26,.9);	}"
 		"QDockWidget::tab{	background:rgba(32,32,32,1);}"
 
 		"QScrollBar:vertical {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 24px; padding: 4px;}"
@@ -521,10 +521,13 @@ void MainWindow::configureAssetsDock()
 	effects->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
     effects->shaderContextMenuAllowed = true;
 
+	tabWidget->addTab(presets, "Presets");
+	tabWidget->addTab(effects, "My Fx");
+
 	auto scrollView = new QScrollArea;
 	auto contentHolder = new QWidget;
 	auto contentLayout = new QVBoxLayout;
-	contentHolder->setLayout(contentLayout);
+	/*contentHolder->setLayout(contentLayout);
 	scrollView->setWidget(contentHolder);
 	scrollView->setWidgetResizable(true);
 	scrollView->setContentsMargins(0, 0, 0, 0);
@@ -534,19 +537,19 @@ void MainWindow::configureAssetsDock()
 		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
 		"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
 		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .0);}"
-	);
+	);*/
 
-	auto presetsLabel = new QLabel("Presets");
-	auto effectsLabel = new QLabel("My Fx");
+	//auto presetsLabel = new QLabel("Presets");
+	//auto effectsLabel = new QLabel("My Fx");
 
-	presetsLabel->setStyleSheet("QLabel{ background: rgba(20,20,20,1); padding: 3px; padding-left: 8px; color: rgba(200,200,200,1); }");
-	effectsLabel->setStyleSheet(presetsLabel->styleSheet());
+	//presetsLabel->setStyleSheet("QLabel{ background: rgba(20,20,20,1); padding: 3px; padding-left: 8px; color: rgba(200,200,200,1); }");
+	//effectsLabel->setStyleSheet(presetsLabel->styleSheet());
 
-	contentLayout->addWidget(presetsLabel);
-	contentLayout->addWidget(presets);
-	contentLayout->addWidget(effectsLabel);
-	contentLayout->addWidget(effects);
-	contentLayout->setContentsMargins(0, 0, 0, 0);
+	//contentLayout->addWidget(presetsLabel);
+	//contentLayout->addWidget(presets);
+	//contentLayout->addWidget(effectsLabel);
+	//contentLayout->addWidget(effects);
+	//contentLayout->setContentsMargins(0, 0, 0, 0);
 
 	presets->setStyleSheet(presets->styleSheet() +
 		"border: 1px solid black;"
@@ -567,7 +570,7 @@ void MainWindow::configureAssetsDock()
 	presets->isResizable = true;
 	effects->isResizable = true;
 
-	scrollView->adjustSize();
+	/*scrollView->adjustSize();
 	
 	auto buttonBar = new QWidget;
 	auto buttonLayout = new QHBoxLayout;
@@ -627,11 +630,11 @@ void MainWindow::configureAssetsDock()
 		connect(addBtn, &QPushButton::clicked, [=]() {
 			createNewGraph();
 		});
-	}
+	}*/
 
-	layout->addWidget(scrollView);
-	layout->addWidget(buttonBar);
-	assetsDock->setWidget(holder);
+	//layout->addWidget(scrollView);
+	//layout->addWidget(buttonBar);
+	assetsDock->setWidget(tabWidget);
 	assetsDock->setStyleSheet(nodeTray->styleSheet());
 
 	updateAssetDock();

@@ -19,6 +19,7 @@ SurfaceMasterNode::SurfaceMasterNode()
 	addInputSocket(new FloatSocketModel("Alpha", "1.0f"));
 	addInputSocket(new FloatSocketModel("Alpha Cutoff"));
 	addInputSocket(new Vector3SocketModel("Vertex Offset"));
+	addInputSocket(new FloatSocketModel("Vertex Extrusion"));
 }
 
 void SurfaceMasterNode::process(ModelContext* ctx)
