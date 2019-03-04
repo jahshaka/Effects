@@ -106,6 +106,8 @@ public:
 
 	bool areSocketsComptible(Socket* outSock, Socket* inSock);
 
+	void emitGraphInvalidated();
+
 protected:
 	void dropEvent(QGraphicsSceneDragDropEvent *event) override;
 	void drawBackground(QPainter *painter, const QRectF &rect);

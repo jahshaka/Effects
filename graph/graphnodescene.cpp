@@ -334,6 +334,11 @@ bool GraphNodeScene::areSocketsComptible(Socket* outSock, Socket* inSock)
 	return outSockModel->canConvertTo(inSockModel);
 }
 
+void GraphNodeScene::emitGraphInvalidated()
+{
+	emit graphInvalidated();
+}
+
 void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 {
 

@@ -102,18 +102,29 @@ void DeleteNodeCommand::undo()
 		scene->addItem(node);
 	}
 
-	for (auto node : list) {
-		//add connections
-		for (auto con : connections) {
-			auto leftNode = con->leftSocket->node;
-			auto rightNode = con->rightSocket->node;
-			scene->addConnection(leftNode->id,
-				leftNode->outSockets.indexOf(con->leftSocket),
-				rightNode->id,
-				rightNode->inSockets.indexOf(con->rightSocket));
-		}
-		scene->addItem(node);
+	QMap<QString, ConnectionModel*> newConnections;
+	for (auto con : connections) {
+		auto leftNode = con->leftSocket->node;
+		auto rightNode = con->rightSocket->node;
+
+		auto conModel = scene->nodeGraph->addConnection(leftNode->id,
+			leftNode->outSockets.indexOf(con->leftSocket),
+			rightNode->id,
+			rightNode->inSockets.indexOf(con->rightSocket));
+
+		auto newCon = scene->addConnection(leftNode->id,
+			leftNode->outSockets.indexOf(con->leftSocket),
+			rightNode->id,
+			rightNode->inSockets.indexOf(con->rightSocket));
+		newCon->connectionId = conModel->id;
+
+		
+		newConnections[conModel->id] = conModel;
+		delete con;
 	}
+	connections = newConnections;
+
+	scene->emitGraphInvalidated();
 	UndoRedo::undo();
 }
 
@@ -129,6 +140,7 @@ void DeleteNodeCommand::redo()
 
 		scene->deleteNode(node);
 	}
+	scene->emitGraphInvalidated();
 	UndoRedo::redo();
 }
 
