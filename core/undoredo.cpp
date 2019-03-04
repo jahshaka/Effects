@@ -98,30 +98,50 @@ DeleteNodeCommand::DeleteNodeCommand(QList<GraphNode*> & list, GraphNodeScene *s
 void DeleteNodeCommand::undo()
 {
 	for (auto node : list) {
-		auto conn = scene->nodeGraph->getNodeConnections(node->nodeId);
 		scene->nodeGraph->addNode(node->model);
-
-		//add connections
-		for (auto con : conn) {
-			auto leftNode = con->leftSocket->node;
-			auto rightNode = con->rightSocket->node;
-			scene->addConnection(leftNode->id,
-				leftNode->outSockets.indexOf(con->leftSocket),
-				rightNode->id,
-				rightNode->inSockets.indexOf(con->rightSocket));
-		}
 		scene->addItem(node);
 	}
+
+	QMap<QString, ConnectionModel*> newConnections;
+	for (auto con : connections) {
+		auto leftNode = con->leftSocket->node;
+		auto rightNode = con->rightSocket->node;
+
+		auto conModel = scene->nodeGraph->addConnection(leftNode->id,
+			leftNode->outSockets.indexOf(con->leftSocket),
+			rightNode->id,
+			rightNode->inSockets.indexOf(con->rightSocket));
+
+		auto newCon = scene->addConnection(leftNode->id,
+			leftNode->outSockets.indexOf(con->leftSocket),
+			rightNode->id,
+			rightNode->inSockets.indexOf(con->rightSocket));
+		newCon->connectionId = conModel->id;
+
+		
+		newConnections[conModel->id] = conModel;
+		delete con;
+	}
+	connections = newConnections;
+
+	scene->emitGraphInvalidated();
 	UndoRedo::undo();
 }
 
 void DeleteNodeCommand::redo()
 {
+	// extract connections
 	for (auto node : list) {
+		auto conModels = scene->nodeGraph->getNodeConnections(node->nodeId);
+		for (auto conModel : conModels) {
+			auto con = scene->getConnection(conModel->id);
+			connections.insert(conModel->id, conModel);
+		}
+
 		scene->deleteNode(node);
 	}
+	scene->emitGraphInvalidated();
 	UndoRedo::redo();
-
 }
 
 MoveMultipleCommand::MoveMultipleCommand(QList<GraphNode*>& list, GraphNodeScene *scene)

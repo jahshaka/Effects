@@ -90,7 +90,8 @@ private:
 	GraphNodeScene* scene;
 	QList<GraphNode*> list;
 	GraphNode* node;
-	QVector<ConnectionModel*> connections;
+	//QVector<ConnectionModel*> connections;
+	QMap<QString, ConnectionModel*> connections;
 };
 
 class MaterialSettingsChangeCommand : public UndoRedo
