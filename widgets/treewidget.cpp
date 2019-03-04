@@ -1,7 +1,7 @@
 #include "treewidget.h"
 #include "../core/project.h"
 #include <QHeaderView>
-#include <QScrollbar>
+#include <QScrollBar>
 
 TreeWidget::TreeWidget() : QTreeWidget()
 {
