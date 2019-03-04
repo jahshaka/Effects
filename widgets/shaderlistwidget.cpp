@@ -6,13 +6,14 @@
 #include <QDebug>
 #include <QUuid>
 
-#include "core/project.h"
+#include "../core/project.h"
 
 
 ShaderListWidget::ShaderListWidget() : ListWidget()
 {
 	setAcceptDrops(true);
 	viewport()->setAcceptDrops(true);
+	addToProjectMenuAllowed = false;
 }
 
 
@@ -20,7 +21,6 @@ ShaderListWidget::~ShaderListWidget()
 {
 
 }
-
 
 void ShaderListWidget::dropEvent(QDropEvent * event)
 {

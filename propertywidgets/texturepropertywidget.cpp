@@ -1,5 +1,5 @@
 #include "texturepropertywidget.h"
-#include "../texturemanager.h"
+#include "../core/texturemanager.h"
 #include <QDebug>
 
 

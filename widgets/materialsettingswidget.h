@@ -9,7 +9,7 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QFormLayout>
-#include "graph/nodegraph.h"
+#include "../graph/nodegraph.h"
 
 namespace Ui {
 class MaterialSettingsWidget;
@@ -21,10 +21,11 @@ class MaterialSettingsWidget : public QWidget
 
 public:
 	MaterialSettingsWidget(QWidget *parent = 0);
-	MaterialSettingsWidget(MaterialSettings* settings, QWidget *parent = 0);
+	MaterialSettingsWidget(MaterialSettings settings, QWidget *parent = 0);
 	~MaterialSettingsWidget();
 
-	void setMaterialSettings(MaterialSettings* settings);
+	void setMaterialSettings(MaterialSettings settings);
+	void updateMaterialSettingsWidget(MaterialSettings &);
 
 	void setName(QString name);
 	void setZWrite(bool val);

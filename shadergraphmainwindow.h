@@ -9,18 +9,19 @@
 #include <QDockWidget>
 #include <QSplitter>
 #include <QToolBar>
+#include <QUndoStack>
 
-#include "propertylistwidget.h"
+#include "widgets/propertylistwidget.h"
 //#include "nodemodel.h"
-#include "graph/graphicsview.h"
-#include "materialsettingswidget.h"
+#include "widgets/graphicsview.h"
+#include "widgets/materialsettingswidget.h"
 #include "dialogs/createnewdialog.h"
-#include "listwidget.h"
+#include "widgets/listwidget.h"
 #include "misc/QtAwesome.h"
 #include "misc/QtAwesomeAnim.h"
 
 #if(EFFECT_BUILD_AS_LIB)
-#include "shaderassetwidget.h"
+#include "widgets/shaderassetwidget.h"
 #endif
 
 class QMenuBar;
@@ -30,6 +31,7 @@ class NodeGraph;
 class NodeLibraryItem;
 class Database;
 class TexturePropertyWidget;
+class UndoRedo;
 
 namespace shadergraph
 {
@@ -69,6 +71,8 @@ public:
 	QListWidgetItem *currentProjectShader = Q_NULLPTR;
 	shaderInfo currentShaderInformation;
     shaderInfo pressedShaderInfo;
+	QUndoStack *stack;
+
 private:
 	void saveShader();
 	void saveDefaultShader();
@@ -128,6 +132,7 @@ private:
 	QDockWidget *projectDock;
 	QDockWidget *assetsDock;
 	QTabWidget *tabbedWidget;
+	QTabWidget *tabWidget;
 	GraphicsView* graphicsView;
 	QTextEdit* textEdit;
 	PropertyListWidget* propertyListWidget;

@@ -9,7 +9,7 @@
 #include <QJsonValue>
 #include <QJsonObject>
 #include <functional>
-#include "../properties.h"
+#include "../models/properties.h"
 
 class NodeModel;
 class ConnectionModel;
@@ -57,11 +57,11 @@ public:
 	QMap<QString, NodeModel*> nodes;
 	QMap<QString, ConnectionModel*> connections;
 	NodeModel* masterNode = nullptr;
-	QList<Property*> properties;
+	QVector<Property*> properties;
 	MaterialSettings settings;
 
 	void addProperty(Property* prop);
-	bool deletePropertyById(const QString& id);
+	void removeProperty(Property* prop);
 	Property* getPropertyByName(const QString& name);
 	Property* getPropertyById(const QString& id);
 	QVector<NodeModel *> getNodesByTypeName(QString name);

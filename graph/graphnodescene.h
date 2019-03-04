@@ -21,15 +21,14 @@
 #include <QUndoStack>
 #include "socketconnection.h"
 #include "graphnode.h"
-#include "graph/nodegraph.h"
+#include "nodegraph.h"
 #include "socket.h"
-#include "graph/sockethelper.h"
-#include "graph/nodemodel.h"
-#include "graph/connectionmodel.h"
-#include "graph/nodegraph.h"
-#include "graph/library.h"
-#include "graph/graphicsview.h"
-#include "core/undoredo.h"
+#include "../core/sockethelper.h"
+#include "../models/nodemodel.h"
+#include "../models/connectionmodel.h"
+#include "../models/library.h"
+#include "../widgets/graphicsview.h"
+#include "../core/undoredo.h"
 //#include "nodes/test.h"
 
 #include <QDebug>
@@ -46,8 +45,6 @@ class GraphNodeScene : public QGraphicsScene
 
 		// only used when dragging
 		SocketConnection* con;
-
-	
 
 	QGraphicsItemGroup *conGroup;
 public:
@@ -73,7 +70,7 @@ public:
 	SocketConnection* removeConnection(SocketConnection* connection, bool removeFromNodeGraph = true, bool emitSignal = true);
 	void removeConnection(const QString& conId, bool removeFromNodeGraph = true, bool emitSignal = true);
 	SocketConnection* addConnection(Socket* leftCon, Socket* rightCon);
-
+	void setUndoRedoStack(QUndoStack *);
 
 	bool eventFilter(QObject *o, QEvent *e);
 	Socket* getSocketAt(float x, float y);

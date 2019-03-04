@@ -5,7 +5,7 @@
 #include <QListWidget>
 #include <QLabel>
 #include <QPushButton>
-#include "../listwidget.h"
+#include "../widgets/listwidget.h"
 #include <QWidget>
 #include <QScrollArea>
 struct NodeGraphPreset {

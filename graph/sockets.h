@@ -3,8 +3,8 @@
 
 #include <QString>
 
-#include "socketmodel.h"
-#include "sockethelper.h"
+#include "../models/socketmodel.h"
+#include "../core/sockethelper.h"
 
 class FloatSocketModel : public SocketModel
 {

@@ -6,8 +6,8 @@
 #include <QGraphicsEffect>
 #include <QDebug>
 
-#include "../nodes/libraryv1.h"
-#include "../properties.h"
+#include "../models/libraryv1.h"
+#include "../models/properties.h"
 #include "../core/project.h"
 
 
@@ -125,6 +125,7 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 	connect(tree, &TreeWidget::itemClicked, [=](QTreeWidgetItem *item, int column) {
 
 		if (tree->indexOfTopLevelItem(item) == -1) { // is not top level item
+			qDebug() << point;
 			scene->addNodeFromSearchDialog(tree->currentItem(), this->point);
 			this->close();
 		}
@@ -134,7 +135,7 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 	});
 
 	connect(treeProperty, &TreeWidget::itemClicked, [=](QTreeWidgetItem *item, int column) {
-			scene->addNodeFromSearchDialog(tree->currentItem(), this->point);
+			scene->addNodeFromSearchDialog(treeProperty->currentItem(), this->point);
 			this->close();		
 	});
 
@@ -157,7 +158,6 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 		auto scenePoint = view->mapFromScene(viewPoint);
 		this->point = scenePoint;
 	}else 	this->point = point;
-
 
 }
 

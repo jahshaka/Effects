@@ -3,13 +3,15 @@
 #include <QMimeData>
 #include <QMouseEvent>
 #include <QPixmap>
+#include <QPainter>
 #include <QScrollBar>
 #include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLayout>
 #include <QMenu>
-#include "core/project.h"
+#include "../core/project.h"
+#include "../../uimanager.h"
 
 
 ListWidget::ListWidget() : QListWidget()
@@ -70,23 +72,31 @@ ListWidget::~ListWidget()
 
 void ListWidget::updateThumbnailImage(QByteArray arr, QListWidgetItem *item)
 {
+	auto size = 35;
 	auto img = QImage::fromData(arr, "PNG");
 	auto pixmap = QPixmap::fromImage(img);
+	QPixmap pixmap_overlay(":/icons/shader_overlay.png");
+	pixmap_overlay = pixmap_overlay.scaled({ size,size }, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 	pixmap = pixmap.scaled({ 90,90 }, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+	QPainter painter(&pixmap);
+	if(true) painter.drawPixmap(QRect(pixmap.width() - size, 0, size, size), pixmap_overlay);
+
 	item->setIcon(QIcon(pixmap));
+	//item->icon().addPixmap(QPixmap(":/icons/shader_overlay.png"));
+
 }
 
 void ListWidget::displayAllContents()
 {
-	setGridSize(QSize(95, 95));
+	//setGridSize(QSize(95, 95));
 
-	int num_of_items_per_row = width() / (gridSize().width()+6);
-	int num_of_models = model()->rowCount();
-	int number_of_rows = num_of_models / num_of_items_per_row;
-	if (num_of_models % num_of_items_per_row != 0) number_of_rows++;
-	int calculated_height = number_of_rows * (gridSize().height() + num_of_items_per_row*2);
+	//int num_of_items_per_row = width() / (gridSize().width()+6);
+	//int num_of_models = model()->rowCount();
+	//int number_of_rows = num_of_models / num_of_items_per_row;
+	//if (num_of_models % num_of_items_per_row != 0) number_of_rows++;
+	//int calculated_height = number_of_rows * (gridSize().height() + num_of_items_per_row*2);
 
-	setFixedHeight(calculated_height);
+	//setFixedHeight(calculated_height);
 }
 
 
@@ -144,6 +154,7 @@ void ListWidget::customContextMenu(QPoint pos)
             auto actionExport = new QAction("Export");
             auto actionEdit = new QAction("Edit");
             auto actionDelete = new QAction("Delete");
+            auto actionProject = new QAction("Add to project");
 
             connect(actionRename,&QAction::triggered,[guid ,this](){
                 emit renameShader(guid);
@@ -154,11 +165,15 @@ void ListWidget::customContextMenu(QPoint pos)
             connect(actionEdit,&QAction::triggered,[guid, index ,this](){
                 emit editShader(guid);
             });
-            connect(actionDelete,&QAction::triggered,[guid ,this](){
-                emit deleteShader(guid);
-            });
+			connect(actionDelete, &QAction::triggered, [guid, this]() {
+				emit deleteShader(guid);
+			});
+			connect(actionProject, &QAction::triggered, [guid, this]() {
+				emit addToProject(this->currentItem());
+			});
 
             menu.addActions({actionRename,actionEdit,actionExport,actionDelete});
+			if (UiManager::isSceneOpen && addToProjectMenuAllowed) menu.addAction(actionProject);
             menu.exec(this->mapToGlobal(pos));
         }else{
             auto actionCreate = new QAction("Create Shader");

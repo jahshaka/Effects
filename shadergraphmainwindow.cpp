@@ -1,12 +1,12 @@
 ﻿#include "mainwindow.h"
 //#include "ui_mainwindow.h"
-#include "graphnode.h"
+#include "graph/graphnode.h"
 #include <QMouseEvent>
 #include <QApplication>
 #include <QButtonGroup>
 #include <QDebug>
 #include <QDrag>
-#include "scenewidget.h"
+#include "widgets/scenewidget.h"
 #include <QLayout>
 #include <QGridLayout>
 #include <QLineEdit>
@@ -27,17 +27,18 @@
 #include <QShortcut>
 #include "generator/shadergenerator.h"
 #include "nodes/test.h"
-#include "materialwriter.h"
+#include "core/materialwriter.h"
 #include "core/materialhelper.h"
-#include "graph/library.h"
-#include "nodes/libraryv1.h"
+#include "models/library.h"
+#include "models/libraryv1.h"
 #include <QPointer>
-#include "graphnodescene.h"
+#include "graph/graphnodescene.h"
 #include "propertywidgets/basepropertywidget.h"
 #include "dialogs/searchdialog.h"
-#include "listwidget.h"
-#include "scenewidget.h"
+#include "widgets/listwidget.h"
+#include "widgets/scenewidget.h"
 #include "core/project.h"
+#include "core/texturemanager.h"
 #include "assets.h"
 #include "propertywidgets/texturepropertywidget.h"
 
@@ -57,7 +58,8 @@
 #include <QUuid>
 #endif
 
-#include "texturemanager.h"
+#include "core/undoredo.h"
+#include "core/texturemanager.h"
 #include <QDebug>
 namespace shadergraph
 {
@@ -65,6 +67,7 @@ namespace shadergraph
 MainWindow::MainWindow( QWidget *parent, Database *database) :
     QMainWindow(parent)
 {
+	stack = new QUndoStack;
 	scene = nullptr;
 	sceneWidget = new SceneWidget();
 	fontIcons = new QtAwesome;
@@ -95,7 +98,8 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
 
 void MainWindow::setNodeGraph(NodeGraph *graph)
 {
-    // create and set new scene
+	TextureManager::getSingleton()->clearTextures();
+
     auto newScene = createNewScene();
 	graphicsView->setScene(newScene);
 	graphicsView->setAcceptDrops(true);
@@ -107,13 +111,18 @@ void MainWindow::setNodeGraph(NodeGraph *graph)
     }
     scene = newScene;
 
+
 	propertyListWidget->setNodeGraph(graph);
+
 	sceneWidget->setNodeGraph(graph);
 	sceneWidget->graphScene = newScene;
-	materialSettingsWidget->setMaterialSettings(&graph->settings);
+	materialSettingsWidget->setMaterialSettings(graph->settings);
 	sceneWidget->setMaterialSettings(graph->settings);
+	propertyListWidget->setStack(stack);
+	stack->clear(); // clears stack, later to add seperate routes for each node addition
 	this->graph = graph;
 
+	regenerateShader();
 	
 }
 
@@ -208,6 +217,7 @@ void MainWindow::loadShadersFromDisk()
 		item->setData(Qt::DisplayRole, obj["name"].toString());
 		item->setData(MODEL_GUID_ROLE, obj["guid"].toString());
 		item->setData(MODEL_TYPE_ROLE, static_cast<int>(ModelTypes::Shader));
+		item->icon().addPixmap(QPixmap(":/icons.shader_overlay.png"));
 		effects->addItem(item);
     }
 	
@@ -255,6 +265,7 @@ QString MainWindow::genGUID()
 void MainWindow::importGraph()
 {
     QString path = QFileDialog::getOpenFileName(this, "Choose file name","material.json","Material File (*.json)");
+	if (path == "") return;
 	importGraphFromFilePath(path);
 }
 
@@ -311,7 +322,7 @@ void MainWindow::loadGraph(QString guid)
 #endif
 
 	
-	regenerateShader();
+	//regenerateShader();
 	currentProjectShader = selectCorrectItemFromDrop(guid);
 	currentShaderInformation.GUID = currentProjectShader->data(MODEL_GUID_ROLE).toString();
 	oldName = currentShaderInformation.name = currentProjectShader->data(Qt::DisplayRole).toString(); 
@@ -407,8 +418,8 @@ void MainWindow::configureStyleSheet()
 		"QMenu::item:hover{	background: rgba(40,128, 185,.9);}"
 		"QMenu::item:selected{	background: rgba(40,128, 185,.9);}"
 
-		"QTabWidget::pane{border: 1px solid rgba(0,0,0,.5);	border - top: 0px solid rgba(0,0,0,0);	}"
-		"QTabWidget::tab - bar{	left: 1px;	}"
+		"QTabWidget::pane{border: 1px solid rgba(0,0,0,.1);	border - top: 0px solid rgba(0,0,0,0);	}"
+		"QTabWidget::tab - bar{	left: 1px; background: rgba(26,26,26,.9);	}"
 		"QDockWidget::tab{	background:rgba(32,32,32,1);}"
 
 		"QScrollBar:vertical {border : 0px solid black;	background: rgba(132, 132, 132, 0);width: 24px; padding: 4px;}"
@@ -474,8 +485,8 @@ void MainWindow::configureProjectDock()
 	auto layout = new QVBoxLayout;
 	widget->setLayout(layout);
 	layout->setContentsMargins(0, 0, 0, 0);
-	projectDock->setWidget(widget);
-	projectDock->setStyleSheet(nodeTray->styleSheet());
+	//projectDock->setWidget(widget);
+	//projectDock->setStyleSheet(nodeTray->styleSheet());
 
 	auto searchContainer = new QWidget;
 	auto searchLayout = new QHBoxLayout;
@@ -491,7 +502,7 @@ void MainWindow::configureProjectDock()
 	searchBar->setTextMargins(8, 0, 0, 0);
 	searchBar->setStyleSheet("QLineEdit{ background:rgba(41,41,41,1); border: 1px solid rgba(150,150,150,.2); border-radius: 1px; color: rgba(250,250,250,.95); }");
 
-	layout->addWidget(assetWidget);
+	//layout->addWidget(assetWidget);
 #endif
 }
 
@@ -504,16 +515,20 @@ void MainWindow::configureAssetsDock()
 	layout->setContentsMargins(0, 0, 0, 0);
 	layout->setSpacing(0);
 
-	auto tabWidget = new QTabWidget;
+	tabWidget = new QTabWidget;
 	presets = new ListWidget;
 	effects = new ListWidget;
 	effects->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
     effects->shaderContextMenuAllowed = true;
 
-	auto scrollView = new QScrollArea;
+	effects->addToProjectMenuAllowed = true;
+
+	auto scrollViewPreset = new QScrollArea;
+	auto scrollViewFx = new QScrollArea;
+	auto scrollViewAsset = new QScrollArea;
 	auto contentHolder = new QWidget;
 	auto contentLayout = new QVBoxLayout;
-	contentHolder->setLayout(contentLayout);
+	/*contentHolder->setLayout(contentLayout);
 	scrollView->setWidget(contentHolder);
 	scrollView->setWidgetResizable(true);
 	scrollView->setContentsMargins(0, 0, 0, 0);
@@ -523,19 +538,19 @@ void MainWindow::configureAssetsDock()
 		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {	background: rgba(200, 200, 200, 0);}"
 		"QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {	background: rgba(0, 0, 0, 0);border: 0px solid white;}"
 		"QScrollBar::sub-line, QScrollBar::add-line {	background: rgba(10, 0, 0, .0);}"
-	);
+	);*/
 
-	auto presetsLabel = new QLabel("Presets");
-	auto effectsLabel = new QLabel("My Fx");
+	//auto presetsLabel = new QLabel("Presets");
+	//auto effectsLabel = new QLabel("My Fx");
 
-	presetsLabel->setStyleSheet("QLabel{ background: rgba(20,20,20,1); padding: 3px; padding-left: 8px; color: rgba(200,200,200,1); }");
-	effectsLabel->setStyleSheet(presetsLabel->styleSheet());
+	//presetsLabel->setStyleSheet("QLabel{ background: rgba(20,20,20,1); padding: 3px; padding-left: 8px; color: rgba(200,200,200,1); }");
+	//effectsLabel->setStyleSheet(presetsLabel->styleSheet());
 
-	contentLayout->addWidget(presetsLabel);
-	contentLayout->addWidget(presets);
-	contentLayout->addWidget(effectsLabel);
-	contentLayout->addWidget(effects);
-	contentLayout->setContentsMargins(0, 0, 0, 0);
+	//contentLayout->addWidget(presetsLabel);
+	//contentLayout->addWidget(presets);
+	//contentLayout->addWidget(effectsLabel);
+	//contentLayout->addWidget(effects);
+	//contentLayout->setContentsMargins(0, 0, 0, 0);
 
 	presets->setStyleSheet(presets->styleSheet() +
 		"border: 1px solid black;"
@@ -549,13 +564,32 @@ void MainWindow::configureAssetsDock()
 		item->setTextAlignment(Qt::AlignBottom);
 		item->setIcon(QIcon(MaterialHelper::assetPath(tile.iconPath)));
 		item->setData(MODEL_TYPE_ROLE, "presets");
+		item->icon().addPixmap(QPixmap(":/icons.shader_overlay.png"));
 		presets->addToListWidget(item);
 	}
 
 	presets->isResizable = true;
 	effects->isResizable = true;
+	
+	scrollViewFx->setWidget(effects);
+	scrollViewPreset->setWidget(presets);
+	scrollViewAsset->setWidget(assetWidget);
+	scrollViewPreset->setWidgetResizable(true);
+	scrollViewFx->setWidgetResizable(true);
+	scrollViewAsset->setWidgetResizable(true);
 
-	scrollView->adjustSize();
+
+	tabWidget->addTab(scrollViewPreset, "Presets");
+	tabWidget->addTab(scrollViewFx, "My Fx");
+	tabWidget->addTab(scrollViewAsset, "Project Fx");
+
+	scrollViewFx->adjustSize();
+	scrollViewPreset->adjustSize();
+
+	scrollViewFx->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+	scrollViewPreset->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+	/*scrollView->adjustSize();
 	
 	auto buttonBar = new QWidget;
 	auto buttonLayout = new QHBoxLayout;
@@ -615,11 +649,11 @@ void MainWindow::configureAssetsDock()
 		connect(addBtn, &QPushButton::clicked, [=]() {
 			createNewGraph();
 		});
-	}
+	}*/
 
-	layout->addWidget(scrollView);
-	layout->addWidget(buttonBar);
-	assetsDock->setWidget(holder);
+	//layout->addWidget(scrollView);
+	//layout->addWidget(buttonBar);
+	assetsDock->setWidget(tabWidget);
 	assetsDock->setStyleSheet(nodeTray->styleSheet());
 
 	updateAssetDock();
@@ -646,8 +680,6 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 	currentProjectShader = item;
 	oldName = newShader;
 
-	
-
 	//QStringList assetsInProject = dataBase->fetchAssetNameByParent(assetItemShader.selectedGuid);
 
 	//// If we encounter the same file, make a duplicate...
@@ -659,14 +691,16 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 	item->setText(newShader);
 	effects->addItem(item);
 	effects->displayAllContents();
-	propertyListWidget->clearPropertyList();
-	if (loadNewGraph) {
-		loadGraphFromTemplate(preset);
-	}else	setNodeGraph(graph);
 
+	stack->clear();
+
+	propertyListWidget->clearPropertyList();
+	if (loadNewGraph)	loadGraphFromTemplate(preset);
+	else				setNodeGraph(graph);
+	
 	currentShaderInformation.GUID = assetGuid;
 	currentShaderInformation.name = newShader;
-	regenerateShader();
+//	regenerateShader();
 
 
 #if(EFFECT_BUILD_AS_LIB)
@@ -686,6 +720,7 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 
 void MainWindow::loadGraphFromTemplate(NodeGraphPreset preset)
 {
+
     propertyListWidget->clearPropertyList();
     currentShaderInformation.GUID = "";
 	auto graph = importGraphFromFilePath(MaterialHelper::assetPath(preset.templatePath), false);
@@ -697,9 +732,10 @@ void MainWindow::loadGraphFromTemplate(NodeGraphPreset preset)
 			i++;
 		}
 	}
+
 	graph->settings.name = preset.name;
 	setNodeGraph(graph);
-	regenerateShader();
+
 }
 
 void MainWindow::setCurrentShaderItem()
@@ -728,8 +764,8 @@ void MainWindow::configureUI()
 	centralWidget = new QWidget();
 	textWidget = new QDockWidget("Code View");
 	displayWidget = new QDockWidget("Display");
-	assetsDock = new QDockWidget("Assets");
-	projectDock = new QDockWidget("Project Assets");
+	assetsDock = new QDockWidget("Effects");
+	projectDock = new QDockWidget("Project Effects");
 
 	propertyWidget = new QDockWidget("Properties");
 	materialSettingsDock = new QDockWidget("Material Settings");
@@ -747,7 +783,7 @@ void MainWindow::configureUI()
 	displayWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	propertyWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	materialSettingsDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	projectDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	//projectDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	assetsDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 
 	setDockNestingEnabled(true);
@@ -759,7 +795,7 @@ void MainWindow::configureUI()
 
 #if(EFFECT_BUILD_AS_LIB)
 	assetWidget = new ShaderAssetWidget;
-	addDockWidget(Qt::LeftDockWidgetArea, projectDock, Qt::Vertical);
+	//addDockWidget(Qt::LeftDockWidgetArea, projectDock, Qt::Vertical);
 #endif
 	addDockWidget(Qt::LeftDockWidgetArea, assetsDock, Qt::Vertical);
 //	addDockWidget(Qt::RightDockWidgetArea, textWidget, Qt::Vertical);
@@ -827,7 +863,8 @@ void MainWindow::configureUI()
 	});
 
 	connect(propertyListWidget, &PropertyListWidget::deleteProperty, [=](QString propID) {
-		graph->deletePropertyById(propID);
+		// remind nick to use thios to delete property by id
+
 	});
 
 	materialSettingsDock->setWidget(materialSettingsWidget);
@@ -954,6 +991,7 @@ void MainWindow::generateTileNode()
 		item->setIcon(tile->icon);
 		item->setBackgroundColor(QColor(60, 60, 60));
 		item->setData(MODEL_TYPE_ROLE, QString("node"));
+		item->icon().addPixmap(QPixmap(":/icons/shader_overlay.png"));
 		setNodeLibraryItem(item, tile);
 
 	}
@@ -1051,10 +1089,6 @@ bool MainWindow::eventFilter(QObject * watched, QEvent * event)
 
 			case QEvent::MouseMove: {
 				auto evt = static_cast<QMouseEvent*>(event);
-				QPoint dragStartPosition(300, 0);
-				if ((evt->pos() - dragStartPosition).manhattanLength()
-					< QApplication::startDragDistance())
-					return true;
 
 				if (evt->buttons() & Qt::LeftButton) {
 
@@ -1062,11 +1096,15 @@ bool MainWindow::eventFilter(QObject * watched, QEvent * event)
 					if (!wid) return true;
 					if (!wid->pressed) return true;
 
+
 					auto drag = new QDrag(this);
 					auto mimeData = new QMimeData;
 					QByteArray arr;
 					arr.setNum(wid->index);
 					drag->setMimeData(mimeData);
+					auto p = propertyListWidget->mapToGlobal(QPoint(wid->x(), wid->y()));
+					drag->setPixmap(QPixmap::grabWidget(wid));
+					drag->setHotSpot(QPoint(wid->width()/2.0, wid->height()/2.0));
 
 					mimeData->setText(wid->modelProperty->displayName);
 					mimeData->setData("index", arr);
@@ -1086,6 +1124,7 @@ bool MainWindow::eventFilter(QObject * watched, QEvent * event)
 GraphNodeScene *MainWindow::createNewScene()
 {
     auto scene = new GraphNodeScene(this);
+	scene->setUndoRedoStack(stack);
     scene->setBackgroundBrush(QBrush(QColor(60, 60, 60)));
 
 	connect(scene, &GraphNodeScene::graphInvalidated, [this, scene]()
@@ -1155,6 +1194,14 @@ QListWidgetItem * MainWindow::selectCorrectItemFromDrop(QString guid)
 
 void MainWindow::configureConnections()
 {
+#if(EFFECT_BUILD_AS_LIB)
+	connect(assetWidget, &ShaderAssetWidget::loadToGraph, [=](QListWidgetItem * item) {
+		currentShaderInformation.name = item->data(Qt::DisplayRole).toString();
+		currentShaderInformation.GUID = item->data(MODEL_GUID_ROLE).toString();
+		loadGraph(currentShaderInformation.GUID);
+	});
+#endif
+
     connect(effects, &QListWidget::itemDoubleClicked, [=](QListWidgetItem *item) {
         currentShaderInformation.name = item->data(Qt::DisplayRole).toString();
         currentShaderInformation.GUID = item->data(MODEL_GUID_ROLE).toString();
@@ -1176,10 +1223,18 @@ void MainWindow::configureConnections()
 
 	
 
-    QShortcut *shortcut = new QShortcut(QKeySequence("space"), this);
-    connect(shortcut, &QShortcut::activated, [=]() {
-		auto dialog = new SearchDialog(this->graph, scene, {0,0});
-        dialog->exec();
+	QShortcut *shortcut = new QShortcut(QKeySequence("space"), this);
+	QShortcut *undo = new QShortcut(QKeySequence("crtl+z"), this);
+	QShortcut *redo = new QShortcut(QKeySequence("crtl+shift+z"), this);
+	connect(shortcut, &QShortcut::activated, [=]() {
+		auto dialog = new SearchDialog(this->graph, scene, { 0,0 });
+		dialog->exec();
+	});
+	connect(undo, &QShortcut::activated, [=]() {
+		stack->undo();
+	});
+	connect(redo, &QShortcut::activated, [=]() {
+		stack->redo();
 	});
 
     //connections for MyFx sections
@@ -1200,14 +1255,20 @@ void MainWindow::configureConnections()
     connect(effects, &ListWidget::createShader, [=](QString guid){
         createNewGraph();
     });
-    connect(effects, &ListWidget::importShader, [=](QString guid){
+	connect(effects, &ListWidget::importShader, [=](QString guid) {
 
-    });
+	});
+	connect(effects, &ListWidget::addToProject, [=](QListWidgetItem *item) {
+		assetWidget->createShader(item);
+		tabWidget->setCurrentIndex(2);
+	});
+
 
 
     // change: any settings changed
     connect(materialSettingsWidget, &MaterialSettingsWidget::settingsChanged,[=](MaterialSettings settings){
-		graph->settings = settings;
+		auto command = new MaterialSettingsChangeCommand(graph, settings, materialSettingsWidget);
+		stack->push(command);
     });
 
     //connection for renaming item

@@ -2,7 +2,7 @@
 #include <irisgl/IrisGL.h>
 //#include "irisgl/src/graphics/graphicshelper.h"
 //#include "nodemodel.h"
-#include "properties.h"
+#include "../models/properties.h"
 #include <QVector2D>
 #include <QVector3D>
 #include <QVector4D>
@@ -12,12 +12,12 @@
 #include <QOpenGLFunctions>
 #include <QImage>
 
-#include "graph/nodegraph.h"
-#include "graphnodescene.h"
-#include "texturemanager.h"
+#include "../graph/nodegraph.h"
+#include "../graph/graphnodescene.h"
+#include "../core/texturemanager.h"
 #include "materialsettingswidget.h"
-#include "core/materialhelper.h"
-#include "assets.h"
+#include "../core/materialhelper.h"
+#include "../assets.h"
 
 float SceneWidget::renderTime = 0;
 

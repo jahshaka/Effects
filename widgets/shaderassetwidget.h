@@ -5,6 +5,7 @@
 #include <QListWidget>
 #include <QJsonObject>
 #include <QPushButton>
+#include <QLineEdit>
 #include <QStackedWidget>
 #include "listwidget.h"
 #include "shaderlistwidget.h"
@@ -43,7 +44,7 @@ public:
 	void createShader(QListWidgetItem *item);
 	QByteArray fetchAsset(QString string);
 	ShaderListWidget *assetViewWidget;
-	void updateAssetView(const QString &path, int filter = -1, bool showDependencies = false);
+	void updateAssetView(const QString &path);
     void setUpDatabase(Database *db);
 	void refresh();
 private:
@@ -52,5 +53,11 @@ private:
 	Database *db;
 	QSize currentSize = QSize(90, 90);
 	QPushButton* closeBtn;
+
+	void configureConnections();
+	void deleteShader(QString guid);
+	void editingFinishedOnListItem(QListWidgetItem *);
+signals:
+	void loadToGraph(QListWidgetItem *item);
 };
 

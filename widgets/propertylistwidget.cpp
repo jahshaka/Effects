@@ -6,14 +6,13 @@
 #include <qgraphicseffect.h>
 #include <QScrollArea>
 #include <QToolButton>
-#include "propertywidgets/floatpropertywidget.h"
-#include "propertywidgets/vectorpropertywidget.h"
-#include "propertywidgets/intpropertywidget.h"
-#include "propertywidgets/texturepropertywidget.h"
-#include "properties.h"
-#include "graph/nodegraph.h"
-#include "mainwindow.h"
-//#include "nodemodel.h"
+#include "../propertywidgets/floatpropertywidget.h"
+#include "../propertywidgets/vectorpropertywidget.h"
+#include "../propertywidgets/intpropertywidget.h"
+#include "../propertywidgets/texturepropertywidget.h"
+#include "../models/properties.h"
+#include "../graph/nodegraph.h"
+#include "../shadergraphmainwindow.h"
 
 PropertyListWidget::PropertyListWidget(QWidget *parent) :
     QWidget(parent)
@@ -109,11 +108,9 @@ void PropertyListWidget::addProperty(QWidget *widget)
 
 void PropertyListWidget::setNodeGraph(NodeGraph *graph)
 {
-	//todo: clear widgets
-
     this->graph = graph;
-	added = 0; 
 
+	added = 0; 
     // build properties
 	for (auto prop : graph->properties) {
 
@@ -151,8 +148,23 @@ void PropertyListWidget::clearPropertyList()
         child->hide();
         child->deleteLater();
     }
-
+	stack->clear();
 	added = 0;
+}
+
+void PropertyListWidget::setStack(QUndoStack *stack)
+{
+	this->stack = stack;
+}
+
+void PropertyListWidget::setCount(int val)
+{
+	added = val;
+}
+
+int PropertyListWidget::getCount()
+{
+	return added;
 }
 
 void PropertyListWidget::addNewFloatProperty()
@@ -162,7 +174,6 @@ void PropertyListWidget::addNewFloatProperty()
     // todo: not safe! find a better way to do this!!!!
     prop->name = QString("property%1").arg(graph->properties.count());
 	this->addFloatProperty(prop);
-	this->graph->addProperty(prop);
 }
 
 void PropertyListWidget::addFloatProperty(FloatProperty* floatProp)
@@ -178,7 +189,6 @@ void PropertyListWidget::addNewVec2Property()
 	prop->displayName = "Vector 2 property";
 	prop->name = QString("property%1").arg(graph->properties.count());
 	this->addVec2Property(prop);
-	this->graph->addProperty(prop);
 }
 
 void PropertyListWidget::addVec2Property(Vec2Property * vec2Prop)
@@ -196,7 +206,6 @@ void PropertyListWidget::addNewVec3Property()
 	prop->displayName = "Vector 3 property";
 	prop->name = QString("property%1").arg(graph->properties.count());
 	this->addVec3Property(prop);
-	this->graph->addProperty(prop);
 }
 
 void PropertyListWidget::addVec3Property(Vec3Property * vec3Prop)
@@ -214,7 +223,6 @@ void PropertyListWidget::addNewVec4Property()
 	prop->displayName = "Vector 4 property";
 	prop->name = QString("property%1").arg(graph->properties.count());
 	this->addVec4Property(prop);
-	this->graph->addProperty(prop);
 }
 
 void PropertyListWidget::addVec4Property(Vec4Property * vec4Prop)
@@ -232,7 +240,6 @@ void PropertyListWidget::addNewIntProperty()
 	prop->displayName = "Int property";
 	prop->name = QString("property%1").arg(graph->properties.count());
 	this->addIntProperty(prop);
-	this->graph->addProperty(prop);
 }
 
 void PropertyListWidget::addIntProperty(IntProperty * intProp)
@@ -250,7 +257,6 @@ void PropertyListWidget::addNewTextureProperty()
 	prop->displayName = "Texture Property";
 	prop->name = QString("property%1").arg(graph->properties.count());
 	this->addTextureProperty(prop);
-	this->graph->addProperty(prop);
 }
 
 void PropertyListWidget::addTextureProperty(TextureProperty * texProp, bool requestTextureFromDatabase)
@@ -263,8 +269,9 @@ void PropertyListWidget::addTextureProperty(TextureProperty * texProp, bool requ
 
 void PropertyListWidget::addToPropertyListWidget(BasePropertyWidget *widget)
 {
+	auto command = new AddPropertyCommand(layout, referenceList, widget, getCount(), this);
+	stack->push(command);
 
-    layout->insertWidget(layout->count() -1, widget); // minus one to account for stretch
     connect(widget, &BasePropertyWidget::currentWidget, [=](BasePropertyWidget *wid) {
         currentWidget = wid;
     });
@@ -275,9 +282,10 @@ void PropertyListWidget::addToPropertyListWidget(BasePropertyWidget *widget)
 
 	connect(widget, &BasePropertyWidget::buttonPressed, [=](bool shouldDelete) {
 		if (shouldDelete) emit deleteProperty(widget->modelProperty->id);
+
+		auto commandd = new DeletePropertyCommand(layout, widget, added, this);
+		stack->push(commandd);
 	});
 
-    referenceList.append(widget);
-    widget->index = added;
-	added++;
+   
 }

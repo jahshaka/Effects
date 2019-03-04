@@ -2,6 +2,9 @@
 #include <QPoint>
 #include <QDebug>
 
+#include "../widgets/propertylistwidget.h"
+
+
 int UndoRedo::count = 0;
 UndoRedo::UndoRedo()
 {
@@ -35,8 +38,10 @@ AddNodeCommand::AddNodeCommand(NodeModel * nodeModel, GraphNodeScene* scene)
 void AddNodeCommand::undo()
 {
 	auto node = scene->getNodeById(nodeModel->id);
+	node->setVisible(false);
 	scene->deleteNode(node);
-	scene->update();
+	scene->update(scene->itemsBoundingRect());
+	scene->views()[0]->update();
 	UndoRedo::undo();
 }
 
@@ -61,7 +66,6 @@ AddConnectionCommand::AddConnectionCommand(const QString &leftNodeId, const QStr
 void AddConnectionCommand::undo()
 {
 
-	//scene->nodeGraph->removeConnection(connectionID);
 	scene->removeConnection(connectionID, true, true);
 	scene->removeItem(scene->getConnection(connectionID));
 	//remind nick to remove connections from models!
@@ -156,3 +160,84 @@ void MoveMultipleCommand::redo()
 	}	
 	UndoRedo::redo();
 }
+
+MaterialSettingsChangeCommand::MaterialSettingsChangeCommand(NodeGraph *graph, MaterialSettings &settings, MaterialSettingsWidget *mat)
+{
+	this->graph = graph;
+	this->settings = settings;
+	this->oldSettings = graph->settings;
+	this->mat = mat;
+}
+
+void MaterialSettingsChangeCommand::undo()
+{
+	this->graph->settings = oldSettings;
+	mat->updateMaterialSettingsWidget(oldSettings);
+}
+
+void MaterialSettingsChangeCommand::redo()
+{
+	this->graph->settings = settings;
+	mat->updateMaterialSettingsWidget(settings);
+}
+
+AddPropertyCommand::AddPropertyCommand(QVBoxLayout *layout, QVector<BasePropertyWidget*>&list, BasePropertyWidget *widget, int index, PropertyListWidget *pl)
+{
+	this->lay = layout;
+	this->list = &list;
+	this->wid = widget;
+	this->index = index;
+	this->propertyList = pl;
+}
+
+void AddPropertyCommand::undo()
+{
+	lay->removeWidget(wid);
+	list->removeOne(wid);
+	index--;
+	wid->setVisible(false);
+	propertyList->graph->removeProperty(wid->modelProperty);
+	propertyList->setCount(index);
+
+}
+
+void AddPropertyCommand::redo()
+{
+	lay->insertWidget(lay->count() - 1, wid); // minus one to account for stretch
+	list->append(wid);
+	wid->index = index;
+	index++;
+	wid->setVisible(true);
+	propertyList->graph->addProperty(wid->modelProperty);
+	propertyList->setCount(index);
+}
+
+DeletePropertyCommand::DeletePropertyCommand(QVBoxLayout *layout, BasePropertyWidget *wid, int index, PropertyListWidget *pl)
+{
+	this->lay = layout;
+	this->index = index;
+	this->wid = wid;
+	this->propertyList = pl;
+}
+
+void DeletePropertyCommand::undo()
+{
+	lay->insertWidget(lay->count() - 1, wid); // minus one to account for stretch
+	propertyList->referenceList.append(wid);
+	wid->index = index;
+	index++;
+	wid->setVisible(true);
+	propertyList->graph->addProperty(wid->modelProperty);
+	propertyList->setCount(index);
+}
+
+void DeletePropertyCommand::redo()
+{
+	lay->removeWidget(wid);
+	propertyList->referenceList.removeOne(wid);
+	index--;
+	wid->setVisible(false);
+	propertyList->graph->removeProperty(wid->modelProperty);
+	propertyList->setCount(index);
+}
+

@@ -9,7 +9,7 @@
 #include <QMessageBox>
 
 #if(EFFECT_BUILD_AS_LIB)
-#include "../core/database/database.h"
+#include "../../core/database/database.h"
 //#include "../uimanager.h"
 //#include "../globals.h"
 //#include "../core/guidmanager.h"
@@ -42,12 +42,15 @@ public:
 	void removeTextureByGuid(QString guid);
 	void loadUnloadedTextures();
 	void setDatabase(Database * dataBase);
+	void clearTextures();
 
 	/*
 	Loads texture using it's Guid
 	Returns graph texture even if it's still not in the database
 	*/
 	GraphTexture* loadTextureFromGuid(QString guid);
+	QString loadTextureFromDisk(QString guid);
+	QString loadTextureFromDatabase(QString guid);
 
 	GraphTexture* importTexture(QString path);
 	static TextureManager* getSingleton();

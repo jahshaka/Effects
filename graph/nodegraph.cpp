@@ -1,9 +1,9 @@
 #include "nodegraph.h"
-#include "connectionmodel.h"
+#include "../models/connectionmodel.h"
 #include "../nodes/test.h"
-#include "library.h"
+#include "../models/library.h"
 #include "../core/guidhelper.h"
-#include "../scenewidget.h"
+#include "../widgets/scenewidget.h"
 
 #include <QJsonObject>
 #include <QJsonArray>
@@ -13,13 +13,14 @@
 
 void NodeGraph::addProperty(Property* prop)
 {
-	this->properties.append(prop);
+	if(!properties.contains(prop))	this->properties.append(prop);
 }
 
-bool NodeGraph::deletePropertyById(const QString & id)
+void NodeGraph::removeProperty(Property * prop)
 {
-	return false;
+	this->properties.removeOne(prop);
 }
+
 
 Property *NodeGraph::getPropertyByName(const QString &name)
 {

@@ -2,9 +2,9 @@
 #include <QDialog>
 #include <QListWidget>
 #include "../graph/nodegraph.h"
-#include "../graph/library.h"
-#include "../listwidget.h"
-#include "../graphnodescene.h"
+#include "../models/library.h"
+#include "../widgets/listwidget.h"
+#include "../graph/graphnodescene.h"
 #include "../widgets//treewidget.h"
 
 

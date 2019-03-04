@@ -7,7 +7,7 @@
 #include <QPainter>
 #include <QtMath>
 #include <QShortcut>
-#include "shadergraph/graphnodescene.h"
+#include "../graph/graphnodescene.h"
 
 qreal GraphicsView::currentScale = 1.0;
 GraphicsView::GraphicsView( QWidget *parent) : QGraphicsView(parent)
@@ -20,7 +20,8 @@ GraphicsView::GraphicsView( QWidget *parent) : QGraphicsView(parent)
 	setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
 
 	setCacheMode(QGraphicsView::CacheBackground);
-	setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
+	//setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
+	setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 	setDragMode(QGraphicsView::RubberBandDrag);
 
 	QGraphicsView::setAcceptDrops(true);

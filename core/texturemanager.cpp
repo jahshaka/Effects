@@ -1,5 +1,7 @@
 #include "texturemanager.h"
-#include "../mainwindow.h"
+#include "../shadergraphmainwindow.h"
+#include "../../globals.h"
+#include "../core/project.h"
 
 TextureManager* TextureManager::instance = 0;
 
@@ -63,6 +65,11 @@ void TextureManager::setDatabase(Database * dataBase)
 	this->database = dataBase;
 }
 
+void TextureManager::clearTextures()
+{
+	textures.clear();
+}
+
 GraphTexture * TextureManager::loadTextureFromGuid(QString guid)
 {
 	auto tex = this->createTexture();
@@ -71,14 +78,36 @@ GraphTexture * TextureManager::loadTextureFromGuid(QString guid)
 		return tex;
 	}
 
+	auto p = loadTextureFromDisk(guid); // load if file paths are located on the disk
+	if (!QFileInfo::exists(p)) // if they are not located on disk
+		p = loadTextureFromDatabase(guid); // load file paths from database
+
+	tex->setImage(p);
+	tex->guid = guid;
+
+	return tex;
+}
+
+QString TextureManager::loadTextureFromDisk(QString guid)
+{
+	auto asset = database->fetchAsset(guid);
+	
+
 	auto imagePath = IrisUtils::join(
 		QStandardPaths::writableLocation(QStandardPaths::DataLocation),
 		"AssetStore", guid, asset.name
 	);
-	tex->setImage(imagePath);
-	tex->guid = guid;
 
-	return tex;
+	return imagePath;
+}
+
+QString TextureManager::loadTextureFromDatabase(QString guid)
+{
+	auto asset = database->fetchAsset(guid);
+
+	auto path = QDir(Globals::project->getProjectFolder()).filePath(asset.name);
+
+	return path;
 }
 
 GraphTexture* TextureManager::importTexture(QString path)
