@@ -405,6 +405,17 @@ GraphNodeScene::GraphNodeScene(QWidget* parent) :
 	selectedNode = nullptr;
 }
 
+void GraphNodeScene::undo()
+{
+	stack->undo();
+}
+
+void GraphNodeScene::redo()
+{
+	stack->redo();
+}
+
+
 SocketConnection *GraphNodeScene::addConnection(QString leftNodeId, int leftSockIndex, QString rightNodeId, int rightSockIndex)
 {
 	auto leftNode = this->getNodeById(leftNodeId);

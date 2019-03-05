@@ -72,6 +72,9 @@ public:
 	SocketConnection* addConnection(Socket* leftCon, Socket* rightCon);
 	void setUndoRedoStack(QUndoStack *);
 
+	void undo();
+	void redo();
+
 	bool eventFilter(QObject *o, QEvent *e);
 	Socket* getSocketAt(float x, float y);
 	SocketConnection* getConnectionAt(float x, float y);
