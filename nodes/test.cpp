@@ -309,11 +309,11 @@ MakeColorNode::MakeColorNode() {
 	title = "Color";
 	typeName = "makeColor";
 
-	addInputSocket(new FloatSocketModel("Value R"));
-	addInputSocket(new FloatSocketModel("Value G"));
-	addInputSocket(new FloatSocketModel("Value B"));
+	addInputSocket(new FloatSocketModel("R"));
+	addInputSocket(new FloatSocketModel("G"));
+	addInputSocket(new FloatSocketModel("B"));
 
-	addOutputSocket(new Vector4SocketModel("color"));
+	addOutputSocket(new Vector4SocketModel("Color"));
 }
 
 void MakeColorNode::process(ModelContext *context)
