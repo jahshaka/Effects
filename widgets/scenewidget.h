@@ -86,6 +86,7 @@ public:
 
     void resetRenderTime();
 
+	QString getTextureUniformName(QString texGuid);
     void passNodeGraphUniforms();
     void setNodeGraph(NodeGraph* graph);
 

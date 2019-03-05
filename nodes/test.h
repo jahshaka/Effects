@@ -15,7 +15,7 @@
 #include "../propertywidgets/texturepropertywidget.h"
 
 
-
+class QDoubleSpinBox;
 
 #if(EFFECT_BUILD_AS_LIB)
 #include "../../widgets/colorpickerwidget.h"
@@ -191,7 +191,11 @@ public:
 	Vector2Node();
 	int x, y;
 	QVector2D value;
+	QDoubleSpinBox *xSpinBox, *ySpinBox;
 	virtual void process(ModelContext* context) override;
+
+	QJsonValue serializeWidgetValue(int widgetIndex);
+	void deserializeWidgetValue(QJsonValue val, int widgetIndex);
 };
 
 class Vector3Node : public NodeModel
@@ -200,7 +204,11 @@ public:
 	Vector3Node();
 	int x, y, z;
 	QVector3D value;
+	QDoubleSpinBox *xSpinBox, *ySpinBox, *zSpinBox;
 	virtual void process(ModelContext* context) override;
+
+	QJsonValue serializeWidgetValue(int widgetIndex);
+	void deserializeWidgetValue(QJsonValue val, int widgetIndex);
 };
 
 class Vector4Node : public NodeModel
@@ -209,7 +217,11 @@ public:
 	Vector4Node();
 	int x, y, z, w;
 	QVector4D value;
+	QDoubleSpinBox *xSpinBox, *ySpinBox, *zSpinBox, *wSpinBox;
 	virtual void process(ModelContext* context) override;
+
+	QJsonValue serializeWidgetValue(int widgetIndex);
+	void deserializeWidgetValue(QJsonValue val, int widgetIndex);
 };
 
 #if(EFFECT_BUILD_AS_LIB)
@@ -219,9 +231,10 @@ public:
 	ColorPickerNode();
 
 private:
-
 	ColorPickerWidget *colorWidget;
 	virtual void process(ModelContext* context) override;
 
+	QJsonValue serializeWidgetValue(int widgetIndex);
+	void deserializeWidgetValue(QJsonValue val, int widgetIndex);
 };
 #endif

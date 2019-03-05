@@ -30,6 +30,9 @@ public:
 
 	SocketConnection();
 
+	Socket* getInSocket();
+	Socket* getOutSocket();
+
 	void updatePosFromSockets();
 	void updatePath();
 	virtual int type() const override;

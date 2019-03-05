@@ -72,10 +72,25 @@ public:
 	SocketConnection* addConnection(Socket* leftCon, Socket* rightCon);
 	void setUndoRedoStack(QUndoStack *);
 
+	void undo();
+	void redo();
+
 	bool eventFilter(QObject *o, QEvent *e);
 	Socket* getSocketAt(float x, float y);
 	SocketConnection* getConnectionAt(float x, float y);
 	SocketConnection* getConnection(const QString& conId);
+
+	bool canSocketConnect(Socket* outSock, Socket* inSock);
+
+	// checks to see if potential connection will cause a loop
+	// sock1 is the one already in the connection
+	// sock2 is the connection to be added
+	bool willConnectionBeALoop(Socket* sock1, Socket* sock2);
+
+	// assigns inSock and outsock given two sockets
+	// doesnt not handle the case where sock1 and sock2 are both In or Out
+	// Out sockets are on the left and In sockets are on the right
+	void determineOutAndInSockets(Socket* sock1, Socket* sock2, Socket** outSock, Socket** inSock);
 
 	GraphNode* getNodeById(QString id);
     QVector<GraphNode*> getNodes();
@@ -104,7 +119,7 @@ public:
 	void deleteSelectedNodes();
 	void deleteNode(GraphNode* node);
 
-	bool areSocketsComptible(Socket* outSock, Socket* inSock);
+	bool areSocketsComptible(Socket* sock1, Socket* sock2);
 
 	void emitGraphInvalidated();
 

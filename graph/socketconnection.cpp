@@ -23,6 +23,28 @@ SocketConnection::SocketConnection()
 	status = SocketConnectionStatus::Finished;
 }
 
+Socket* SocketConnection::getInSocket()
+{
+	if (socket1 != nullptr && socket1->socketType == SocketType::In)
+		return socket1;
+
+	if (socket2 != nullptr && socket2->socketType == SocketType::In)
+		return socket2;
+
+	return nullptr;
+}
+
+Socket* SocketConnection::getOutSocket()
+{
+	if (socket1 != nullptr && socket1->socketType == SocketType::Out)
+		return socket1;
+
+	if (socket2 != nullptr && socket2->socketType == SocketType::Out)
+		return socket2;
+
+	return nullptr;
+}
+
 void SocketConnection::updatePosFromSockets()
 {
 	pos1 = socket1->getSocketPosition();

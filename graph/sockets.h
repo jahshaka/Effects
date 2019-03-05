@@ -114,6 +114,16 @@ public:
 		return SocketHelper::convertVectorValue(varName, this, toModel);
 	}
 
+	virtual bool canConvertTo(SocketModel* other)
+	{
+		if (other->typeName == "float" ||
+			other->typeName == "vec2" ||
+			other->typeName == "vec3" ||
+			other->typeName == "vec4")
+			return true;
+		return false;
+	}
+
 	virtual SocketModel* duplicate()
 	{
 		return new Vector4SocketModel(name);

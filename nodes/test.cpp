@@ -309,11 +309,11 @@ MakeColorNode::MakeColorNode() {
 	title = "Color";
 	typeName = "makeColor";
 
-	addInputSocket(new FloatSocketModel("Value R"));
-	addInputSocket(new FloatSocketModel("Value G"));
-	addInputSocket(new FloatSocketModel("Value B"));
+	addInputSocket(new FloatSocketModel("R"));
+	addInputSocket(new FloatSocketModel("G"));
+	addInputSocket(new FloatSocketModel("B"));
 
-	addOutputSocket(new Vector4SocketModel("color"));
+	addOutputSocket(new Vector4SocketModel("Color"));
 }
 
 void MakeColorNode::process(ModelContext *context)
@@ -718,6 +718,27 @@ void Vector2Node::process(ModelContext * context)
 	outSockets[0]->setVarName("vec2(" + QString::number(value.x()) + "," + QString::number(value.y()) + ")");
 }
 
+QJsonValue Vector2Node::serializeWidgetValue(int widgetIndex)
+{
+	QJsonObject obj;
+	obj["x"] = value.x();
+	obj["y"] = value.y();
+
+	return obj;
+}
+
+void Vector2Node::deserializeWidgetValue(QJsonValue val, int widgetIndex)
+{
+	auto obj = val.toObject();
+
+	value.setX(x = obj["x"].toDouble());
+	value.setY(y = obj["y"].toDouble());
+
+	xSpinBox->setValue(value.x());
+	ySpinBox->setValue(value.y());
+}
+
+
 Vector3Node::Vector3Node()
 {
 	setNodeType(NodeCategory::Constants);
@@ -781,6 +802,29 @@ void Vector3Node::process(ModelContext * context)
 {
 	auto ctx = (ShaderContext*)context;
 	outSockets[0]->setVarName("vec3(" + QString::number(value.x()) + "," + QString::number(value.y()) + "," + QString::number(value.z()) + ")");
+}
+
+QJsonValue Vector3Node::serializeWidgetValue(int widgetIndex)
+{
+	QJsonObject obj;
+	obj["x"] = value.x();
+	obj["y"] = value.y();
+	obj["z"] = value.z();
+
+	return obj;
+}
+
+void Vector3Node::deserializeWidgetValue(QJsonValue val, int widgetIndex)
+{
+	auto obj = val.toObject();
+
+	value.setX(x = obj["x"].toDouble());
+	value.setY(y = obj["y"].toDouble());
+	value.setZ(z = obj["z"].toDouble());
+
+	xSpinBox->setValue(value.x());
+	ySpinBox->setValue(value.y());
+	zSpinBox->setValue(value.z());
 }
 
 Vector4Node::Vector4Node()
@@ -857,6 +901,33 @@ void Vector4Node::process(ModelContext * context)
 	outSockets[0]->setVarName("vec4(" + QString::number(value.x()) + "," + QString::number(value.y()) + "," + QString::number(value.z()) + "," + QString::number(value.w()) + ")");
 }
 
+QJsonValue Vector4Node::serializeWidgetValue(int widgetIndex)
+{
+	QJsonObject obj;
+	obj["x"] = value.x();
+	obj["y"] = value.y();
+	obj["z"] = value.z();
+	obj["w"] = value.w();
+
+	return obj;
+}
+
+void Vector4Node::deserializeWidgetValue(QJsonValue val, int widgetIndex)
+{
+	auto obj = val.toObject();
+
+	value.setX(x = obj["x"].toDouble());
+	value.setY(y = obj["y"].toDouble());
+	value.setZ(z = obj["z"].toDouble());
+	value.setW(w = obj["w"].toDouble());
+
+	xSpinBox->setValue(value.x());
+	ySpinBox->setValue(value.y());
+	zSpinBox->setValue(value.z());
+	wSpinBox->setValue(value.w());
+}
+
+
 #if(EFFECT_BUILD_AS_LIB)
 ColorPickerNode::ColorPickerNode()
 {
@@ -888,5 +959,31 @@ void ColorPickerNode::process(ModelContext * context)
 	outSockets[3]->setVarName(QString::number(col.blueF()));
 	outSockets[4]->setVarName(QString::number(col.alphaF()));
 
+}
+
+QJsonValue ColorPickerNode::serializeWidgetValue(int widgetIndex)
+{
+	auto col = colorWidget->getColor();
+
+	QJsonObject obj;
+	obj["r"] = col.redF();
+	obj["g"] = col.greenF();
+	obj["b"] = col.blueF();
+	obj["a"] = col.alphaF();
+
+	return obj;
+}
+
+void ColorPickerNode::deserializeWidgetValue(QJsonValue val, int widgetIndex)
+{
+	auto obj = val.toObject();
+
+	QColor col;
+	col.setRedF(obj["r"].toDouble());
+	col.setGreenF(obj["g"].toDouble());
+	col.setBlueF(obj["b"].toDouble());
+	col.setAlphaF(obj["a"].toDouble());
+
+	colorWidget->setColor(col);
 }
 #endif

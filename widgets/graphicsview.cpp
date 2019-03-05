@@ -173,6 +173,25 @@ void GraphicsView::addShortcuts()
 		this->scene->deleteSelectedNodes();
 		this->repaint();
 	});
+
+	// undo-redo
+	auto undoShortcut = new QShortcut(this);
+	undoShortcut->setKey(QKeySequence::Undo);
+	connect(undoShortcut, &QShortcut::activated, [this]()
+	{
+		scene->undo();
+		scene->update();
+		//this->repaint();
+	});
+
+	auto redoShortcut = new QShortcut(this);
+	redoShortcut->setKey(QKeySequence::Redo);
+	connect(redoShortcut, &QShortcut::activated, [this]()
+	{
+		scene->redo();
+		scene->update();
+		//this->repaint();
+	});
 }
 
 void GraphicsView::setScene(GraphNodeScene * scene)

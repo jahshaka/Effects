@@ -125,6 +125,7 @@ void DeleteNodeCommand::undo()
 	connections = newConnections;
 
 	scene->emitGraphInvalidated();
+	scene->update();
 	UndoRedo::undo();
 }
 
@@ -141,6 +142,7 @@ void DeleteNodeCommand::redo()
 		scene->deleteNode(node);
 	}
 	scene->emitGraphInvalidated();
+	scene->update();
 	UndoRedo::redo();
 }
 
