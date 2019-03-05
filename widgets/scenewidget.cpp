@@ -151,8 +151,10 @@ void SceneWidget::render()
 	texMan->loadUnloadedTextures();
 	int i = 0;
 	for (auto tex : texMan->textures) {
+		auto uniformName = getTextureUniformName(tex->guid);
+
 		graphics->setTexture(i, tex->texture);
-		graphics->setShaderUniform(tex->uniformName, i);
+		graphics->setShaderUniform(uniformName, i);
 		i++;
 	}
 	
@@ -228,6 +230,17 @@ void SceneWidget::updateShader()
 void SceneWidget::resetRenderTime()
 {
     renderTime = 0;
+}
+
+QString SceneWidget::getTextureUniformName(QString texGuid)
+{
+	for (auto prop : graph->properties) {
+		if (prop->type == PropertyType::Texture)
+			if (prop->getValue() == texGuid)
+				return prop->getUniformName();
+	}
+
+	return "";
 }
 
 void SceneWidget::passNodeGraphUniforms()
