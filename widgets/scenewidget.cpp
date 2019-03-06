@@ -123,9 +123,17 @@ void SceneWidget::render()
     //spriteBatch->drawString(font, QString("fps %1").arg(fps), QVector2D(), Qt::black);
     //spriteBatch->end();
 	
-    device->setBlendState(iris::BlendState::createOpaque(), true);
-    device->setDepthState(iris::DepthState(), true);
-	device->setRasterizerState(iris::RasterizerState::createCullCounterClockwise(), true);
+	// reset render states
+    //device->setBlendState(iris::BlendState::createOpaque(), true);
+    //device->setDepthState(iris::DepthState(), true);
+	//device->setRasterizerState(iris::RasterizerState::createCullCounterClockwise(), true);
+
+	// apply effect states
+	setMaterialSettings(graph->settings);
+
+	device->setBlendState(blendState, true);
+	device->setDepthState(depthState, true);
+	device->setRasterizerState(rasterState, true);
 
     auto& graphics = device;
     device->setViewport(QRect(0, 0, viewportWidth, viewportHeight));
@@ -382,10 +390,24 @@ void SceneWidget::setMaterialSettings(MaterialSettings settings)
 {
 	this->materialSettings = settings;
 
+	// blend state
 	if (settings.blendMode == BlendMode::Additive)
 		blendState = iris::BlendState::createAdditive();
 	if (settings.blendMode == BlendMode::Blend)
 		blendState = iris::BlendState::createAlphaBlend();
 	if (settings.blendMode == BlendMode::Opaque)
 		blendState = iris::BlendState::createOpaque();
+
+	// depth state
+	depthState = iris::DepthState(false, false);
+	depthState.depthBufferEnabled = settings.depthTest;
+	depthState.depthWriteEnabled = settings.zwrite;
+
+	// rasterizer state
+	if (settings.cullMode == CullMode::Back)
+		rasterState = iris::RasterizerState::createCullCounterClockwise();
+	if (settings.cullMode == CullMode::Front)
+		rasterState = iris::RasterizerState::createCullClockwise();
+	if (settings.cullMode == CullMode::None)
+		rasterState = iris::RasterizerState::createCullNone();
 }
