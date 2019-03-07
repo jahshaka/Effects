@@ -1,5 +1,5 @@
 #include "treewidget.h"
-#include "../core/project.h"
+#include "src/core/project.h"
 #include <QHeaderView>
 #include <QScrollBar>
 

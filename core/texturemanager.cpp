@@ -1,7 +1,7 @@
 #include "texturemanager.h"
 #include "../shadergraphmainwindow.h"
 #include "../../globals.h"
-#include "../core/project.h"
+#include "src/core/project.h"
 
 TextureManager* TextureManager::instance = 0;
 

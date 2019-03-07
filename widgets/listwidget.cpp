@@ -10,7 +10,7 @@
 #include <QJsonObject>
 #include <QLayout>
 #include <QMenu>
-#include "../core/project.h"
+#include "src/core/project.h"
 #include "../../uimanager.h"
 
 
