@@ -22,7 +22,7 @@ set_target_properties(assimp PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_
 set(CPP
 	core/materialhelper.cpp
 	core/materialwriter.cpp
-	core/project.cpp
+	#core/project.cpp
 	core/texturemanager.cpp
 	core/undoredo.cpp
 	core/sockethelper.cpp
@@ -85,7 +85,7 @@ set(HEADERS
 	core/guidhelper.h
 	core/materialhelper.h
 	core/materialwriter.h
-	core/project.h
+	#core/project.h
 	core/texturemanager.h
 	core/undoredo.h
 	core/sockethelper.h
