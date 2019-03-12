@@ -41,7 +41,7 @@ public:
 	void addItem(const AssetRecord &assetData);
 	void createFolder();
 	void createShader(QString *shaderName = Q_NULLPTR);
-	void createShader(QListWidgetItem *item);
+	QString createShader(QListWidgetItem *item);
 	QByteArray fetchAsset(QString string);
 	ShaderListWidget *assetViewWidget;
 	void updateAssetView(const QString &path);

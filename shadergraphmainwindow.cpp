@@ -1263,9 +1263,9 @@ void MainWindow::configureConnections()
 
 	});
 	connect(effects, &ListWidget::addToProject, [=](QListWidgetItem *item) {
-		assetWidget->createShader(item);
+		auto guid = assetWidget->createShader(item);
 		tabWidget->setCurrentIndex(2);
-		ListWidget::highlightNodeForInterval(2, item);
+		ListWidget::highlightNodeForInterval(2, selectCorrectItemFromDrop(guid));
 	});
 
 

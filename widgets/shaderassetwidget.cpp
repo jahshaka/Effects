@@ -476,7 +476,7 @@ void ShaderAssetWidget::createShader(QString *shaderName)
 	AssetManager::addAsset(assetShader);
 }
 
-void ShaderAssetWidget::createShader(QListWidgetItem * item)
+QString ShaderAssetWidget::createShader(QListWidgetItem * item)
 {
 	const QString newShader = "Untitled Shader";
 	
@@ -571,6 +571,7 @@ void ShaderAssetWidget::createShader(QListWidgetItem * item)
 	// build material from definition
 	AssetManager::addAsset(assetShader);
 	refresh();
+	return targetGuid;
 }
 
 QByteArray ShaderAssetWidget::fetchAsset(QString string)
