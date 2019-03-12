@@ -867,8 +867,10 @@ void MainWindow::configureUI()
 
 	});
 
-	connect(materialSettingsWidget, SIGNAL(settingsChanged(MaterialSettings value)), sceneWidget, SLOT(setMaterialSettings(MaterialSettings settings)));
-
+	//connect(materialSettingsWidget, SIGNAL(settingsChanged(MaterialSettings)), sceneWidget, SLOT(setMaterialSettings(MaterialSettings)));
+	connect(materialSettingsWidget, &MaterialSettingsWidget::settingsChanged, [=](MaterialSettings value) {
+		sceneWidget->setMaterialSettings(value);
+	});
 	materialSettingsDock->setWidget(materialSettingsWidget);
 	propertyListWidget->installEventFilter(this);
 

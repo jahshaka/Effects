@@ -160,6 +160,10 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 		this->point = scenePoint;
 	}else 	this->point = point;
 
+	//move view under mouse
+	QPoint p(45,45);
+	this->point = this->point - p;
+
 	installEventFilter(this);
 
 }
@@ -271,10 +275,6 @@ bool SearchDialog::eventFilter(QObject *watched, QEvent *e)
 			searchBar->grabKeyboard();
 		}
 	}
-
-
-
-
 	return false;
 }
 
