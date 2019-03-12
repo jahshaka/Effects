@@ -90,8 +90,8 @@ void ListWidget::updateThumbnailImage(QByteArray arr, QListWidgetItem *item)
 void ListWidget::highlightNodeForInterval(int seconds, QListWidgetItem * item)
 {
 	QVariantAnimation *anim = new QVariantAnimation;
-	anim->setStartValue(QColor(230, 130, 30, 255));
-	anim->setEndValue(QColor(230, 130, 30, 0));
+	anim->setStartValue(QColor(50, 148, 213, 255));
+	anim->setEndValue(QColor(50, 148, 213, 0));
 	anim->setDuration(seconds*1000);
 	anim->start();
 	QPixmap pixmap = item->icon().pixmap(35, 35);
