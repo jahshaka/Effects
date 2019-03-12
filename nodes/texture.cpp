@@ -62,23 +62,37 @@ void TexelSizeNode::process(ModelContext* context)
 	this->outSockets[4]->setVarName("(1.0 / textureSize(" + texName + ", 0.0).y)");
 }
 
-/*
+
 SampleEquirectangularTextureNode::SampleEquirectangularTextureNode()
 {
-	setNodeType(NodeType::Math);
+	setNodeType(NodeCategory::Texture);
 	title = "Sample Texture Equirectangular";
-	typeName = "texelsize";
-	enablePreview = true;
+	typeName = "sampleequirect";
+	enablePreview = false;
 
 	addInputSocket(new TextureSocketModel("Texture"));
-	addOutputSocket(new Vector2SocketModel("Size"));
-	addOutputSocket(new FloatSocketModel("Width"));
-	addOutputSocket(new FloatSocketModel("Height"));
-	addOutputSocket(new FloatSocketModel("1/Width"));
-	addOutputSocket(new FloatSocketModel("1/Height"));
+	addInputSocket(new Vector3SocketModel("Vector"));
+	addOutputSocket(new Vector4SocketModel("RGBA"));
 }
-*/
 
+void SampleEquirectangularTextureNode::process(ModelContext* context)
+{
+	auto ctx = (ShaderContext*)context;
+
+	ctx->addFunction("envMapEquirect", R"(vec2 envMapEquirect(vec3 wcNormal, float flipEnvMap) {
+		float y = clamp( -1.0 * wcNormal.y * 0.5 + 0.5,0,1 );
+		float x = atan(  wcNormal.z, wcNormal.x ) * RECIPROCAL_PI2 + 0.5;
+		return vec2(x, y);
+	})");
+
+	auto texture	= this->getValueFromInputSocket(0);
+	auto uv			= this->getValueFromInputSocket(1);
+
+	auto res		= this->getOutputSocketVarName(0);
+
+	auto code = res + " = texture("+ texture +",envMapEquirect("+ uv + "));";
+	ctx->addCodeChunk(this, code);
+}
 
 FlipbookUVAnimationNode::FlipbookUVAnimationNode()
 {
@@ -95,6 +109,7 @@ FlipbookUVAnimationNode::FlipbookUVAnimationNode()
 
 	addOutputSocket(new Vector2SocketModel("UV"));
 }
+
 
 void FlipbookUVAnimationNode::process(ModelContext* context)
 {
@@ -129,7 +144,6 @@ void FlipbookUVAnimationNode::process(ModelContext* context)
 	auto code = res + " = flipbook("+rows+","+columns+","+animLength+","+uv+","+time+");";
 	ctx->addCodeChunk(this, code);
 }
-
 
 TileUVNode::TileUVNode()
 {

@@ -250,6 +250,10 @@ void LibraryV1::initTexture()
 		return new TexelSizeNode();
 	});
 
+	addNode("sampleequirect", "Sample Texture Equirectangular", iconPath, type, []() {
+		return new SampleEquirectangularTextureNode();
+	});
+
 	addNode("flipbook", "Flipbook Animation", iconPath, type, []() {
 		return new FlipbookUVAnimationNode();
 	});
