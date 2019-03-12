@@ -10,6 +10,7 @@
 #include <QJsonObject>
 #include <QLayout>
 #include <QMenu>
+#include <QVariantAnimation>
 #include "src/core/project.h"
 #include "../../uimanager.h"
 
@@ -84,6 +85,25 @@ void ListWidget::updateThumbnailImage(QByteArray arr, QListWidgetItem *item)
 	item->setIcon(QIcon(pixmap));
 	//item->icon().addPixmap(QPixmap(":/icons/shader_overlay.png"));
 
+}
+
+void ListWidget::highlightNodeForInterval(int seconds, QListWidgetItem * item)
+{
+	QVariantAnimation *anim = new QVariantAnimation;
+	anim->setStartValue(QColor(230, 130, 30, 255));
+	anim->setEndValue(QColor(230, 130, 30, 0));
+	anim->setDuration(seconds*1000);
+	anim->start();
+	QPixmap pixmap = item->icon().pixmap(35, 35);
+	auto pix = pixmap.scaled({ 90,90 }, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+
+	connect(anim, &QVariantAnimation::valueChanged, [=](const QVariant &value) {
+		QPixmap bg(pix);
+		bg.fill(value.value<QColor>());
+		QPainter painter(&bg);
+		painter.drawPixmap(QRect(0, 0, 90, 90), pix);
+		item->setIcon(bg);
+	});
 }
 
 void ListWidget::displayAllContents()

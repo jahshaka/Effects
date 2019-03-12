@@ -25,6 +25,7 @@ public:
 	int numberOfItemPerRow;
 	void addToListWidget(QListWidgetItem *item);
 	static void updateThumbnailImage(QByteArray arr, QListWidgetItem *item);
+	static void highlightNodeForInterval(int seconds, QListWidgetItem* item);
 private slots:
     void customContextMenu(QPoint pos);
 	
