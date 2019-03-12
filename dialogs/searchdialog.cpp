@@ -21,6 +21,7 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 	setWindowFlag(Qt::SubWindow);
 	setAttribute(Qt::WA_QuitOnClose, false);
 	
+
 	auto widgetHolder = new QWidget;
 	auto widgetLayout = new QVBoxLayout;
 	widgetHolder->setLayout(widgetLayout);
@@ -159,6 +160,8 @@ SearchDialog::SearchDialog(NodeGraph *graph, GraphNodeScene* scene, QPoint point
 		this->point = scenePoint;
 	}else 	this->point = point;
 
+	installEventFilter(this);
+
 }
 
 
@@ -254,5 +257,24 @@ void SearchDialog::showEvent(QShowEvent * event)
 	QDialog::showEvent(event);
 	this->setGeometry(point.x(), point.y(), geometry().width(), geometry().height());
 	searchBar->setFocus();
+}
+
+bool SearchDialog::eventFilter(QObject *watched, QEvent *e)
+{
+	if (watched == this) {
+		auto keyEvent = static_cast<QKeyEvent*>(e);
+
+		if (keyEvent->key() == Qt::Key_Up || keyEvent->key() == Qt::Key_Down) {
+			tree->grabKeyboard();
+		}
+		else {
+			searchBar->grabKeyboard();
+		}
+	}
+
+
+
+
+	return false;
 }
 

@@ -30,6 +30,7 @@ public:
 protected:
 	void leaveEvent(QEvent *event) override;
 	void showEvent(QShowEvent *event) override;
+	bool eventFilter(QObject *, QEvent *) override;
 
 };
 
