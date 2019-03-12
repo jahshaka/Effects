@@ -224,6 +224,10 @@ void CreateNewDialog::createViewWithOptions()
 
 	});
 
+	connect(nameEdit, &QLineEdit::returnPressed, [=]() {
+		confirm->click();
+	});
+
 	holder->setStyleSheet(
 		"QWidget{background:rgba(32,32,32,1); color:rgba(240,240,240,1); border: 0px solid rgba(0,0,0,0);}"
 		"QMenu{	background: rgba(26,26,26,.9); color: rgba(250,250, 250,.9); border-radius : 2px; }"
