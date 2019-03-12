@@ -273,7 +273,9 @@ bool SearchDialog::eventFilter(QObject *watched, QEvent *e)
 		}
 		else {
 			searchBar->grabKeyboard();
+			searchBar->releaseKeyboard();
 		}
+		return QDialog::eventFilter(watched, e);
 	}
 	return false;
 }
