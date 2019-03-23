@@ -84,7 +84,8 @@ void ShaderAssetWidget::updateAssetView(const QString & path)
 {
 	assetViewWidget->clear();
 
-	for (const auto &asset : db->fetchChildAssets(path, static_cast<int>(ModelTypes::Shader))) addItem(asset);
+	for (const auto &asset : db->fetchChildAssets(path, static_cast<int>(ModelTypes::Shader))) 
+		addItem(asset);
 
 	setWidgetToBeShown();
 }
@@ -546,8 +547,9 @@ QString ShaderAssetWidget::createShader(QListWidgetItem * item)
 	db->createAssetEntry(targetGuid,
 		sourceRecord.name,
 		static_cast<int>(ModelTypes::Shader),
-		assetItemShader.selectedGuid);
+		Globals::project->getProjectGuid());
 
+	
 	db->updateAssetAsset(targetGuid, updatedDoc.toBinaryData());
 	
 	db->updateAssetThumbnail(targetGuid, db->fetchAsset(item->data(MODEL_GUID_ROLE).toString()).thumbnail);
