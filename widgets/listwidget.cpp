@@ -10,10 +10,10 @@
 #include <QJsonObject>
 #include <QLayout>
 #include <QMenu>
-#include <QVariantAnimation>
 #include "src/core/project.h"
 #include "../../uimanager.h"
 
+QVariantAnimation* ListWidget::anim = Q_NULLPTR;
 
 ListWidget::ListWidget() : QListWidget()
 {
@@ -91,7 +91,7 @@ void ListWidget::updateThumbnailImage(QByteArray arr, QListWidgetItem *item)
 
 void ListWidget::highlightNodeForInterval(int seconds, QListWidgetItem * item)
 {
-	QVariantAnimation *anim = new QVariantAnimation;
+	anim = new QVariantAnimation;
 	anim->setStartValue(QColor(50, 148, 213, 255));
 	anim->setEndValue(QColor(50, 148, 213, 0));
 	anim->setDuration(seconds*1000);
@@ -106,6 +106,13 @@ void ListWidget::highlightNodeForInterval(int seconds, QListWidgetItem * item)
 		painter.drawPixmap(QRect(0, 0, 90, 90), pix);
 		item->setIcon(bg);
 	});
+}
+
+void ListWidget::stopHighlightedNode()
+{
+	if (!anim) return;
+
+	if (anim->state() == QVariantAnimation::Running)  anim->stop();
 }
 
 void ListWidget::displayAllContents()
