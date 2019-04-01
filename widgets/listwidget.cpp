@@ -96,14 +96,14 @@ void ListWidget::highlightNodeForInterval(int seconds, QListWidgetItem * item)
 	anim->setEndValue(QColor(50, 148, 213, 0));
 	anim->setDuration(seconds*1000);
 	anim->start();
-	QPixmap pixmap = item->icon().pixmap(35, 35);
-	auto pix = pixmap.scaled({ 90,90 }, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+	QPixmap pixmap = item->icon().pixmap(90, 90);
 
 	connect(anim, &QVariantAnimation::valueChanged, [=](const QVariant &value) {
-		QPixmap bg(pix);
+		QPixmap bg(pixmap);
 		bg.fill(value.value<QColor>());
 		QPainter painter(&bg);
-		painter.drawPixmap(QRect(0, 0, 90, 90), pix);
+		painter.setRenderHint(QPainter::HighQualityAntialiasing);
+		painter.drawPixmap(QRect(0, 0, 90, 90), pixmap);
 		item->setIcon(bg);
 	});
 }

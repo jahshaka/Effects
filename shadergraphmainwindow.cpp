@@ -185,6 +185,8 @@ void MainWindow::saveShader()
 #endif
 
 	ListWidget::updateThumbnailImage(arr, currentProjectShader);
+	tabWidget->setCurrentIndex(1);
+	ListWidget::highlightNodeForInterval(2, selectCorrectItemFromDrop(currentShaderInformation.GUID));
 }
 
 void MainWindow::saveDefaultShader()
