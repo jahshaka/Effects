@@ -54,6 +54,7 @@
 #include "../core/guidmanager.h"
 #include "../../irisgl/src/core/irisutils.h"
 #include "../io/assetmanager.h"
+#include "../dialogs/progressdialog.h"
 #else
 #include <QUuid>
 #endif
@@ -292,13 +293,19 @@ NodeGraph* MainWindow::importGraphFromFilePath(QString filePath, bool assign)
 
 void MainWindow::loadGraph(QString guid)
 {
+	auto progressDialog = new ProgressDialog;
+	progressDialog->setRange(0, 10);
+	progressDialog->setValueAndText(1, "Clearing propertyList");
     propertyListWidget->clearPropertyList();
 	NodeGraph *graph;
 
 #if(EFFECT_BUILD_AS_LIB)
 	QJsonObject obj = QJsonDocument::fromBinaryData(fetchAsset(guid)).object();
+	progressDialog->setValueAndText(2, "Fetch graph");
 
 	graph = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
+	progressDialog->setValueAndText(6, "Deserialize Graph");
+
 	this->setNodeGraph(graph);
 #else
 	auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/");
@@ -323,12 +330,14 @@ void MainWindow::loadGraph(QString guid)
 	this->restoreGraphPositions(obj["graph"].toObject());
 #endif
 
-	
+	progressDialog->setValueAndText(8, "Tidying up");
+
 	//regenerateShader();
 	currentProjectShader = selectCorrectItemFromDrop(guid);
 	currentShaderInformation.GUID = currentProjectShader->data(MODEL_GUID_ROLE).toString();
 	oldName = currentShaderInformation.name = currentProjectShader->data(Qt::DisplayRole).toString(); 
 	restoreGraphPositions(obj["shadergraph"].toObject());
+	progressDialog->close();
 }
 
 void MainWindow::exportGraph()

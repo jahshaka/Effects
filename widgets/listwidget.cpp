@@ -111,7 +111,6 @@ void ListWidget::highlightNodeForInterval(int seconds, QListWidgetItem * item)
 void ListWidget::stopHighlightedNode()
 {
 	if (!anim) return;
-
 	if (anim->state() == QVariantAnimation::Running)  anim->stop();
 }
 
