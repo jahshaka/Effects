@@ -294,9 +294,12 @@ NodeGraph* MainWindow::importGraphFromFilePath(QString filePath, bool assign)
 void MainWindow::loadGraph(QString guid)
 {
 	auto progressDialog = new ProgressDialog;
+	
 	progressDialog->setRange(0, 10);
 	progressDialog->setValueAndText(1, "Clearing propertyList");
+	progressDialog->show();
     propertyListWidget->clearPropertyList();
+	
 	NodeGraph *graph;
 
 #if(EFFECT_BUILD_AS_LIB)
