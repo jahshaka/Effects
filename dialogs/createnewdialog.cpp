@@ -14,9 +14,6 @@ CreateNewDialog::CreateNewDialog(bool maximized) : QDialog()
 
 	if (maximized) createViewWithOptions();
 	else createViewWithoutOptions();
-
-	
-
     configureStylesheet();
 }
 
@@ -303,6 +300,10 @@ void CreateNewDialog::createViewWithoutOptions()
 		name = text;
 
 		currentInfoSelected.title = text;
+	});
+
+	connect(nameEdit, &QLineEdit::returnPressed, [=]() {
+		confirm->click();
 	});
 
 }

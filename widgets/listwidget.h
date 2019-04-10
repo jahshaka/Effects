@@ -1,6 +1,7 @@
 #pragma once
 #include <QListWidget>
 #include <QSize>
+#include <QVariantAnimation>
 
 struct shaderInfo {
 	QString GUID;
@@ -26,9 +27,11 @@ public:
 	void addToListWidget(QListWidgetItem *item);
 	static void updateThumbnailImage(QByteArray arr, QListWidgetItem *item);
 	static void highlightNodeForInterval(int seconds, QListWidgetItem* item);
+	static void stopHighlightedNode();
+	static QVariantAnimation* anim;
+
 private slots:
     void customContextMenu(QPoint pos);
-	
 
 protected:
     QMimeData * mimeData(const QList<QListWidgetItem *> items) const override;
