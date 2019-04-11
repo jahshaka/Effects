@@ -62,6 +62,14 @@
 #include "core/undoredo.h"
 #include "core/texturemanager.h"
 #include <QDebug>
+#include "../io/scenewriter.h"
+#include "../io/scenereader.h"
+#include "../io/materialreader.hpp"
+#include "irisgl/src/materials/custommaterial.h"
+
+
+
+
 namespace shadergraph
 {
 
@@ -1210,6 +1218,134 @@ QListWidgetItem * MainWindow::selectCorrectItemFromDrop(QString guid)
     return nullptr;
 }
 
+void MainWindow::generateMaterialFromEffect(QString guid)
+{
+	const QString assetGuid = GUIDManager::generateGUID();
+	QJsonObject obj = QJsonDocument::fromBinaryData(fetchAsset(guid)).object();
+	auto graphObj = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
+	auto name = dataBase->fetchAsset(guid).name;
+
+	QJsonObject materialDef;
+
+	materialDef["name"] = name;
+	materialDef["version"] = 2.0;
+	materialDef["shaderGuid"] = guid;
+
+	QJsonObject valuesObj;
+
+	for (auto prop : graphObj->properties) {
+		if (prop->type == PropertyType::Bool) {
+			valuesObj[prop->name] = prop->getValue().toBool();
+		}
+
+		if (prop->type == PropertyType::Float) {
+			valuesObj[prop->name] = prop->getValue().toFloat();
+		}
+
+		if (prop->type == PropertyType::Color) {
+			valuesObj[prop->name] = prop->getValue().value<QColor>().name();
+		}
+
+		if (prop->type == PropertyType::Texture) {
+			//matObj[prop->name] = relative ? getRelativePath(prop->getValue().toString()) : QFileInfo(prop->getValue().toString()).fileName();
+			//auto id = dataBase->fetchAssetGUIDByName(QFileInfo(prop->getValue().toString()).fileName());
+			auto id = prop->getValue().toString();
+			valuesObj[prop->name] = id;
+		}
+
+		if (prop->type == PropertyType::Vec2) {
+			valuesObj[prop->name] = SceneWriter::jsonVector2(prop->getValue().value<QVector2D>());
+		}
+
+		if (prop->type == PropertyType::Vec3) {
+			valuesObj[prop->name] = SceneWriter::jsonVector3(prop->getValue().value<QVector3D>());
+		}
+
+		if (prop->type == PropertyType::Vec4) {
+			valuesObj[prop->name] = SceneWriter::jsonVector4(prop->getValue().value<QVector4D>());
+		}
+	}
+
+	materialDef["values"] = valuesObj;
+
+
+	auto materialDefOriginal = materialDef;
+
+
+	// replace material guid with texture name
+	auto materialValues = materialDef["values"].toObject();
+	for (const auto& key : materialValues.keys()) {
+		if (materialValues[key].isString())
+		{
+			auto texName = dataBase->fetchAsset(materialValues[key].toString()).name;
+			if (texName.isEmpty())
+				continue;
+			materialValues[key] = texName;
+		}
+	}
+	materialDef["values"] = materialValues;
+
+	QJsonDocument saveDoc;
+	saveDoc.setObject(materialDefOriginal);
+
+	QString fileName = IrisUtils::join(
+		Globals::project->getProjectFolder(),
+		IrisUtils::buildFileName(name, "material")
+	);
+
+	QFile file(fileName);
+	file.open(QFile::WriteOnly);
+	file.write(saveDoc.toJson());
+	file.close();
+
+	// WRITE TO DATABASE
+	QByteArray binaryMat = QJsonDocument(materialDefOriginal).toBinaryData();
+	dataBase->createAssetEntry(
+		assetGuid,
+		QFileInfo(fileName).fileName(),
+		static_cast<int>(ModelTypes::Material),
+		Globals::project->getProjectGuid(),
+		QString(),
+		QString(),
+		QByteArray(),
+		QByteArray(),
+		QByteArray(),
+		binaryMat
+	);
+
+	MaterialReader reader;
+	auto material = reader.parseMaterial(materialDefOriginal, dataBase);
+
+	// Actually create the material and add shader as it's dependency
+	dataBase->createDependency(
+		static_cast<int>(ModelTypes::Material),
+		static_cast<int>(ModelTypes::Shader),
+		assetGuid, guid,
+		Globals::project->getProjectGuid());
+
+	// Add all its textures as dependencies too
+	auto values = materialDefOriginal["values"].toObject();
+	for (const auto& prop : graphObj->properties) {
+		if (prop->type == PropertyType::Texture) {
+			if (!values.value(prop->name).toString().isEmpty()) {
+				dataBase->createDependency(
+					static_cast<int>(ModelTypes::Material),
+					static_cast<int>(ModelTypes::Texture),
+					assetGuid, values.value(prop->name).toString(),
+					Globals::project->getProjectGuid()
+				);
+			}
+		}
+	}
+ 
+	/*auto assetMat = new AssetMaterial;
+	assetMat->assetGuid = assetGuid;
+	assetMat->setValue(QVariant::fromValue(material));
+	AssetManager::addAsset(assetMat);*/
+
+	
+}
+
 void MainWindow::configureConnections()
 {
 #if(EFFECT_BUILD_AS_LIB)
@@ -1280,6 +1416,7 @@ void MainWindow::configureConnections()
 		auto guid = assetWidget->createShader(item);
 		tabWidget->setCurrentIndex(2);
 		ListWidget::highlightNodeForInterval(2, selectCorrectItemFromDrop(guid));
+		generateMaterialFromEffect(guid);
 	});
 
 

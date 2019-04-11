@@ -109,6 +109,8 @@ private:
 	void regenerateShader();
 	QListWidgetItem* selectCorrectItemFromDrop(QString guid);
 	QList<QString> loadedShadersGUID;
+
+	void generateMaterialFromEffect(QString guid);
 private:
     void configureConnections();
     void editingFinishedOnListItem();
