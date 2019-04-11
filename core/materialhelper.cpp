@@ -87,6 +87,7 @@ QJsonObject MaterialHelper::serialize(NodeGraph* graph)
 	matObj["version"] = 2.0;
 	matObj["type"] = "effect";
 	matObj["shaderGuid"] = "";
+	matObj["materialGuid"] = graph->materialGuid;
 
 
 	// GENERATE SHADERS
@@ -124,7 +125,7 @@ NodeGraph* MaterialHelper::extractNodeGraphFromMaterialDefinition(QJsonObject ma
 {
 	auto graphObj = matObj["shadergraph"].toObject();
 	auto graph = NodeGraph::deserialize(graphObj, new LibraryV1());
-
+	graph->materialGuid = matObj["materialGuid"].toString();
 	return graph;
 }
 

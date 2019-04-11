@@ -59,6 +59,7 @@ public:
 	NodeModel* masterNode = nullptr;
 	QVector<Property*> properties;
 	MaterialSettings settings;
+	QString materialGuid = QString::null;
 
 	void addProperty(Property* prop);
 	void removeProperty(Property* prop);

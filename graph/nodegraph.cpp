@@ -188,6 +188,7 @@ QJsonObject NodeGraph::serialize()
 		propJson.append(propObj);
 	}
 	graph["properties"] = propJson;
+	graph["materialGuid"] = materialGuid;
 
 	return graph;
 }
