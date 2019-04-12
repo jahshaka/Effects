@@ -195,9 +195,13 @@ void MainWindow::saveShader()
 	}
 #endif
 
-	ListWidget::updateThumbnailImage(arr, currentProjectShader);
-	tabWidget->setCurrentIndex(1);
-	ListWidget::highlightNodeForInterval(2, selectCorrectItemFromDrop(currentShaderInformation.GUID));
+	int currentTab = selectCorrectTabForItem(currentShaderInformation.GUID);
+	auto item = selectCorrectItemFromDrop(currentShaderInformation.GUID);
+	if (item) {
+		ListWidget::updateThumbnailImage(arr, item);
+		tabWidget->setCurrentIndex(currentTab);
+		ListWidget::highlightNodeForInterval(2, item);
+	}
 }
 
 void MainWindow::saveDefaultShader()
@@ -1220,6 +1224,22 @@ QListWidgetItem * MainWindow::selectCorrectItemFromDrop(QString guid)
     return nullptr;
 }
 
+int MainWindow::selectCorrectTabForItem(QString guid)
+{
+	for (int i = 0; i < effects->count(); i++)
+	{
+		if (guid == effects->item(i)->data(MODEL_GUID_ROLE))	return 1;
+	}
+
+#if(EFFECT_BUILD_AS_LIB)
+	for (int i = 0; i < assetWidget->assetViewWidget->count(); i++)
+	{
+		if (guid == assetWidget->assetViewWidget->item(i)->data(MODEL_GUID_ROLE))	return 2;
+	}
+#endif
+	return 0;
+}
+
 void MainWindow::configureConnections()
 {
 #if(EFFECT_BUILD_AS_LIB)
@@ -1290,6 +1310,7 @@ void MainWindow::configureConnections()
 		auto guid = assetWidget->createShader(item);
 		tabWidget->setCurrentIndex(2);
 		ListWidget::highlightNodeForInterval(2, selectCorrectItemFromDrop(guid));
+		loadGraph(guid);
 	});
 
 

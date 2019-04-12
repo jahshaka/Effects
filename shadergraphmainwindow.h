@@ -108,6 +108,7 @@ private:
     GraphNodeScene* createNewScene();
 	void regenerateShader();
 	QListWidgetItem* selectCorrectItemFromDrop(QString guid);
+	int selectCorrectTabForItem(QString guid);
 	QList<QString> loadedShadersGUID;
 private:
     void configureConnections();
