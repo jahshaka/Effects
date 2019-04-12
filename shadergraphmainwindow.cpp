@@ -1315,6 +1315,16 @@ void MainWindow::generateMaterialFromShader(QString guid)
 	assetMat->setValue(QVariant::fromValue(material));
 	AssetManager::addAsset(assetMat);
 
+
+	// write material guid to graph and save graph
+	QJsonObject obj = QJsonDocument::fromBinaryData(fetchAsset(guid)).object();
+	auto graphObj = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
+	graphObj->materialGuid = assetGuid;
+
+	QJsonDocument doc;
+	auto graphObject = MaterialHelper::serialize(graphObj);
+	doc.setObject(graphObject);
+	dataBase->updateAssetAsset(guid, doc.toBinaryData());
 }
 
 void MainWindow::writeMaterial(QJsonObject& matObj, QString guid)

@@ -198,7 +198,7 @@ QJsonObject NodeGraph::serialize()
 		propJson.append(propObj);
 	}
 	graph["properties"] = propJson;
-
+	graph["materialGuid"] = materialGuid;
 	return graph;
 }
 
@@ -267,6 +267,7 @@ NodeGraph* NodeGraph::deserialize(QJsonObject graphObj, NodeLibrary* library)
 	
 		// deserialize material settings
 	graph->settings = graph->deserializeMaterialSettings(graphObj["settings"].toObject());
+	graph->materialGuid = graphObj["materialGuid"].toString();
 	
 	return graph;
 }
