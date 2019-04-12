@@ -84,7 +84,7 @@ void ListWidget::updateThumbnailImage(QByteArray arr, QListWidgetItem *item)
 	QPainter painter(&pixmap);
 	if(true) painter.drawPixmap(QRect(pixmap.width() - size, 0, size, size), pixmap_overlay);*/
 
-	item->setIcon(QIcon(pixmap));
+	if(item) item->setIcon(QIcon(pixmap));
 	//item->icon().addPixmap(QPixmap(":/icons/shader_overlay.png"));
 
 }
