@@ -69,6 +69,9 @@ For more information see the LICENSE file
 #include <QUuid>
 #endif
 
+#include "io/materialreader.hpp"
+#include "io/scenewriter.h"
+
 #include "core/undoredo.h"
 #include "core/texturemanager.h"
 #include <QDebug>
@@ -1240,6 +1243,125 @@ int MainWindow::selectCorrectTabForItem(QString guid)
 	return 0;
 }
 
+void MainWindow::generateMaterialFromShader(QString guid)
+{
+	QJsonObject matDef; 
+	writeMaterial(matDef, guid);
+
+	QJsonDocument saveDoc;
+	//saveDoc.setObject(materialDef);
+	saveDoc.setObject(matDef);
+
+	QString fileName = IrisUtils::join(
+		Globals::project->getProjectFolder(),
+		IrisUtils::buildFileName(matDef["name"].toString(), "material")
+	);
+
+	QFile file(fileName);
+	file.open(QFile::WriteOnly);
+	file.write(saveDoc.toJson());
+	file.close();
+
+	// WRITE TO DATABASE
+	const QString assetGuid = GUIDManager::generateGUID();
+	QByteArray binaryMat = QJsonDocument(matDef).toBinaryData();
+	dataBase->createAssetEntry(
+		assetGuid,
+		QFileInfo(fileName).fileName(),
+		static_cast<int>(ModelTypes::Material),
+		Globals::project->getProjectGuid(),
+		QString(),
+		QString(),
+		QByteArray(),
+		QByteArray(),
+		QByteArray(),
+		binaryMat
+	);
+
+	/*ThumbnailGenerator::getSingleton()->requestThumbnail(
+		ThumbnailRequestType::Material, fileName, assetGuid
+	);*/
+
+
+
+	MaterialReader reader;
+	auto material = reader.parseMaterial(matDef, dataBase);
+
+	// Actually create the material and add shader as it's dependency
+	dataBase->createDependency(
+		static_cast<int>(ModelTypes::Material),
+		static_cast<int>(ModelTypes::Shader),
+		assetGuid, material->getGuid(),
+		Globals::project->getProjectGuid());
+
+	// Add all its textures as dependencies too
+	auto values = matDef["values"].toObject();
+	qDebug() << values << "   " << material->properties;
+	for (const auto& prop : material->properties) {
+		if (prop->type == iris::PropertyType::Texture) {
+			if (!values.value(prop->name).toString().isEmpty()) {
+				dataBase->createDependency(
+					static_cast<int>(ModelTypes::Material),
+					static_cast<int>(ModelTypes::Texture),
+					assetGuid, values.value(prop->name).toString(),
+					Globals::project->getProjectGuid()
+				);
+			}
+		}
+	}
+
+	auto assetMat = new AssetMaterial;
+	assetMat->assetGuid = assetGuid;
+	assetMat->setValue(QVariant::fromValue(material));
+	AssetManager::addAsset(assetMat);
+
+}
+
+void MainWindow::writeMaterial(QJsonObject& matObj, QString guid)
+{
+	auto name = dataBase->fetchAsset(guid).name;
+	QJsonObject obj = QJsonDocument::fromBinaryData(fetchAsset(guid)).object();
+	auto graphObj = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
+
+	matObj["name"] = name;
+	matObj["version"] = 2.0;
+	matObj["shaderGuid"] = guid;
+
+	QJsonObject valuesObj;
+	for (auto prop : graphObj->properties) {
+		if (prop->type == PropertyType::Bool) {
+			valuesObj[prop->name] = prop->getValue().toBool();
+		}
+
+		if (prop->type == PropertyType::Float) {
+			valuesObj[prop->name] = prop->getValue().toFloat();
+		}
+
+		if (prop->type == PropertyType::Color) {
+			valuesObj[prop->name] = prop->getValue().value<QColor>().name();
+		}
+
+		if (prop->type == PropertyType::Texture) {
+			auto id = prop->getValue().toString();
+			valuesObj[prop->name] = id;
+		}
+
+		if (prop->type == PropertyType::Vec2) {
+			valuesObj[prop->name] = SceneWriter::jsonVector2(prop->getValue().value<QVector2D>());
+		}
+
+		if (prop->type == PropertyType::Vec3) {
+			valuesObj[prop->name] = SceneWriter::jsonVector3(prop->getValue().value<QVector3D>());
+		}
+
+		if (prop->type == PropertyType::Vec4) {
+			valuesObj[prop->name] = SceneWriter::jsonVector4(prop->getValue().value<QVector4D>());
+		}
+	}
+
+	matObj["values"] = valuesObj;
+}
+
 void MainWindow::configureConnections()
 {
 #if(EFFECT_BUILD_AS_LIB)
@@ -1311,6 +1433,7 @@ void MainWindow::configureConnections()
 		tabWidget->setCurrentIndex(2);
 		ListWidget::highlightNodeForInterval(2, selectCorrectItemFromDrop(guid));
 		loadGraph(guid);
+		generateMaterialFromShader(guid);
 	});
 
 

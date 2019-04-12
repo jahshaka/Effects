@@ -110,6 +110,9 @@ private:
 	QListWidgetItem* selectCorrectItemFromDrop(QString guid);
 	int selectCorrectTabForItem(QString guid);
 	QList<QString> loadedShadersGUID;
+
+	void generateMaterialFromShader(QString guid);
+	void writeMaterial(QJsonObject& matObj, QString guid);
 private:
     void configureConnections();
     void editingFinishedOnListItem();
