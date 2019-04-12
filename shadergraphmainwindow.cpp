@@ -204,6 +204,8 @@ void MainWindow::saveShader()
 		ListWidget::updateThumbnailImage(arr, item);
 		tabWidget->setCurrentIndex(currentTab);
 		ListWidget::highlightNodeForInterval(2, item);
+
+		if (currentTab == 2) updateMaterialFromShader(currentShaderInformation.GUID);
 	}
 }
 
@@ -1248,6 +1250,9 @@ void MainWindow::generateMaterialFromShader(QString guid)
 	QJsonObject matDef; 
 	writeMaterial(matDef, guid);
 
+	QJsonObject obj = QJsonDocument::fromBinaryData(fetchAsset(guid)).object();
+	auto graphObj = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
+
 	QJsonDocument saveDoc;
 	//saveDoc.setObject(materialDef);
 	saveDoc.setObject(matDef);
@@ -1287,18 +1292,20 @@ void MainWindow::generateMaterialFromShader(QString guid)
 	MaterialReader reader;
 	auto material = reader.parseMaterial(matDef, dataBase);
 
+	
+	
+
 	// Actually create the material and add shader as it's dependency
 	dataBase->createDependency(
 		static_cast<int>(ModelTypes::Material),
 		static_cast<int>(ModelTypes::Shader),
-		assetGuid, material->getGuid(),
+		assetGuid, guid,
 		Globals::project->getProjectGuid());
 
 	// Add all its textures as dependencies too
 	auto values = matDef["values"].toObject();
-	qDebug() << values << "   " << material->properties;
-	for (const auto& prop : material->properties) {
-		if (prop->type == iris::PropertyType::Texture) {
+	for (const auto& prop : graphObj->properties) {
+		if (prop->type == PropertyType::Texture) {
 			if (!values.value(prop->name).toString().isEmpty()) {
 				dataBase->createDependency(
 					static_cast<int>(ModelTypes::Material),
@@ -1317,8 +1324,7 @@ void MainWindow::generateMaterialFromShader(QString guid)
 
 
 	// write material guid to graph and save graph
-	QJsonObject obj = QJsonDocument::fromBinaryData(fetchAsset(guid)).object();
-	auto graphObj = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
+	
 	graphObj->materialGuid = assetGuid;
 
 	QJsonDocument doc;
@@ -1327,11 +1333,51 @@ void MainWindow::generateMaterialFromShader(QString guid)
 	dataBase->updateAssetAsset(guid, doc.toBinaryData());
 }
 
-void MainWindow::writeMaterial(QJsonObject& matObj, QString guid)
+void MainWindow::updateMaterialFromShader(QString guid)
+{
+	bool tryas = true;
+	QJsonObject obj = QJsonDocument::fromBinaryData(fetchAsset(guid)).object();
+	auto graphObj = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
+	auto materialDef = QJsonDocument::fromBinaryData(dataBase->fetchAssetData(graphObj->materialGuid)).object();
+
+	if (tryas) {
+		
+		//delete dependencies
+		auto values = materialDef["values"].toObject();
+		for (const auto& prop : graphObj->properties) {
+			if (prop->type == PropertyType::Texture) {
+				if (!values.value(prop->name).toString().isEmpty()) {
+					if (!dataBase->checkIfDependencyExists(graphObj->materialGuid, values.value(prop->name).toString()))
+					{
+						dataBase->deleteDependency(graphObj->materialGuid, values.value(prop->name).toString());
+					}
+				}
+			}
+		}
+
+		if (!dataBase->checkIfDependencyExists(graphObj->materialGuid, guid)) {
+			dataBase->deleteDependency(graphObj->materialGuid, guid);
+		}
+		 //delete asset
+		dataBase->deleteAsset(graphObj->materialGuid);
+		generateMaterialFromShader(guid);
+
+	}
+	else {
+
+	}
+}
+
+iris::CustomMaterial* MainWindow::writeMaterial(QJsonObject& matObj, QString guid)
 {
 	auto name = dataBase->fetchAsset(guid).name;
 	QJsonObject obj = QJsonDocument::fromBinaryData(fetchAsset(guid)).object();
 	auto graphObj = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
+
+	auto mat = new iris::CustomMaterial();
+	mat->setName(name);
+	mat->setVersion(2);
+	
 
 	matObj["name"] = name;
 	matObj["version"] = 2.0;
@@ -1341,35 +1387,43 @@ void MainWindow::writeMaterial(QJsonObject& matObj, QString guid)
 	for (auto prop : graphObj->properties) {
 		if (prop->type == PropertyType::Bool) {
 			valuesObj[prop->name] = prop->getValue().toBool();
+			mat->properties.append(dynamic_cast<iris::Property*>(prop));
 		}
 
 		if (prop->type == PropertyType::Float) {
 			valuesObj[prop->name] = prop->getValue().toFloat();
+			mat->properties.append(dynamic_cast<iris::Property*>(prop));
 		}
 
 		if (prop->type == PropertyType::Color) {
 			valuesObj[prop->name] = prop->getValue().value<QColor>().name();
+			mat->properties.append(dynamic_cast<iris::Property*>(prop));
 		}
 
 		if (prop->type == PropertyType::Texture) {
 			auto id = prop->getValue().toString();
 			valuesObj[prop->name] = id;
+			mat->properties.append(dynamic_cast<iris::Property*>(prop));
 		}
 
 		if (prop->type == PropertyType::Vec2) {
 			valuesObj[prop->name] = SceneWriter::jsonVector2(prop->getValue().value<QVector2D>());
+			mat->properties.append(dynamic_cast<iris::Property*>(prop));
 		}
 
 		if (prop->type == PropertyType::Vec3) {
 			valuesObj[prop->name] = SceneWriter::jsonVector3(prop->getValue().value<QVector3D>());
+			mat->properties.append(dynamic_cast<iris::Property*>(prop));
 		}
 
 		if (prop->type == PropertyType::Vec4) {
 			valuesObj[prop->name] = SceneWriter::jsonVector4(prop->getValue().value<QVector4D>());
+			mat->properties.append(dynamic_cast<iris::Property*>(prop));
 		}
 	}
 
 	matObj["values"] = valuesObj;
+	return mat;
 }
 
 void MainWindow::configureConnections()
