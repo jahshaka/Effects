@@ -1335,6 +1335,9 @@ void MainWindow::generateMaterialFromShader(QString guid)
 
 void MainWindow::updateMaterialFromShader(QString guid)
 {
+	// This ensures that a context is set
+	this->sceneWidget->makeCurrent();
+
 	bool tryas = true;
 	QJsonObject obj = QJsonDocument::fromBinaryData(fetchAsset(guid)).object();
 	auto graphObj = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
@@ -1366,6 +1369,9 @@ void MainWindow::updateMaterialFromShader(QString guid)
 	else {
 
 	}
+
+	// This ensures that a context is set
+	this->sceneWidget->doneCurrent();
 }
 
 iris::CustomMaterial* MainWindow::writeMaterial(QJsonObject& matObj, QString guid)
