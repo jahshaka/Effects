@@ -113,7 +113,8 @@ private:
 
 	void generateMaterialFromShader(QString guid);
 	void updateMaterialFromShader(QString guid);
-	iris::CustomMaterial* writeMaterial(QJsonObject& matObj, QString guid);
+	void writeMaterial(QJsonObject& matObj, QString guid);
+	QJsonObject writeMaterialValuesFromShader(QString guid);
 private:
     void configureConnections();
     void editingFinishedOnListItem();
