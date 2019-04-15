@@ -1245,6 +1245,13 @@ int MainWindow::selectCorrectTabForItem(QString guid)
 	return 0;
 }
 
+void MainWindow::updateMaterialThumbnail(QString shaderGuid, QString materialGuid)
+{
+	auto assetThumbnails = dataBase->fetchAssetThumbnails({ shaderGuid });
+	auto assetThumbnail = assetThumbnails[0].thumbnail;
+	dataBase->updateAssetThumbnail(materialGuid, assetThumbnail);
+}
+
 void MainWindow::generateMaterialFromShader(QString guid)
 {
 	QJsonObject matDef; 
@@ -1283,9 +1290,7 @@ void MainWindow::generateMaterialFromShader(QString guid)
 		binaryMat
 	);
 
-	/*ThumbnailGenerator::getSingleton()->requestThumbnail(
-		ThumbnailRequestType::Material, fileName, assetGuid
-	);*/
+	updateMaterialThumbnail(guid, assetGuid);
 
 	MaterialReader reader;
 	auto material = reader.parseMaterial(matDef, dataBase);
@@ -1367,6 +1372,8 @@ void MainWindow::updateMaterialFromShader(QString guid)
 			}
 		}
 	}
+	updateMaterialThumbnail(guid, graphObj->materialGuid);
+
 
 	auto assetMat = new AssetMaterial;
 	assetMat->assetGuid = graphObj->materialGuid;

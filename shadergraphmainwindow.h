@@ -111,6 +111,7 @@ private:
 	int selectCorrectTabForItem(QString guid);
 	QList<QString> loadedShadersGUID;
 
+	void updateMaterialThumbnail(QString shaderGuid, QString materialGuid);
 	void generateMaterialFromShader(QString guid);
 	void updateMaterialFromShader(QString guid);
 	void writeMaterial(QJsonObject& matObj, QString guid);
