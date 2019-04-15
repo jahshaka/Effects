@@ -78,6 +78,12 @@ For more information see the LICENSE file
 namespace shadergraph
 {
 
+	enum class ShaderWorkspace {
+		Presets = 0,
+		Myfx = 1,
+		Projects = 2
+	};
+
 MainWindow::MainWindow( QWidget *parent, Database *database) :
     QMainWindow(parent)
 {
@@ -205,7 +211,7 @@ void MainWindow::saveShader()
 		tabWidget->setCurrentIndex(currentTab);
 		ListWidget::highlightNodeForInterval(2, item);
 
-		if (currentTab == 2) updateMaterialFromShader(currentShaderInformation.GUID);
+		if (currentTab == (int)ShaderWorkspace::Projects) updateMaterialFromShader(currentShaderInformation.GUID);
 	}
 }
 
@@ -1233,13 +1239,13 @@ int MainWindow::selectCorrectTabForItem(QString guid)
 {
 	for (int i = 0; i < effects->count(); i++)
 	{
-		if (guid == effects->item(i)->data(MODEL_GUID_ROLE))	return 1;
+		if (guid == effects->item(i)->data(MODEL_GUID_ROLE))	return (int) ShaderWorkspace::Myfx;
 	}
 
 #if(EFFECT_BUILD_AS_LIB)
 	for (int i = 0; i < assetWidget->assetViewWidget->count(); i++)
 	{
-		if (guid == assetWidget->assetViewWidget->item(i)->data(MODEL_GUID_ROLE))	return 2;
+		if (guid == assetWidget->assetViewWidget->item(i)->data(MODEL_GUID_ROLE))	return (int)ShaderWorkspace::Projects;
 	}
 #endif
 	return 0;
@@ -1429,7 +1435,6 @@ QJsonObject MainWindow::writeMaterialValuesFromShader(QString guid)
 		}
 	}
 
-	qDebug() << valuesObj;
 	return valuesObj;
 }
 
@@ -1501,7 +1506,7 @@ void MainWindow::configureConnections()
 	});
 	connect(effects, &ListWidget::addToProject, [=](QListWidgetItem *item) {
 		auto guid = assetWidget->createShader(item);
-		tabWidget->setCurrentIndex(2);
+		tabWidget->setCurrentIndex((int)ShaderWorkspace::Projects);
 		ListWidget::highlightNodeForInterval(2, selectCorrectItemFromDrop(guid));
 		loadGraph(guid);
 		generateMaterialFromShader(guid);
