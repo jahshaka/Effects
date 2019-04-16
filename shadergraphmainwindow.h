@@ -108,7 +108,14 @@ private:
     GraphNodeScene* createNewScene();
 	void regenerateShader();
 	QListWidgetItem* selectCorrectItemFromDrop(QString guid);
+	int selectCorrectTabForItem(QString guid);
 	QList<QString> loadedShadersGUID;
+
+	void updateMaterialThumbnail(QString shaderGuid, QString materialGuid);
+	void generateMaterialFromShader(QString guid);
+	void updateMaterialFromShader(QString guid);
+	void writeMaterial(QJsonObject& matObj, QString guid);
+	QJsonObject writeMaterialValuesFromShader(QString guid);
 private:
     void configureConnections();
     void editingFinishedOnListItem();
