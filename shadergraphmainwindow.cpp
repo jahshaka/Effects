@@ -80,7 +80,7 @@ namespace shadergraph
 
 	enum class ShaderWorkspace {
 		Presets = 0,
-		Myfx = 1,
+		MyEffects = 1,
 		Projects = 2
 	};
 
@@ -1239,7 +1239,7 @@ int MainWindow::selectCorrectTabForItem(QString guid)
 {
 	for (int i = 0; i < effects->count(); i++)
 	{
-		if (guid == effects->item(i)->data(MODEL_GUID_ROLE))	return (int) ShaderWorkspace::Myfx;
+		if (guid == effects->item(i)->data(MODEL_GUID_ROLE))	return (int) ShaderWorkspace::MyEffects;
 	}
 
 #if(EFFECT_BUILD_AS_LIB)
