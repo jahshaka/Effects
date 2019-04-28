@@ -619,8 +619,8 @@ void MainWindow::configureAssetsDock()
 
 
 	tabWidget->addTab(scrollViewPreset, "Presets");
-	tabWidget->addTab(scrollViewFx, "My Fx");
-	tabWidget->addTab(scrollViewAsset, "Project Fx");
+	tabWidget->addTab(scrollViewFx, "My Materials");
+	tabWidget->addTab(scrollViewAsset, "Project Materials");
 
 	scrollViewFx->adjustSize();
 	scrollViewPreset->adjustSize();
@@ -803,8 +803,8 @@ void MainWindow::configureUI()
 	centralWidget = new QWidget();
 	textWidget = new QDockWidget("Code View");
 	displayWidget = new QDockWidget("Display");
-	assetsDock = new QDockWidget("Effects");
-	projectDock = new QDockWidget("Project Effects");
+	assetsDock = new QDockWidget("Materials");
+	projectDock = new QDockWidget("Project Materials");
 
 	propertyWidget = new QDockWidget("Properties");
 	materialSettingsDock = new QDockWidget("Material Settings");
