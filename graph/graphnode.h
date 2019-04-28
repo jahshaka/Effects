@@ -69,7 +69,6 @@ class GraphNode : public QGraphicsPathItem
 {
 	QVector<Socket*> sockets;
 	int nodeWidth;
-	QGraphicsTextItem* text;
 	QGraphicsProxyWidget* proxyWidget;
 	QGraphicsProxyWidget* proxyPreviewWidget;
 	
@@ -77,6 +76,8 @@ class GraphNode : public QGraphicsPathItem
 	int inSocketCount = 0;
 	int outSocketCount = 0;
 public:
+	QGraphicsTextItem* text;
+
 	int nodeType;
 	int level = 0;
 	int titleHeight = 30;
