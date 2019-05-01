@@ -51,6 +51,7 @@ For more information see the LICENSE file
 #include "core/texturemanager.h"
 #include "assets.h"
 #include "propertywidgets/texturepropertywidget.h"
+#include "widgets/assetview.h"
 
 #include <QMainWindow>
 #include <QStandardPaths>
@@ -113,7 +114,7 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
     loadShadersFromDisk();
 
 	Assets::load();
-	
+	assetView = nullptr;
 }
 
 void MainWindow::setNodeGraph(NodeGraph *graph)
@@ -292,9 +293,10 @@ QString MainWindow::genGUID()
 
 void MainWindow::importGraph()
 {
-    QString path = QFileDialog::getOpenFileName(this, "Choose file name","material.json","Material File (*.json)");
+    QString path = QFileDialog::getOpenFileName(this, "Choose file name","material.json","Material File (*.jaf)");
 	if (path == "") return;
-	importGraphFromFilePath(path);
+	assetView->importJahModel(path, false); 
+	//importGraphFromFilePath(path);
 }
 
 NodeGraph* MainWindow::importGraphFromFilePath(QString filePath, bool assign)
@@ -1072,7 +1074,8 @@ void MainWindow::updateAssetDock()
 {
 
 #if(EFFECT_BUILD_AS_LIB)
-		for (const auto &asset : dataBase->fetchAssets())  //dp something{
+	auto assets = dataBase->fetchAssets();
+		for (const auto &asset : assets)  //dp something{
 		{
 			if (asset.projectGuid == "" && asset.type == static_cast<int>(ModelTypes::Shader)) {
 				 

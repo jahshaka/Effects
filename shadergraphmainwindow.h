@@ -32,6 +32,7 @@ class NodeLibraryItem;
 class Database;
 class TexturePropertyWidget;
 class UndoRedo;
+class AssetView;
 
 namespace shadergraph
 {
@@ -58,6 +59,8 @@ public:
     void setNodeGraph(NodeGraph* graph);
     void newNodeGraph(QString *shaderName = Q_NULLPTR, int *templateType = Q_NULLPTR, QString *templateName = Q_NULLPTR);
 	
+	void setAssetView(AssetView* assetView) { this->assetView = assetView; }
+
 	void refreshShaderGraph();
 	void setAssetWidgetDatabase(Database *db);
 	void renameShader();
@@ -72,8 +75,10 @@ public:
 	shaderInfo currentShaderInformation;
     shaderInfo pressedShaderInfo;
 	QUndoStack *stack;
+	
 
 private:
+	
 	void saveShader();
 	void saveDefaultShader();
     void loadShadersFromDisk();
@@ -126,7 +131,7 @@ private:
     SceneWidget* sceneWidget;
 	NodeGraph *graph;
 	QSplitter *splitView;
-	
+	AssetView* assetView;
 
 	QDockWidget* nodeTray;
 	QWidget *centralWidget;
