@@ -88,7 +88,9 @@ private:
 
     void importGraph();
 	NodeGraph* importGraphFromFilePath(QString filePath, bool assign = true);
-    void exportGraph();
+	void exportEffect(QString guid);
+	// keeping this around for standalone (nick)
+	void exportGraph();
     void restoreGraphPositions(const QJsonObject& data);
     bool deleteShader(QString guid);
 
