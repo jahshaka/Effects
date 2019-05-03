@@ -79,6 +79,7 @@ For more information see the LICENSE file
 #include "core/texturemanager.h"
 #include <QDebug>
 #include "zip.h"
+#include "core/exporter.h"
 
 namespace shadergraph
 {
@@ -393,6 +394,9 @@ void MainWindow::exportEffect(QString guid)
 	if (!temporaryDir.isValid()) return;
 
 	const QString writePath = temporaryDir.path();
+
+	Exporter::exportShaderAsMaterial(dataBase, guid, filePath);
+	return;
 
 	//const QString guid = assetItem.wItem->data(MODEL_GUID_ROLE).toString();
 
@@ -1382,7 +1386,7 @@ void MainWindow::generateMaterialFromShader(QString guid)
 		assetGuid,
 		QFileInfo(fileName).fileName(),
 		static_cast<int>(ModelTypes::Material),
-		Globals::project->getProjectGuid(),
+		QString(),
 		QString(),
 		QString(),
 		QByteArray(),
