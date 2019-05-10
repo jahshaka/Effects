@@ -191,7 +191,7 @@ void LibraryV1::initMath()
 		return new SmoothStepNode();
 	});
 
-	addNode("frac", "Fraction", iconPath, type, []() {
+	addNode("fraction", "Fraction", iconPath, type, []() {
 		return new FracNode();
 	});
 
