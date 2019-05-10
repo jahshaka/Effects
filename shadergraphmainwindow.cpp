@@ -301,8 +301,100 @@ void MainWindow::importGraph()
 {
     QString path = QFileDialog::getOpenFileName(this, "Choose file name","material.json","Material File (*.jaf)");
 	if (path == "") return;
-	assetView->importJahModel(path, false); 
+	//assetView->importJahModel(path, false); 
+	importEffect(path);
 	//importGraphFromFilePath(path);
+}
+
+void MainWindow::importEffect(QString fileName)
+{
+	QFileInfo entryInfo(fileName);
+
+	auto assetPath = IrisUtils::join(
+		QStandardPaths::writableLocation(QStandardPaths::DataLocation),
+		"AssetStore"
+	);
+
+	// create a temporary directory and extract our project into it
+	// we need a sure way to get the project name, so we have to extract it first and check the blob
+	QTemporaryDir temporaryDir;
+	if (temporaryDir.isValid()) {
+		zip_extract(entryInfo.absoluteFilePath().toStdString().c_str(),
+			temporaryDir.path().toStdString().c_str(),
+			Q_NULLPTR, Q_NULLPTR
+		);
+
+		QFile f(QDir(temporaryDir.path()).filePath(".manifest"));
+
+		if (!f.exists()) {
+			QMessageBox::warning(
+				this,
+				"Incompatible Asset format",
+				"This asset was made with a deprecated version of Jahshaka\n"
+				"You can extract the contents manually and try importing as regular assets.",
+				QMessageBox::Ok
+			);
+
+			return;
+		}
+
+		if (!f.open(QFile::ReadOnly | QFile::Text)) return;
+		QTextStream in(&f);
+		const QString jafString = in.readLine();
+		f.close();
+
+		ModelTypes jafType = ModelTypes::Undefined;
+
+		if (jafString == "object") {
+			jafType = ModelTypes::Object;
+		}
+		else if (jafString == "texture") {
+			jafType = ModelTypes::Texture;
+		}
+		else if (jafString == "material") {
+			jafType = ModelTypes::Material;
+		}
+		else if (jafString == "shader") {
+			jafType = ModelTypes::Shader;
+		}
+		else if (jafString == "sky") {
+			jafType = ModelTypes::Sky;
+		}
+		else if (jafString == "particle_system") {
+			jafType = ModelTypes::ParticleSystem;
+		}
+
+		QVector<AssetRecord> records;
+
+		QMap<QString, QString> guidCompareMap;
+		QString guid = dataBase->importAsset(jafType,
+			QDir(temporaryDir.path()).filePath("asset.db"),
+			QMap<QString, QString>(),
+			guidCompareMap,
+			records,
+			AssetViewFilter::Effects);
+
+		const QString assetFolder = QDir(assetPath).filePath(guid);
+		QDir().mkpath(assetFolder);
+
+		QString assetsDir = QDir(temporaryDir.path()).filePath("assets");
+		QDirIterator projectDirIterator(assetsDir, QDir::NoDotAndDotDot | QDir::Files);
+
+		QStringList fileNames;
+		while (projectDirIterator.hasNext()) fileNames << projectDirIterator.next();
+
+		jafType = ModelTypes::Undefined;
+
+		QString placeHolderGuid = GUIDManager::generateGUID();
+
+		for (const auto &file : fileNames) {
+			QFileInfo fileInfo(file);
+			QString fileToCopyTo = IrisUtils::join(assetFolder, fileInfo.fileName());
+			bool copyFile = QFile::copy(fileInfo.absoluteFilePath(), fileToCopyTo);
+		}
+	}
+
+	this->updateAssetDock();
 }
 
 NodeGraph* MainWindow::importGraphFromFilePath(QString filePath, bool assign)
@@ -843,7 +935,7 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 #if(EFFECT_BUILD_AS_LIB)
 
 	auto shaderDefinition = MaterialHelper::serialize(graph);
-	dataBase->createAssetEntry(QString::null, assetGuid,newShader,static_cast<int>(ModelTypes::Shader), QJsonDocument(shaderDefinition).toBinaryData());
+	dataBase->createAssetEntry(QString::null, assetGuid,newShader,static_cast<int>(ModelTypes::Shader), QJsonDocument(shaderDefinition).toBinaryData(), QByteArray(), AssetViewFilter::Effects);
 	auto assetShader = new AssetMaterial;
 	assetShader->fileName = newShader;
 	assetShader->assetGuid = assetGuid;
@@ -1064,12 +1156,12 @@ void MainWindow::configureToolbar()
 
 	toolBar->addSeparator();
 
-	auto exportBtn = new QAction;
+	//auto exportBtn = new QAction;
 	auto importBtn = new QAction;
 	auto addBtn = new QAction;
 
-	exportBtn->setIcon(fontIcons->icon(fa::upload, options));
-	exportBtn->setToolTip("Export shader");
+	//exportBtn->setIcon(fontIcons->icon(fa::upload, options));
+	//exportBtn->setToolTip("Export shader");
 
 	importBtn->setIcon(fontIcons->icon(fa::download, options));
 	importBtn->setToolTip("Import shader");
@@ -1077,7 +1169,7 @@ void MainWindow::configureToolbar()
 	addBtn->setIcon(fontIcons->icon(fa::plus, options));
 	addBtn->setToolTip("Create new shader");
 
-	toolBar->addActions({ exportBtn, importBtn, addBtn });
+	toolBar->addActions({ /*exportBtn,*/ importBtn, addBtn });
 
 	// this acts as a spacer
 	QWidget* empty = new QWidget();
@@ -1094,7 +1186,7 @@ void MainWindow::configureToolbar()
 	this->addToolBar(toolBar);
 
 	connect(actionSave, &QAction::triggered, this, &MainWindow::saveShader);
-	connect(exportBtn, &QAction::triggered, this, &MainWindow::exportGraph);
+	//connect(exportBtn, &QAction::triggered, this, &MainWindow::exportGraph);
 	connect(importBtn, &QAction::triggered, this, &MainWindow::importGraph);
 	connect(addBtn, &QAction::triggered, this, [=]() {
 		createNewGraph(true);
@@ -1168,9 +1260,10 @@ bool MainWindow::createNewGraph(bool loadNewGraph)
 
 void MainWindow::updateAssetDock()
 {
-
+	effects->clear();
 #if(EFFECT_BUILD_AS_LIB)
-	auto assets = dataBase->fetchAssets();
+	//auto assets = dataBase->fetchAssets();
+	auto assets = dataBase->fetchAssetsByViewFilter(AssetViewFilter::Effects);
 		for (const auto &asset : assets)  //dp something{
 		{
 			if (asset.projectGuid == "" && asset.type == static_cast<int>(ModelTypes::Shader)) {
@@ -1357,7 +1450,7 @@ void MainWindow::updateMaterialThumbnail(QString shaderGuid, QString materialGui
 	dataBase->updateAssetThumbnail(materialGuid, assetThumbnail);
 }
 
-void MainWindow::generateMaterialFromShader(QString guid)
+void MainWindow::generateMaterialInProjectFromShader(QString guid)
 {
 	QJsonObject matDef; 
 	writeMaterial(matDef, guid);
@@ -1386,13 +1479,14 @@ void MainWindow::generateMaterialFromShader(QString guid)
 		assetGuid,
 		QFileInfo(fileName).fileName(),
 		static_cast<int>(ModelTypes::Material),
-		QString(),
+		Globals::project->getProjectGuid(),
 		QString(),
 		QString(),
 		QByteArray(),
 		QByteArray(),
 		QByteArray(),
-		binaryMat
+		binaryMat,
+		AssetViewFilter::Editor
 	);
 
 	updateMaterialThumbnail(guid, assetGuid);
@@ -1608,7 +1702,7 @@ void MainWindow::configureConnections()
 		tabWidget->setCurrentIndex((int)ShaderWorkspace::Projects);
 		ListWidget::highlightNodeForInterval(2, selectCorrectItemFromDrop(guid));
 		loadGraph(guid);
-		generateMaterialFromShader(guid);
+		generateMaterialInProjectFromShader(guid);
 	});
 
 

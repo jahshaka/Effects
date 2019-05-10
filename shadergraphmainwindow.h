@@ -87,6 +87,8 @@ private:
 	void deleteMaterialFile(QString filename);
 
     void importGraph();
+	void importEffect(QString fileName);
+
 	NodeGraph* importGraphFromFilePath(QString filePath, bool assign = true);
 	void exportEffect(QString guid);
 	// keeping this around for standalone (nick)
@@ -119,7 +121,7 @@ private:
 	QList<QString> loadedShadersGUID;
 
 	void updateMaterialThumbnail(QString shaderGuid, QString materialGuid);
-	void generateMaterialFromShader(QString guid);
+	void generateMaterialInProjectFromShader(QString guid);
 	void updateMaterialFromShader(QString guid);
 	void writeMaterial(QJsonObject& matObj, QString guid);
 	QJsonObject writeMaterialValuesFromShader(QString guid);
