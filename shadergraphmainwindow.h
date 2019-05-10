@@ -87,6 +87,8 @@ private:
 	void deleteMaterialFile(QString filename);
 
     void importGraph();
+	void importEffect(QString fileName);
+
 	NodeGraph* importGraphFromFilePath(QString filePath, bool assign = true);
 	void exportEffect(QString guid);
 	// keeping this around for standalone (nick)

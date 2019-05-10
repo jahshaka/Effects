@@ -1,4 +1,4 @@
-﻿/**************************************************************************
+/**************************************************************************
 This file is part of JahshakaVR, VR Authoring Toolkit
 http://www.jahshaka.com
 Copyright (c) 2016  GPLv3 Jahshaka LLC <coders@jahshaka.com>
@@ -301,8 +301,100 @@ void MainWindow::importGraph()
 {
     QString path = QFileDialog::getOpenFileName(this, "Choose file name","material.json","Material File (*.jaf)");
 	if (path == "") return;
-	assetView->importJahModel(path, false); 
+	//assetView->importJahModel(path, false); 
+	importEffect(path);
 	//importGraphFromFilePath(path);
+}
+
+void MainWindow::importEffect(QString fileName)
+{
+	QFileInfo entryInfo(fileName);
+
+	auto assetPath = IrisUtils::join(
+		QStandardPaths::writableLocation(QStandardPaths::DataLocation),
+		"AssetStore"
+	);
+
+	// create a temporary directory and extract our project into it
+	// we need a sure way to get the project name, so we have to extract it first and check the blob
+	QTemporaryDir temporaryDir;
+	if (temporaryDir.isValid()) {
+		zip_extract(entryInfo.absoluteFilePath().toStdString().c_str(),
+			temporaryDir.path().toStdString().c_str(),
+			Q_NULLPTR, Q_NULLPTR
+		);
+
+		QFile f(QDir(temporaryDir.path()).filePath(".manifest"));
+
+		if (!f.exists()) {
+			QMessageBox::warning(
+				this,
+				"Incompatible Asset format",
+				"This asset was made with a deprecated version of Jahshaka\n"
+				"You can extract the contents manually and try importing as regular assets.",
+				QMessageBox::Ok
+			);
+
+			return;
+		}
+
+		if (!f.open(QFile::ReadOnly | QFile::Text)) return;
+		QTextStream in(&f);
+		const QString jafString = in.readLine();
+		f.close();
+
+		ModelTypes jafType = ModelTypes::Undefined;
+
+		if (jafString == "object") {
+			jafType = ModelTypes::Object;
+		}
+		else if (jafString == "texture") {
+			jafType = ModelTypes::Texture;
+		}
+		else if (jafString == "material") {
+			jafType = ModelTypes::Material;
+		}
+		else if (jafString == "shader") {
+			jafType = ModelTypes::Shader;
+		}
+		else if (jafString == "sky") {
+			jafType = ModelTypes::Sky;
+		}
+		else if (jafString == "particle_system") {
+			jafType = ModelTypes::ParticleSystem;
+		}
+
+		QVector<AssetRecord> records;
+
+		QMap<QString, QString> guidCompareMap;
+		QString guid = dataBase->importAsset(jafType,
+			QDir(temporaryDir.path()).filePath("asset.db"),
+			QMap<QString, QString>(),
+			guidCompareMap,
+			records,
+			AssetViewFilter::Effects);
+
+		const QString assetFolder = QDir(assetPath).filePath(guid);
+		QDir().mkpath(assetFolder);
+
+		QString assetsDir = QDir(temporaryDir.path()).filePath("assets");
+		QDirIterator projectDirIterator(assetsDir, QDir::NoDotAndDotDot | QDir::Files);
+
+		QStringList fileNames;
+		while (projectDirIterator.hasNext()) fileNames << projectDirIterator.next();
+
+		jafType = ModelTypes::Undefined;
+
+		QString placeHolderGuid = GUIDManager::generateGUID();
+
+		for (const auto &file : fileNames) {
+			QFileInfo fileInfo(file);
+			QString fileToCopyTo = IrisUtils::join(assetFolder, fileInfo.fileName());
+			bool copyFile = QFile::copy(fileInfo.absoluteFilePath(), fileToCopyTo);
+		}
+	}
+
+	this->updateAssetDock();
 }
 
 NodeGraph* MainWindow::importGraphFromFilePath(QString filePath, bool assign)
