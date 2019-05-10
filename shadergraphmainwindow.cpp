@@ -1,4 +1,4 @@
-/**************************************************************************
+﻿/**************************************************************************
 This file is part of JahshakaVR, VR Authoring Toolkit
 http://www.jahshaka.com
 Copyright (c) 2016  GPLv3 Jahshaka LLC <coders@jahshaka.com>
@@ -935,7 +935,7 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 #if(EFFECT_BUILD_AS_LIB)
 
 	auto shaderDefinition = MaterialHelper::serialize(graph);
-	dataBase->createAssetEntry(QString::null, assetGuid,newShader,static_cast<int>(ModelTypes::Shader), QJsonDocument(shaderDefinition).toBinaryData());
+	dataBase->createAssetEntry(QString::null, assetGuid,newShader,static_cast<int>(ModelTypes::Shader), QJsonDocument(shaderDefinition).toBinaryData(), QByteArray(), AssetViewFilter::Effects);
 	auto assetShader = new AssetMaterial;
 	assetShader->fileName = newShader;
 	assetShader->assetGuid = assetGuid;
@@ -1156,12 +1156,12 @@ void MainWindow::configureToolbar()
 
 	toolBar->addSeparator();
 
-	auto exportBtn = new QAction;
+	//auto exportBtn = new QAction;
 	auto importBtn = new QAction;
 	auto addBtn = new QAction;
 
-	exportBtn->setIcon(fontIcons->icon(fa::upload, options));
-	exportBtn->setToolTip("Export shader");
+	//exportBtn->setIcon(fontIcons->icon(fa::upload, options));
+	//exportBtn->setToolTip("Export shader");
 
 	importBtn->setIcon(fontIcons->icon(fa::download, options));
 	importBtn->setToolTip("Import shader");
@@ -1169,7 +1169,7 @@ void MainWindow::configureToolbar()
 	addBtn->setIcon(fontIcons->icon(fa::plus, options));
 	addBtn->setToolTip("Create new shader");
 
-	toolBar->addActions({ exportBtn, importBtn, addBtn });
+	toolBar->addActions({ /*exportBtn,*/ importBtn, addBtn });
 
 	// this acts as a spacer
 	QWidget* empty = new QWidget();
@@ -1186,7 +1186,7 @@ void MainWindow::configureToolbar()
 	this->addToolBar(toolBar);
 
 	connect(actionSave, &QAction::triggered, this, &MainWindow::saveShader);
-	connect(exportBtn, &QAction::triggered, this, &MainWindow::exportGraph);
+	//connect(exportBtn, &QAction::triggered, this, &MainWindow::exportGraph);
 	connect(importBtn, &QAction::triggered, this, &MainWindow::importGraph);
 	connect(addBtn, &QAction::triggered, this, [=]() {
 		createNewGraph(true);
@@ -1260,9 +1260,10 @@ bool MainWindow::createNewGraph(bool loadNewGraph)
 
 void MainWindow::updateAssetDock()
 {
-
+	effects->clear();
 #if(EFFECT_BUILD_AS_LIB)
-	auto assets = dataBase->fetchAssets();
+	//auto assets = dataBase->fetchAssets();
+	auto assets = dataBase->fetchAssetsByViewFilter(AssetViewFilter::Effects);
 		for (const auto &asset : assets)  //dp something{
 		{
 			if (asset.projectGuid == "" && asset.type == static_cast<int>(ModelTypes::Shader)) {
@@ -1449,7 +1450,7 @@ void MainWindow::updateMaterialThumbnail(QString shaderGuid, QString materialGui
 	dataBase->updateAssetThumbnail(materialGuid, assetThumbnail);
 }
 
-void MainWindow::generateMaterialFromShader(QString guid)
+void MainWindow::generateMaterialInProjectFromShader(QString guid)
 {
 	QJsonObject matDef; 
 	writeMaterial(matDef, guid);
@@ -1478,13 +1479,14 @@ void MainWindow::generateMaterialFromShader(QString guid)
 		assetGuid,
 		QFileInfo(fileName).fileName(),
 		static_cast<int>(ModelTypes::Material),
-		QString(),
+		Globals::project->getProjectGuid(),
 		QString(),
 		QString(),
 		QByteArray(),
 		QByteArray(),
 		QByteArray(),
-		binaryMat
+		binaryMat,
+		AssetViewFilter::Editor
 	);
 
 	updateMaterialThumbnail(guid, assetGuid);
@@ -1700,7 +1702,7 @@ void MainWindow::configureConnections()
 		tabWidget->setCurrentIndex((int)ShaderWorkspace::Projects);
 		ListWidget::highlightNodeForInterval(2, selectCorrectItemFromDrop(guid));
 		loadGraph(guid);
-		generateMaterialFromShader(guid);
+		generateMaterialInProjectFromShader(guid);
 	});
 
 

@@ -121,7 +121,8 @@ public:
 			QByteArray(),
 			QByteArray(),
 			QByteArray(),
-			binaryMat
+			binaryMat,
+			AssetViewFilter::Effects
 		);
 
 		//updateMaterialThumbnail(guid, assetGuid);
