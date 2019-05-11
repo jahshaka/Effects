@@ -32,6 +32,7 @@ class NodeLibraryItem;
 class Database;
 class TexturePropertyWidget;
 class UndoRedo;
+class AssetView;
 
 namespace shadergraph
 {
@@ -58,6 +59,8 @@ public:
     void setNodeGraph(NodeGraph* graph);
     void newNodeGraph(QString *shaderName = Q_NULLPTR, int *templateType = Q_NULLPTR, QString *templateName = Q_NULLPTR);
 	
+	void setAssetView(AssetView* assetView) { this->assetView = assetView; }
+
 	void refreshShaderGraph();
 	void setAssetWidgetDatabase(Database *db);
 	void renameShader();
@@ -72,8 +75,10 @@ public:
 	shaderInfo currentShaderInformation;
     shaderInfo pressedShaderInfo;
 	QUndoStack *stack;
+	
 
 private:
+	
 	void saveShader();
 	void saveDefaultShader();
     void loadShadersFromDisk();
@@ -82,8 +87,12 @@ private:
 	void deleteMaterialFile(QString filename);
 
     void importGraph();
+	void importEffect(QString fileName);
+
 	NodeGraph* importGraphFromFilePath(QString filePath, bool assign = true);
-    void exportGraph();
+	void exportEffect(QString guid);
+	// keeping this around for standalone (nick)
+	void exportGraph();
     void restoreGraphPositions(const QJsonObject& data);
     bool deleteShader(QString guid);
 
@@ -112,7 +121,7 @@ private:
 	QList<QString> loadedShadersGUID;
 
 	void updateMaterialThumbnail(QString shaderGuid, QString materialGuid);
-	void generateMaterialFromShader(QString guid);
+	void generateMaterialInProjectFromShader(QString guid);
 	void updateMaterialFromShader(QString guid);
 	void writeMaterial(QJsonObject& matObj, QString guid);
 	QJsonObject writeMaterialValuesFromShader(QString guid);
@@ -126,7 +135,7 @@ private:
     SceneWidget* sceneWidget;
 	NodeGraph *graph;
 	QSplitter *splitView;
-	
+	AssetView* assetView;
 
 	QDockWidget* nodeTray;
 	QWidget *centralWidget;

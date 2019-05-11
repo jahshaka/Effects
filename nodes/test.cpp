@@ -673,8 +673,8 @@ Vector2Node::Vector2Node()
 	wid->setLayout(layout);
 	wid->setMaximumWidth(164);
 
-	auto xSpinBox = new QDoubleSpinBox;
-	auto ySpinBox = new QDoubleSpinBox;
+	xSpinBox = new QDoubleSpinBox;
+	ySpinBox = new QDoubleSpinBox;
 	xSpinBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	ySpinBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	xSpinBox->setAlignment(Qt::AlignCenter);
@@ -750,9 +750,9 @@ Vector3Node::Vector3Node()
 	wid->setLayout(layout);
 	wid->setMaximumWidth(164);
 
-	auto xSpinBox = new QDoubleSpinBox;
-	auto ySpinBox = new QDoubleSpinBox;
-	auto zSpinBox = new QDoubleSpinBox;
+	xSpinBox = new QDoubleSpinBox;
+	ySpinBox = new QDoubleSpinBox;
+	zSpinBox = new QDoubleSpinBox;
 	xSpinBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	ySpinBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	zSpinBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -838,10 +838,10 @@ Vector4Node::Vector4Node()
 	wid->setLayout(layout);
 	wid->setMaximumWidth(154);
 
-	auto xSpinBox = new QDoubleSpinBox;
-	auto ySpinBox = new QDoubleSpinBox;
-	auto zSpinBox = new QDoubleSpinBox;
-	auto wSpinBox = new QDoubleSpinBox;
+	xSpinBox = new QDoubleSpinBox;
+	ySpinBox = new QDoubleSpinBox;
+	zSpinBox = new QDoubleSpinBox;
+	wSpinBox = new QDoubleSpinBox;
 	xSpinBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	ySpinBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	zSpinBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
