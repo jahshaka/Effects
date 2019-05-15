@@ -34,7 +34,8 @@ public:
 
 		for (const auto &assetGuid : AssetHelper::fetchAssetAndAllDependencies(materialGuid, dataBase)) {
 			auto asset = dataBase->fetchAsset(assetGuid);
-			auto assetPath = QDir(Globals::project->getProjectFolder()).filePath(asset.name);
+			//auto assetPath = QDir(Globals::project->getProjectFolder()).filePath(asset.name);
+			auto assetPath = getAssetPath(asset);
 			QFileInfo assetInfo(assetPath);
 			if (assetInfo.exists()) {
 				QFile::copy(
@@ -217,6 +218,25 @@ public:
 		}
 
 		return valuesObj;
+	}
+
+	static QString getAssetPath(const AssetRecord& asset)
+	{
+		QString path;
+		if (asset.view_filter == AssetViewFilter::Editor) {
+			path = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + Constants::PROJECT_FOLDER;
+			//auto projectFolder = SettingsManager::getDefaultManager()->getValue("default_directory", spath).toString();
+		}
+		else if (asset.view_filter == AssetViewFilter::AssetsView ||	
+				 asset.view_filter == AssetViewFilter::Effects) {
+			auto assetPath = IrisUtils::join(
+				QStandardPaths::writableLocation(QStandardPaths::DataLocation),
+				"AssetStore"
+			);
+			path = QDir(assetPath).filePath(asset.guid);
+		}
+		
+		return IrisUtils::join(path, asset.name);
 	}
 };
 
