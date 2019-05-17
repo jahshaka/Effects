@@ -32,11 +32,8 @@ class NodeLibraryItem;
 class Database;
 class TexturePropertyWidget;
 class UndoRedo;
-<<<<<<< Updated upstream
 class AssetView;
-=======
 enum WindowSpaces;
->>>>>>> Stashed changes
 
 namespace shadergraph
 {
