@@ -77,6 +77,7 @@ For more information see the LICENSE file
 
 #include "core/undoredo.h"
 #include "core/texturemanager.h"
+#include "src/mainwindow.h"
 #include <QDebug>
 #include "zip.h"
 #include "core/exporter.h"
@@ -1718,6 +1719,23 @@ void MainWindow::configureConnections()
         //item finished editing
         editingFinishedOnListItem();
     });
+
+	shortcut = new QShortcut(QKeySequence("s"), this);
+	connect(shortcut, &QShortcut::activated, [=]() {
+		emit switchWorkspace(WindowSpaces::DESKTOP);
+		});
+	shortcut = new QShortcut(QKeySequence("p"), this);
+	connect(shortcut, &QShortcut::activated, [=]() {
+		emit switchWorkspace(WindowSpaces::PLAYER);
+		});
+	shortcut = new QShortcut(QKeySequence("e"), this);
+	connect(shortcut, &QShortcut::activated, [=]() {
+		emit switchWorkspace(WindowSpaces::EDITOR);
+		});
+	shortcut = new QShortcut(QKeySequence("a"), this);
+	connect(shortcut, &QShortcut::activated, [=]() {
+		emit switchWorkspace(WindowSpaces::ASSETS);
+		});
 
 }
 

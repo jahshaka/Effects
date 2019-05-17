@@ -32,7 +32,11 @@ class NodeLibraryItem;
 class Database;
 class TexturePropertyWidget;
 class UndoRedo;
+<<<<<<< Updated upstream
 class AssetView;
+=======
+enum WindowSpaces;
+>>>>>>> Stashed changes
 
 namespace shadergraph
 {
@@ -53,7 +57,8 @@ struct nodeListModel {
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
+signals:
+	void switchWorkspace(WindowSpaces);
 public:
     explicit MainWindow( QWidget *parent = Q_NULLPTR, Database *database = Q_NULLPTR);
     void setNodeGraph(NodeGraph* graph);
