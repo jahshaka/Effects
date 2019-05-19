@@ -45,6 +45,7 @@ For more information see the LICENSE file
 #include "graph/graphnodescene.h"
 #include "propertywidgets/basepropertywidget.h"
 #include "dialogs/searchdialog.h"
+#include "dialogs/infowidget.h"
 #include "widgets/listwidget.h"
 #include "widgets/scenewidget.h"
 #include "core/project.h"
@@ -1719,6 +1720,10 @@ void MainWindow::configureConnections()
         editingFinishedOnListItem();
     });
 
+	shortcut = new QShortcut(QKeySequence("v"), this);
+	connect(shortcut, &QShortcut::activated, [=]() {
+		auto dia = new InfoWidget(MainWindowMenus::WorkspaceMenu);
+	});
 }
 
 void MainWindow::editingFinishedOnListItem()
