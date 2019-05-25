@@ -387,10 +387,31 @@ void MainWindow::importEffect(QString fileName)
 
 		QString placeHolderGuid = GUIDManager::generateGUID();
 
+		// import assets on by one and move them to folders matching their guids
+		auto assets = dataBase->fetchAssetAndAllDependencies(guid);
 		for (const auto &file : fileNames) {
 			QFileInfo fileInfo(file);
+			for (const auto &assetGuid : assets) {
+				auto record = dataBase->fetchAsset(assetGuid);
+
+				if (fileInfo.fileName() == record.name) {
+					// move asset to it's own folder
+					const QDir destFolder = QDir(IrisUtils::join(assetPath, record.guid));
+					if (destFolder.exists()) {
+						if (!destFolder.mkdir("."))
+							irisLog("Unable to create folder "+destFolder.absolutePath());
+					}
+
+					auto destPath = IrisUtils::join(assetPath, record.guid, fileInfo.fileName());
+					bool fileCopied = QFile::copy(fileInfo.absoluteFilePath(), destPath);
+					
+					if (!fileCopied)
+						irisLog("Failed to copy texture " + fileInfo.fileName());
+				}
+			}
+			/*QFileInfo fileInfo(file);
 			QString fileToCopyTo = IrisUtils::join(assetFolder, fileInfo.fileName());
-			bool copyFile = QFile::copy(fileInfo.absoluteFilePath(), fileToCopyTo);
+			bool copyFile = QFile::copy(fileInfo.absoluteFilePath(), fileToCopyTo);*/
 		}
 	}
 
@@ -809,8 +830,8 @@ void MainWindow::configureAssetsDock()
 
 
 	tabWidget->addTab(scrollViewPreset, "Presets");
-	tabWidget->addTab(scrollViewFx, "My Fx");
-	tabWidget->addTab(scrollViewAsset, "Project Fx");
+	tabWidget->addTab(scrollViewFx, "My Materials");
+	tabWidget->addTab(scrollViewAsset, "Project Materials");
 
 	scrollViewFx->adjustSize();
 	scrollViewPreset->adjustSize();

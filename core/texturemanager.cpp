@@ -88,9 +88,9 @@ GraphTexture * TextureManager::loadTextureFromGuid(QString guid)
 		return tex;
 	}
 
-	auto p = loadTextureFromDisk(guid); // load if file paths are located on the disk
-	if (!QFileInfo::exists(p)) // if they are not located on disk
-		p = loadTextureFromDatabase(guid); // load file paths from database
+	//auto p = loadTextureFromDisk(guid); // load if file paths are located on the disk
+	//if (!QFileInfo::exists(p)) // if they are not located on disk
+	auto p = loadTextureFromDatabase(guid); // load file paths from database
 
 	tex->setImage(p);
 	tex->guid = guid;
@@ -115,9 +115,12 @@ QString TextureManager::loadTextureFromDatabase(QString guid)
 {
 	auto asset = database->fetchAsset(guid);
 
-	auto path = QDir(Globals::project->getProjectFolder()).filePath(asset.name);
+	auto imagePath = IrisUtils::join(
+		QStandardPaths::writableLocation(QStandardPaths::DataLocation),
+		"AssetStore", guid, asset.name
+	);
 
-	return path;
+	return imagePath;
 }
 
 GraphTexture* TextureManager::importTexture(QString path)
@@ -136,7 +139,13 @@ GraphTexture* TextureManager::importTexture(QString path)
 	QString fileToCopyTo = IrisUtils::join(assetFolder, fileInfo.fileName());
 	bool copyFile = QFile::copy(fileInfo.absoluteFilePath(), fileToCopyTo);
 
-	database->createAssetEntry(QString::null, texGuid, fileInfo.fileName(), static_cast<int>(ModelTypes::File));
+	database->createAssetEntry(QString::null,
+		texGuid,
+		fileInfo.fileName(),
+		static_cast<int>(ModelTypes::File),
+		QByteArray(),
+		QByteArray(),
+		AssetViewFilter::Effects);
 
 	auto tex = createTexture();
 	tex->path = fileToCopyTo;
