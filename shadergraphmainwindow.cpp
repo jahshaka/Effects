@@ -121,6 +121,8 @@ MainWindow::MainWindow( QWidget *parent, Database *database) :
 
 	Assets::load();
 	assetView = nullptr;
+
+	addMaterialToMaterialTrayInEditorView();
 }
 
 void MainWindow::setNodeGraph(NodeGraph *graph)
@@ -295,6 +297,48 @@ QString MainWindow::genGUID()
 	auto guid = id.toString().remove(0, 1);
 	guid.chop(1);
 	return guid;
+}
+
+void MainWindow::addMaterialToMaterialTrayInEditorView()
+{
+	auto createMat = [=](NodeGraphPreset preset) {
+		QJsonObject matObj;
+		matObj["name"] = preset.name;
+		matObj["version"] = 2.0;
+		matObj["shaderGuid"] = "";
+
+		matObj["material_type"] = "Default";
+		matObj["icon"] = "../../shadergraph/" + preset.iconPath;
+		if (preset.list.length() > 0)	matObj["diffuseTexture"] = "../../shadergraph/" + preset.list.at(0);
+		else matObj["diffuseTexture"] = "";
+		matObj["normalTexture"] = "";
+		matObj["specularTexture"] = "";
+		matObj["textureScale"] = 2;
+		matObj["diffuseColor"] = "#FFF";
+		matObj["specularColor"] = "#444";
+		matObj["shininess"] = 84;
+
+		QJsonDocument saveDoc;
+		saveDoc.setObject(matObj);
+
+		QString fileName = IrisUtils::join(
+			Globals::project->getProjectFolder(),
+			IrisUtils::buildFileName(matObj["name"].toString(), "material")
+		);
+
+		QFile file(fileName);
+		file.open(QFile::WriteOnly);
+		file.write(saveDoc.toJson());
+		file.close();
+	};
+
+	for (auto preset : CreateNewDialog::getPresetList()) {
+		createMat(preset);
+	}
+	for (auto preset : CreateNewDialog::getStarterList()) {
+		createMat(preset);
+	}
+
 }
 
 void MainWindow::importGraph()
@@ -1480,7 +1524,6 @@ void MainWindow::generateMaterialInProjectFromShader(QString guid)
 	auto graphObj = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
 
 	QJsonDocument saveDoc;
-	//saveDoc.setObject(materialDef);
 	saveDoc.setObject(matDef);
 
 	QString fileName = IrisUtils::join(

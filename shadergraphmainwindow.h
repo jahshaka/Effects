@@ -68,6 +68,8 @@ public:
 	void loadGraph(QString guid);
 	static QString genGUID();
 
+	void addMaterialToMaterialTrayInEditorView();
+
     ~MainWindow();
 
 	QList<NodeGraphPreset> list;
