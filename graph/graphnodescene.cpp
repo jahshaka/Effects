@@ -401,6 +401,11 @@ void GraphNodeScene::dropEvent(QGraphicsSceneDragDropEvent * event)
 	if (event->mimeData()->data("MODEL_TYPE_ROLE").toStdString() == "presets") {
 		emit loadGraphFromPreset(event->mimeData()->text());
 	}
+
+	if (event->mimeData()->data("MODEL_TYPE_ROLE").toStdString() == "presets2") {
+		qDebug() << "preset 2";
+		emit loadGraphFromPreset2(event->mimeData()->text());
+	}
 }
 
 void GraphNodeScene::drawBackground(QPainter * painter, const QRectF & rect)

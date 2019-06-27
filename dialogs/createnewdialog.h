@@ -55,6 +55,7 @@ public:
 	void createViewWithoutOptions();
 
 	static QList<NodeGraphPreset> getPresetList();
+	static QList<NodeGraphPreset> getAdditionalPresetList();
 	static QList<NodeGraphPreset> getStarterList();
 
 

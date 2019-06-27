@@ -110,7 +110,7 @@ private:
 	void configureProjectDock();
 	void configureAssetsDock();
 	void createShader(NodeGraphPreset preset, bool loadNewGraph = true);
-	void loadGraphFromTemplate(NodeGraphPreset preset);
+	void loadGraphFromTemplate(NodeGraphPreset preset, bool v1 = true);
 	void setCurrentShaderItem();
 	QByteArray fetchAsset(QString string);
 
