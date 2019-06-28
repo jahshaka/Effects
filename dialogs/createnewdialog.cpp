@@ -371,7 +371,7 @@ QList<NodeGraphPreset> CreateNewDialog::getAdditionalPresetList()
 			QFileInfo fileInfo(file.fileName().split('.')[0]);
 			graphPreset.name = fileInfo.fileName();
 			graphPreset.title = graphPreset.name + " Template";
-			graphPreset.templatePath = graphPreset.name.toLower() + ".effect";
+			graphPreset.templatePath = "materials_to_graph/" + graphPreset.name.toLower() + ".effect";
 			graphPreset.iconPath = "materials_to_graph/" + graphPreset.name.toLower() + ".png";
 			graphPreset.list.append("materials_to_graph/" + graphPreset.name.toLower() + " diff.png");
 			graphPreset.list.append("materials_to_graph/" + graphPreset.name.toLower() + " spec.png");

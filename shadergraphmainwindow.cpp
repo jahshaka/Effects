@@ -601,6 +601,7 @@ void MainWindow::exportGraph()
 	sourceFile.close();
 
 	auto imagePath = path.split('.')[0]+".png";
+
 	
 
 }
@@ -985,16 +986,12 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 	saveShader();
 }
 
-void MainWindow::loadGraphFromTemplate(NodeGraphPreset preset, bool v1)
+void MainWindow::loadGraphFromTemplate(NodeGraphPreset preset)
 {
-
-	qDebug() << v1;
-
     propertyListWidget->clearPropertyList();
     currentShaderInformation.GUID = "";
 	NodeGraph *graph;
-	if(v1) graph = importGraphFromFilePath(MaterialHelper::assetPath(preset.templatePath), false);
-	else   graph = importGraphFromFilePath(MaterialHelper::assetPath("materials_to_graph/" + preset.templatePath), false);
+	graph = importGraphFromFilePath(MaterialHelper::assetPath(preset.templatePath), false);
 	int i = 0;
 	for (auto prop : graph->properties) {
 		if (prop->type == PropertyType::Texture) {
@@ -1211,7 +1208,7 @@ void MainWindow::configureToolbar()
 	addBtn->setIcon(fontIcons->icon(fa::plus, options));
 	addBtn->setToolTip("Create new shader");
 
-	toolBar->addActions({ exportBtn, importBtn, addBtn });
+	toolBar->addActions({ /*exportBtn,*/ importBtn, addBtn });
 
 	// this acts as a spacer
 	QWidget* empty = new QWidget();
@@ -1427,7 +1424,7 @@ GraphNodeScene *MainWindow::createNewScene()
 	connect(scene, &GraphNodeScene::loadGraphFromPreset2, [=](QString name) {
 		for (auto preset : CreateNewDialog::getAdditionalPresetList()) {
 			if (name == preset.name) {
-				loadGraphFromTemplate(preset, false);
+				loadGraphFromTemplate(preset);
 			}
 		}
 	});
@@ -1705,6 +1702,13 @@ void MainWindow::configureConnections()
 
 	connect(presets, &QListWidget::itemDoubleClicked, [=](QListWidgetItem *item) {
 		for (auto preset : CreateNewDialog::getPresetList()) {
+			if (item->data(Qt::DisplayRole).toString() == preset.name) {
+				loadGraphFromTemplate(preset);
+			}
+		}
+	});
+	connect(presets, &QListWidget::itemDoubleClicked, [=](QListWidgetItem *item) {
+		for (auto preset : CreateNewDialog::getAdditionalPresetList()) {
 			if (item->data(Qt::DisplayRole).toString() == preset.name) {
 				loadGraphFromTemplate(preset);
 			}
