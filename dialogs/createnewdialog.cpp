@@ -370,7 +370,8 @@ QList<NodeGraphPreset> CreateNewDialog::getAdditionalPresetList()
 		QFileInfo file(it.next());
 
 		// ignore pngs
-		if (file.fileName().split('.')[1] == "png") 
+		if (file.fileName().split('.')[1] == "png" || 
+			file.fileName().split('.')[1] == "frag") 
 			continue;
 
 		if (file.fileName().split('.')[1] != "effect") {
