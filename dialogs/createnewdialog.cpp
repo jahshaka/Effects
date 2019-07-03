@@ -453,16 +453,11 @@ void CreateNewDialog::getTexturesForPreset(QVector<QString> *list, int index)
 		QFileInfo info(dirList.at(i));
 		if (info.fileName() == QString("..") || info.fileName() == QString(".")) continue;
 
-		qDebug() << info.fileName() << index;
-
-
-
 		//search each sub directory
 		QDirIterator it(info.filePath(), QDirIterator::Subdirectories);
 		while (it.hasNext()) {
 			QFileInfo iterator(it.next());
 			if (iterator.fileName() == QString("..") || iterator.fileName() == QString(".")) continue;
-			qDebug() << iterator.filePath() << index;
 			list->append(iterator.filePath()); 
 		}
 
