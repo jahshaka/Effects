@@ -355,33 +355,51 @@ QList<NodeGraphPreset> CreateNewDialog::getPresetList()
 
 QList<NodeGraphPreset> CreateNewDialog::getAdditionalPresetList()
 {
+
+
 	QList<NodeGraphPreset> presetsList;
 	NodeGraphPreset graphPreset;
 	// create constants for this
 	auto filePath = MaterialHelper::assetPath("materials_to_graph");
 	QDirIterator it(filePath);
 
+	int i = 0;
+
 	while (it.hasNext()) {
 
-		QFile file(it.next());
-		if (file.fileName().split('.')[1] != "effect") continue;
+		QFileInfo file(it.next());
+
+		// placed here for readme.txt  when tthis file is encountered, value i should NOT be incremented
+		auto name = file.fileName();
+		if (file.fileName().split('.')[0] == "README") 
+			continue;
+
+		if (file.fileName().split('.')[1] != "effect") {
+			i++;
+			continue;
+		}
 		else {
-			
-			
+
+
 			QFileInfo fileInfo(file.fileName().split('.')[0]);
 			graphPreset.name = fileInfo.fileName();
 			graphPreset.title = graphPreset.name + " Template";
 			graphPreset.templatePath = "materials_to_graph/" + graphPreset.name.toLower() + ".effect";
 			graphPreset.iconPath = "materials_to_graph/" + graphPreset.name.toLower() + ".png";
-			graphPreset.list.append("materials_to_graph/" + graphPreset.name.toLower() + " diff.png");
-			graphPreset.list.append("materials_to_graph/" + graphPreset.name.toLower() + " spec.png");
-			graphPreset.list.append("materials_to_graph/" + graphPreset.name.toLower() + " norm.png");
+			
+			getTexturesForPreset(&graphPreset.list, i);
 
 			presetsList.append(graphPreset);
 			graphPreset.list.clear();
+			i++;
 		}
 
 	}
+
+
+
+	
+
 	return presetsList;
 }
 
@@ -412,6 +430,44 @@ QList<NodeGraphPreset> CreateNewDialog::getStarterList()
 	graphPreset.list.clear();
 
 	return list;
+}
+
+void CreateNewDialog::getTexturesForPreset(QVector<QString> *list, int index)
+{
+	auto filePath = MaterialHelper::materialPresetAssetPath();
+	QDir dir(filePath);
+	dir.setFilter(QDir::AllDirs);
+	auto dirList = dir.entryInfoList();
+
+	//qDebug() << list;
+
+
+	for (int i = index; i < dirList.count(); i++) {
+		QFileInfo info(dirList.at(i));
+		if (info.fileName() == QString("..") || info.fileName() == QString(".")) continue;
+
+		qDebug() << info.fileName() << index;
+
+
+
+		//search each sub directory
+		QDirIterator it(info.filePath(), QDirIterator::Subdirectories);
+		while (it.hasNext()) {
+			QFileInfo iterator(it.next());
+			if (iterator.fileName() == QString("..") || iterator.fileName() == QString(".")) continue;
+			qDebug() << iterator.filePath() << index;
+			list->append(iterator.filePath()); 
+		}
+
+		//re-order list from color, norm, spec to color, spec, norm
+
+		auto temp = list->at(1);
+		list->removeAt(1);
+		list->append(temp);
+
+		return;
+
+	}
 }
 
 

@@ -12,6 +12,7 @@ public:
 	static bool materialHasEffect(QJsonObject matObj);
 
 	static QString assetPath(QString relPath);
+	static QString materialPresetAssetPath();
 
 	// generates vertex and fragment shader form nodegraph
 	// returns true if all goes well, false if otherwose

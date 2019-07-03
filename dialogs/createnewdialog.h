@@ -58,6 +58,8 @@ public:
 	static QList<NodeGraphPreset> getAdditionalPresetList();
 	static QList<NodeGraphPreset> getStarterList();
 
+	static void getTexturesForPreset(QVector<QString> *list, int index);
+
 
 private:
 	QString name;

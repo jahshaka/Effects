@@ -988,6 +988,7 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 
 void MainWindow::loadGraphFromTemplate(NodeGraphPreset preset)
 {
+	qDebug() << preset.list[0];
     propertyListWidget->clearPropertyList();
     currentShaderInformation.GUID = "";
 	NodeGraph *graph;
@@ -1208,7 +1209,7 @@ void MainWindow::configureToolbar()
 	addBtn->setIcon(fontIcons->icon(fa::plus, options));
 	addBtn->setToolTip("Create new shader");
 
-	toolBar->addActions({ /*exportBtn,*/ importBtn, addBtn });
+	toolBar->addActions({ exportBtn, importBtn, addBtn });
 
 	// this acts as a spacer
 	QWidget* empty = new QWidget();
