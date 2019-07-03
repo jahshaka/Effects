@@ -327,7 +327,7 @@ QList<NodeGraphPreset> CreateNewDialog::getPresetList()
 	QList<NodeGraphPreset> presetsList;
 	NodeGraphPreset graphPreset;
 	graphPreset.name = "Checker Board";
-	graphPreset.title = "Chacker Board";
+	graphPreset.title = "Checker Board";
 	graphPreset.templatePath = "checker.effect";
 	graphPreset.iconPath = "checkerThumb.png";
 	graphPreset.list.append("checker.jpg");
@@ -335,7 +335,7 @@ QList<NodeGraphPreset> CreateNewDialog::getPresetList()
 	graphPreset.list.clear();
 
 	graphPreset.name = "Grass";
-	graphPreset.title = "Grass Template";
+	graphPreset.title = "Grass";
 	graphPreset.templatePath = "grass.effect";
 	graphPreset.iconPath = "grassThumb.png";
 	graphPreset.list.append("grass.jpg");
@@ -343,7 +343,7 @@ QList<NodeGraphPreset> CreateNewDialog::getPresetList()
 	graphPreset.list.clear();
 
 	graphPreset.name = "Gold";
-	graphPreset.title = "Gold Template";
+	graphPreset.title = "Gold";
 	graphPreset.templatePath = "gold.effect";
 	graphPreset.iconPath = "goldThumb.png";
 	//graphPreset.list.append("assets/grass.jpg");
@@ -369,9 +369,8 @@ QList<NodeGraphPreset> CreateNewDialog::getAdditionalPresetList()
 
 		QFileInfo file(it.next());
 
-		// placed here for readme.txt  when tthis file is encountered, value i should NOT be incremented
-		auto name = file.fileName();
-		if (file.fileName().split('.')[0] == "README") 
+		// ignore pngs
+		if (file.fileName().split('.')[1] == "png") 
 			continue;
 
 		if (file.fileName().split('.')[1] != "effect") {
@@ -380,10 +379,18 @@ QList<NodeGraphPreset> CreateNewDialog::getAdditionalPresetList()
 		}
 		else {
 
+			
 
 			QFileInfo fileInfo(file.fileName().split('.')[0]);
+
+			QString title;
+
+			if (fileInfo.fileName() == "concrete") title = QString("painted metal");
+			else title = fileInfo.fileName();
+
+
 			graphPreset.name = fileInfo.fileName();
-			graphPreset.title = graphPreset.name + " Template";
+			graphPreset.title = title;
 			graphPreset.templatePath = "materials_to_graph/" + graphPreset.name.toLower() + ".effect";
 			graphPreset.iconPath = "materials_to_graph/" + graphPreset.name.toLower() + ".png";
 			
@@ -408,21 +415,21 @@ QList<NodeGraphPreset> CreateNewDialog::getStarterList()
 	NodeGraphPreset graphPreset;
 	QList<NodeGraphPreset> list;
 	graphPreset.name = "Default";
-	graphPreset.title = "Default Template";
+	graphPreset.title = "Default";
     graphPreset.templatePath = "default.effect";
 	graphPreset.iconPath = "default.png";
 	list.append(graphPreset);
 	graphPreset.list.clear();
 
 	graphPreset.name = "Basic";
-	graphPreset.title = "Basic Template";
+	graphPreset.title = "Basic";
     graphPreset.templatePath = "basic.effect";
 	graphPreset.iconPath = "basic.png";
 	list.append(graphPreset);
 	graphPreset.list.clear();
 
 	graphPreset.name = "Texture";
-	graphPreset.title = "Texture Template";
+	graphPreset.title = "Texture";
     graphPreset.templatePath = "texture.effect";
 	graphPreset.iconPath = "texture.png";
     graphPreset.list.append("wood.jpg");

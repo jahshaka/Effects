@@ -816,7 +816,7 @@ void MainWindow::configureAssetsDock()
 	// get list of presets
 	for (auto tile : CreateNewDialog::getPresetList()) {
 		auto item = new QListWidgetItem;
-		item->setText(tile.name);
+		item->setText(tile.title);
 		item->setSizeHint(defaultItemSize);
 		item->setTextAlignment(Qt::AlignBottom);
 		item->setIcon(QIcon(MaterialHelper::assetPath(tile.iconPath)));
@@ -827,7 +827,7 @@ void MainWindow::configureAssetsDock()
 
 	for (auto tile : CreateNewDialog::getAdditionalPresetList()) {
 		auto item = new QListWidgetItem;
-		item->setText(tile.name);
+		item->setText(tile.title);
 		item->setSizeHint(defaultItemSize);
 		item->setTextAlignment(Qt::AlignBottom);
 		item->setIcon(QIcon(MaterialHelper::assetPath(tile.iconPath)));
@@ -988,7 +988,6 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 
 void MainWindow::loadGraphFromTemplate(NodeGraphPreset preset)
 {
-	qDebug() << preset.list[0];
     propertyListWidget->clearPropertyList();
     currentShaderInformation.GUID = "";
 	NodeGraph *graph;
@@ -1703,14 +1702,14 @@ void MainWindow::configureConnections()
 
 	connect(presets, &QListWidget::itemDoubleClicked, [=](QListWidgetItem *item) {
 		for (auto preset : CreateNewDialog::getPresetList()) {
-			if (item->data(Qt::DisplayRole).toString() == preset.name) {
+			if (item->data(Qt::DisplayRole).toString() == preset.title) {
 				loadGraphFromTemplate(preset);
 			}
 		}
 	});
 	connect(presets, &QListWidget::itemDoubleClicked, [=](QListWidgetItem *item) {
 		for (auto preset : CreateNewDialog::getAdditionalPresetList()) {
-			if (item->data(Qt::DisplayRole).toString() == preset.name) {
+			if (item->data(Qt::DisplayRole).toString() == preset.title) {
 				loadGraphFromTemplate(preset);
 			}
 		}
