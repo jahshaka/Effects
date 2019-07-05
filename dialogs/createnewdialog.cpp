@@ -358,29 +358,27 @@ QList<NodeGraphPreset> CreateNewDialog::getAdditionalPresetList()
 	QList<NodeGraphPreset> presetsList;
 	NodeGraphPreset graphPreset;
 	// create constants for this
-	auto filePath = MaterialHelper::assetPath("materials_to_graph");
+	QString prefix(QString("materials_to_graph") + QDir::separator());
+	auto filePath = MaterialHelper::assetPath(prefix);
 	QDirIterator it(filePath);
 
 	while (it.hasNext()) {
 
 		QFile file(it.next());
-		if (file.fileName().split('.')[1] != "effect") continue;
-		else {
-			
-			
+		if (file.fileName().split('.')[1] == "effect") {
+
 			QFileInfo fileInfo(file.fileName().split('.')[0]);
 			graphPreset.name = fileInfo.fileName();
 			graphPreset.title = graphPreset.name + " Template";
-			graphPreset.templatePath = "materials_to_graph/" + graphPreset.name.toLower() + ".effect";
-			graphPreset.iconPath = "materials_to_graph/" + graphPreset.name.toLower() + ".png";
-			graphPreset.list.append("materials_to_graph/" + graphPreset.name.toLower() + " diff.png");
-			graphPreset.list.append("materials_to_graph/" + graphPreset.name.toLower() + " spec.png");
-			graphPreset.list.append("materials_to_graph/" + graphPreset.name.toLower() + " norm.png");
+			graphPreset.templatePath = prefix + graphPreset.name + ".effect";
+			graphPreset.iconPath = prefix + graphPreset.name.toLower() + ".png";
+			graphPreset.list.append(prefix + graphPreset.name.toLower() + " diff.png");
+			graphPreset.list.append(prefix + graphPreset.name.toLower() + " spec.png");
+			graphPreset.list.append(prefix + graphPreset.name.toLower() + " norm.png");
 
 			presetsList.append(graphPreset);
 			graphPreset.list.clear();
 		}
-
 	}
 	return presetsList;
 }
