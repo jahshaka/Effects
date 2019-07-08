@@ -372,8 +372,8 @@ QList<NodeGraphPreset> CreateNewDialog::getAdditionalPresetList()
 			graphPreset.title = graphPreset.name + " Template";
 			graphPreset.templatePath = prefix + graphPreset.name + ".effect";
 			graphPreset.iconPath = prefix + graphPreset.name.toLower() + ".png";
-			graphPreset.list.append(prefix + graphPreset.name.toLower() + " diff.png");
-			graphPreset.list.append(prefix + graphPreset.name.toLower() + " spec.png");
+			graphPreset.list.append(prefix + graphPreset.name.toLower() + " diff.jpg");
+			graphPreset.list.append(prefix + graphPreset.name.toLower() + " spec.jpg");
 			graphPreset.list.append(prefix + graphPreset.name.toLower() + " norm.png");
 
 			presetsList.append(graphPreset);
