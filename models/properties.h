@@ -131,6 +131,7 @@ struct IntProperty : public Property
         obj["value"] = value;
 		obj["minValue"] = minValue;
 		obj["maxValue"] = maxValue;
+		obj["step"] = step;
         return obj;
     }
 
@@ -139,6 +140,7 @@ struct IntProperty : public Property
 		value = obj["value"].toInt();
 		minValue = obj["minValue"].toInt();
 		maxValue = obj["maxValue"].toInt();
+		step = obj["step"].toInt();
     }
 };
 
@@ -181,12 +183,16 @@ struct FloatProperty : public Property
 		obj["value"] = value;
 		obj["minValue"] = minValue;
 		obj["maxValue"] = maxValue;
+		obj["step"] = step;
         return obj;
     }
 
     void deserialize(const QJsonObject& obj) override
     {
         value = (float)obj["value"].toDouble();
+		minValue = (float)obj["minValue"].toDouble();
+		maxValue = (float)obj["maxValue"].toDouble();
+		step = (float)obj["step"].toDouble();
     }
 };
 
