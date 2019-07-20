@@ -32,6 +32,8 @@ public:
 	static void parseMaterialProperties(iris::CustomMaterialPtr material, QJsonArray propList);
 	//static QJsonArray serializeMateriaProperties(iris::)
 
+	static void parseMaterialStates(iris::CustomMaterialPtr material, QJsonObject matObj);
+
 
 	static QString vertexShaderTemplate;
 	static QString fragmentShaderTemplate;

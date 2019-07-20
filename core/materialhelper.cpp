@@ -113,6 +113,8 @@ QJsonObject MaterialHelper::serialize(NodeGraph* graph)
 	// just placed here for convenience
 	matObj["properties"] = matObj["shadergraph"].toObject()["properties"];
 
+	matObj["states"] = matObj["shadergraph"].toObject()["settings"];
+
 	return matObj;
 }
 
@@ -169,6 +171,7 @@ iris::CustomMaterialPtr MaterialHelper::generateMaterialFromMaterialDefinition(Q
 
 	// generate properties
 	parseMaterialProperties(mat, matObj["properties"].toArray());
+	parseMaterialStates(mat, matObj);
 
 	return mat;
 }
@@ -282,5 +285,14 @@ void MaterialHelper::parseMaterialProperties(iris::CustomMaterialPtr material, Q
 
 			material->properties.append(vecProp);
 		}
+	}
+
+}
+
+void MaterialHelper::parseMaterialStates(iris::CustomMaterialPtr material, QJsonObject matObj)
+{
+	if (matObj.contains("states")) {
+		auto statesObject = matObj["states"].toObject();
+		material->setBaseMaterialProperties(statesObject);
 	}
 }
