@@ -106,6 +106,7 @@ public:
 
 	QMenu* createContextMenu(float x, float y);
 	QMenu* removeConnectionContextMenu(float x, float y);
+	QMenu* nodeOperationsContextMenu(QPointF p, GraphNode* node);
 
 	QJsonObject serialize();
 	QListWidgetItem *currentlyEditing = Q_NULLPTR;

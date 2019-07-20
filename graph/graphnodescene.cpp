@@ -208,6 +208,26 @@ QMenu * GraphNodeScene::removeConnectionContextMenu(float x, float y)
 	return menu;
 }
 
+QMenu* GraphNodeScene::nodeOperationsContextMenu(QPointF p, GraphNode* node)
+{
+	auto menu = new QMenu();
+	menu->setStyleSheet(
+		"QMenu { background-color: #1A1A1A; color: #EEE; padding: 0; margin: 0; }"
+		"QMenu::item { background-color: #1A1A1A; padding: 6px 8px; margin: 0; }"
+		"QMenu::item:selected { background-color: #3498db; color: #EEE; padding: 6px 8px; margin: 0; }"
+		"QMenu::item : disabled { color: #555; }"
+	);
+
+	auto deleteNodeText = "Delete " + node->text->toPlainText() + " node";
+
+
+	connect(menu->addAction(deleteNodeText), &QAction::triggered, [=]() {
+		deleteNode(node);
+	});
+
+	return menu;
+}
+
 QJsonObject GraphNodeScene::serialize()
 {
 	QJsonObject data;
@@ -498,6 +518,7 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 	case QEvent::GraphicsSceneMousePress:
 	{
 		auto sock = getSocketAt(me->scenePos().x(), me->scenePos().y());
+		auto node = getNodeByPos({ me->scenePos().x(), me->scenePos().y() });
 		if (sock != nullptr) {
 			if (me->button() == Qt::LeftButton) {
 
@@ -553,6 +574,15 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 			}
 
 			return true;
+		}
+		else if (node != nullptr && me->button() == Qt::RightButton && node->text->toPlainText() != "Surface Material") { // find better comparison
+			//create qmenu to copy and delete node
+			qDebug() << "node hit" << node->nodeId;
+			auto menu = nodeOperationsContextMenu(me->scenePos(), node);
+			auto view = this->views().first();
+			auto scenePoint = view->mapFromScene(me->scenePos());
+			auto p = view->viewport()->mapToGlobal(scenePoint);
+			menu->exec(p);
 		}
 		else if (me->button() == Qt::RightButton)
 		{
@@ -756,7 +786,6 @@ Socket* GraphNodeScene::getSocketAt(float x, float y)
 		if (item && item->type() == (int)GraphicsItemType::Socket)
 			return (Socket*)item;
 	}
-
 	return nullptr;
 }
 
@@ -810,13 +839,11 @@ QVector<GraphNode*> GraphNodeScene::getNodes()
 
 GraphNode *GraphNodeScene::getNodeByPos(QPointF point)
 {
-	auto items = this->items();
+	auto items = this->items(point);
 	//auto items = this->items();
 	for (auto item : items) {
-		if (item && item->boundingRect().contains(point)) {
+		if (item && item->type() == (int)GraphicsItemType::Node)
 			return (GraphNode*)item;
-		}
 	}
-
 	return nullptr;
 }

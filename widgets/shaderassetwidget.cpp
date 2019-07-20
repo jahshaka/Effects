@@ -75,9 +75,6 @@ ShaderAssetWidget::ShaderAssetWidget(Database *handle) : QWidget()
 	lableText->setAlignment(Qt::AlignCenter);
 	noWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-	closeBtn = new QPushButton("Hide Panel");
-	noWidgetLayout->addWidget(closeBtn);
-
 	stackWidget->addWidget(assetViewWidget);
 	stackWidget->addWidget(noWidget);
 	this->setWidgetToBeShown();
