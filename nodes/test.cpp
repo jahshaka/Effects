@@ -664,7 +664,7 @@ Vector2Node::Vector2Node()
 {
 	setNodeType(NodeCategory::Constants);
 	title = "Vector 2 Node";
-	typeName = "vector 2 node";
+	typeName = "vector2";
 
 	x = y = 0;
 
