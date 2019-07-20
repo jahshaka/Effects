@@ -179,37 +179,41 @@ void SceneWidget::render()
 
     // lights
     //qDebug()<<lights.size();
-    graphics->setShaderUniform("u_lightCount", lights.size());
+	if (!graph->settings.acceptLighting) {
+		graphics->setShaderUniform("u_lightCount", 0);
+	}
+	else {
+		graphics->setShaderUniform("u_lightCount", lights.size());
 
-    for (int i=0;i<lights.size();i++)
-    {
-        QString lightPrefix = QString("u_lights[%0].").arg(i);
+		for (int i = 0; i < lights.size(); i++)
+		{
+			QString lightPrefix = QString("u_lights[%0].").arg(i);
 
-        auto light = lights[i];
-        if(!light->isVisible())
-        {
-            //quick hack for now
-            graphics->setShaderUniform(lightPrefix+"color", QColor(0,0,0));
-            continue;
-        }
+			auto light = lights[i];
+			if (!light->isVisible())
+			{
+				//quick hack for now
+				graphics->setShaderUniform(lightPrefix + "color", QColor(0, 0, 0));
+				continue;
+			}
 
-        graphics->setShaderUniform(lightPrefix+"type", (int)light->lightType);
-        graphics->setShaderUniform(lightPrefix+"position", light->getLocalPos());
-        //mat->setUniformValue(lightPrefix+"direction", light->getDirection());
-        graphics->setShaderUniform(lightPrefix+"distance", light->distance);
-        graphics->setShaderUniform(lightPrefix+"direction", light->getLightDir());
-        graphics->setShaderUniform(lightPrefix+"cutOffAngle", light->spotCutOff);
-        graphics->setShaderUniform(lightPrefix+"cutOffSoftness", light->spotCutOffSoftness);
-        graphics->setShaderUniform(lightPrefix+"intensity", light->intensity);
-        graphics->setShaderUniform(lightPrefix+"color", light->color);
+			graphics->setShaderUniform(lightPrefix + "type", (int)light->lightType);
+			graphics->setShaderUniform(lightPrefix + "position", light->getLocalPos());
+			//mat->setUniformValue(lightPrefix+"direction", light->getDirection());
+			graphics->setShaderUniform(lightPrefix + "distance", light->distance);
+			graphics->setShaderUniform(lightPrefix + "direction", light->getLightDir());
+			graphics->setShaderUniform(lightPrefix + "cutOffAngle", light->spotCutOff);
+			graphics->setShaderUniform(lightPrefix + "cutOffSoftness", light->spotCutOffSoftness);
+			graphics->setShaderUniform(lightPrefix + "intensity", light->intensity);
+			graphics->setShaderUniform(lightPrefix + "color", light->color);
 
-        graphics->setShaderUniform(lightPrefix+"constantAtten", 1.0f);
-        graphics->setShaderUniform(lightPrefix+"linearAtten", 0.0f);
-        graphics->setShaderUniform(lightPrefix+"quadtraticAtten", 1.0f);
+			graphics->setShaderUniform(lightPrefix + "constantAtten", 1.0f);
+			graphics->setShaderUniform(lightPrefix + "linearAtten", 0.0f);
+			graphics->setShaderUniform(lightPrefix + "quadtraticAtten", 1.0f);
 
-        graphics->setShaderUniform(lightPrefix + "shadowType", (int)iris::ShadowMapType::None);
-    }
-
+			graphics->setShaderUniform(lightPrefix + "shadowType", (int)iris::ShadowMapType::None);
+		}
+	}
 
     passNodeGraphUniforms();
 
