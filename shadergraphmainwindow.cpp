@@ -599,6 +599,11 @@ void MainWindow::exportGraph()
 	sourceFile.write("#pragma include <surface.frag>\n\n" + (gen.getFragmentShader().toUtf8()));
 	//sourceFile.write("#pragma include <surface.frag>\n\n"+(new ShaderGenerator())->generateShader(graph).toUtf8());
 	sourceFile.close();
+
+	auto imagePath = path.split('.')[0]+".png";
+
+	
+
 }
 
 void MainWindow::restoreGraphPositions(const QJsonObject &data)
@@ -806,6 +811,8 @@ void MainWindow::configureAssetsDock()
 		"border: 1px solid black;"
 	);
 
+	CreateNewDialog::getAdditionalPresetList();
+
 	// get list of presets
 	for (auto tile : CreateNewDialog::getPresetList()) {
 		auto item = new QListWidgetItem;
@@ -814,6 +821,17 @@ void MainWindow::configureAssetsDock()
 		item->setTextAlignment(Qt::AlignBottom);
 		item->setIcon(QIcon(MaterialHelper::assetPath(tile.iconPath)));
 		item->setData(MODEL_TYPE_ROLE, "presets");
+		item->icon().addPixmap(QPixmap(":/icons.shader_overlay.png"));
+		presets->addToListWidget(item);
+	}
+
+	for (auto tile : CreateNewDialog::getAdditionalPresetList()) {
+		auto item = new QListWidgetItem;
+		item->setText(tile.name);
+		item->setSizeHint(defaultItemSize);
+		item->setTextAlignment(Qt::AlignBottom);
+		item->setIcon(QIcon(MaterialHelper::assetPath(tile.iconPath)));
+		item->setData(MODEL_TYPE_ROLE, "presets2");
 		item->icon().addPixmap(QPixmap(":/icons.shader_overlay.png"));
 		presets->addToListWidget(item);
 	}
@@ -970,14 +988,14 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 
 void MainWindow::loadGraphFromTemplate(NodeGraphPreset preset)
 {
-
     propertyListWidget->clearPropertyList();
     currentShaderInformation.GUID = "";
-	auto graph = importGraphFromFilePath(MaterialHelper::assetPath(preset.templatePath), false);
+	NodeGraph *graph;
+	graph = importGraphFromFilePath(MaterialHelper::assetPath(preset.templatePath), false);
 	int i = 0;
 	for (auto prop : graph->properties) {
 		if (prop->type == PropertyType::Texture) {
-			auto graphTexture = TextureManager::getSingleton()->importTexture(MaterialHelper::assetPath(preset.list.at(i)));
+			GraphTexture* graphTexture = TextureManager::getSingleton()->importTexture(MaterialHelper::assetPath(preset.list.at(i)));
 			prop->setValue(graphTexture->guid);
 			i++;
 		}
@@ -1177,12 +1195,12 @@ void MainWindow::configureToolbar()
 
 	toolBar->addSeparator();
 
-	//auto exportBtn = new QAction;
+	auto exportBtn = new QAction;
 	auto importBtn = new QAction;
 	auto addBtn = new QAction;
 
-	//exportBtn->setIcon(fontIcons->icon(fa::upload, options));
-	//exportBtn->setToolTip("Export shader");
+	exportBtn->setIcon(fontIcons->icon(fa::upload, options));
+	exportBtn->setToolTip("Export shader");
 
 	importBtn->setIcon(fontIcons->icon(fa::download, options));
 	importBtn->setToolTip("Import shader");
@@ -1207,7 +1225,7 @@ void MainWindow::configureToolbar()
 	this->addToolBar(toolBar);
 
 	connect(actionSave, &QAction::triggered, this, &MainWindow::saveShader);
-	//connect(exportBtn, &QAction::triggered, this, &MainWindow::exportGraph);
+	connect(exportBtn, &QAction::triggered, this, &MainWindow::exportGraph);
 	connect(importBtn, &QAction::triggered, this, &MainWindow::importGraph);
 	connect(addBtn, &QAction::triggered, this, [=]() {
 		createNewGraph(true);
@@ -1396,6 +1414,15 @@ GraphNodeScene *MainWindow::createNewScene()
 
 	connect(scene, &GraphNodeScene::loadGraphFromPreset, [=](QString name) {
 		for (auto preset : CreateNewDialog::getPresetList()) {
+			if (name == preset.name) {
+				loadGraphFromTemplate(preset);
+			}
+		}
+	});
+
+
+	connect(scene, &GraphNodeScene::loadGraphFromPreset2, [=](QString name) {
+		for (auto preset : CreateNewDialog::getAdditionalPresetList()) {
 			if (name == preset.name) {
 				loadGraphFromTemplate(preset);
 			}
@@ -1680,6 +1707,19 @@ void MainWindow::configureConnections()
 			}
 		}
 	});
+	connect(presets, &QListWidget::itemDoubleClicked, [=](QListWidgetItem *item) {
+		for (auto preset : CreateNewDialog::getAdditionalPresetList()) {
+			if (item->data(Qt::DisplayRole).toString() == preset.name) {
+				loadGraphFromTemplate(preset);
+			}
+		}
+	});
+
+	QShortcut* exportGraphCall = new QShortcut(QKeySequence("crtl+e"), this);
+	connect(exportGraphCall, &QShortcut::activated, [=]() {
+		qDebug() << "graph export should call";
+		exportGraph();
+		});
 
 	
 

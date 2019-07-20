@@ -15,6 +15,10 @@ For more information see the LICENSE file
 #include <QDebug>
 #include <QButtonGroup>
 #include <QGraphicsEffect>
+#include <QStandardPaths>
+#include <QDirIterator>
+#include <QJsonDocument>
+#include "materials/materialhelper.h"
 
 #include "../core/materialhelper.h"
 
@@ -346,6 +350,36 @@ QList<NodeGraphPreset> CreateNewDialog::getPresetList()
 	presetsList.append(graphPreset);
 	graphPreset.list.clear();
 
+	return presetsList;
+}
+
+QList<NodeGraphPreset> CreateNewDialog::getAdditionalPresetList()
+{
+	QList<NodeGraphPreset> presetsList;
+	NodeGraphPreset graphPreset;
+	// create constants for this
+	QString prefix(QString("materials_to_graph") + QDir::separator());
+	auto filePath = MaterialHelper::assetPath(prefix);
+	QDirIterator it(filePath);
+
+	while (it.hasNext()) {
+
+		QFile file(it.next());
+		if (file.fileName().split('.')[1] == "effect") {
+
+			QFileInfo fileInfo(file.fileName().split('.')[0]);
+			graphPreset.name = fileInfo.fileName();
+			graphPreset.title = graphPreset.name + " Template";
+			graphPreset.templatePath = prefix + graphPreset.name + ".effect";
+			graphPreset.iconPath = prefix + graphPreset.name.toLower() + ".png";
+			graphPreset.list.append(prefix + graphPreset.name.toLower() + " diff.jpg");
+			graphPreset.list.append(prefix + graphPreset.name.toLower() + " spec.jpg");
+			graphPreset.list.append(prefix + graphPreset.name.toLower() + " norm.png");
+
+			presetsList.append(graphPreset);
+			graphPreset.list.clear();
+		}
+	}
 	return presetsList;
 }
 
