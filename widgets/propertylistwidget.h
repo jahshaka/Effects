@@ -60,6 +60,9 @@ private:
 
     void addToPropertyListWidget(BasePropertyWidget *widget);
 
+	QString generatePropName();
+	bool graphHasProperty(QString propName);
+
 private:
     QVBoxLayout* layout;
 	int added = 0;

@@ -181,8 +181,7 @@ void PropertyListWidget::addNewFloatProperty()
 {
     auto prop = new FloatProperty();
     prop->displayName = "Float Property";
-    // todo: not safe! find a better way to do this!!!!
-    prop->name = QString("property%1").arg(graph->properties.count());
+    prop->name = generatePropName();
 	this->addFloatProperty(prop);
 }
 
@@ -197,7 +196,7 @@ void PropertyListWidget::addNewVec2Property()
 {
 	auto prop = new Vec2Property;
 	prop->displayName = "Vector 2 property";
-	prop->name = QString("property%1").arg(graph->properties.count());
+	prop->name = generatePropName();
 	this->addVec2Property(prop);
 }
 
@@ -214,7 +213,7 @@ void PropertyListWidget::addNewVec3Property()
 {
 	auto prop = new Vec3Property;
 	prop->displayName = "Vector 3 property";
-	prop->name = QString("property%1").arg(graph->properties.count());
+	prop->name = generatePropName();
 	this->addVec3Property(prop);
 }
 
@@ -231,7 +230,7 @@ void PropertyListWidget::addNewVec4Property()
 {
 	auto prop = new Vec4Property;
 	prop->displayName = "Vector 4 property";
-	prop->name = QString("property%1").arg(graph->properties.count());
+	prop->name = generatePropName();
 	this->addVec4Property(prop);
 }
 
@@ -248,7 +247,7 @@ void PropertyListWidget::addNewIntProperty()
 {
 	auto prop = new IntProperty;
 	prop->displayName = "Int property";
-	prop->name = QString("property%1").arg(graph->properties.count());
+	prop->name = generatePropName();
 	this->addIntProperty(prop);
 }
 
@@ -265,7 +264,7 @@ void PropertyListWidget::addNewTextureProperty()
 {
 	auto prop = new TextureProperty;
 	prop->displayName = "Texture Property";
-	prop->name = QString("property%1").arg(graph->properties.count());
+	prop->name = generatePropName();
 	this->addTextureProperty(prop);
 }
 
@@ -298,4 +297,24 @@ void PropertyListWidget::addToPropertyListWidget(BasePropertyWidget *widget)
 	});
 
    
+}
+
+QString PropertyListWidget::generatePropName()
+{
+	QString propName;
+	int i = 0;
+	do {
+		propName = QString("property%1").arg(i++);
+	} while (graphHasProperty(propName));
+
+	return propName;
+}
+
+bool PropertyListWidget::graphHasProperty(QString propName)
+{
+	for (const auto& prop : graph->properties) {
+		if (prop->name == propName)
+			return true;
+	}
+	return false;
 }
