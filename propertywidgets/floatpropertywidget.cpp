@@ -56,6 +56,18 @@ void FloatPropertyWidget::setConnections() {
 		emit valueChanged(val);
 	});
 
+	connect(wid, &WidgetFloat::minChanged, [=](double val) {
+		prop->minValue = val;
+	});
+
+	connect(wid, &WidgetFloat::maxChanged, [=](double val) {
+		prop->maxValue = val;
+	});
+
+	connect(wid, &WidgetFloat::stepChanged, [=](double val) {
+		prop->step = val;
+	});
+
 }
 
 

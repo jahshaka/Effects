@@ -52,10 +52,22 @@ void IntPropertyWidget::setPropValue(int value)
 
 void IntPropertyWidget::setConnections() {
 	
-	connect(this, &IntPropertyWidget::valueChanged, [=](int val) {
+	connect(wid, &WidgetInt::valueChanged, [=](int val) {
 		x = val;
 		setPropValue(val);
 		emit valueChanged(val);
+	});
+
+	connect(wid, &WidgetInt::minChanged, [=](int val) {
+		prop->minValue = val;
+	});
+
+	connect(wid, &WidgetInt::maxChanged, [=](int val) {
+		prop->maxValue = val;
+	});
+
+	connect(wid, &WidgetInt::stepChanged, [=](int val) {
+		prop->step = val;
 	});
 }
 

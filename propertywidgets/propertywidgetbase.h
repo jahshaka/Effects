@@ -112,7 +112,9 @@ public:
 	LabelState state = LabelState::Visible;
 signals:
 	void valueChanged(int val);
-
+	void minChanged(int val);
+	void maxChanged(int val);
+	void stepChanged(int val);
 };
 
 
@@ -138,6 +140,9 @@ public:
 	LabelState state = LabelState::Visible;
 signals:
 	void valueChanged(double val);
+	void minChanged(double val);
+	void maxChanged(double val);
+	void stepChanged(double val);
 
 };
 

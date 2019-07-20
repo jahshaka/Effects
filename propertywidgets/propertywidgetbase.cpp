@@ -297,13 +297,16 @@ WidgetInt::WidgetInt() : PropertyWidgetBase()
 
 	connect(minSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [=](int val) {
 		spinBox->setMinimum(val);
+		emit minChanged(val);
 	});
 	connect(maxSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [=](int val) {
 		spinBox->setMaximum(val);
+		emit maxChanged(val);
 
 	});
 	connect(stepSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [=](int val) {
 		spinBox->setSingleStep(val);
+		emit stepChanged(val);
 	});
 }
 
@@ -395,13 +398,16 @@ WidgetFloat::WidgetFloat() : PropertyWidgetBase()
 
 	connect(minSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
 		floatSpinBox->setMinimum(val);
+		emit minChanged(val);
 	});
 	connect(maxSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
 		floatSpinBox->setMaximum(val);
+		emit maxChanged(val);
 
 	});
 	connect(stepSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [=](double val) {
 		floatSpinBox->setSingleStep(val);
+		emit stepChanged(val);
 	});
 }
 
