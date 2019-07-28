@@ -1834,8 +1834,8 @@ void MainWindow::editingFinishedOnListItem()
 
 void MainWindow::addMenuToSceneWidget()
 {
-	QMenu *modelMenu = new QMenu("model");
-	QMenu *backgroundMenu = new QMenu("background");
+	QMenu *modelMenu = new QMenu("Model");
+	QMenu *backgroundMenu = new QMenu("Background");
 	modelMenu->setStyleSheet(
 		"QMenu { background-color: #1A1A1A; color: #EEE; padding: 0; margin: 0; }"
 		"QMenu:hover { background-color: #3498db; }"
@@ -1853,27 +1853,27 @@ void MainWindow::addMenuToSceneWidget()
 	displayWidget->setWidget(window);
 	window->setCentralWidget(sceneWidget);
 	
-	auto cubeAction = new QAction("cube");
+	auto cubeAction = new QAction("Cube");
 	connect(cubeAction, &QAction::triggered, [=]() {
 		sceneWidget->setPreviewModel(PreviewModel::Cube);
 	});		
-	auto planeAction = new QAction("plane");
+	auto planeAction = new QAction("Plane");
 	connect(planeAction, &QAction::triggered, [=]() {
 		sceneWidget->setPreviewModel(PreviewModel::Plane);
 	});
-	auto sphereAction = new QAction("sphere");
+	auto sphereAction = new QAction("Sphere");
 	connect(sphereAction, &QAction::triggered, [=]() {
 		sceneWidget->setPreviewModel(PreviewModel::Sphere);
 	});
-	auto cylinderAction = new QAction("cylinder");
+	auto cylinderAction = new QAction("Cylinder");
 	connect(cylinderAction, &QAction::triggered, [=]() {
 		sceneWidget->setPreviewModel(PreviewModel::Cylinder);
 	});
-	auto capsuleAction = new QAction("capsule");
+	auto capsuleAction = new QAction("Capsule");
 	connect(capsuleAction, &QAction::triggered, [=]() {
 		sceneWidget->setPreviewModel(PreviewModel::Capsule);
 	});
-	auto torusAction = new QAction("torus");
+	auto torusAction = new QAction("Torus");
 	connect(torusAction, &QAction::triggered, [=]() {
 		sceneWidget->setPreviewModel(PreviewModel::Torus);
 	});
@@ -1886,11 +1886,22 @@ void MainWindow::addMenuToSceneWidget()
 						   torusAction,
 		});
 
-	auto whiteAction = new QAction("white");
-	connect(whiteAction, &QAction::triggered, [=]() {});
-	auto blackAction = new QAction("black");
-	connect(blackAction, &QAction::triggered, [=]() {});
-	backgroundMenu->addActions({ whiteAction, blackAction});
+	auto whiteAction = new QAction("White");
+	connect(whiteAction, &QAction::triggered, [=]() {
+		sceneWidget->setClearColor(QColor(255, 255, 255));
+	});
+
+	auto grayAction = new QAction("Gray");
+	connect(grayAction, &QAction::triggered, [=]() {
+		sceneWidget->setClearColor(QColor(125, 125, 125));
+	});
+
+
+	auto blackAction = new QAction("Black");
+	connect(blackAction, &QAction::triggered, [=]() {
+		sceneWidget->setClearColor(QColor(0, 0, 0));
+	});
+	backgroundMenu->addActions({ whiteAction, grayAction, blackAction});
 
 	cubeAction->setCheckable(true);
 	planeAction->setCheckable(true);

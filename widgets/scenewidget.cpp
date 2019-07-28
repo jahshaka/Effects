@@ -52,7 +52,7 @@ void SceneWidget::start()
     vertexBuffer = iris::VertexBuffer::create(layout);
     //vertexBuffer->setData()
 
-	clearColor = Qt::white;
+	clearColor = QColor(125, 125, 125);
 
     cam = iris::CameraNode::create();
     cam->setLocalPos(QVector3D(2, 0, 3));
@@ -127,8 +127,6 @@ void SceneWidget::update(float dt)
 
 void SceneWidget::render()
 {
-    device->clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, clearColor);
-	
     //spriteBatch->begin();
     //spriteBatch->drawString(font, QString("fps %1").arg(fps), QVector2D(), Qt::black);
     //spriteBatch->end();
@@ -147,6 +145,9 @@ void SceneWidget::render()
 
     auto& graphics = device;
     device->setViewport(QRect(0, 0, viewportWidth, viewportHeight));
+	device->clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, clearColor);
+
+
     device->setShader(shader);
     device->setShaderUniform("u_viewMatrix", cam->viewMatrix);
     device->setShaderUniform("u_projMatrix", cam->projMatrix);
@@ -333,6 +334,7 @@ QImage SceneWidget::takeScreenshot(int width, int height)
 	auto tempH = viewportHeight;
 	viewportWidth = width;
 	viewportHeight = height;
+	QColor savedClearColor = clearColor;
 	clearColor = QColor(0, 0, 0, 0);
 
 	cam->aspectRatio = viewportWidth / (float)viewportHeight;
@@ -345,7 +347,7 @@ QImage SceneWidget::takeScreenshot(int width, int height)
 	
 	viewportWidth = tempW;
 	viewportHeight = tempH;
-	clearColor = Qt::white;
+	clearColor = savedClearColor;
 
 	auto img = screenshotRT->toImage();
 	this->doneCurrent();

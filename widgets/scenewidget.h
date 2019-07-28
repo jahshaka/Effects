@@ -78,6 +78,8 @@ public:
 
     void render();
 
+	void setClearColor(QColor color) { this->clearColor = color; }
+
 	static float getRenderTime() { return renderTime; }
 	void setVertexShader(QString vertShader);
 	void setFragmentShader(QString fragShader);
