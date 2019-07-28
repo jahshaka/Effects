@@ -32,7 +32,7 @@ GraphicsView::GraphicsView( QWidget *parent) : QGraphicsView(parent)
 	setCacheMode(QGraphicsView::CacheBackground);
 	//setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
 	setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
-	setDragMode(QGraphicsView::RubberBandDrag);
+	setDragMode(QGraphicsView::ScrollHandDrag);
 
 	QGraphicsView::setAcceptDrops(true);
 
