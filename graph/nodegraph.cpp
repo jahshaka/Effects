@@ -334,22 +334,22 @@ MaterialSettings NodeGraph::deserializeMaterialSettings(QJsonObject obj)
 {
 
 	auto getBlendmode = [](QJsonObject obj) {
-		if (obj["blendMode"].toString() == "Opaque") return BlendMode::Opaque;
-		if (obj["blendMode"].toString() == "Blend") return BlendMode::Blend;
-		if (obj["blendMode"].toString() == "Additive") return BlendMode::Additive;
+		if (obj["blendMode"].toString().toLower() == "opaque") return BlendMode::Opaque;
+		if (obj["blendMode"].toString().toLower() == "blend") return BlendMode::Blend;
+		if (obj["blendMode"].toString().toLower() == "additive") return BlendMode::Additive;
 		return BlendMode::Opaque;
 	};
 	auto getCullMode = [](QJsonObject obj) {
-		if (obj["cullMode"].toString() == "Front") return CullMode::Front;
-		if (obj["cullMode"].toString() == "Back") return CullMode::Back;
-		if (obj["cullMode"].toString() == "None") return CullMode::None;
+		if (obj["cullMode"].toString().toLower() == "front") return CullMode::Front;
+		if (obj["cullMode"].toString().toLower() == "back") return CullMode::Back;
+		if (obj["cullMode"].toString().toLower() == "none") return CullMode::None;
 		return CullMode::Front;
 	};
 	auto getRenderLayer = [](QJsonObject obj) {
-		if (obj["renderLayer"].toString() == "Opaque") return RenderLayer::Opaque;
-		if (obj["renderLayer"].toString() == "AlphaTested") return RenderLayer::AlphaTested;
-		if (obj["renderLayer"].toString() == "Transparent") return RenderLayer::Transparent;
-		if (obj["renderLayer"].toString() == "Overlay") return RenderLayer::Overlay;
+		if (obj["renderLayer"].toString().toLower() == "opaque") return RenderLayer::Opaque;
+		if (obj["renderLayer"].toString().toLower() == "alphatested") return RenderLayer::AlphaTested;
+		if (obj["renderLayer"].toString().toLower() == "transparent") return RenderLayer::Transparent;
+		if (obj["renderLayer"].toString().toLower() == "overlay") return RenderLayer::Overlay;
 		return RenderLayer::Opaque;
 	};
 
