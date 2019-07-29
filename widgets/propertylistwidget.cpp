@@ -152,13 +152,15 @@ void PropertyListWidget::setNodeGraph(NodeGraph *graph)
 void PropertyListWidget::clearPropertyList()
 {
     // remove all QWidgets
-    for(auto child : referenceList){
-        referenceList.removeOne(child);
-        layout->removeWidget(child);
+    for(int i= referenceList.length() - 1; i > -1;i--){
+        auto child = referenceList.at(i);
+       referenceList.removeOne(child);
         child->hide();
         child->deleteLater();
+        layout->update();
+
     }
-	stack->clear();
+    stack->clear();
 	added = 0;
 }
 
