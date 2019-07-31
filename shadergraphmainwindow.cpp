@@ -35,6 +35,7 @@ For more information see the LICENSE file
 #include <QPixmap>
 #include <QScrollBar>
 #include <QShortcut>
+#include <QDesktopServices>
 #include "generator/shadergenerator.h"
 #include "nodes/test.h"
 #include "core/materialwriter.h"
@@ -52,6 +53,7 @@ For more information see the LICENSE file
 #include "assets.h"
 #include "propertywidgets/texturepropertywidget.h"
 #include "widgets/assetview.h"
+#include "misc/stylesheet.h"
 
 #include <QMainWindow>
 #include <QStandardPaths>
@@ -1222,6 +1224,18 @@ void MainWindow::configureToolbar()
 	actionSave->setIcon(fontIcons->icon(fa::floppyo, options));
 	toolBar->addAction(actionSave);
 
+	QPushButton* downloadBtn = new QPushButton("Download Materials");
+	//downloadBtn->setStyleSheet(StyleSheet::QPushButtonGreyscale());
+	downloadBtn->setStyleSheet( QString(
+		"QPushButton{ background-color: rgba(33,33,33, 1); color: #DEDEDE; border : 0; padding: 10px 16px; margin-right:6px; margin-left:6px; border-radius: 2px; }"
+		"QPushButton:hover{ background-color: #555; }"
+		"QPushButton:pressed{ background-color: #444; }"
+	));
+	connect(downloadBtn, &QPushButton::pressed, []() {
+		QDesktopServices::openUrl(QUrl("https://www.jahshaka.com/get/materials/"));
+	});
+	toolBar->addWidget(downloadBtn);
+
 	this->addToolBar(toolBar);
 
 	connect(actionSave, &QAction::triggered, this, &MainWindow::saveShader);
@@ -1240,6 +1254,7 @@ void MainWindow::configureToolbar()
 		"QToolBar::separator:horizontal { background: #272727; width: 1px; margin-left: 6px; margin-right: 6px;} "
 		"QToolButton { border-radius: 2px; background: rgba(33,33,33, 1); color: rgba(250,250,250, 1); border : 1px solid rgba(10,10,10, .4); font: 18px; padding: 8px; } "
 		"QToolButton:hover{ background: rgba(48,48,48, 1); } "
+		"QToolButton#actionDownload{width:40px;}"
 	);
 
 	empty->setStyleSheet(
