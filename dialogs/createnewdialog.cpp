@@ -172,7 +172,8 @@ void CreateNewDialog::createViewWithOptions()
 	int j = 0;
 
 	//set up list options
-	for (auto tile : getStarterList()) {
+	auto starterList = getStarterList();
+	for (auto tile : starterList) {
 		auto item = new OptionSelection(tile);
 		optionLayout->addWidget(item, i, j);
 		j++;
@@ -188,6 +189,9 @@ void CreateNewDialog::createViewWithOptions()
 		});
 
 	}
+
+	currentInfoSelected = starterList[0];
+	infoLabel->setText(currentInfoSelected.title + " selected");
 
 	auto spacerItem = new QWidget;
 	spacerItem->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
