@@ -103,7 +103,7 @@ void CustomRenderWidget::render()
 	cam->update(0.016f);
 
 	//device->clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, QColor(qMin((int)(renderTime*0.1f * 255), 255), 0, 0));
-	device->clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, QColor(0, 0, 0, 0));
+	device->clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, QColor(128, 128, 128, 255));
 
 	device->setBlendState(iris::BlendState::createOpaque());
 	device->setDepthState(iris::DepthState());
