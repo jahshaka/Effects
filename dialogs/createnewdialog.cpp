@@ -369,9 +369,17 @@ QList<NodeGraphPreset> CreateNewDialog::getAdditionalPresetList()
 	while (it.hasNext()) {
 
 		QFile file(it.next());
-		if (file.fileName().split('.')[1] == "effect") {
+        qDebug() << file.fileName();
 
-			QFileInfo fileInfo(file.fileName().split('.')[0]);
+#ifdef Q_OS_MAC
+        if (file.fileName().split('.')[2] == "effect") {
+            QFileInfo fileInfo(file.fileName().split('.')[1]);
+#else
+        if (file.fileName().split('.')[1] == "effect") {
+            QFileInfo fileInfo(file.fileName().split('.')[0]);
+#endif
+
+
 			graphPreset.name = fileInfo.fileName();
 			graphPreset.title = graphPreset.name + " Template";
 			graphPreset.templatePath = prefix + graphPreset.name + ".effect";
