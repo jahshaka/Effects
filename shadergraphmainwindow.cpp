@@ -1197,32 +1197,68 @@ void MainWindow::configureToolbar()
 
 	toolBar->addSeparator();
 
-	auto exportBtn = new QAction;
-	auto importBtn = new QAction;
-	auto addBtn = new QAction;
+	//auto exportBtn = new QAction;
+	//auto importBtn = new QAction;
+	//auto addBtn = new QAction;
 
-	exportBtn->setIcon(fontIcons->icon(fa::upload, options));
-	exportBtn->setToolTip("Export shader");
+	//exportBtn->setIcon(fontIcons->icon(fa::upload, options));
+	//exportBtn->setToolTip("Export shader");
 
+	//importBtn->setIcon(fontIcons->icon(fa::download, options));
+	//importBtn->setToolTip("Import shader");
+
+	QPushButton* importBtn = new QPushButton("Import");
 	importBtn->setIcon(fontIcons->icon(fa::download, options));
-	importBtn->setToolTip("Import shader");
+	importBtn->setStyleSheet(QString(
+		"QPushButton{ background-color: rgba(33,33,33, 1); color: #DEDEDE; border : 0; padding: 10px 16px; margin-right:6px; margin-left:6px; border-radius: 2px; }"
+		"QPushButton:hover{ background-color: #555; }"
+		"QPushButton:pressed{ background-color: #444; }"
+	));
+	connect(importBtn, &QPushButton::pressed, this, [=]() {
+		createNewGraph(true);
+	});
+	toolBar->addWidget(importBtn);
 
-	addBtn->setIcon(fontIcons->icon(fa::plus, options));
-	addBtn->setToolTip("Create new shader");
+	//addBtn->setIcon(fontIcons->icon(fa::plus, options));
+	//addBtn->setToolTip("Create new shader");
 
-	toolBar->addActions({ /*exportBtn,*/ importBtn, addBtn });
+	//toolBar->addActions({ /*exportBtn,*/ importBtn, /*addBtn*/ });
+
+	QPushButton* newBtn = new QPushButton("New");
+	newBtn->setIcon(fontIcons->icon(fa::floppyo, options));
+	//addBtn->setIcon(fontIcons->icon(fa::plus, options));
+	newBtn->setStyleSheet(QString(
+		"QPushButton{ background-color: rgba(33,33,33, 1); color: #DEDEDE; border : 0; padding: 10px 16px; margin-right:6px; margin-left:6px; border-radius: 2px; }"
+		"QPushButton:hover{ background-color: #555; }"
+		"QPushButton:pressed{ background-color: #444; }"
+	));
+	connect(newBtn, &QPushButton::pressed, this, [=]() {
+		createNewGraph(true);
+	});
+	toolBar->addWidget(newBtn);
 
 	// this acts as a spacer
 	QWidget* empty = new QWidget();
 	empty->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	toolBar->addWidget(empty);
 
-	QAction *actionSave = new QAction;
-	actionSave->setObjectName(QStringLiteral("actionSave"));
-	actionSave->setCheckable(false);
-	actionSave->setToolTip("Export | Export the current scene");
-	actionSave->setIcon(fontIcons->icon(fa::floppyo, options));
-	toolBar->addAction(actionSave);
+	//QAction *actionSave = new QAction;
+	//actionSave->setObjectName(QStringLiteral("actionSave"));
+	//actionSave->setCheckable(false);
+	//actionSave->setToolTip("Export | Export the current scene");
+	//actionSave->setIcon(fontIcons->icon(fa::floppyo, options));
+	//actionSave->setText("Save");
+	//toolBar->addAction(actionSave);
+
+	QPushButton* saveBtn = new QPushButton("Save");
+	saveBtn->setIcon(fontIcons->icon(fa::floppyo, options));
+	saveBtn->setStyleSheet(QString(
+		"QPushButton{ background-color: rgba(33,33,33, 1); color: #DEDEDE; border : 0; padding: 10px 16px; margin-right:6px; margin-left:6px; border-radius: 2px; }"
+		"QPushButton:hover{ background-color: #555; }"
+		"QPushButton:pressed{ background-color: #444; }"
+	));
+	connect(saveBtn, &QPushButton::pressed, this, &MainWindow::saveShader);
+	toolBar->addWidget(saveBtn);
 
 	QPushButton* downloadBtn = new QPushButton("Download Materials");
 	//downloadBtn->setStyleSheet(StyleSheet::QPushButtonGreyscale());
@@ -1238,12 +1274,12 @@ void MainWindow::configureToolbar()
 
 	this->addToolBar(toolBar);
 
-	connect(actionSave, &QAction::triggered, this, &MainWindow::saveShader);
-	connect(exportBtn, &QAction::triggered, this, &MainWindow::exportGraph);
-	connect(importBtn, &QAction::triggered, this, &MainWindow::importGraph);
-	connect(addBtn, &QAction::triggered, this, [=]() {
-		createNewGraph(true);
-	});
+	//connect(actionSave, &QAction::triggered, this, &MainWindow::saveShader);
+	//connect(exportBtn, &QAction::triggered, this, &MainWindow::exportGraph);
+	//connect(importBtn, &QAction::triggered, this, &MainWindow::importGraph);
+	//connect(addBtn, &QAction::triggered, this, [=]() {
+	//	createNewGraph(true);
+	//});
 
 	toolBar->setStyleSheet(""
 		//"QToolBar{background: rgba(48,48,48, 1); border: .5px solid rgba(20,20,20, .8); border-bottom: 1px solid rgba(20,20,20, .8); padding: 0px;}"
