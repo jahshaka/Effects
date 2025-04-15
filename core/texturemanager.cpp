@@ -47,7 +47,7 @@ void TextureManager::removeTextureByGuid(QString guid)
 
 			// remove from filesystem
 			auto assetFolder = IrisUtils::join(
-				QStandardPaths::writableLocation(QStandardPaths::DataLocation),
+                QStandardPaths::writableLocation(QStandardPaths::AppDataLocation),
 				"AssetStore", guid
 			);
 
@@ -104,7 +104,7 @@ QString TextureManager::loadTextureFromDisk(QString guid)
 	
 
 	auto imagePath = IrisUtils::join(
-		QStandardPaths::writableLocation(QStandardPaths::DataLocation),
+        QStandardPaths::writableLocation(QStandardPaths::AppDataLocation),
 		"AssetStore", guid, asset.name
 	);
 
@@ -116,7 +116,7 @@ QString TextureManager::loadTextureFromDatabase(QString guid)
 	auto asset = database->fetchAsset(guid);
 
 	auto imagePath = IrisUtils::join(
-		QStandardPaths::writableLocation(QStandardPaths::DataLocation),
+        QStandardPaths::writableLocation(QStandardPaths::AppDataLocation),
 		"AssetStore", guid, asset.name
 	);
 
@@ -126,7 +126,7 @@ QString TextureManager::loadTextureFromDatabase(QString guid)
 GraphTexture* TextureManager::importTexture(QString path)
 {
 	auto assetPath = IrisUtils::join(
-		QStandardPaths::writableLocation(QStandardPaths::DataLocation),
+        QStandardPaths::writableLocation(QStandardPaths::AppDataLocation),
 		"AssetStore"
 	);
 
@@ -139,7 +139,7 @@ GraphTexture* TextureManager::importTexture(QString path)
 	QString fileToCopyTo = IrisUtils::join(assetFolder, fileInfo.fileName());
 	bool copyFile = QFile::copy(fileInfo.absoluteFilePath(), fileToCopyTo);
 
-	database->createAssetEntry(QString::null,
+    database->createAssetEntry(QString(),
 		texGuid,
 		fileInfo.fileName(),
 		static_cast<int>(ModelTypes::File),

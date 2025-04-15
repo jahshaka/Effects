@@ -15,6 +15,8 @@ For more information see the LICENSE file
 #include <QtMath>
 #include <QMessageBox>
 #include <QGraphicsEffect>
+#include <QPainterPath>
+#include <QEnterEvent>
 
 
 BasePropertyWidget::BasePropertyWidget(QWidget * parent) : QWidget(parent)
@@ -154,7 +156,7 @@ void BasePropertyWidget::paintEvent(QPaintEvent * event)
 
 	QPainter painter(this);
 	painter.setRenderHint(QPainter::Antialiasing);
-	painter.setRenderHint(QPainter::HighQualityAntialiasing);
+    // painter.setRenderHint(QPainter::HighQualityAntialiasing);
 
 	// draw title border
 	QPainterPath path;
@@ -205,7 +207,7 @@ void HeaderObject::mouseReleaseEvent(QMouseEvent * event)
 
 void HeaderObject::enterEvent(QEvent * event)
 {
-	QWidget::enterEvent(event);
+    QWidget::enterEvent(static_cast<QEnterEvent*>(event));
 	setCursor(Qt::OpenHandCursor);
 }
 

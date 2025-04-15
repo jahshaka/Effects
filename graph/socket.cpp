@@ -11,10 +11,11 @@ For more information see the LICENSE file
 #include "socket.h"
 #include "socketconnection.h"
 #include "graphnodescene.h"
+#include <QGuiApplication>
+#include <QScreen>
 #include <QGraphicsItem>
 #include <QFontMetrics>
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QDebug>
 
 Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title) :
@@ -27,8 +28,8 @@ Socket::Socket(QGraphicsItem* parent, SocketType socketType, QString title) :
 	text->setDefaultTextColor(QColor(200, 200, 200));
 
 	QFont font = text->font();
-	font.setWeight(60);
-	auto ratio = QApplication::desktop()->devicePixelRatio();
+    font.setWeight(QFont::Medium);
+    auto ratio = QGuiApplication::primaryScreen()->devicePixelRatio();
 	font.setPixelSize(14);
 	text->setFont(font);
 
@@ -170,7 +171,7 @@ void Socket::updateSocket()
 void Socket::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
 
-	painter->setRenderHint(QPainter::HighQualityAntialiasing);
+    painter->setRenderHint(QPainter::Antialiasing);
 	QPainterPath path;
 	QPainterPath pathShadow;
 

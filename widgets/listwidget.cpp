@@ -52,7 +52,7 @@ ListWidget::ListWidget() : QListWidget()
 
 	numberOfItemPerRow = 3;
 	QFont font = this->font();
-	font.setWeight(60);
+    font.setWeight(QFont::Medium);
 	font.setPixelSize(12);
 	setFont(font);
 	setContentsMargins(0, 0, 0, 0);
@@ -112,7 +112,7 @@ void ListWidget::highlightNodeForInterval(int seconds, QListWidgetItem * item)
 		QPixmap bg(pixmap);
 		bg.fill(value.value<QColor>());
 		QPainter painter(&bg);
-		painter.setRenderHint(QPainter::HighQualityAntialiasing);
+        painter.setRenderHint(QPainter::Antialiasing);
 		painter.drawPixmap(QRect(0, 0, 90, 90), pixmap);
 		item->setIcon(bg);
 	});
