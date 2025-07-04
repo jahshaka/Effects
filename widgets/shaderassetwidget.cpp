@@ -120,7 +120,7 @@ void ShaderAssetWidget::addItem(const FolderRecord & folderData)
 
 void ShaderAssetWidget::addItem(const AssetRecord & assetData)
 {
-	auto prop = QJsonDocument::fromBinaryData(assetData.properties).object();
+    auto prop = QJsonDocument::fromJson(assetData.properties).object();
 	if (!prop["type"].toString().isEmpty()) {
 		// No need to check further, this is a builtin asset
 		return;
@@ -128,7 +128,7 @@ void ShaderAssetWidget::addItem(const AssetRecord & assetData)
 
 	// dont show item if its not a shader asset
 
-	auto doc = QJsonDocument::fromBinaryData(assetData.asset);
+    auto doc = QJsonDocument::fromJson(assetData.asset);
 	auto obj = doc.object();
 	auto name = obj["name"].toString();
 
@@ -482,7 +482,7 @@ void ShaderAssetWidget::createShader(QString *shaderName)
 	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(newShader, "shader"));
 	assetShader->setValue(QVariant::fromValue(shaderDefinition));
 
-	db->updateAssetAsset(assetGuid, QJsonDocument(shaderDefinition).toBinaryData());
+    db->updateAssetAsset(assetGuid, QJsonDocument(shaderDefinition).toJson());
 
 	AssetManager::addAsset(assetShader);
 }
@@ -504,7 +504,7 @@ QString ShaderAssetWidget::createShader(QListWidgetItem * item)
 	AssetRecord sourceRecord = db->fetchAsset(sourceGuid);
 	auto sourceData = db->fetchAssetData(sourceGuid);
 
-	auto doc = QJsonDocument::fromBinaryData(sourceData);
+    auto doc = QJsonDocument::fromJson(sourceData);
 	auto obj = doc.object();
 	auto list = obj["properties"].toArray();
 	QString str;
@@ -516,7 +516,7 @@ QString ShaderAssetWidget::createShader(QListWidgetItem * item)
 				auto value = prop.toObject()["value"].toString();
 
 				auto assetPath = IrisUtils::join(
-					QStandardPaths::writableLocation(QStandardPaths::DataLocation),
+                    QStandardPaths::writableLocation(QStandardPaths::AppDataLocation),
 					"AssetStore"
 				);
 				
@@ -560,7 +560,7 @@ QString ShaderAssetWidget::createShader(QListWidgetItem * item)
 		Globals::project->getProjectGuid());
 
 	
-	db->updateAssetAsset(targetGuid, updatedDoc.toBinaryData());
+    db->updateAssetAsset(targetGuid, updatedDoc.toJson());
 	
 	db->updateAssetThumbnail(targetGuid, db->fetchAsset(item->data(MODEL_GUID_ROLE).toString()).thumbnail);
 
@@ -573,7 +573,7 @@ QString ShaderAssetWidget::createShader(QListWidgetItem * item)
 	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(shaderName, "shader"));
 
 	//auto assetData = db->fetchAssetData(targetGuid);
-	auto matObj = QJsonDocument::fromBinaryData(sourceData).object();
+    auto matObj = QJsonDocument::fromJson(sourceData).object();
 	//auto mat = MaterialHelper::generateMaterialFromMaterialDefinition(matObj, true);
 	//assetShader->setValue(QVariant::fromValue(mat));
 	assetShader->setValue(matObj);

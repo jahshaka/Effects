@@ -184,7 +184,7 @@ void SceneWidget::render()
 		graphics->setShaderUniform("u_lightCount", 0);
 	}
 	else {
-		graphics->setShaderUniform("u_lightCount", lights.size());
+        graphics->setShaderUniform("u_lightCount", static_cast<int>(lights.size()));
 
 		for (int i = 0; i < lights.size(); i++)
 		{
@@ -324,7 +324,7 @@ void SceneWidget::mouseReleaseEvent(QMouseEvent * evt)
 
 void SceneWidget::wheelEvent(QWheelEvent* evt)
 {
-	scale += (evt->delta()/480.0f);
+    scale += (evt->angleDelta().y()/480.0f);
 }
 
 QImage SceneWidget::takeScreenshot(int width, int height)

@@ -197,7 +197,7 @@ void MainWindow::saveShader()
 	sceneWidget->takeScreenshot(512, 512).save(&buffer, "PNG");
 
 #if(EFFECT_BUILD_AS_LIB)
-	dataBase->updateAssetAsset(currentShaderInformation.GUID, doc.toBinaryData());
+    dataBase->updateAssetAsset(currentShaderInformation.GUID, doc.toJson());
 	dataBase->updateAssetThumbnail(currentShaderInformation.GUID, arr);
 #else
 
@@ -232,7 +232,7 @@ void MainWindow::saveDefaultShader()
 void MainWindow::loadShadersFromDisk()
 {
 	// create constants for this
-	auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Materials/MyFx/");
+    auto filePath = QDir().filePath(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/Materials/MyFx/");
 	QDirIterator it(filePath);
 
 	while (it.hasNext()) {
@@ -313,7 +313,7 @@ void MainWindow::importEffect(QString fileName)
 	QFileInfo entryInfo(fileName);
 
 	auto assetPath = IrisUtils::join(
-		QStandardPaths::writableLocation(QStandardPaths::DataLocation),
+        QStandardPaths::writableLocation(QStandardPaths::AppDataLocation),
 		"AssetStore"
 	);
 
@@ -451,7 +451,7 @@ void MainWindow::loadGraph(QString guid)
 	NodeGraph *graph;
 
 #if(EFFECT_BUILD_AS_LIB)
-	QJsonObject obj = QJsonDocument::fromBinaryData(fetchAsset(guid)).object();
+    QJsonObject obj = QJsonDocument::fromJson(fetchAsset(guid)).object();
 	progressDialog->setValueAndText(2, "Fetch graph");
 
 	graph = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
@@ -976,13 +976,13 @@ void MainWindow::createShader(NodeGraphPreset preset, bool loadNewGraph)
 #if(EFFECT_BUILD_AS_LIB)
 
 	auto shaderDefinition = MaterialHelper::serialize(graph);
-	dataBase->createAssetEntry(QString::null, assetGuid,newShader,static_cast<int>(ModelTypes::Shader), QJsonDocument(shaderDefinition).toBinaryData(), QByteArray(), AssetViewFilter::Effects);
+    dataBase->createAssetEntry(QString(), assetGuid,newShader,static_cast<int>(ModelTypes::Shader), QJsonDocument(shaderDefinition).toJson(), QByteArray(), AssetViewFilter::Effects);
 	auto assetShader = new AssetMaterial;
 	assetShader->fileName = newShader;
 	assetShader->assetGuid = assetGuid;
 	assetShader->path = IrisUtils::join(Globals::project->getProjectFolder(), IrisUtils::buildFileName(newShader, "shader"));
 	assetShader->setValue(QVariant::fromValue(MaterialHelper::createMaterialFromShaderGraph(graph)));
-	dataBase->updateAssetAsset(assetGuid, QJsonDocument(shaderDefinition).toBinaryData());
+    dataBase->updateAssetAsset(assetGuid, QJsonDocument(shaderDefinition).toJson());
 	AssetManager::addAsset(assetShader);
 #endif
 	saveShader();
@@ -1125,7 +1125,7 @@ void MainWindow::configureUI()
 
 	connect(propertyListWidget, &PropertyListWidget::imageRequestedForTexture, [=](QString guid) {
 		auto assetPath = IrisUtils::join(
-			QStandardPaths::writableLocation(QStandardPaths::DataLocation),
+            QStandardPaths::writableLocation(QStandardPaths::AppDataLocation),
 			"AssetStore"
 		);
 		QString assetFolder = QDir(assetPath).filePath(guid);
@@ -1197,68 +1197,32 @@ void MainWindow::configureToolbar()
 
 	toolBar->addSeparator();
 
-	//auto exportBtn = new QAction;
-	//auto importBtn = new QAction;
-	//auto addBtn = new QAction;
+	auto exportBtn = new QAction;
+	auto importBtn = new QAction;
+	auto addBtn = new QAction;
 
-	//exportBtn->setIcon(fontIcons->icon(fa::upload, options));
-	//exportBtn->setToolTip("Export shader");
+	exportBtn->setIcon(fontIcons->icon(fa::upload, options));
+	exportBtn->setToolTip("Export shader");
 
-	//importBtn->setIcon(fontIcons->icon(fa::download, options));
-	//importBtn->setToolTip("Import shader");
-
-	QPushButton* importBtn = new QPushButton("Import");
 	importBtn->setIcon(fontIcons->icon(fa::download, options));
-	importBtn->setStyleSheet(QString(
-		"QPushButton{ background-color: rgba(33,33,33, 1); color: #DEDEDE; border : 0; padding: 10px 16px; margin-right:6px; margin-left:6px; border-radius: 2px; }"
-		"QPushButton:hover{ background-color: #555; }"
-		"QPushButton:pressed{ background-color: #444; }"
-	));
-	connect(importBtn, &QPushButton::pressed, this, [=]() {
-		createNewGraph(true);
-	});
-	toolBar->addWidget(importBtn);
+	importBtn->setToolTip("Import shader");
 
-	//addBtn->setIcon(fontIcons->icon(fa::plus, options));
-	//addBtn->setToolTip("Create new shader");
+	addBtn->setIcon(fontIcons->icon(fa::plus, options));
+	addBtn->setToolTip("Create new shader");
 
-	//toolBar->addActions({ /*exportBtn,*/ importBtn, /*addBtn*/ });
-
-	QPushButton* newBtn = new QPushButton("New");
-	newBtn->setIcon(fontIcons->icon(fa::floppyo, options));
-	//addBtn->setIcon(fontIcons->icon(fa::plus, options));
-	newBtn->setStyleSheet(QString(
-		"QPushButton{ background-color: rgba(33,33,33, 1); color: #DEDEDE; border : 0; padding: 10px 16px; margin-right:6px; margin-left:6px; border-radius: 2px; }"
-		"QPushButton:hover{ background-color: #555; }"
-		"QPushButton:pressed{ background-color: #444; }"
-	));
-	connect(newBtn, &QPushButton::pressed, this, [=]() {
-		createNewGraph(true);
-	});
-	toolBar->addWidget(newBtn);
+	toolBar->addActions({ /*exportBtn,*/ importBtn, addBtn });
 
 	// this acts as a spacer
 	QWidget* empty = new QWidget();
 	empty->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	toolBar->addWidget(empty);
 
-	//QAction *actionSave = new QAction;
-	//actionSave->setObjectName(QStringLiteral("actionSave"));
-	//actionSave->setCheckable(false);
-	//actionSave->setToolTip("Export | Export the current scene");
-	//actionSave->setIcon(fontIcons->icon(fa::floppyo, options));
-	//actionSave->setText("Save");
-	//toolBar->addAction(actionSave);
-
-	QPushButton* saveBtn = new QPushButton("Save");
-	saveBtn->setIcon(fontIcons->icon(fa::floppyo, options));
-	saveBtn->setStyleSheet(QString(
-		"QPushButton{ background-color: rgba(33,33,33, 1); color: #DEDEDE; border : 0; padding: 10px 16px; margin-right:6px; margin-left:6px; border-radius: 2px; }"
-		"QPushButton:hover{ background-color: #555; }"
-		"QPushButton:pressed{ background-color: #444; }"
-	));
-	connect(saveBtn, &QPushButton::pressed, this, &MainWindow::saveShader);
-	toolBar->addWidget(saveBtn);
+	QAction *actionSave = new QAction;
+	actionSave->setObjectName(QStringLiteral("actionSave"));
+	actionSave->setCheckable(false);
+	actionSave->setToolTip("Export | Export the current scene");
+	actionSave->setIcon(fontIcons->icon(fa::floppyo, options));
+	toolBar->addAction(actionSave);
 
 	QPushButton* downloadBtn = new QPushButton("Download Materials");
 	//downloadBtn->setStyleSheet(StyleSheet::QPushButtonGreyscale());
@@ -1274,12 +1238,12 @@ void MainWindow::configureToolbar()
 
 	this->addToolBar(toolBar);
 
-	//connect(actionSave, &QAction::triggered, this, &MainWindow::saveShader);
-	//connect(exportBtn, &QAction::triggered, this, &MainWindow::exportGraph);
-	//connect(importBtn, &QAction::triggered, this, &MainWindow::importGraph);
-	//connect(addBtn, &QAction::triggered, this, [=]() {
-	//	createNewGraph(true);
-	//});
+	connect(actionSave, &QAction::triggered, this, &MainWindow::saveShader);
+	connect(exportBtn, &QAction::triggered, this, &MainWindow::exportGraph);
+	connect(importBtn, &QAction::triggered, this, &MainWindow::importGraph);
+	connect(addBtn, &QAction::triggered, this, [=]() {
+		createNewGraph(true);
+	});
 
 	toolBar->setStyleSheet(""
 		//"QToolBar{background: rgba(48,48,48, 1); border: .5px solid rgba(20,20,20, .8); border-bottom: 1px solid rgba(20,20,20, .8); padding: 0px;}"
@@ -1312,7 +1276,7 @@ void MainWindow::generateTileNode()
 		item->setTextAlignment(Qt::AlignBottom | Qt::AlignHCenter);
 		item->setFlags(item->flags() | Qt::ItemIsEditable);
 		item->setIcon(tile->icon);
-		item->setBackgroundColor(QColor(60, 60, 60));
+        item->setBackground(QColor(60, 60, 60));
 		item->setData(MODEL_TYPE_ROLE, QString("node"));
 		item->icon().addPixmap(QPixmap(":/icons/shader_overlay.png"));
 		setNodeLibraryItem(item, tile);
@@ -1428,7 +1392,7 @@ bool MainWindow::eventFilter(QObject * watched, QEvent * event)
 					arr.setNum(wid->index);
 					drag->setMimeData(mimeData);
 					auto p = propertyListWidget->mapToGlobal(QPoint(wid->x(), wid->y()));
-					drag->setPixmap(QPixmap::grabWidget(wid));
+                    drag->setPixmap(wid->grab());
 					drag->setHotSpot(QPoint(wid->width()/2.0, wid->height()/2.0));
 
 					mimeData->setText(wid->modelProperty->displayName);
@@ -1554,7 +1518,7 @@ void MainWindow::generateMaterialInProjectFromShader(QString guid)
 	QJsonObject matDef; 
 	writeMaterial(matDef, guid);
 
-	QJsonObject obj = QJsonDocument::fromBinaryData(fetchAsset(guid)).object();
+    QJsonObject obj = QJsonDocument::fromJson(fetchAsset(guid)).object();
 	auto graphObj = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
 
 	QJsonDocument saveDoc;
@@ -1573,7 +1537,7 @@ void MainWindow::generateMaterialInProjectFromShader(QString guid)
 
 	// WRITE TO DATABASE
 	const QString assetGuid = GUIDManager::generateGUID();
-	QByteArray binaryMat = QJsonDocument(matDef).toBinaryData();
+    QByteArray binaryMat = QJsonDocument(matDef).toJson();
 	dataBase->createAssetEntry(
 		assetGuid,
 		QFileInfo(fileName).fileName(),
@@ -1627,7 +1591,7 @@ void MainWindow::generateMaterialInProjectFromShader(QString guid)
 	QJsonDocument doc;
 	auto graphObject = MaterialHelper::serialize(graphObj);
 	doc.setObject(graphObject);
-	dataBase->updateAssetAsset(guid, doc.toBinaryData());
+    dataBase->updateAssetAsset(guid, doc.toJson());
 }
 
 void MainWindow::updateMaterialFromShader(QString guid)
@@ -1636,9 +1600,9 @@ void MainWindow::updateMaterialFromShader(QString guid)
 	this->sceneWidget->makeCurrent();
 
 	bool tryas = true;
-	QJsonObject obj = QJsonDocument::fromBinaryData(fetchAsset(guid)).object();
+    QJsonObject obj = QJsonDocument::fromJson(fetchAsset(guid)).object();
 	auto graphObj = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
-	auto materialDef = QJsonDocument::fromBinaryData(dataBase->fetchAssetData(graphObj->materialGuid)).object();
+    auto materialDef = QJsonDocument::fromJson(dataBase->fetchAssetData(graphObj->materialGuid)).object();
 
 	materialDef["values"] = writeMaterialValuesFromShader(guid);
 	
@@ -1693,7 +1657,7 @@ void MainWindow::writeMaterial(QJsonObject& matObj, QString guid)
 
 QJsonObject MainWindow::writeMaterialValuesFromShader(QString guid)
 {
-	QJsonObject obj = QJsonDocument::fromBinaryData(fetchAsset(guid)).object();
+    QJsonObject obj = QJsonDocument::fromJson(fetchAsset(guid)).object();
 	auto graphObj = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
 	QJsonObject valuesObj;
 	for (auto prop : graphObj->properties) {
@@ -1843,7 +1807,7 @@ void MainWindow::editingFinishedOnListItem()
 
 #if(EFFECT_BUILD_AS_LIB)
     QJsonDocument doc;
-    QJsonObject obj = QJsonDocument::fromBinaryData(fetchAsset(pressedShaderInfo.GUID)).object();
+    QJsonObject obj = QJsonDocument::fromJson(fetchAsset(pressedShaderInfo.GUID)).object();
     auto graph = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
     graph->settings.name = newName;
     auto go = graph->serialize();
@@ -1858,7 +1822,7 @@ void MainWindow::editingFinishedOnListItem()
     obj["shadergraph"] = shadergraph;
 
     doc.setObject(obj);
-    dataBase->updateAssetAsset(pressedShaderInfo.GUID,doc.toBinaryData());
+    dataBase->updateAssetAsset(pressedShaderInfo.GUID,doc.toJson());
     dataBase->renameAsset(pressedShaderInfo.GUID, newName);
 #else
     // get json obj from file and edit graph like above
