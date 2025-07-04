@@ -92,7 +92,7 @@ public:
 		writeMaterial(matDef, shaderGuid, dataBase);
 
 		auto assetData = dataBase->fetchAssetData(shaderGuid);
-		QJsonObject obj = QJsonDocument::fromBinaryData(assetData).object();
+        QJsonObject obj = QJsonDocument::fromJson(assetData).object();
 		auto graphObj = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
 
 		QJsonDocument saveDoc;
@@ -111,7 +111,7 @@ public:
 
 		// WRITE TO DATABASE
 		const QString assetGuid = GUIDManager::generateGUID();
-		QByteArray binaryMat = QJsonDocument(matDef).toBinaryData();
+        QByteArray binaryMat = QJsonDocument(matDef).toJson();
 		dataBase->createAssetEntry(
 			assetGuid,
 			QFileInfo(fileName).fileName(),
@@ -164,7 +164,7 @@ public:
 		QJsonDocument doc;
 		auto graphObject = MaterialHelper::serialize(graphObj);
 		doc.setObject(graphObject);
-		dataBase->updateAssetAsset(shaderGuid, doc.toBinaryData());
+        dataBase->updateAssetAsset(shaderGuid, doc.toJson());
 
 		return assetGuid;
 	}
@@ -183,7 +183,7 @@ public:
 
 	static QJsonObject writeMaterialValuesFromShader(Database* db, QString guid)
 	{
-		QJsonObject obj = QJsonDocument::fromBinaryData(db->fetchAssetData(guid)).object();
+        QJsonObject obj = QJsonDocument::fromJson(db->fetchAssetData(guid)).object();
 		auto graphObj = MaterialHelper::extractNodeGraphFromMaterialDefinition(obj);
 		QJsonObject valuesObj;
 		for (auto prop : graphObj->properties) {
@@ -224,13 +224,13 @@ public:
 	{
 		QString path;
 		if (asset.view_filter == AssetViewFilter::Editor) {
-			path = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + Constants::PROJECT_FOLDER;
+            path = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + Constants::PROJECT_FOLDER;
 			//auto projectFolder = SettingsManager::getDefaultManager()->getValue("default_directory", spath).toString();
 		}
 		else if (asset.view_filter == AssetViewFilter::AssetsView ||	
 				 asset.view_filter == AssetViewFilter::Effects) {
 			auto assetPath = IrisUtils::join(
-				QStandardPaths::writableLocation(QStandardPaths::DataLocation),
+                QStandardPaths::writableLocation(QStandardPaths::AppDataLocation),
 				"AssetStore"
 			);
 			path = QDir(assetPath).filePath(asset.guid);

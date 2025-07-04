@@ -10,7 +10,6 @@ For more information see the LICENSE file
 *************************************************************************/
 #include "graphnode.h"
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include <QGraphicsEffect>
@@ -139,7 +138,7 @@ void CustomRenderWidget::render()
 
 	passNodeGraphUniforms();
 
-	graphics->setShaderUniform("u_lightCount", lights.size());
+    graphics->setShaderUniform("u_lightCount", static_cast<int>(lights.size()));
 
 	mesh->draw(device);
 }
@@ -220,7 +219,7 @@ GraphNode::GraphNode(QGraphicsItem* parent) :
 	text->setDefaultTextColor(QColor(255, 255, 255));
 
     QFont font = text->font();
-    font.setWeight(65);
+    font.setWeight(QFont::Medium);
     text->setFont(font);
 
 	QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
@@ -441,7 +440,7 @@ void GraphNode::paint(QPainter *painter,
 	const QStyleOptionGraphicsItem *option,
 	QWidget *widget)
 {
-    painter->setRenderHint(QPainter::HighQualityAntialiasing);
+    // painter->setRenderHint(QPainter::HighQualityAntialigoogleasing);
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setRenderHint(QPainter::TextAntialiasing);
 

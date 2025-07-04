@@ -446,8 +446,8 @@ OptionSelection::OptionSelection(NodeGraphPreset node) : QPushButton()
     name->setText(node.title);
 
 	auto font = name->font();
-	font.setWeight(65);
-	name->setFont(font);
+    font.setWeight(QFont::Medium);
+    name->setFont(font);
 
 	auto effect = new QGraphicsDropShadowEffect;
 	effect->setBlurRadius(15);
@@ -480,7 +480,7 @@ void OptionSelection::paintEvent(QPaintEvent *event)
 	if (isChecked()) {
 		QPainter painter(this);
 		painter.setRenderHint(QPainter::Antialiasing);
-		painter.setRenderHint(QPainter::HighQualityAntialiasing);
+        painter.setRenderHint(QPainter::Antialiasing);
 		painter.drawPixmap(width() - 25, 5, 23, 23, checkedIconIcon);
 	}
 
