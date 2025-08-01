@@ -656,11 +656,11 @@ bool GraphNodeScene::eventFilter(QObject *o, QEvent *e)
 	}
 	break;
 
-	case QEvent::GraphicsSceneDrop: {
-		auto event = (QDropEvent*)e;
-		event->acceptProposedAction();
-	}
-	break;
+    // case QEvent::GraphicsSceneDrop: {
+    // 	auto event = (QDropEvent*)e;
+    // 	event->acceptProposedAction();
+    // }
+    // break;
 
 	}
 
