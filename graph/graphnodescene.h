@@ -75,7 +75,7 @@ public:
 	void undo();
 	void redo();
 
-	bool eventFilter(QObject *o, QEvent *e);
+    bool eventFilter(QObject *o, QEvent *e) override;
 	Socket* getSocketAt(float x, float y);
 	SocketConnection* getConnectionAt(float x, float y);
 	SocketConnection* getConnection(const QString& conId);
@@ -125,7 +125,7 @@ public:
 
 protected:
 	void dropEvent(QGraphicsSceneDragDropEvent *event) override;
-	void drawBackground(QPainter *painter, const QRectF &rect);
+    void drawBackground(QPainter *painter, const QRectF &rect) override;
 
 signals:
 	void newConnection(SocketConnection* connection);

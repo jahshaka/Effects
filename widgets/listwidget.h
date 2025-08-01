@@ -34,7 +34,7 @@ private slots:
     void customContextMenu(QPoint pos);
 
 protected:
-    QMimeData * mimeData(const QList<QListWidgetItem *> items) const;
+    QMimeData * mimeData(const QList<QListWidgetItem *> &items) const override;
     void resizeEvent(QResizeEvent * event) override;
 
 signals:

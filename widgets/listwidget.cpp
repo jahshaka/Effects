@@ -140,7 +140,7 @@ void ListWidget::displayAllContents()
 
 
 
-QMimeData * ListWidget::mimeData(const QList<QListWidgetItem *> items) const
+QMimeData * ListWidget::mimeData(const QList<QListWidgetItem *> &items) const
 {
 
 	

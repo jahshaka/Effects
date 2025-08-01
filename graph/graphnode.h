@@ -126,7 +126,7 @@ public:
 
 	virtual int type() const override;
 
-	QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+    QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
 	QPointF initialPoint;
 	QPointF movedPoint;
